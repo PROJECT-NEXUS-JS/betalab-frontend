@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+/* 피그마 디자인 시스템의 CSS이름을 몇개 옮기긴 했는데 애매한게 있어서 라벨은 안옮겼습니다. */
+
+@theme {
+  --color-Primary-Color-100: #F3F7FF;
+  --color-Primary-Color-200: #DAE7FF;
+  --color-Primary-Color-300: #A7C6FF;
+  --color-Primary-Color-400: #74A4FF;
+  --color-Primary-Color-500: #0E62FF;
+
+  --color-Black: #1A1E27;
+  --color-Dark-Gray: #505866;
+  --color-Light-Gray: #B1B8C0;
+
+  --color-Gray-50: #FBFCFE;
+  --color-Gray-100: #E8EAEC;
+  --color-Gray-200: #B1B8C0;
+  --color-Gray-300: #64768C;
+
+  --color-Error: #C33F38;
+  --color-Information: #3D90E3;
+  --color-Warning:#EEAB46;
+  --color-Success: #67AC5C;
+
+
+}
