@@ -23,72 +23,50 @@
   --color-Information: #3d90e3;
   --color-Warning: #eeab46;
   --color-Success: #67ac5c;
+
+  --font-sans: "SUIT", sans-serif;
 }
 
 @layer utilities {
-  .text-head1 {
-    font-size: 4rem;
-    line-height: 1.2;
-    font-weight: 700;
+  .text-head {
+    font-size: 2.67rem;
+    line-height: 150%;
+    letter-spacing: -1%;
   }
 
-  .text-head2 {
-    font-size: 3rem;
-    line-height: 1.3;
-    font-weight: 700;
-  }
-
-  .text-head3 {
-    font-size: 2.5rem;
-    line-height: 1.4;
-    font-weight: 700;
-  }
-
-  .text-head4 {
+  .text-subtitle-01 {
     font-size: 2rem;
-    line-height: 1.4;
-    font-weight: 700;
+    line-height: 150%;
+    letter-spacing: -1%;
   }
 
-  .text-head5 {
-    font-size: 1.5rem;
-    line-height: 1.5;
-    font-weight: 600;
+  .text-subtitle-02 {
+    font-size: 1.67rem;
+    line-height: 150%;
+    letter-spacing: -1%;
   }
 
-  .text-head6 {
-    font-size: 1.25rem;
-    line-height: 1.5;
-    font-weight: 600;
+  .text-body-01 {
+    font-size: 1.33rem;
+    line-height: 150%;
+    letter-spacing: -1%;
   }
 
-  .text-body1 {
-    font-size: 1.125rem;
-    line-height: 1.6;
-    font-weight: 400;
+  .text-body-02 {
+    font-size: 1.17rem;
+    line-height: 150%;
+    letter-spacing: -1%;
   }
 
-  .text-body2 {
+  .text-caption-01 {
     font-size: 1rem;
-    line-height: 1.6;
-    font-weight: 400;
+    line-height: 150%;
+    letter-spacing: -1%;
   }
 
-  .text-body3 {
-    font-size: 0.875rem;
-    line-height: 1.6;
-    font-weight: 400;
-  }
-
-  .text-caption {
-    font-size: 0.75rem;
-    line-height: 1.4;
-    font-weight: 400;
-  }
-
-  .text-button {
-    font-size: 1rem;
-    line-height: 1.4;
-    font-weight: 600;
+  .text-caption-02 {
+    font-size: 0.83rem;
+    line-height: 150%;
+    letter-spacing: -1%;
   }
 }
