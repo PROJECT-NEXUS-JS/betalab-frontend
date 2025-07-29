@@ -3,26 +3,92 @@
 /* 피그마 디자인 시스템의 CSS이름을 몇개 옮기긴 했는데 애매한게 있어서 라벨은 안옮겼습니다. */
 
 @theme {
-  --color-Primary-100: #F3F7FF;
-  --color-Primary-200: #DAE7FF;
-  --color-Primary-300: #A7C6FF;
-  --color-Primary-400: #74A4FF;
-  --color-Primary-500: #0E62FF;
+  --color-Primary-100: #f3f7ff;
+  --color-Primary-200: #dae7ff;
+  --color-Primary-300: #a7c6ff;
+  --color-Primary-400: #74a4ff;
+  --color-Primary-500: #0e62ff;
 
-  --color-White: #FFFFFF;
-  --color-Black: #1A1E27;
+  --color-White: #ffffff;
+  --color-Black: #1a1e27;
   --color-Dark-Gray: #505866;
-  --color-Light-Gray: #B1B8C0;
+  --color-Light-Gray: #b1b8c0;
 
-  --color-Gray-50: #FBFCFE;
-  --color-Gray-100: #E8EAEC;
-  --color-Gray-200: #B1B8C0;
-  --color-Gray-300: #64768C;
+  --color-Gray-50: #fbfcfe;
+  --color-Gray-100: #e8eaec;
+  --color-Gray-200: #b1b8c0;
+  --color-Gray-300: #64768c;
 
-  --color-Error: #C33F38;
-  --color-Information: #3D90E3;
-  --color-Warning:#EEAB46;
-  --color-Success: #67AC5C;
+  --color-Error: #c33f38;
+  --color-Information: #3d90e3;
+  --color-Warning: #eeab46;
+  --color-Success: #67ac5c;
+}
 
+@layer utilities {
+  .text-head1 {
+    font-size: 4rem;
+    line-height: 1.2;
+    font-weight: 700;
+  }
 
+  .text-head2 {
+    font-size: 3rem;
+    line-height: 1.3;
+    font-weight: 700;
+  }
+
+  .text-head3 {
+    font-size: 2.5rem;
+    line-height: 1.4;
+    font-weight: 700;
+  }
+
+  .text-head4 {
+    font-size: 2rem;
+    line-height: 1.4;
+    font-weight: 700;
+  }
+
+  .text-head5 {
+    font-size: 1.5rem;
+    line-height: 1.5;
+    font-weight: 600;
+  }
+
+  .text-head6 {
+    font-size: 1.25rem;
+    line-height: 1.5;
+    font-weight: 600;
+  }
+
+  .text-body1 {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+
+  .text-body2 {
+    font-size: 1rem;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+
+  .text-body3 {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+
+  .text-caption {
+    font-size: 0.75rem;
+    line-height: 1.4;
+    font-weight: 400;
+  }
+
+  .text-button {
+    font-size: 1rem;
+    line-height: 1.4;
+    font-weight: 600;
+  }
 }
