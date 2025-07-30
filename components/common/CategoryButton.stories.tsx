@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
+import React from 'react';
 import CategoryButton, { CategoryButtonProps } from "./CategoryButton";
 
 const meta: Meta<CategoryButtonProps> = {
@@ -28,7 +29,20 @@ export default meta;
 
 type Story = StoryObj<CategoryButtonProps>;
 
-export const Default: Story = {
+export const AllVariants: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-4 p-4">
+      {(meta?.argTypes?.type?.options as CategoryButtonProps['type'][]).map((type) => (
+        <CategoryButton key={type} type={type} onClick={() => {}} />
+      ))}
+    </div>
+  ),
+  parameters: {
+    controls: { hideNoControlsWarning: true },
+  },
+};
+
+export const App: Story = {
   args: {
     type: "앱",
   },

@@ -31,7 +31,7 @@ export default function CategoryButton({
       onClick={onClick}
     >
       {icon && <Image src={icon.src} alt={icon.alt} />}
-      <p className='text-xs'>{type}</p>
+      <p className='text-xs w-full'>{type}</p>
     </button>
   );
 }
