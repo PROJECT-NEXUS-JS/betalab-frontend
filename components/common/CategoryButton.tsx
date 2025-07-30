@@ -7,7 +7,7 @@ import Bomb from '@/public/icons/category-icon/bomb.svg';
 import Image from 'next/image';
 
 export interface CategoryButtonProps {
-  type: '앱' | '웹' | '인기순위' | '게임' | '마감 임박' | '커뮤니티';
+  type: '앱' | '웹' | '인기순위' | '게임' | '마감 임박';
   onClick: () => void; 
 }
 
@@ -17,7 +17,6 @@ const ICON_MAP: Record<CategoryButtonProps['type'], { src: any; alt: string }> =
   인기순위: { src: GoalSvg, alt: '인기순위 아이콘' },
   게임: { src: GameSvg, alt: '게임 아이콘' },
   '마감 임박': { src: Bomb, alt: '마감 임박 아이콘' },
-  커뮤니티: { src: CommunitySvg, alt: '커뮤니티 아이콘' },
 };
 
 export default function CategoryButton({

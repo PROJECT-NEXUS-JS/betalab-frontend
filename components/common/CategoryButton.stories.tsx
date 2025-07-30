@@ -18,7 +18,6 @@ const meta: Meta<CategoryButtonProps> = {
         "인기순위",
         "게임",
         "마감 임박",
-        "커뮤니티",
       ],
     },
     onClick: { action: "clicked" },
@@ -69,11 +68,5 @@ export const Game: Story = {
 export const Urgent: Story = {
   args: {
     type: "마감 임박",
-  },
-};
-
-export const Community: Story = {
-  args: {
-    type: "커뮤니티",
   },
 };
