@@ -2,17 +2,18 @@
 @import url("https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/static/woff2/SUIT-Medium.css");
 @import url("https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/static/woff2/SUIT-SemiBold.css");
 @import url("https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/static/woff2/SUIT-Bold.css");
+@import url("https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css");
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --font-sans: "SUIT", sans-serif;
+  --font-sans: 'SUIT Variable', sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: "SUIT", sans-serif;
+  --font-sans: 'SUIT Variable', sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 
@@ -26,5 +27,5 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: "SUIT", sans-serif;
+  font-family: 'SUIT Variable', sans-serif;
 }
