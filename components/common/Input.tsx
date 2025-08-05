@@ -25,6 +25,7 @@ export default function Input({
     <div className={`${baseClasses} flex justify-between items-center`} >
       <input
         type="text"
+        className="focus:outline-none"
         placeholder={placeholder}
         value={value}
         onChange={onChange}
