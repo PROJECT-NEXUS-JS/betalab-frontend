@@ -45,6 +45,10 @@ export default meta;
 type Story = StoryObj<InputProps>;
 
 export const TextAllVariants: Story = {
+  args: {
+    value: "dsdsdsd"
+  },
+
   render: () => (
     <div className="flex flex-col flex-wrap gap-4 p-4">
       {(meta?.argTypes?.state?.options as InputProps['state'][]).map((state) => (
@@ -61,9 +65,10 @@ export const TextAllVariants: Story = {
       ))}
     </div>
   ),
+
   parameters: {
     controls: { hideNoControlsWarning: true },
-  },
+  }
 };
 
 export const TextAreaAllVariants: Story = {
