@@ -45,7 +45,7 @@ export const AllVariants: Story = {
         <Label 
           key={size} 
           size={size}
-          helpText={true}
+          help={true}
           label={true}
           tag={true}
           tag2={true}
@@ -56,6 +56,7 @@ export const AllVariants: Story = {
           dday={7}
           placeholder="input"
           value=""
+          helpText="Help text"
           maxLength={30}
           onChange={() => {}} />
       ))}

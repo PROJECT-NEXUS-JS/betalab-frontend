@@ -2,10 +2,11 @@
 import { useState } from "react";
 import Tag from "@/components/common/Tag";
 import Input from "@/components/common/Input";
+import HelpText from "./HelpText";
 
 export interface LabelProps {
   size: "sm" | "md" | "lg" | "xl";
-  helpText: boolean;
+  help: boolean;
   label: boolean;
   tag: boolean; 
   tag2: boolean;
@@ -17,13 +18,14 @@ export interface LabelProps {
   dday?: number;
   placeholder?: string;
   value?: string;
+  helpText?: string;
   maxLength?: number;
   onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
 export default function Label({
   size = 'md',
-  helpText = false,
+  help = false,
   label = false,
   tag = false,
   tag2 = false,
@@ -35,6 +37,7 @@ export default function Label({
   dday = 7,
   placeholder = '',
   value = '',
+  helpText = '',
   maxLength = 30,
   onChange = () => {},
 }: LabelProps) {
@@ -64,7 +67,7 @@ export default function Label({
         onChange={handleInputChange}
       />
       <div className="flex items-center justify-between">
-        {helpText && <span className="text-xs text-gray-500">컴포넌트 만들면 불러오기</span>}
+        {help && <HelpText style="error" text={helpText} />}
         {textCounter && (
           <span className="text-[10px] text-Light-Gray font-semibold">
             {`${inputValueLength}/${maxLength}`}

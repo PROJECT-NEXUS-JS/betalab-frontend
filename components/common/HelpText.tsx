@@ -17,8 +17,8 @@ export default function HelpText({
   text = "",
 }: HelpTextProps) {
   return (
-    <div className="flex items-center justify-center gap-2">
-      <div className="w-4 h-4 flex justify-center items-center">{THEME_ICON_IMAGE[style]}</div>
+    <div className="flex items-center gap-[10px]">
+      <div>{THEME_ICON_IMAGE[style]}</div>
       <span className={`${THEME_STYLE_CLASSNAME[style]} text-xs font-semibold`}>{text}</span>
     </div>
   );
