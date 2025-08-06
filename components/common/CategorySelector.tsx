@@ -1,6 +1,6 @@
 'use client';
 
-import Chip from './Chip';
+import Chip from './atoms/Chip';
 
 const CATEGORIES = ['앱', '웹', '게임', '기타'];
 
