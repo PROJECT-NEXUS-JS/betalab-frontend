@@ -44,6 +44,31 @@ export default meta;
 
 type Story = StoryObj<InputProps>;
 
+export const TextAllSmVariants: Story = {
+  args: {
+    value: "dsdsdsd"
+  },
+
+  render: () => (
+    <div className="flex flex-col flex-wrap gap-4 p-4">
+      {(meta?.argTypes?.state?.options as InputProps['state'][]).map((state) => (
+        <Input 
+          key={`${state}`} 
+          type="text"
+          state={state} 
+          size="sm"
+          placeholder="Placeholder text" 
+          value="" 
+          onChange={() => {}} />
+      ))}
+    </div>
+  ),
+
+  parameters: {
+    controls: { hideNoControlsWarning: true },
+  }
+};
+
 export const TextAllVariants: Story = {
   args: {
     value: "dsdsdsd"
