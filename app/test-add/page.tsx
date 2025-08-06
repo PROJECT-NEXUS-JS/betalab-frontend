@@ -2,9 +2,9 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import CategorySelector from '@/components/common/CategorySelector';
-import StepNextButton from '@/components/common/StepNextButton';
-import CarouselBar from '@/components/common/CarouselBar';
+import CategorySelector from '@/components/common/molecules/CategorySelector';
+import StepNextButton from '@/components/common/molecules/StepNextButton';
+import CarouselBar from '@/components/common/molecules/CarouselBar';
 
 export default function TestAddPage() {
   const [selected, setSelected] = useState<string | null>(null);

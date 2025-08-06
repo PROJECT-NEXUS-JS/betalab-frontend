@@ -1,4 +1,4 @@
-import Button from "@/components/common/Button";
+import Button from "@/components/common/atoms/Button";
 import BetalabLogo from "@/components/common/svg/BetalabLogo";
 import HeaderIcons from "../molecules/HeaderIcons";
 import Searchbar from "@/components/common/molecules/Searchbar";

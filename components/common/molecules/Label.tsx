@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import Tag from "@/components/common/Tag";
-import Input from "@/components/common/Input";
-import HelpText from "./HelpText";
+import Tag from "@/components/common/atoms/Tag";
+import Input from "@/components/common/atoms/Input";
+import HelpText from "@/components/common/atoms/HelpText";
 
 export interface LabelProps {
   size: "sm" | "md" | "lg" | "xl";

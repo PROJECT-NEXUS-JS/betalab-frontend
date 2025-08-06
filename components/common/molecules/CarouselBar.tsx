@@ -1,4 +1,4 @@
-import DotUnit from './DotUnit';
+import DotUnit from '@/components/common/atoms/DotUnit';
 
 interface CarouselBarProps {
   activeIndex: number; 

@@ -1,6 +1,6 @@
 import { PostCardModel } from "@/types/models/postsModel";
 import Image from "next/image";
-import Tag from "@/components/common/Tag";
+import Tag from "@/components/common/atoms/Tag";
 import { cn } from "@/lib/utils";
 
 interface PostCardProps {

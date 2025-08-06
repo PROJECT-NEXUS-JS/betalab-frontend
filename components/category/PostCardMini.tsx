@@ -1,6 +1,6 @@
 import BookMark from "@/components/common/svg/BookMark";
 import { PostCardModel } from "@/types/models/postsModel";
-import Tag from "@/components/common/Tag";
+import Tag from "@/components/common/atoms/Tag";
 import { cn } from "@/lib/utils";
 
 interface PostCardMiniProps {
