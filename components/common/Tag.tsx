@@ -17,7 +17,7 @@ export interface TagProps {
     | "blue"
     | "gray"
     | "필수";
-  onClick: () => void;
+  onClick?: () => void;
   dday?: number;
 }
 
