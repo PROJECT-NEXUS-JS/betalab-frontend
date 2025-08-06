@@ -1,25 +1,42 @@
 'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import CategorySelector from '@/components/common/molecules/CategorySelector';
 import StepNextButton from '@/components/common/molecules/StepNextButton';
 import CarouselBar from '@/components/common/molecules/CarouselBar';
 
+const CATEGORY_MAP = {
+  앱: 'app',
+  웹: 'web',
+  게임: 'game',
+  기타: 'etc',
+} as const;
+
+type Category = keyof typeof CATEGORY_MAP;
+
 export default function TestAddPage() {
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Category | null>(null);
   const STEP_INDEX = 0;
+  const router = useRouter();
+
+  const handleNext = () => {
+    if (!selected) return alert('카테고리를 선택해주세요!');
+    const slug = CATEGORY_MAP[selected];
+    router.push(`/test-add/${slug}`);
+  };
 
   return (
     <main className="flex min-h-screen w-full">
       <div className="w-1/4 bg-gradient-to-b from-white to-[#D4EED8] relative">
-      <Image
-    src="/test1.png"
-    alt="테스트 이미지"
-    fill
-    className="object-cover" 
-    priority
-  />
+        <Image
+          src="/test1.png"
+          alt="테스트 이미지"
+          fill
+          className="object-cover"
+          priority
+        />
       </div>
 
       <div className="w-1/2 flex flex-col justify-between px-12 py-10">
@@ -37,7 +54,7 @@ export default function TestAddPage() {
 
         <div className="flex items-center justify-between mt-6">
           <CarouselBar activeIndex={STEP_INDEX} total={10} />
-          <StepNextButton />
+          <StepNextButton onClick={handleNext} />
         </div>
       </div>
     </main>
