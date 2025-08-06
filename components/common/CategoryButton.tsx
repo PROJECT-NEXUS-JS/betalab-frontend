@@ -21,7 +21,7 @@ export default function CategoryButton({
   
   return (
     <button
-      className="w-20 h-20 p-4 flex flex-col justify-center items-center bg-Gray-50 rounded-2xl hover:bg-Gray-100 transition-colors gap-2"
+      className="size-20 p-4 flex flex-col justify-center items-center bg-Gray-50 rounded-2xl hover:bg-Gray-100 transition-colors gap-2"
       onClick={onClick}
     >
       {icon && (
