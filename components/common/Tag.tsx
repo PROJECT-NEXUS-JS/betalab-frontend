@@ -8,7 +8,15 @@ import fire_blue from "@/public/icons/tag-icon/fire-blue.svg";
 import calender_gray from "@/public/icons/tag-icon/calender-gray.svg";
 
 export interface TagProps {
-  style: "orange" | "red" | "green" | "purple" | "black" | "blue" | "gray" | "필수";
+  style:
+    | "orange"
+    | "red"
+    | "green"
+    | "purple"
+    | "black"
+    | "blue"
+    | "gray"
+    | "필수";
   onClick: () => void;
   dday?: number;
 }
@@ -20,18 +28,12 @@ export default function Tag({ style, onClick, dday = 7 }: TagProps) {
       className={`flex justify-center items-center text-[10px] font-semibold px-1 h-5 gap-1 rounded-sm cursor-pointer ${TAG_COLORS[style]}`}
     >
       {TAG_ICONS[style] && (
-        <Image
-          src={TAG_ICONS[style]}
-          alt={style}
-          width={12}
-          height={12}
-        />
+        <Image src={TAG_ICONS[style]} alt={style} width={12} height={12} />
       )}
       {TAG_TEXT(dday)[style]}
     </div>
   );
 }
-
 
 const TAG_ICONS: Record<string, string | null> = {
   orange: diamond_orange,
@@ -64,36 +66,4 @@ const TAG_TEXT = (dday: number) => ({
   blue: "참여자에 대해 자세히 파악할 수 있어요",
   gray: `D-${dday}`,
   필수: "*필수",
-<<<<<<< HEAD
 });
-=======
-});
-
-export interface TagProps {
-  style:
-    | "orange"
-    | "red"
-    | "green"
-    | "purple"
-    | "black"
-    | "blue"
-    | "gray"
-    | "필수";
-  onClick?: () => void;
-  dday?: number;
-}
-
-export default function Tag({ style, onClick, dday = 7 }: TagProps) {
-  return (
-    <div
-      onClick={onClick}
-      className={`flex justify-center items-center text-[10px] font-semibold px-1 h-5 gap-1 rounded-sm cursor-pointer ${TAG_COLORS[style]}`}
-    >
-      {TAG_ICONS[style] && (
-        <Image src={TAG_ICONS[style]} alt={style} width={12} height={12} />
-      )}
-      {TAG_TEXT(dday)[style]}
-    </div>
-  );
-}
->>>>>>> 8c98eb9 (feat: PostCard 컴포넌트 완성)
