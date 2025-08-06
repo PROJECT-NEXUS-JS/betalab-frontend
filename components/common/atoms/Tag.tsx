@@ -7,15 +7,43 @@ import diamond_white from "@/public/icons/tag-icon/diamond-white.svg";
 import fire_blue from "@/public/icons/tag-icon/fire-blue.svg";
 import calender_gray from "@/public/icons/tag-icon/calender-gray.svg";
 
+export interface TagProps {
+  style:
+    | "orange"
+    | "red"
+    | "green"
+    | "purple"
+    | "black"
+    | "blue"
+    | "gray"
+    | "필수";
+  onClick?: () => void;
+  dday?: number;
+}
+
+export default function Tag({ style, onClick, dday = 7 }: TagProps) {
+  return (
+    <div
+      onClick={onClick}
+      className={`flex justify-center items-center text-[10px] font-semibold px-1 h-5 gap-1 rounded-sm cursor-pointer ${TAG_COLORS[style]}`}
+    >
+      {TAG_ICONS[style] && (
+        <Image src={TAG_ICONS[style]} alt={style} width={12} height={12} />
+      )}
+      {TAG_TEXT(dday)[style]}
+    </div>
+  );
+}
+
 const TAG_ICONS: Record<string, string | null> = {
   orange: diamond_orange,
   red: fire_red,
   green: calender_green,
   purple: siren,
-  black: diamond_white, 
+  black: diamond_white,
   blue: fire_blue,
   gray: calender_gray,
-  필수: null
+  필수: null,
 };
 
 const TAG_COLORS: Record<string, string> = {
@@ -39,28 +67,3 @@ const TAG_TEXT = (dday: number) => ({
   gray: `D-${dday}`,
   필수: "*필수",
 });
-
-export interface TagProps {
-  style: "orange" | "red" | "green" | "purple" | "black" | "blue" | "gray" | "필수";
-  onClick: () => void;
-  dday?: number;
-}
-
-export default function Tag({ style, onClick, dday = 7 }: TagProps) {
-  return (
-    <div
-      onClick={onClick}
-      className={`flex justify-center items-center text-[10px] font-semibold px-1 h-5 gap-1 rounded-sm cursor-pointer ${TAG_COLORS[style]}`}
-    >
-      {TAG_ICONS[style] && (
-        <Image
-          src={TAG_ICONS[style]}
-          alt={style}
-          width={12}
-          height={12}
-        />
-      )}
-      {TAG_TEXT(dday)[style]}
-    </div>
-  );
-}
