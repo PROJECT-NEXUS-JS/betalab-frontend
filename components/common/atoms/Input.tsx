@@ -17,6 +17,8 @@ export interface InputProps {
   placeholder?: string;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }
 
 export default function Input({
