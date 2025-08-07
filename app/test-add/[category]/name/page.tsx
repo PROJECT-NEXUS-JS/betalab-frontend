@@ -18,7 +18,6 @@ export default function TestAddNamePage() {
   const [isFocused, setIsFocused] = useState(false);
   const STEP_INDEX = 3;
   const MAX_LENGTH = 30;
-
   const getInputState = (): InputProps['state'] => {
     if (title.length === 0) return 'no value';
     if (isFocused) return 'focused';
