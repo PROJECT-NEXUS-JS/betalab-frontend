@@ -5,7 +5,7 @@ const BACKEND_URL = process.env.BACKEND_URL!;
 
 export async function POST(req: NextRequest) {
   const cookieStore = await cookies();
-  const refreshToken = cookieStore.get('refresh_token');
+  const refreshToken = cookieStore.get('refreshToken');
 
   if (!refreshToken) {
     return NextResponse.json({ message: 'No refresh token' }, { status: 401 });
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
 
     const res = NextResponse.json({ newAccessToken }, { status: 200 });
 
-    res.cookies.set('access_token', newAccessToken, {
+    res.cookies.set('accessToken', newAccessToken, {
       httpOnly: true,
       path: '/',
       maxAge: 60 * 15, // 15분
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
       sameSite: 'lax',
     });
 
-    res.cookies.set('refresh_token', newRefreshToken, {
+    res.cookies.set('refreshToken', newRefreshToken, {
       httpOnly: true,
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 7일
