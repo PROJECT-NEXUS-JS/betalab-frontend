@@ -24,7 +24,11 @@ export default function TestAddPage() {
   const handleNext = () => {
     if (!selected) return alert('카테고리를 선택해주세요!');
     const slug = CATEGORY_MAP[selected];
-    router.push(`/test-add/${slug}`);
+    if (slug === 'web') {
+      router.push(`/test-add/web/genre`);
+    } else {
+      router.push(`/test-add/${slug}`);
+    }
   };
 
   return (
