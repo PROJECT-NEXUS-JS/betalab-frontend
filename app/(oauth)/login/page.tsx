@@ -27,6 +27,7 @@ export default function LoginPage() {
           label="카카오 로그인"
           onClick={handleLogin}
         />
+        <Button Size="md" State="Text btn" label="그냥 둘러보기" onClick={() => {}} />
       </div>
     </div>
   );
