@@ -1,5 +1,6 @@
-// src/app/api/auth/login/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+
+const BACKEND_URL = process.env.BACKEND_URL!;
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,7 +13,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const backendRes = await fetch(`${process.env.BASE_URL}/auth/login`, {
+    const backendRes = await fetch(`${BACKEND_URL}/auth/login`, {
       method: 'POST',
       headers: { id_token: idToken },
     });
@@ -24,7 +25,7 @@ export async function POST(req: NextRequest) {
       responseData = await backendRes.json();
     } else {
       const rawText = await backendRes.text();
-      console.error('📦 JSON 아님:', rawText);
+      console.error('JSON 아님:', rawText);
       return NextResponse.json(
         { success: false, message: `예상치 못한 응답 형식: ${rawText}` },
         { status: backendRes.status },
