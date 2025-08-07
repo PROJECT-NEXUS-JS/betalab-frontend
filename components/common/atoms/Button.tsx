@@ -1,3 +1,5 @@
+import { cn } from '@/lib/utils';
+
 export interface ButtonProps {
   State:
     | 'Default'
@@ -27,7 +29,11 @@ export default function Button({
     return (
       <button
         onClick={onClick}
-        className={`${THEME_COLOR_CLASSNAME['Text btn']} ${TEXT_BUTTON_SIZE_CLASSNAME[sizeForTextBtn]} leading-6`}
+        className={cn(
+          THEME_COLOR_CLASSNAME['Text btn'],
+          TEXT_BUTTON_SIZE_CLASSNAME[sizeForTextBtn],
+          'leading-6 rounded-[1px]',
+        )}
       >
         {label}
       </button>
