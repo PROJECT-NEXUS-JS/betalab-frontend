@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/nextjs";
-import Header, { HeaderAdmin } from "./Header";
+import type { Meta, StoryObj } from '@storybook/nextjs';
+import Header, { HeaderAdmin } from './Header';
 
 interface HeaderProps {
   isLogin?: boolean;
@@ -7,20 +7,20 @@ interface HeaderProps {
 }
 
 const meta: Meta<HeaderProps> = {
-  title: "Components/Organisms/Header",
+  title: 'Components/Organisms/Header',
   component: Header,
   parameters: {
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
     isLogin: {
-      control: { type: "boolean" },
-      description: "로그인 상태 여부",
+      control: { type: 'boolean' },
+      description: '로그인 상태 여부',
     },
     isSearchbar: {
-      control: { type: "boolean" },
-      description: "서치바 표시 여부",
+      control: { type: 'boolean' },
+      description: '서치바 표시 여부',
     },
   },
 };
@@ -43,8 +43,7 @@ export const LoggedOut: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "로그인하지 않은 상태의 헤더입니다. 로그인/회원가입 버튼이 표시됩니다.",
+        story: '로그인하지 않은 상태의 헤더입니다. 로그인/회원가입 버튼이 표시됩니다.',
       },
     },
   },
@@ -58,7 +57,7 @@ export const LoggedIn: Story = {
   parameters: {
     docs: {
       description: {
-        story: "로그인한 상태의 헤더입니다. 헤더 아이콘들이 표시됩니다.",
+        story: '로그인한 상태의 헤더입니다. 헤더 아이콘들이 표시됩니다.',
       },
     },
   },
@@ -72,7 +71,7 @@ export const WithSearchbar: Story = {
   parameters: {
     docs: {
       description: {
-        story: "서치바가 포함된 헤더입니다.",
+        story: '서치바가 포함된 헤더입니다.',
       },
     },
   },
@@ -86,7 +85,7 @@ export const LoggedInWithSearchbar: Story = {
   parameters: {
     docs: {
       description: {
-        story: "로그인한 상태에서 서치바가 포함된 헤더입니다.",
+        story: '로그인한 상태에서 서치바가 포함된 헤더입니다.',
       },
     },
   },

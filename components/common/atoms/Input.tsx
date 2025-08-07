@@ -1,10 +1,18 @@
-import Image from "next/image";
-import CircleX from "@/public/icons/input-icon/circle-x.svg";
+import Image from 'next/image';
+import CircleX from '@/public/icons/input-icon/circle-x.svg';
 
 export interface InputProps {
   type: 'text' | 'text area';
-  state: 'no value' | 'has value' | 'focused' | 'disabled' | 'error' | 'information' | 'warning' | 'success';
-  size: "sm" | "md" | "lg" | "xl";
+  state:
+    | 'no value'
+    | 'has value'
+    | 'focused'
+    | 'disabled'
+    | 'error'
+    | 'information'
+    | 'warning'
+    | 'success';
+  size: 'sm' | 'md' | 'lg' | 'xl';
 
   placeholder?: string;
   value?: string;
@@ -22,7 +30,7 @@ export default function Input({
   const baseClasses = `p-4 text-sm border rounded-[2px] focus:outline-none transition-colors ${THEME_COLOR_CLASSNAME[state]} ${THEME_SIZE_CLASSNAME[size]}`;
 
   return type === 'text' ? (
-    <div className={`${baseClasses} flex justify-between items-center`} >
+    <div className={`${baseClasses} flex justify-between items-center`}>
       <input
         type="text"
         className="focus:outline-none"
@@ -47,12 +55,12 @@ export default function Input({
   );
 }
 
-
 const THEME_COLOR_CLASSNAME = {
   'no value': 'border-Gray-100 text-Light-Gray placeholder:text-Light-Gray bg-White',
   'has value': 'border-Gray-100 text-Dark-Gray placeholder:text-Dark-Gray bg-White',
   focused: 'border-Black text-Dark-Gray placeholder:text-Dark-Gray bg-White',
-  disabled: 'border-Gray-100 text-Light-Gray placeholder:text-Light-Gray cursor-not-allowed bg-Gray-100',
+  disabled:
+    'border-Gray-100 text-Light-Gray placeholder:text-Light-Gray cursor-not-allowed bg-Gray-100',
   error: 'border-Error text-Dark-Gray placeholder:text-Dark-Gray bg-White',
   information: 'border-Information text-Dark-Gray placeholder:text-Dark-Gray bg-White',
   warning: 'border-Warning text-Dark-Gray placeholder:text-Dark-Gray bg-White',

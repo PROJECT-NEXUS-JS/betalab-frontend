@@ -1,29 +1,20 @@
-import type { Meta, StoryObj } from "@storybook/nextjs";
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import React from 'react';
-import Tag, { TagProps } from "./Tag";
+import Tag, { TagProps } from './Tag';
 
 const meta: Meta<TagProps> = {
-  title: "Components/Tag",
+  title: 'Components/Tag',
   component: Tag,
   parameters: {
     layout: 'centered',
   },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
     style: {
-      control: { type: "select" },
-      options: [
-        "orange",
-        "red",
-        "green",
-        "purple",
-        "black",
-        "blue",
-        "gray",
-        "필수",
-      ],
+      control: { type: 'select' },
+      options: ['orange', 'red', 'green', 'purple', 'black', 'blue', 'gray', '필수'],
     },
-    onClick: { action: "clicked" },
+    onClick: { action: 'clicked' },
   },
 };
 
@@ -34,7 +25,7 @@ type Story = StoryObj<TagProps>;
 export const AllVariants: Story = {
   render: () => (
     <div className="flex flex-wrap gap-4 p-4">
-      {(meta?.argTypes?.style?.options as TagProps['style'][]).map((style) => (
+      {(meta?.argTypes?.style?.options as TagProps['style'][]).map(style => (
         <Tag key={style} style={style} onClick={() => {}} />
       ))}
     </div>
@@ -46,48 +37,48 @@ export const AllVariants: Story = {
 
 export const Orange: Story = {
   args: {
-    style: "orange",
+    style: 'orange',
   },
 };
 
 export const Red: Story = {
   args: {
-    style: "red",
+    style: 'red',
   },
 };
 
 export const Green: Story = {
   args: {
-    style: "green",
+    style: 'green',
   },
 };
 
 export const Purple: Story = {
   args: {
-    style: "purple",
+    style: 'purple',
   },
 };
 
 export const Black: Story = {
   args: {
-    style: "black",
+    style: 'black',
   },
 };
 
 export const Blue: Story = {
   args: {
-    style: "blue",
+    style: 'blue',
   },
 };
 
 export const Gray: Story = {
   args: {
-    style: "gray",
+    style: 'gray',
   },
 };
 
 export const 필수: Story = {
   args: {
-    style: "필수",
+    style: '필수',
   },
 };

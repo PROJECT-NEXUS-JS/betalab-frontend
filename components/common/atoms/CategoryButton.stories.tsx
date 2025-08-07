@@ -1,26 +1,20 @@
-import type { Meta, StoryObj } from "@storybook/nextjs";
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import React from 'react';
-import CategoryButton, { CategoryButtonProps } from "./CategoryButton";
+import CategoryButton, { CategoryButtonProps } from './CategoryButton';
 
 const meta: Meta<CategoryButtonProps> = {
-  title: "Components/CategoryButton",
+  title: 'Components/CategoryButton',
   component: CategoryButton,
   parameters: {
     layout: 'centered',
   },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
     type: {
-      control: { type: "select" },
-      options: [
-        "앱",
-        "웹",
-        "인기순위",
-        "게임",
-        "마감 임박",
-      ],
+      control: { type: 'select' },
+      options: ['앱', '웹', '인기순위', '게임', '마감 임박'],
     },
-    onClick: { action: "clicked" },
+    onClick: { action: 'clicked' },
   },
 };
 
@@ -31,7 +25,7 @@ type Story = StoryObj<CategoryButtonProps>;
 export const AllVariants: Story = {
   render: () => (
     <div className="flex flex-wrap gap-4 p-4">
-      {(meta?.argTypes?.type?.options as CategoryButtonProps['type'][]).map((type) => (
+      {(meta?.argTypes?.type?.options as CategoryButtonProps['type'][]).map(type => (
         <CategoryButton key={type} type={type} onClick={() => {}} />
       ))}
     </div>
@@ -43,30 +37,30 @@ export const AllVariants: Story = {
 
 export const App: Story = {
   args: {
-    type: "앱",
+    type: '앱',
   },
 };
 
 export const Web: Story = {
   args: {
-    type: "웹",
+    type: '웹',
   },
 };
 
 export const Popular: Story = {
   args: {
-    type: "인기순위",
+    type: '인기순위',
   },
 };
 
 export const Game: Story = {
   args: {
-    type: "게임",
+    type: '게임',
   },
 };
 
 export const Urgent: Story = {
   args: {
-    type: "마감 임박",
+    type: '마감 임박',
   },
 };

@@ -1,21 +1,18 @@
-import type { Meta, StoryObj } from "@storybook/nextjs";
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import React from 'react';
-import Toast, { ToastProps } from "./Toast";
+import Toast, { ToastProps } from './Toast';
 
 const meta: Meta<ToastProps> = {
-  title: "Components/Toast",
+  title: 'Components/Toast',
   component: Toast,
   parameters: {
     layout: 'centered',
   },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
     style: {
-      control: { type: "select" },
-      options: [
-        "default",
-        "error",
-      ],
+      control: { type: 'select' },
+      options: ['default', 'error'],
     },
   },
 };
@@ -27,7 +24,7 @@ type Story = StoryObj<ToastProps>;
 export const AllVariants: Story = {
   render: () => (
     <div className="flex flex-wrap gap-4 p-4">
-      {(meta?.argTypes?.style?.options as ToastProps['style'][]).map((style) => (
+      {(meta?.argTypes?.style?.options as ToastProps['style'][]).map(style => (
         <Toast key={style} style={style} message={`${style} Toast`} />
       ))}
     </div>
@@ -39,14 +36,14 @@ export const AllVariants: Story = {
 
 export const Default: Story = {
   args: {
-    style: "default",
-    message: "This is a default toast message.",
+    style: 'default',
+    message: 'This is a default toast message.',
   },
 };
 
 export const Error: Story = {
   args: {
-    style: "error",
-    message: "This is an error toast message.",
+    style: 'error',
+    message: 'This is an error toast message.',
   },
 };

@@ -1,17 +1,17 @@
-import type { Meta, StoryObj } from "@storybook/nextjs";
-import PostCardMini from "./PostCardMini";
-import { PostCardModel } from "@/types/models/postsModel";
+import type { Meta, StoryObj } from '@storybook/nextjs';
+import PostCardMini from './PostCardMini';
+import { PostCardModel } from '@/types/models/postsModel';
 
 const meta: Meta<typeof PostCardMini> = {
-  title: "Category/PostCardMini",
+  title: 'Category/PostCardMini',
   component: PostCardMini,
   parameters: {
-    layout: "centered",
+    layout: 'centered',
   },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
     post: {
-      control: "object",
+      control: 'object',
     },
   },
 };
@@ -20,30 +20,28 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 // 기본 데이터 템플릿 (미래 날짜로 설정)
-const createPostData = (
-  overrides: Partial<PostCardModel> = {}
-): PostCardModel => ({
-  id: "1",
-  title: "기본 제목",
-  serviceSummary: "기본 서비스 요약입니다.",
-  thumbnailUrl: "https://picsum.photos/id/237/200/300",
+const createPostData = (overrides: Partial<PostCardModel> = {}): PostCardModel => ({
+  id: '1',
+  title: '기본 제목',
+  serviceSummary: '기본 서비스 요약입니다.',
+  thumbnailUrl: 'https://picsum.photos/id/237/200/300',
   mainCategories: [
-    { code: "GAME", name: "게임" },
-    { code: "ENTERTAINMENT", name: "엔터테인먼트" },
+    { code: 'GAME', name: '게임' },
+    { code: 'ENTERTAINMENT', name: '엔터테인먼트' },
   ],
   platformCategories: [
-    { code: "MOBILE", name: "모바일" },
-    { code: "WEB", name: "웹" },
+    { code: 'MOBILE', name: '모바일' },
+    { code: 'WEB', name: '웹' },
   ],
   reward: {
-    rewardType: "CASH",
-    rewardDescription: "CASH",
+    rewardType: 'CASH',
+    rewardDescription: 'CASH',
   },
   schedule: {
-    startDate: "2024-12-01",
-    endDate: "2024-12-31",
-    recruitmentDeadline: "2024-12-15",
-    durationTime: "30분",
+    startDate: '2024-12-01',
+    endDate: '2024-12-31',
+    recruitmentDeadline: '2024-12-15',
+    durationTime: '30분',
   },
   ...overrides,
 });
@@ -52,12 +50,12 @@ const createPostData = (
 export const ShortTitleWithReward: Story = {
   args: {
     post: createPostData({
-      title: "짧은 제목",
+      title: '짧은 제목',
       schedule: {
-        startDate: "2024-12-01",
-        endDate: "2024-12-31",
-        recruitmentDeadline: "2024-12-08",
-        durationTime: "30분",
+        startDate: '2024-12-01',
+        endDate: '2024-12-31',
+        recruitmentDeadline: '2024-12-08',
+        durationTime: '30분',
       },
     }),
   },
@@ -67,12 +65,12 @@ export const ShortTitleWithReward: Story = {
 export const LongTitleTodayDeadline: Story = {
   args: {
     post: createPostData({
-      title: "매우 긴 제목입니다. 이 제목은 두 줄에 걸쳐서 표시될 것입니다.",
+      title: '매우 긴 제목입니다. 이 제목은 두 줄에 걸쳐서 표시될 것입니다.',
       schedule: {
-        startDate: "2024-12-01",
-        endDate: "2024-12-31",
-        recruitmentDeadline: new Date().toISOString().split("T")[0], // 오늘 날짜
-        durationTime: "30분",
+        startDate: '2024-12-01',
+        endDate: '2024-12-31',
+        recruitmentDeadline: new Date().toISOString().split('T')[0], // 오늘 날짜
+        durationTime: '30분',
       },
     }),
   },
@@ -82,16 +80,16 @@ export const LongTitleTodayDeadline: Story = {
 export const ShortTitleNoReward: Story = {
   args: {
     post: createPostData({
-      title: "리워드 없는 서비스",
+      title: '리워드 없는 서비스',
       reward: {
-        rewardType: "NONE",
-        rewardDescription: "NONE",
+        rewardType: 'NONE',
+        rewardDescription: 'NONE',
       },
       schedule: {
-        startDate: "2024-12-01",
-        endDate: "2024-12-31",
-        recruitmentDeadline: "2024-12-20",
-        durationTime: "30분",
+        startDate: '2024-12-01',
+        endDate: '2024-12-31',
+        recruitmentDeadline: '2024-12-20',
+        durationTime: '30분',
       },
     }),
   },

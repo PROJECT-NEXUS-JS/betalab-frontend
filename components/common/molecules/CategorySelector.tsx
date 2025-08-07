@@ -19,7 +19,7 @@ interface Props {
 export default function CategorySelector({ selected, onSelect }: Props) {
   return (
     <div className="flex gap-3 flex-wrap">
-      {Object.keys(CATEGORY_MAP).map((category) => (
+      {Object.keys(CATEGORY_MAP).map(category => (
         <Chip
           key={category}
           variant={selected === category ? 'active' : 'solid'}

@@ -1,8 +1,8 @@
 import DotUnit from '@/components/common/atoms/DotUnit';
 
 interface CarouselBarProps {
-  activeIndex: number; 
-  total?: number;      
+  activeIndex: number;
+  total?: number;
 }
 
 export default function CarouselBar({ activeIndex, total = 10 }: CarouselBarProps) {

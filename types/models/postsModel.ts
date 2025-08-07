@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // 일정 정보를 위한 스키마
 export const PostScheduleResponseSchema = z.object({
@@ -18,17 +18,17 @@ export const PostCardSchema = z.object({
     z.object({
       code: z.string(),
       name: z.string(),
-    })
+    }),
   ),
   platformCategories: z.array(
     z.object({
       code: z.string(),
       name: z.string(),
-    })
+    }),
   ),
   reward: z.object({
     rewardType: z.string(),
-    rewardDescription: z.enum(["CASH", "GIFT_CARD", "PRODUCT", "NONE"]),
+    rewardDescription: z.enum(['CASH', 'GIFT_CARD', 'PRODUCT', 'NONE']),
   }),
   schedule: PostScheduleResponseSchema,
 });

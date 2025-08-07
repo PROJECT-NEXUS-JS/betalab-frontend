@@ -1,20 +1,20 @@
-import Image from "next/image";
-import RedExclamationMark from "@/public/icons/helptext-icon/red-exclamation-mark.svg";
-import RedX from "@/public/icons/helptext-icon/red-x.svg";
-import GreenCheck from "@/public/icons/helptext-icon/green-check.svg";
-import YellowExclamationMark from "@/public/icons/helptext-icon/yellow-exclamation-mark.svg";
-import BlueCheck from "@/public/icons/helptext-icon/blue-check.svg";
+import Image from 'next/image';
+import RedExclamationMark from '@/public/icons/helptext-icon/red-exclamation-mark.svg';
+import RedX from '@/public/icons/helptext-icon/red-x.svg';
+import GreenCheck from '@/public/icons/helptext-icon/green-check.svg';
+import YellowExclamationMark from '@/public/icons/helptext-icon/yellow-exclamation-mark.svg';
+import BlueCheck from '@/public/icons/helptext-icon/blue-check.svg';
 
 export interface HelpTextProps {
-  style: "error" | "x" | "check" | "warning" | "information";
+  style: 'error' | 'x' | 'check' | 'warning' | 'information';
   // size: "sm";
   text: string;
 }
 
 export default function HelpText({
-  style = "information",
+  style = 'information',
   // size = "sm",
-  text = "",
+  text = '',
 }: HelpTextProps) {
   return (
     <div className="flex items-center gap-[10px]">
@@ -25,11 +25,11 @@ export default function HelpText({
 }
 
 const THEME_STYLE_CLASSNAME = {
-  error: "text-Error",
-  x: "text-Error",
-  check: "text-Success",
-  warning: "text-Warning",
-  information: "text-Information",
+  error: 'text-Error',
+  x: 'text-Error',
+  check: 'text-Success',
+  warning: 'text-Warning',
+  information: 'text-Information',
 };
 
 const THEME_ICON_IMAGE = {

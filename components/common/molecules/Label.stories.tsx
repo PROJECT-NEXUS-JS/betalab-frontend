@@ -1,32 +1,38 @@
-import type { Meta, StoryObj } from "@storybook/nextjs";
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import React from 'react';
-import Label, { LabelProps } from "./Label";
+import Label, { LabelProps } from './Label';
 
 const meta: Meta<LabelProps> = {
-  title: "Components/Label",
+  title: 'Components/Label',
   component: Label,
   parameters: {
     layout: 'centered',
   },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
     size: {
-      control: { type: "select" },
-      options: ["sm", "md", "lg", "xl"],
+      control: { type: 'select' },
+      options: ['sm', 'md', 'lg', 'xl'],
     },
-    helpText: { control: "boolean" },
-    label: { control: "boolean" },
-    tag: { control: "boolean" },
-    tag2: { control: "boolean" },
-    textCounter: { control: "boolean" },
-    labelText: { control: "text" },
-    tagStyle: { control: "select", options: ["orange", "red", "green", "purple", "black", "blue", "gray", "필수"] },
-    tag2Style: { control: "select", options: ["orange", "red", "green", "purple", "black", "blue", "gray", "필수"] },
-    dday: { control: "number" },
-    placeholder: { control: "text" },
-    value: { control: "text" },
-    maxLength: { control: "number" },
-    onChange: { action: "changed" },
+    helpText: { control: 'boolean' },
+    label: { control: 'boolean' },
+    tag: { control: 'boolean' },
+    tag2: { control: 'boolean' },
+    textCounter: { control: 'boolean' },
+    labelText: { control: 'text' },
+    tagStyle: {
+      control: 'select',
+      options: ['orange', 'red', 'green', 'purple', 'black', 'blue', 'gray', '필수'],
+    },
+    tag2Style: {
+      control: 'select',
+      options: ['orange', 'red', 'green', 'purple', 'black', 'blue', 'gray', '필수'],
+    },
+    dday: { control: 'number' },
+    placeholder: { control: 'text' },
+    value: { control: 'text' },
+    maxLength: { control: 'number' },
+    onChange: { action: 'changed' },
   },
 };
 
@@ -36,14 +42,14 @@ type Story = StoryObj<LabelProps>;
 
 export const AllVariants: Story = {
   args: {
-    value: "dsdsdsd"
+    value: 'dsdsdsd',
   },
 
   render: () => (
     <div className="flex flex-col flex-wrap gap-4 p-4">
-      {(meta?.argTypes?.size?.options as LabelProps['size'][]).map((size) => (
-        <Label 
-          key={size} 
+      {(meta?.argTypes?.size?.options as LabelProps['size'][]).map(size => (
+        <Label
+          key={size}
           size={size}
           help={true}
           label={true}
@@ -58,13 +64,13 @@ export const AllVariants: Story = {
           value=""
           helpText="Help text"
           maxLength={30}
-          onChange={() => {}} />
+          onChange={() => {}}
+        />
       ))}
     </div>
   ),
 
   parameters: {
     controls: { hideNoControlsWarning: true },
-  }
+  },
 };
-

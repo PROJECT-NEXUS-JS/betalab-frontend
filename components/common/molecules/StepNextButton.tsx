@@ -7,12 +7,5 @@ interface Props {
 }
 
 export default function StepNextButton({ onClick }: Props) {
-  return (
-    <Button
-      State="Primary"
-      Size="xl"
-      label="다음으로"
-      onClick={onClick ?? (() => {})} 
-    />
-  );
+  return <Button State="Primary" Size="xl" label="다음으로" onClick={onClick ?? (() => {})} />;
 }

@@ -1,20 +1,20 @@
-"use client";
-import { useState } from "react";
-import Tag from "@/components/common/atoms/Tag";
-import Input from "@/components/common/atoms/Input";
-import HelpText from "@/components/common/atoms/HelpText";
+'use client';
+import { useState } from 'react';
+import Tag from '@/components/common/atoms/Tag';
+import Input from '@/components/common/atoms/Input';
+import HelpText from '@/components/common/atoms/HelpText';
 
 export interface LabelProps {
-  size: "sm" | "md" | "lg" | "xl";
+  size: 'sm' | 'md' | 'lg' | 'xl';
   help: boolean;
   label: boolean;
-  tag: boolean; 
+  tag: boolean;
   tag2: boolean;
   textCounter: boolean;
 
   labelText?: string;
-  tagStyle?: "orange" | "red" | "green" | "purple" | "black" | "blue" | "gray" | "필수";
-  tag2Style?: "orange" | "red" | "green" | "purple" | "black" | "blue" | "gray" | "필수";
+  tagStyle?: 'orange' | 'red' | 'green' | 'purple' | 'black' | 'blue' | 'gray' | '필수';
+  tag2Style?: 'orange' | 'red' | 'green' | 'purple' | 'black' | 'blue' | 'gray' | '필수';
   dday?: number;
   placeholder?: string;
   value?: string;
@@ -32,8 +32,8 @@ export default function Label({
   textCounter = false,
 
   labelText = '',
-  tagStyle = "필수",
-  tag2Style = "gray",
+  tagStyle = '필수',
+  tag2Style = 'gray',
   dday = 7,
   placeholder = '',
   value = '',
@@ -53,7 +53,7 @@ export default function Label({
     <div className={`flex flex-col gap-1 ${THEME_SIZE_CLASSNAME[size]}`}>
       {label && (
         <div className="flex items-center justify-start gap-1">
-          {label && <label className="text-base font-semibold text-Black">{labelText}</label>} 
+          {label && <label className="text-base font-semibold text-Black">{labelText}</label>}
           {tag && <Tag style={tagStyle} onClick={() => {}} dday={dday} />}
           {tag2 && <Tag style={tag2Style} onClick={() => {}} dday={dday} />}
         </div>
@@ -77,7 +77,6 @@ export default function Label({
     </div>
   );
 }
-
 
 const THEME_SIZE_CLASSNAME = {
   sm: 'w-[258px]',

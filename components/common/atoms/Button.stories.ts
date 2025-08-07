@@ -1,32 +1,24 @@
-import type { Meta, StoryObj } from "@storybook/nextjs";
-import Button, { ButtonProps } from "./Button";
+import type { Meta, StoryObj } from '@storybook/nextjs';
+import Button, { ButtonProps } from './Button';
 
 const meta: Meta<ButtonProps> = {
-  title: "Components/Button",
+  title: 'Components/Button',
   component: Button,
   parameters: {
     layout: 'centered',
   },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
     State: {
-      control: { type: "select" },
-      options: [
-        "Default",
-        "Primary",
-        "Sub",
-        "Solid",
-        "Disabled",
-        "Secondary",
-        "Focused",
-      ],
+      control: { type: 'select' },
+      options: ['Default', 'Primary', 'Sub', 'Solid', 'Disabled', 'Secondary', 'Focused'],
     },
     Size: {
-      control: { type: "select" },
-      options: ["xs", "sm", "md", "lg", "xl", "xxl", "xxxl"],
+      control: { type: 'select' },
+      options: ['xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl'],
     },
-    onClick: { action: "clicked" },
-    label: { control: "text" },
+    onClick: { action: 'clicked' },
+    label: { control: 'text' },
   },
 };
 
@@ -35,65 +27,64 @@ type Story = StoryObj<typeof meta>;
 
 export const Playground: Story = {
   args: {
-    State: "Default",
-    Size: "md",
-    label: "Click Me",
+    State: 'Default',
+    Size: 'md',
+    label: 'Click Me',
   },
 };
 
 export const Default: Story = {
   args: {
-    State: "Default",
-    Size: "md",
-    label: "Default",
+    State: 'Default',
+    Size: 'md',
+    label: 'Default',
   },
 };
 
 export const Primary: Story = {
   args: {
-    State: "Primary",
-    Size: "md",
-    label: "Primary",
+    State: 'Primary',
+    Size: 'md',
+    label: 'Primary',
   },
 };
 
 export const Sub: Story = {
   args: {
-    State: "Sub",
-    Size: "md",
-    label: "Sub",
+    State: 'Sub',
+    Size: 'md',
+    label: 'Sub',
   },
 };
 
 export const Solid: Story = {
   args: {
-    State: "Solid",
-    Size: "md",
-    label: "Solid",
+    State: 'Solid',
+    Size: 'md',
+    label: 'Solid',
   },
 };
 
 export const Disabled: Story = {
   args: {
-    State: "Disabled",
-    Size: "md",
-    label: "Disabled",
+    State: 'Disabled',
+    Size: 'md',
+    label: 'Disabled',
   },
 };
 
 export const Secondary: Story = {
   args: {
-    State: "Secondary",
-    Size: "md",
-    label: "Secondary",
+    State: 'Secondary',
+    Size: 'md',
+    label: 'Secondary',
   },
 };
 
 export const Focused: Story = {
   args: {
-    State: "Focused",
-    Size: "md",
-    label: "Focused",
+    State: 'Focused',
+    Size: 'md',
+    label: 'Focused',
   },
 };
-

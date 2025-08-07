@@ -1,6 +1,6 @@
-import React, { useRef } from "react";
-import { ArrowRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import React, { useRef } from 'react';
+import { ArrowRight } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface SearchbarProps {
   className?: string;
@@ -10,17 +10,17 @@ interface SearchbarProps {
 
 export default function Searchbar({
   className,
-  placeholder = "어떤 서비스를 먼저 경험해볼까요?",
+  placeholder = '어떤 서비스를 먼저 경험해볼까요?',
   onSearch,
 }: SearchbarProps) {
   const searchRef = useRef<HTMLInputElement>(null);
 
   const handleSearch = () => {
-    onSearch?.(searchRef.current?.value || "");
+    onSearch?.(searchRef.current?.value || '');
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       handleSearch();
     }
   };
@@ -28,8 +28,8 @@ export default function Searchbar({
   return (
     <div
       className={cn(
-        "rounded-[6.25rem] relative shadow-[0_0_7px_rgba(0,0,0,0.1)] bg-transparent",
-        className
+        'rounded-[6.25rem] relative shadow-[0_0_7px_rgba(0,0,0,0.1)] bg-transparent',
+        className,
       )}
     >
       <input

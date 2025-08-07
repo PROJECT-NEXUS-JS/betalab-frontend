@@ -1,7 +1,7 @@
-import BookMark from "@/components/common/svg/BookMark";
-import { PostCardModel } from "@/types/models/postsModel";
-import Tag from "@/components/common/atoms/Tag";
-import { cn } from "@/lib/utils";
+import BookMark from '@/components/common/svg/BookMark';
+import { PostCardModel } from '@/types/models/postsModel';
+import Tag from '@/components/common/atoms/Tag';
+import { cn } from '@/lib/utils';
 
 interface PostCardMiniProps {
   post: PostCardModel;
@@ -9,15 +9,11 @@ interface PostCardMiniProps {
 }
 
 export default function PostCardMini({ post, className }: PostCardMiniProps) {
-  const mainCategoryNames = post.mainCategories.map(
-    (category) => category.name
-  );
-  const platformCategoryNames = post.platformCategories.map(
-    (category) => category.name
-  );
+  const mainCategoryNames = post.mainCategories.map(category => category.name);
+  const platformCategoryNames = post.platformCategories.map(category => category.name);
 
   const allCategoryNames = [...mainCategoryNames, ...platformCategoryNames];
-  const categoryText = allCategoryNames.join("  ·  ");
+  const categoryText = allCategoryNames.join('  ·  ');
 
   const calculateDday = (deadline: string): number => {
     const today = new Date();
@@ -30,27 +26,23 @@ export default function PostCardMini({ post, className }: PostCardMiniProps) {
   const dday = calculateDday(post.schedule.recruitmentDeadline);
   const isTodayDeadline = dday === 0;
 
-  const getRewardTagStyle = (rewardType: string): "orange" | "black" => {
+  const getRewardTagStyle = (rewardType: string): 'orange' | 'black' => {
     switch (rewardType) {
-      case "CASH":
-      case "GIFT_CARD":
-      case "PRODUCT":
-        return "orange";
-      case "NONE":
+      case 'CASH':
+      case 'GIFT_CARD':
+      case 'PRODUCT':
+        return 'orange';
+      case 'NONE':
       default:
-        return "black";
+        return 'black';
     }
   };
 
   return (
-    <div className={cn("p-3 flex flex-col gap-3", className)}>
+    <div className={cn('p-3 flex flex-col gap-3', className)}>
       <div className="bg-Primary-100 rounded-sm w-[14.625rem] h-[5.3125rem] gap-1 p-3 flex flex-col items-start justify-start">
-        <p className="text-caption-02 font-medium text-Primary-500">
-          {categoryText}
-        </p>
-        <h3 className="text-body-02 font-semibold text-black line-clamp-2 w-full">
-          {post.title}
-        </h3>
+        <p className="text-caption-02 font-medium text-Primary-500">{categoryText}</p>
+        <h3 className="text-body-02 font-semibold text-black line-clamp-2 w-full">{post.title}</h3>
       </div>
       <div className="flex flex-row justify-between items-center">
         <div className="flex flex-row gap-1">

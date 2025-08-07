@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -27,7 +27,7 @@
   --color-Warning: #eeab46;
   --color-Success: #67ac5c;
 
-  --font-sans: "SUIT Variable", sans-serif;
+  --font-sans: 'SUIT Variable', sans-serif;
 
   /* 타이포그래피 스케일 정의 */
   --font-size-head: 2rem;

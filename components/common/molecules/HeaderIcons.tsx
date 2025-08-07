@@ -1,8 +1,8 @@
-import BookMark from "@/components/common/svg/BookMark";
-import Bell from "../svg/Bell";
-import Mail from "../svg/Mail";
-import UserProfile from "@/components/common/svg/UserProfile";
-import ArrowDown from "@/components/common/svg/ArrowDown";
+import BookMark from '@/components/common/svg/BookMark';
+import Bell from '../svg/Bell';
+import Mail from '../svg/Mail';
+import UserProfile from '@/components/common/svg/UserProfile';
+import ArrowDown from '@/components/common/svg/ArrowDown';
 
 export default function HeaderIcons() {
   return (

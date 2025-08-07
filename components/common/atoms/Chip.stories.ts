@@ -1,31 +1,23 @@
-import type { Meta, StoryObj } from "@storybook/nextjs";
-import Chip, { ChipProps } from "./Chip";
+import type { Meta, StoryObj } from '@storybook/nextjs';
+import Chip, { ChipProps } from './Chip';
 
 const meta: Meta<ChipProps> = {
-  title: "Components/Chip",
+  title: 'Components/Chip',
   component: Chip,
   parameters: {
-    layout: "centered",
+    layout: 'centered',
   },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
     variant: {
-      control: { type: "select" },
-      options: [
-        "default",
-        "primary",
-        "secondary",
-        "solid",
-        "sub",
-        "active",
-        "disabled",
-      ],
+      control: { type: 'select' },
+      options: ['default', 'primary', 'secondary', 'solid', 'sub', 'active', 'disabled'],
     },
     size: {
-      control: { type: "select" },
-      options: ["xs", "sm", "md", "lg"],
+      control: { type: 'select' },
+      options: ['xs', 'sm', 'md', 'lg'],
     },
-    children: { control: "text" },
+    children: { control: 'text' },
   },
 };
 
@@ -34,57 +26,57 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    variant: "default",
-    size: "md",
-    children: "Default Chip",
+    variant: 'default',
+    size: 'md',
+    children: 'Default Chip',
   },
 };
 
 export const Primary: Story = {
   args: {
-    variant: "primary",
-    size: "md",
-    children: "Primary Chip",
+    variant: 'primary',
+    size: 'md',
+    children: 'Primary Chip',
   },
 };
 
 export const Secondary: Story = {
   args: {
-    variant: "secondary",
-    size: "md",
-    children: "Secondary Chip",
+    variant: 'secondary',
+    size: 'md',
+    children: 'Secondary Chip',
   },
 };
 
 export const Solid: Story = {
   args: {
-    variant: "solid",
-    size: "md",
-    children: "Solid Chip",
+    variant: 'solid',
+    size: 'md',
+    children: 'Solid Chip',
   },
 };
 
 export const Sub: Story = {
   args: {
-    variant: "sub",
-    size: "md",
-    children: "Sub Chip",
+    variant: 'sub',
+    size: 'md',
+    children: 'Sub Chip',
   },
 };
 
 export const Active: Story = {
   args: {
-    variant: "active",
-    size: "md",
-    children: "Active Chip",
+    variant: 'active',
+    size: 'md',
+    children: 'Active Chip',
   },
 };
 
 export const Disabled: Story = {
   args: {
-    variant: "disabled",
-    size: "md",
-    children: "Disabled Chip",
+    variant: 'disabled',
+    size: 'md',
+    children: 'Disabled Chip',
   },
 };
 
@@ -98,8 +90,8 @@ export const Disabled: Story = {
 
 export const WithIcon: Story = {
   args: {
-    variant: "primary",
-    size: "md",
-    children: "Star with Icon",
+    variant: 'primary',
+    size: 'md',
+    children: 'Star with Icon',
   },
 };
