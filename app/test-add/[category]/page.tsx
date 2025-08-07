@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import StepNextButton from '@/components/common/molecules/StepNextButton';
 import CarouselBar from '@/components/common/molecules/CarouselBar';
 import Chip from '@/components/common/atoms/Chip';
@@ -29,6 +29,15 @@ export default function TestAddCategoryPage() {
   const STEP_INDEX = 1;
 
   const platforms = PLATFORM_MAP[category as string];
+  const storageKey = `temp-platform-${category}`;
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(storageKey);
+      if (saved && platforms?.includes(saved)) {
+        setSelectedPlatform(saved);
+      }
+    }
+  }, [category]);
 
   if (!platforms) {
     return (
@@ -38,10 +47,20 @@ export default function TestAddCategoryPage() {
     );
   }
 
+  const handleSave = () => {
+    if (!selectedPlatform) {
+      alert('선택된 플랫폼이 없습니다.');
+      return;
+    }
+
+    localStorage.setItem(storageKey, selectedPlatform);
+    alert('임시 저장 되었습니다.');
+  };
+
   return (
     <main className="flex min-h-screen w-full">
       <div className="w-1/4 bg-gradient-to-b from-white to-[#D4EED8] relative">
-        <Image src="/test1.png" alt="테스트 이미지" fill className="object-cover" priority />
+        <Image src="/test2.png" alt="테스트 이미지" fill className="object-cover" priority />
       </div>
       <div className="w-1/2 flex flex-col justify-between px-12 py-10">
         <div className="flex flex-col gap-6">
@@ -67,15 +86,9 @@ export default function TestAddCategoryPage() {
             ))}
           </div>
         </div>
+
         <div className="flex items-center justify-between mt-6">
-          <Button
-            State="Sub"
-            Size="xl"
-            label="임시 저장"
-            onClick={() => {
-              alert('임시 저장 되었습니다.');
-            }}
-          />
+          <Button State="Sub" Size="xl" label="임시 저장" onClick={handleSave} />
           <div className="flex-1 flex justify-center">
             <CarouselBar activeIndex={STEP_INDEX} total={10} />
           </div>
