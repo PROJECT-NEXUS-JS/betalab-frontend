@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import StepNextButton from '@/components/common/molecules/StepNextButton';
 import CarouselBar from '@/components/common/molecules/CarouselBar';
 import Chip from '@/components/common/atoms/Chip';
-import Button from '@/components/common/atoms/Button';
 
 const APP_GENRES = [
   '라이프 스타일',
