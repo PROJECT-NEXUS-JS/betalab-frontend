@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 export interface ChipProps {
   variant: 'default' | 'primary' | 'secondary' | 'solid' | 'sub' | 'active' | 'disabled';
   size: 'xs' | 'sm' | 'md' | 'lg';
-  children: ReactNode;
+  children?: ReactNode;
   value?: string;
   onClick?: () => void;
 }
