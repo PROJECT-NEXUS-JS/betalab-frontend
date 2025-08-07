@@ -29,11 +29,6 @@ export default function TestAddCategoryPage() {
 
   const platforms = PLATFORM_MAP[category as string];
   const storageKey = `temp-platform-${category}`;
-  const handleNext = () => {
-    if (!selectedPlatform) return alert('플랫폼을 선택해주세요!');
-    console.log('선택된 플랫폼:', selectedPlatform);
-    router.push(`/test-add/${category}/genre`);
-  };
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem(storageKey);
@@ -50,6 +45,7 @@ export default function TestAddCategoryPage() {
       </main>
     );
   }
+
 
   return (
     <main className="flex min-h-screen w-full">
