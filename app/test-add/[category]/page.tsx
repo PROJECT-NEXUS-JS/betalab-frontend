@@ -60,7 +60,7 @@ export default function TestAddCategoryPage() {
   return (
     <main className="flex min-h-screen w-full">
       <div className="w-1/4 bg-gradient-to-b from-white to-[#D4EED8] relative">
-        <Image src="/test2.png" alt="테스트 이미지" fill className="object-cover" priority />
+        <Image src="/test1.png" alt="테스트 이미지" fill className="object-cover" priority />
       </div>
       <div className="w-1/2 flex flex-col justify-between px-12 py-10">
         <div className="flex flex-col gap-6">
