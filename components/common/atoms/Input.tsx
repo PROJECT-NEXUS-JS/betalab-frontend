@@ -19,6 +19,7 @@ export interface InputProps {
   onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onFocus?: () => void;
   onBlur?: () => void;
+  maxLength?: number;
 }
 
 export default function Input({
@@ -35,7 +36,7 @@ export default function Input({
     <div className={`${baseClasses} flex justify-between items-center`}>
       <input
         type="text"
-        className="focus:outline-none"
+        className="w-full pr-10 focus:outline-none"
         placeholder={placeholder}
         value={value}
         onChange={onChange}
