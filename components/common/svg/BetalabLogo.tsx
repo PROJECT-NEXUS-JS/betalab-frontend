@@ -22,8 +22,8 @@ export default function BetalabLogo({ className }: { className?: string }) {
         fill="#0E62FF"
       />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M99.9725 20.0203H99.9992V23.8652H99.9725V20.0203Z"
         fill="#0E62FF"
       />
@@ -36,8 +36,8 @@ export default function BetalabLogo({ className }: { className?: string }) {
         fill="#0E62FF"
       />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M17.3691 17.7654V18.4283H17.3866L17.3749 18.4401L22.8107 23.8638L31.5612 23.8642V20.0193L24.4614 20.0193L22.2175 17.7654L31.5555 17.7654V16.0418V13.9205V10.2082V7.0262V6.36328L17.3691 6.36328L17.3691 7.0262V10.2082V17.7654ZM21.214 13.9205L27.7106 13.9205V10.2082L21.214 10.2082V13.9205Z"
         fill="#0E62FF"
       />

@@ -1,7 +1,10 @@
 'use client';
 import { useCallback } from 'react';
-import { getUserManager } from '@/lib/oidc-client';
 import Image from 'next/image';
+import BetalabLogo from '@/components/common/svg/BetalabLogo';
+import Button from '@/components/common/atoms/Button';
+import KakaoButton from '@/components/auth/KakaoButton';
+import { getUserManager } from '@/lib/oidc-client';
 
 export default function LoginPage() {
   const mgr = getUserManager();
@@ -11,22 +14,19 @@ export default function LoginPage() {
   }, [mgr]);
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-6 text-center">로그인</h2>
-        <button
+    <div className="flex flex-col items-center justify-center h-screen bg-White gap-[97px]">
+      <div className="flex flex-col items-center gap-3">
+        <Image alt="Betalab 로고" src="/betalab_description2.gif" width={146} height={48} />
+        <BetalabLogo className="mx-auto mb-6 w-[336px]" />
+      </div>
+      <div className="w-[300px] flex flex-col items-center gap-6">
+        <KakaoButton
+          size="md"
+          width="wide"
+          align="left"
+          label="카카오 로그인"
           onClick={handleLogin}
-          className="w-full transition-transform transform hover:scale-105 cursor-pointer"
-        >
-          <Image
-            src="/kakao_login_medium_narrow.png"
-            alt="카카오 로그인"
-            width={183}
-            height={45}
-            priority
-            className="mx-auto"
-          />
-        </button>
+        />
       </div>
     </div>
   );
