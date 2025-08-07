@@ -17,7 +17,7 @@ function createOidcConfig(): UserManagerSettings {
   return {
     authority: 'https://kauth.kakao.com',
     client_id: 'c82e4b6293f3f263f3924e92294f0439',
-    redirect_uri: `http://localhost:3000/oidc-callback`,
+    redirect_uri: `${window.location.origin}/oidc-callback`,
     response_type: 'code',
     scope: ['openid', 'account_email', 'profile_nickname', 'profile_image'].join(' '),
     post_logout_redirect_uri: window.location.origin,

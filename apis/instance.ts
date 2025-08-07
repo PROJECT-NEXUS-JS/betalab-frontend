@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BACKEND_URL = process.env.BACKEND_URL;
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export const instance = axios.create({
   baseURL: BACKEND_URL,
@@ -12,8 +12,7 @@ export const instance = axios.create({
 
 instance.interceptors.request.use(
   config => {
-    const accessToken = localStorage.getItem('access_token');
-
+    const accessToken = localStorage.getItem('accessToken');
     if (accessToken) {
       config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
