@@ -28,13 +28,13 @@ export default function TestAddNamePage() {
   const handleNext = () => {
     if (!title.trim()) return alert('제목을 입력해주세요!');
     localStorage.setItem(`temp-title-${category}`, title.trim());
-    router.push('/test-add/app/intro');
+    router.push(`/test-add/${category}/about`);
   };
 
   return (
     <main className="flex min-h-screen w-full">
       <div className="w-1/4 bg-gradient-to-b from-white to-[#D4EED8] relative">
-        <Image src="/test2.png" alt="테스트 이미지" fill className="object-cover" priority />
+        <Image src="/test2.png" alt="테스트 이미지" fill className="object-center" priority />
       </div>
       <div className="w-3/4 flex flex-col justify-between px-12 py-10">
         <div className="flex flex-col gap-6">
