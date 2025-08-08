@@ -17,6 +17,7 @@ export default function SurveyPage() {
   const [enterDirectly, setEnterDirectly] = useState(false);
   const [enterDirectlyValue, setEnterDirectlyValue] = useState('');
   const [showToast, setShowToast] = useState(false);
+  const [isDirectlyInputValid, setIsDirectlyInputValid] = useState(true);
 
   const mutation = useProfileEditMutation();
 
@@ -43,8 +44,18 @@ export default function SurveyPage() {
     setEnterDirectlyValue('');
   };
 
+  const handleEnterDirectlyValueChange = (text: string) => {
+    if (text.length <= ENTER_DIRECTLY_MAX_LENGTH) {
+      setEnterDirectlyValue(text);
+      setIsDirectlyInputValid(true);
+    } else {
+      setIsDirectlyInputValid(false);
+    }
+  };
+
   const isButtonVisible =
     inputValue.trim() !== '' &&
+    isDirectlyInputValid &&
     (selectedTags.length > 0 || // 칩 하나라도 선택 OR
       (enterDirectly && enterDirectlyValue.trim() !== '')); // 직접입력 켜져있고 값 있음
 
@@ -55,6 +66,7 @@ export default function SurveyPage() {
     };
     mutation.mutate(formData);
   };
+
   return (
     <div className="mt-30 w-full flex justify-center">
       <div className="flex flex-col items-center gap-10 w-[556px]">
@@ -107,15 +119,16 @@ export default function SurveyPage() {
               {enterDirectly && (
                 <Label
                   size="sm"
-                  help={false}
+                  help={!isDirectlyInputValid}
                   label={true}
                   tag={false}
                   tag2={false}
                   textCounter={true}
                   labelText="직접 입력"
+                  helpText={`최대 ${ENTER_DIRECTLY_MAX_LENGTH}자까지 가능해요`}
                   placeholder="예) 강아지"
                   value={enterDirectlyValue}
-                  onChange={e => setEnterDirectlyValue(e.target.value)}
+                  onChange={e => handleEnterDirectlyValueChange(e.target.value)}
                   maxLength={ENTER_DIRECTLY_MAX_LENGTH}
                 />
               )}

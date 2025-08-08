@@ -1,8 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { instance } from '@/apis/instance';
 import { MeResponseSchema } from '../dto/auth';
 
-export const useUserInfoQuery = () => {
+export const useUserInfoQuery = (enabled: boolean = true) => {
   return useQuery({
     queryKey: ['userInfo'],
     queryFn: async () => {
@@ -15,5 +15,6 @@ export const useUserInfoQuery = () => {
 
       return parsed.data.data;
     },
+    enabled: enabled,
   });
 };
