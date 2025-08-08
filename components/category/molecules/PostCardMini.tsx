@@ -39,8 +39,10 @@ export default function PostCardMini({ post, className }: PostCardMiniProps) {
   };
 
   return (
-    <div className={cn('p-3 flex flex-col gap-3', className)}>
-      <div className="bg-Primary-100 rounded-sm w-[14.625rem] h-[5.3125rem] gap-1 p-3 flex flex-col items-start justify-start">
+    <div
+      className={cn('shadow-[0_0_10px_rgba(0,0,0,0.1)] p-3 group flex flex-col gap-3', className)}
+    >
+      <div className="bg-Primary-100 rounded-sm w-[14.625rem] h-[5.3125rem] gap-1 p-3 flex flex-col  items-start justify-start">
         <p className="text-caption-02 font-medium text-Primary-500">{categoryText}</p>
         <h3 className="text-body-02 font-semibold text-black line-clamp-2 w-full">{post.title}</h3>
       </div>
@@ -50,7 +52,7 @@ export default function PostCardMini({ post, className }: PostCardMiniProps) {
           {!isTodayDeadline && <Tag style="gray" dday={dday} />}
           <Tag style={getRewardTagStyle(post.reward.rewardDescription)} />
         </div>
-        <BookMark className="size-6" />
+        <BookMark className="size-6 fill-transparent text-transparent group-hover:fill-transparent group-hover:text-Gray-200 group-hover:stroke-Gray-200 group-hover:stroke-2" />
       </div>
     </div>
   );
