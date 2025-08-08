@@ -4,19 +4,39 @@ import Tag from '@/components/common/atoms/Tag';
 import Button from '@/components/common/atoms/Button';
 import Chip from '@/components/common/atoms/Chip';
 import Label from '@/components/common/molecules/Label';
+import ToastPortal from '@/components/common/molecules/ToastPortal';
+
+const TEST_CHIP_SELECT_MAX = 5;
+const ENTER_DIRECTLY_MAX_LENGTH = 5;
 
 export default function SurveyPage() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [enterDirectly, setEnterDirectly] = useState(false);
   const [enterDirectlyValue, setEnterDirectlyValue] = useState('');
+  const [showToast, setShowToast] = useState(false);
 
   const handleTagClick = (tag: string) => {
-    if (selectedTags.includes(tag)) {
+    const isSelected = selectedTags.includes(tag);
+    const totalSelected = selectedTags.length + (enterDirectly ? 1 : 0);
+
+    if (isSelected) {
       setSelectedTags(selectedTags.filter(t => t !== tag));
     } else {
+      if (totalSelected >= TEST_CHIP_SELECT_MAX) {
+        setShowToast(true);
+        return;
+      }
       setSelectedTags(prev => [...prev, tag]);
     }
+  };
+
+  const handleEnterDirectlyToggle = () => {
+    const totalSelected = selectedTags.length + (enterDirectly ? 0 : 1);
+    if (totalSelected > TEST_CHIP_SELECT_MAX) return;
+
+    setEnterDirectly(prev => !prev);
+    setEnterDirectlyValue('');
   };
   return (
     <div className="mt-30 w-full flex justify-center">
@@ -36,42 +56,64 @@ export default function SurveyPage() {
             onChange={e => setInputValue(e.target.value)}
           />
         </section>
-        <section className="w-full flex flex-col gap-6">
-          <div className="w-full flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-Black">어떤 테스트에 관심 있으신가요 ?</h2>
-            <Tag style="gray" icon={false} onClick={() => {}} label="중복선택 가능" />
-          </div>
-          <div className="flex flex-wrap gap-4">
-            {TEST_CHIP_LIST.map((tag, index) => (
+        <section className="w-full flex flex-col">
+          <div className="w-full flex flex-col gap-6">
+            <div className="w-full flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-Black">어떤 테스트에 관심 있으신가요 ?</h2>
+              <Tag style="gray" icon={false} onClick={() => {}} label="중복선택 가능" />
+            </div>
+            <div className="flex flex-wrap gap-4">
+              {TEST_CHIP_LIST.map((tag, index) => (
+                <Chip
+                  key={index}
+                  value={tag}
+                  variant={selectedTags.includes(tag) ? 'active' : 'solid'}
+                  size="lg"
+                  onClick={() => {
+                    handleTagClick(tag);
+                  }}
+                >
+                  {tag}
+                </Chip>
+              ))}
               <Chip
-                key={index}
-                value={tag}
-                variant={selectedTags.includes(tag) ? 'active' : 'solid'}
+                key={TEST_CHIP_LIST.length}
+                value="직접 입력"
+                variant={enterDirectly ? 'active' : 'solid'}
                 size="lg"
-                onClick={() => {
-                  handleTagClick(tag);
-                }}
+                onClick={handleEnterDirectlyToggle}
               >
-                {tag}
+                직접 입력
               </Chip>
-            ))}
-            <Chip
-              key={TEST_CHIP_LIST.length}
-              value="직접 입력"
-              variant={enterDirectly ? 'active' : 'solid'}
-              size="lg"
-              onClick={() => {
-                setEnterDirectly(prev => !prev);
-                setEnterDirectlyValue('');
-              }}
-            >
-              직접 입력
-            </Chip>
+            </div>
+            <div className="w-full flex flex-col">
+              {enterDirectly && (
+                <Label
+                  size="sm"
+                  help={false}
+                  label={true}
+                  tag={false}
+                  tag2={false}
+                  textCounter={true}
+                  labelText="직접 입력"
+                  placeholder="예) 강아지"
+                  value={enterDirectlyValue}
+                  onChange={e => setEnterDirectlyValue(e.target.value)}
+                  maxLength={ENTER_DIRECTLY_MAX_LENGTH}
+                />
+              )}
+            </div>
           </div>
         </section>
         <section className="w-full flex flex-col">
           <Button State="Primary" Size="md" onClick={() => {}} label="회원가입 하기" />
         </section>
+        <ToastPortal
+          visible={showToast}
+          onClose={() => setShowToast(false)}
+          style="error"
+          message={`최대 ${TEST_CHIP_SELECT_MAX}개까지 선택할 수 있어요`}
+        />
       </div>
     </div>
   );
