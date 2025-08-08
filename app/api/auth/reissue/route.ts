@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     res.cookies.set('accessToken', newAccessToken, {
       httpOnly: true,
       path: '/',
-      maxAge: 60 * 15, // 15분
+      maxAge: 60 * 60, // 1시간
       secure: true,
       sameSite: 'lax',
     });

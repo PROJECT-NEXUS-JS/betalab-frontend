@@ -6,6 +6,8 @@ import Chip from '@/components/common/atoms/Chip';
 import Label from '@/components/common/molecules/Label';
 import ToastPortal from '@/components/common/molecules/ToastPortal';
 
+import { useProfileEditMutation } from '@/hooks/auth/mutations/useProfileEditMutation';
+
 const TEST_CHIP_SELECT_MAX = 5;
 const ENTER_DIRECTLY_MAX_LENGTH = 5;
 
@@ -15,6 +17,8 @@ export default function SurveyPage() {
   const [enterDirectly, setEnterDirectly] = useState(false);
   const [enterDirectlyValue, setEnterDirectlyValue] = useState('');
   const [showToast, setShowToast] = useState(false);
+
+  const mutation = useProfileEditMutation();
 
   const handleTagClick = (tag: string) => {
     const isSelected = selectedTags.includes(tag);
@@ -43,6 +47,14 @@ export default function SurveyPage() {
     inputValue.trim() !== '' &&
     (selectedTags.length > 0 || // 칩 하나라도 선택 OR
       (enterDirectly && enterDirectlyValue.trim() !== '')); // 직접입력 켜져있고 값 있음
+
+  const handleSubmitButtonClick = () => {
+    const formData = {
+      job: inputValue,
+      interests: [...selectedTags, enterDirectly ? enterDirectlyValue : ''],
+    };
+    mutation.mutate(formData);
+  };
   return (
     <div className="mt-30 w-full flex justify-center">
       <div className="flex flex-col items-center gap-10 w-[556px]">
@@ -112,7 +124,12 @@ export default function SurveyPage() {
         </section>
         <section className="w-full flex flex-col">
           {isButtonVisible && (
-            <Button State="Primary" Size="md" onClick={() => {}} label="회원가입 하기" />
+            <Button
+              State="Primary"
+              Size="md"
+              onClick={handleSubmitButtonClick}
+              label="회원가입 하기"
+            />
           )}
         </section>
         <ToastPortal
