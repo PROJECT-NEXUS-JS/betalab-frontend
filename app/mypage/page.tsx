@@ -1,6 +1,6 @@
 'use client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useUserInfoQuery } from '@/hooks/query/useUserInfoQuery';
+import { useUserInfoQuery } from '@/hooks/auth/query/useUserInfoQuery';
 import { ReactNode, useState } from 'react';
 
 export default function MyPage() {

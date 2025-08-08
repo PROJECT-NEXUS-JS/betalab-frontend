@@ -38,6 +38,11 @@ export default function SurveyPage() {
     setEnterDirectly(prev => !prev);
     setEnterDirectlyValue('');
   };
+
+  const isButtonVisible =
+    inputValue.trim() !== '' &&
+    (selectedTags.length > 0 || // 칩 하나라도 선택 OR
+      (enterDirectly && enterDirectlyValue.trim() !== '')); // 직접입력 켜져있고 값 있음
   return (
     <div className="mt-30 w-full flex justify-center">
       <div className="flex flex-col items-center gap-10 w-[556px]">
@@ -106,7 +111,9 @@ export default function SurveyPage() {
           </div>
         </section>
         <section className="w-full flex flex-col">
-          <Button State="Primary" Size="md" onClick={() => {}} label="회원가입 하기" />
+          {isButtonVisible && (
+            <Button State="Primary" Size="md" onClick={() => {}} label="회원가입 하기" />
+          )}
         </section>
         <ToastPortal
           visible={showToast}

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { instance } from '@/apis/instance';
-import { MeResponseSchema } from '@/types/models/auth';
+import { MeResponseSchema } from '../dto/auth';
 
 export const useUserInfoQuery = () => {
   return useQuery({
