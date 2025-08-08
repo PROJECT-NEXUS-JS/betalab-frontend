@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import '@/styles/globals.css';
 import '@/styles/tailwind.css';
+import ReactQueryProvider from './ReactQueryProvider';
 
 export const metadata: Metadata = {
   title: 'Betalab',
@@ -14,7 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <ReactQueryProvider>{children}</ReactQueryProvider>
+      </body>
     </html>
   );
 }
