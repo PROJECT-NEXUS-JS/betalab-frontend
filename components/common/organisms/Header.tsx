@@ -1,8 +1,9 @@
-import Button from '@/components/common/atoms/Button';
-import BetalabLogo from '@/components/common/svg/BetalabLogo';
-import HeaderIcons from '../molecules/HeaderIcons';
-import Searchbar from '@/components/common/molecules/Searchbar';
-import { cn } from '@/lib/utils';
+import Button from "@/components/common/atoms/Button";
+import BetalabLogo from "@/components/common/svg/BetalabLogo";
+import HeaderIcons from "../molecules/HeaderIcons";
+import Searchbar from "@/components/common/molecules/Searchbar";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 interface HeaderProps {
   isLogin?: boolean;
@@ -10,10 +11,17 @@ interface HeaderProps {
   className?: string;
 }
 
-export default function Header({ isLogin = false, isSearchbar = false, className }: HeaderProps) {
+export default function Header({
+  isLogin = false,
+  isSearchbar = false,
+  className,
+}: HeaderProps) {
   return (
     <header
-      className={cn('w-full flex flex-row items-center px-16 py-4 justify-between', className)}
+      className={cn(
+        "w-full flex flex-row items-center px-16 py-4 justify-between",
+        className
+      )}
     >
       <div className="flex h-11 flex-row items-center gap-4">
         <BetalabLogo className="w-25 h-6" />
@@ -22,7 +30,14 @@ export default function Header({ isLogin = false, isSearchbar = false, className
       {isLogin ? (
         <HeaderIcons />
       ) : (
-        <Button State="Sub" Size="xs" label="로그인/회원가입" onClick={() => {}} />
+        <Link href="/login" passHref>
+          <Button
+            State="Sub"
+            Size="xs"
+            label="로그인/회원가입"
+            className="cursor-pointer"
+          />
+        </Link>
       )}
     </header>
   );
@@ -31,7 +46,10 @@ export default function Header({ isLogin = false, isSearchbar = false, className
 export function HeaderAdmin({ className }: { className?: string }) {
   return (
     <header
-      className={cn('w-full flex flex-row items-center px-16 py-4 justify-between', className)}
+      className={cn(
+        "w-full flex flex-row items-center px-16 py-4 justify-between",
+        className
+      )}
     >
       <div className="flex h-11 flex-row items-center gap-3">
         <BetalabLogo className="w-25 h-6" />

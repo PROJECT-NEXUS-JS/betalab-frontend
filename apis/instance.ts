@@ -1,27 +1,27 @@
-import axios from 'axios';
+import axios from "axios";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export const instance = axios.create({
   baseURL: BACKEND_URL,
-  responseType: 'json',
-  headers: { 'Content-Type': 'application/json' },
+  responseType: "json",
+  headers: { "Content-Type": "application/json" },
   timeout: 5000,
   withCredentials: true,
 });
 
 instance.interceptors.request.use(
-  config => {
-    const accessToken = localStorage.getItem('accessToken');
+  (config) => {
+    const accessToken = localStorage.getItem("accessToken");
     if (accessToken) {
-      config.headers['Authorization'] = `Bearer ${accessToken}`;
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
 
     return config;
   },
-  error => {
+  (error) => {
     return Promise.reject(error);
-  },
+  }
 );
 
 // 응답 인터셉터: 401 → 자동 리프레시 후 재시도
@@ -29,7 +29,7 @@ let isRefreshing = false;
 let failedQueue: any[] = [];
 
 function processQueue(error: any, token: string | null = null) {
-  failedQueue.forEach(prom => {
+  failedQueue.forEach((prom) => {
     if (token) {
       prom.resolve(token);
     } else {
@@ -40,10 +40,10 @@ function processQueue(error: any, token: string | null = null) {
 }
 
 instance.interceptors.response.use(
-  response => {
+  (response) => {
     return response;
   },
-  async error => {
+  async (error) => {
     const originalRequest = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
@@ -51,7 +51,7 @@ instance.interceptors.response.use(
         return new Promise((resolve, reject) => {
           failedQueue.push({
             resolve: (token: string) => {
-              originalRequest.headers['Authorization'] = `Bearer ${token}`;
+              originalRequest.headers["Authorization"] = `Bearer ${token}`;
               resolve(instance(originalRequest));
             },
             reject: (err: any) => reject(err),
@@ -68,16 +68,16 @@ instance.interceptors.response.use(
         });
 
         const newAccessToken = res.data.accessToken;
-        localStorage.setItem('access_token', newAccessToken);
+        localStorage.setItem("access_token", newAccessToken);
 
         processQueue(null, newAccessToken);
 
-        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
         return instance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
-        localStorage.removeItem('access_token');
-        window.location.href = '/login';
+        localStorage.removeItem("access_token");
+        window.location.href = "/login";
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
@@ -85,5 +85,5 @@ instance.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  },
+  }
 );

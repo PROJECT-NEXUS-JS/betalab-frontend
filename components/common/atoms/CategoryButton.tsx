@@ -1,19 +1,28 @@
-import Image from 'next/image';
+import Image from "next/image";
 
 export interface CategoryButtonProps {
-  type: '앱' | '웹' | '인기순위' | '게임' | '마감 임박';
-  onClick: () => void;
+  type: "앱" | "웹" | "인기순위" | "게임" | "마감 임박";
+  onClick?: () => void;
 }
 
-const ICON_MAP: Record<CategoryButtonProps['type'], { src: string; alt: string }> = {
-  앱: { src: '/icons/category-icon/app.svg', alt: '앱 아이콘' },
-  웹: { src: '/icons/category-icon/web.svg', alt: '웹 아이콘' },
-  인기순위: { src: '/icons/category-icon/goal.svg', alt: '인기순위 아이콘' },
-  게임: { src: '/icons/category-icon/game.svg', alt: '게임 아이콘' },
-  '마감 임박': { src: '/icons/category-icon/bomb.svg', alt: '마감 임박 아이콘' },
+const ICON_MAP: Record<
+  CategoryButtonProps["type"],
+  { src: string; alt: string }
+> = {
+  앱: { src: "/icons/category-icon/app.svg", alt: "앱 아이콘" },
+  웹: { src: "/icons/category-icon/web.svg", alt: "웹 아이콘" },
+  인기순위: { src: "/icons/category-icon/goal.svg", alt: "인기순위 아이콘" },
+  게임: { src: "/icons/category-icon/game.svg", alt: "게임 아이콘" },
+  "마감 임박": {
+    src: "/icons/category-icon/bomb.svg",
+    alt: "마감 임박 아이콘",
+  },
 };
 
-export default function CategoryButton({ type, onClick }: CategoryButtonProps) {
+export default function CategoryButton({
+  type,
+  onClick = () => {},
+}: CategoryButtonProps) {
   const icon = ICON_MAP[type];
 
   return (
