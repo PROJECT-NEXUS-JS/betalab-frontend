@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { BaseModelSchema } from './base-model';
+import { BaseModelSchema } from '@/types/models/base-model';
 
 export const LoginResponseSchema = BaseModelSchema(
   z.object({

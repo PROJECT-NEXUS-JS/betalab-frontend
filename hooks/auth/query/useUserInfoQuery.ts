@@ -10,7 +10,7 @@ export const useUserInfoQuery = () => {
 
       const parsed = MeResponseSchema.safeParse(res.data);
       if (!parsed.success) {
-        throw new Error('유저 정보 파싱 실패');
+        throw new Error(`유저 정보 파싱 실패: ${parsed.error.toString()}`);
       }
 
       return parsed.data.data;
