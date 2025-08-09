@@ -3,6 +3,7 @@ import BetalabLogo from '@/components/common/svg/BetalabLogo';
 import HeaderIcons from '../molecules/HeaderIcons';
 import Searchbar from '@/components/common/molecules/Searchbar';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 interface HeaderProps {
   isLogin?: boolean;
@@ -22,7 +23,9 @@ export default function Header({ isLogin = false, isSearchbar = false, className
       {isLogin ? (
         <HeaderIcons />
       ) : (
-        <Button State="Sub" Size="xs" label="로그인/회원가입" onClick={() => {}} />
+        <Link href="/login" passHref>
+          <Button State="Sub" Size="xs" label="로그인/회원가입" className="cursor-pointer" />
+        </Link>
       )}
     </header>
   );
