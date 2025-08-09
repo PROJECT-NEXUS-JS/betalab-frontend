@@ -26,9 +26,9 @@ export default function TestAddIntroPage() {
   };
 
   const handleNext = () => {
-    if (!title.trim()) return alert('소속이나 이름을 입력해주세요!');
+    if (!title.trim()) return alert('연락처를 입력해주세요!');
     localStorage.setItem(`temp-title-${category}`, title.trim());
-    router.push(`/test-add/${category}/tel`);
+    router.push(`/test-add/${category}/purpose`);
   };
 
   return (
@@ -39,8 +39,10 @@ export default function TestAddIntroPage() {
       <div className="w-3/4 flex flex-col justify-between px-12 py-10">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-1">
-            <p className="text-subtitle-01 font-bold">소속이나 이름을 간단하게 적어주세요</p>
-            <p className="text-body-02 text-Gray-300">참여자들이 보고 문의를 할 수 있어요</p>
+            <p className="text-subtitle-01 font-bold">연락 가능한 채널을 등록해주세요</p>
+            <p className="text-body-02 text-Gray-300">
+              참여자들이 직접 연락할 수 있도록, 전화·이메일·오픈채팅 등 원하는 채널을 남겨주세요.
+            </p>
           </div>
 
           <div className="relative w-fit">
@@ -48,7 +50,7 @@ export default function TestAddIntroPage() {
               type="text"
               state={getInputState()}
               size="xl"
-              placeholder="ex. 베타랩 팀, S대 팀 프로젝트"
+              placeholder="예: open.kakao.com/abcd1234 또는 BetaLab@email.com"
               value={title}
               onChange={e => {
                 const inputValue = e.target.value;
