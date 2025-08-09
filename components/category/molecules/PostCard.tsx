@@ -22,7 +22,7 @@ export default function PostCard({ post, className }: PostCardProps) {
         className,
       )}
     >
-      <div className="relative rounded-[2px] w-full min-h-[9.125rem] overflow-hidden">
+      <div className="relative rounded-[2px] w-full min-h-[146px] overflow-hidden">
         {post.thumbnailUrl ? (
           <div className="group">
             <Image

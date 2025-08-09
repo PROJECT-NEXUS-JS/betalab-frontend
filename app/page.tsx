@@ -31,15 +31,34 @@ const mockPostData = {
 };
 
 export default function HomePage() {
-  const { isLoggedIn, isLoading } = useAuth();
+  const { isLoggedIn, isLoading: isAuthLoading } = useAuth();
   const {
-    data: postsPage,
-    isLoading: isPostsLoading,
-    error: postsError,
-  } = useUsersPostsListQuery({ sortBy: 'latest', page: 0, size: 8 });
+    data: recommendPosts,
+    isLoading: recommendPostsLoading,
+    error: recommendPostsError,
+  } = useUsersPostsListQuery({ sortBy: 'latest', page: 0, size: 4 });
+  const {
+    data: deadlinePosts,
+    isLoading: deadlinePostsLoading,
+    error: deadlinePostsError,
+  } = useUsersPostsListQuery({ sortBy: 'deadline', page: 0, size: 4 });
+  const {
+    data: popularPosts,
+    isLoading: popularPostsLoading,
+    error: popularPostsError,
+  } = useUsersPostsListQuery({ sortBy: 'popular', page: 0, size: 4 });
+
+  const isLoading =
+    isAuthLoading || recommendPostsLoading || deadlinePostsLoading || popularPostsLoading;
+
+  const isError = recommendPostsError || deadlinePostsError || popularPostsError;
 
   if (isLoading) {
     return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>홈페이지에 문의하세요.</div>;
   }
 
   return (
@@ -50,13 +69,14 @@ export default function HomePage() {
         <HomeSection>
           <SectionTitle className="w-full text-left">오늘의 추천 테스트</SectionTitle>
           <CardScroll>
-            {isPostsLoading && <div className="px-3 py-4 text-Gray-300">불러오는 중...</div>}
-            {!isPostsLoading && !!postsError && (
-              <div className="px-3 py-4 text-Error">목록을 불러오지 못했어요</div>
+            {recommendPosts?.content.length === 0 && (
+              <div className="h-[146px] flex justify-center items-center">
+                <p className="text-body-01 text-Gray-300">오늘의 추천 테스트가 없어요.</p>
+              </div>
             )}
-            {!isPostsLoading &&
-              !postsError &&
-              (postsPage?.content ?? []).map(post => <PostCard key={post.id} post={post} />)}
+            {recommendPosts?.content.map(post => (
+              <PostCard key={post.id} post={post} />
+            ))}
           </CardScroll>
           <ViewAllButton href="/category?category=recommend">
             오늘의 추천 테스트 전체보기
@@ -65,10 +85,14 @@ export default function HomePage() {
         <HomeSection>
           <SectionTitle className="w-full text-left">곧 마감되는 테스트에요</SectionTitle>
           <CardScroll>
-            <PostCardMini post={mockPostData} />
-            <PostCardMini post={mockPostData} />
-            <PostCardMini post={mockPostData} />
-            <PostCardMini post={mockPostData} />
+            {deadlinePosts?.content.length === 0 && (
+              <div className="h-[146px] flex justify-center items-center">
+                <p className="text-body-01 text-Gray-300">곧 마감되는 테스트가 없어요.</p>
+              </div>
+            )}
+            {deadlinePosts?.content.map(post => (
+              <PostCard key={post.id} post={post} />
+            ))}
           </CardScroll>
           <ViewAllButton href="/category?category=deadline">
             마감 임박 테스트 전체보기
@@ -77,10 +101,14 @@ export default function HomePage() {
         <HomeSection>
           <SectionTitle className="w-full text-left">인기있는 테스트에요</SectionTitle>
           <CardScroll>
-            <PostCardMini post={mockPostData} />
-            <PostCardMini post={mockPostData} />
-            <PostCardMini post={mockPostData} />
-            <PostCardMini post={mockPostData} />
+            {popularPosts?.content.length === 0 && (
+              <div className="h-[146px] flex justify-center items-center">
+                <p className="text-body-01 text-Gray-300">인기 테스트가 없어요.</p>
+              </div>
+            )}
+            {popularPosts?.content.map(post => (
+              <PostCard key={post.id} post={post} />
+            ))}
           </CardScroll>
           <ViewAllButton href="/category?category=popular">인기 테스트 전체보기</ViewAllButton>
         </HomeSection>

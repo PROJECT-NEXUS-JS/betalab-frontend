@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { BaseModelSchema } from '@/types/models/base-model';
 
-// Request schema/types for GET /v1/users/posts/list
 export const getUsersPostsListRequestSchema = z
   .object({
     mainCategory: z.string().optional(),

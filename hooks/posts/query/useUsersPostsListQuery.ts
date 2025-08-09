@@ -36,7 +36,10 @@ async function fetchUsersPostsList(
   return res.data as GetUsersPostsListResponseType;
 }
 
-export function useUsersPostsListQuery(params: GetUsersPostsListRequestType) {
+export function useUsersPostsListQuery(
+  params: GetUsersPostsListRequestType,
+  options?: { enabled?: boolean },
+) {
   const key: QueryKey = ['usersPostsList', params];
 
   const parsed = getUsersPostsListRequestSchema.safeParse(params);
@@ -50,6 +53,7 @@ export function useUsersPostsListQuery(params: GetUsersPostsListRequestType) {
     getUsersPostsListResponseSchema,
     {
       select: data => data.data,
+      enabled: options?.enabled,
     },
   );
 }
