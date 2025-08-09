@@ -11,13 +11,14 @@ import TextCounter from '@/components/test-add/TextCounter';
 import type { InputProps } from '@/components/common/atoms/Input';
 import { useRouter } from 'next/navigation';
 
-export default function TestAddNamePage() {
+export default function TestAddIntroPage() {
   const { category } = useParams();
   const router = useRouter();
   const [title, setTitle] = useState('');
   const [isFocused, setIsFocused] = useState(false);
-  const STEP_INDEX = 3;
+  const STEP_INDEX = 5;
   const MAX_LENGTH = 30;
+
   const getInputState = (): InputProps['state'] => {
     if (title.length === 0) return 'no value';
     if (isFocused) return 'focused';
@@ -25,9 +26,9 @@ export default function TestAddNamePage() {
   };
 
   const handleNext = () => {
-    if (!title.trim()) return alert('제목을 입력해주세요!');
+    if (!title.trim()) return alert('소속이나 이름을 입력해주세요!');
     localStorage.setItem(`temp-title-${category}`, title.trim());
-    router.push(`/test-add/${category}/about`);
+    router.push(`/test-add/${category}/purpose`);
   };
 
   return (
@@ -38,12 +39,8 @@ export default function TestAddNamePage() {
       <div className="w-3/4 flex flex-col justify-between px-12 py-10">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-1">
-            <p className="text-subtitle-01 font-bold">
-              어떤 제목이면 테스터의 눈길을 끌 수 있을까요 ?
-            </p>
-            <p className="text-body-02 text-Gray-300">
-              참여자들에게 직접 보여지는 썸네일 제목입니다.
-            </p>
+            <p className="text-subtitle-01 font-bold">소속이나 이름을 간단하게 적어주세요</p>
+            <p className="text-body-02 text-Gray-300">참여자들이 보고 문의를 할 수 있어요</p>
           </div>
 
           <div className="relative w-fit">
@@ -51,7 +48,7 @@ export default function TestAddNamePage() {
               type="text"
               state={getInputState()}
               size="xl"
-              placeholder="ex. 베타랩: 효율적인 베타테스트 플랫폼"
+              placeholder="ex. 베타랩 팀, S대 팀 프로젝트"
               value={title}
               onChange={e => {
                 const inputValue = e.target.value;

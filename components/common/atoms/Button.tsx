@@ -11,8 +11,9 @@ export interface ButtonProps {
     | 'Focused'
     | 'Text btn';
   Size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'xxxl';
-  onClick: () => void;
+  onClick?: () => void;
   label: string;
+  className?: string;
 }
 
 export default function Button({
@@ -20,6 +21,7 @@ export default function Button({
   Size = 'md',
   onClick = () => {},
   label = 'Click Me',
+  className,
 }: ButtonProps) {
   const sizeForTextBtn: 'sm' | 'md' | 'lg' = ['sm', 'md', 'lg'].includes(Size)
     ? (Size as 'sm' | 'md' | 'lg')
@@ -33,6 +35,7 @@ export default function Button({
           THEME_COLOR_CLASSNAME['Text btn'],
           TEXT_BUTTON_SIZE_CLASSNAME[sizeForTextBtn],
           'leading-6 rounded-[1px]',
+          className,
         )}
       >
         {label}
@@ -43,7 +46,7 @@ export default function Button({
   return (
     <button
       onClick={onClick}
-      className={`${THEME_COLOR_CLASSNAME[State]} ${THEME_SIZE_CLASSNAME[Size]}`}
+      className={cn(`${THEME_COLOR_CLASSNAME[State]} ${THEME_SIZE_CLASSNAME[Size]}`, className)}
     >
       {label}
     </button>
