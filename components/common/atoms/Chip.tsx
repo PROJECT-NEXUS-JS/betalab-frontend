@@ -8,6 +8,7 @@ export interface ChipProps {
   children?: ReactNode;
   value?: string;
   onClick?: () => void;
+  showArrowIcon?: boolean;
 }
 
 export default function Chip({
@@ -16,6 +17,7 @@ export default function Chip({
   children,
   value,
   onClick,
+  showArrowIcon = true,
   ...props
 }: ChipProps) {
   const THEME_COLOR_CLASSNAME = {
@@ -47,7 +49,9 @@ export default function Chip({
       {...props}
     >
       {children}
-      <ArrowDown className="size-6 text-White group-hover:rotate-180 duration-200" />
+      {showArrowIcon && (
+        <ArrowDown className="size-6 text-White group-hover:rotate-180 duration-200" />
+      )}
     </button>
   );
 }

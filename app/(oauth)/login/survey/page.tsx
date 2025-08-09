@@ -101,6 +101,7 @@ export default function SurveyPage() {
                   onClick={() => {
                     handleTagClick(tag);
                   }}
+                  showArrowIcon={false}
                 >
                   {tag}
                 </Chip>
