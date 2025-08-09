@@ -2,7 +2,6 @@ import Chip from '@/components/common/atoms/Chip';
 import { DropdownElementProps } from '@/components/common/atoms/DropdownElement';
 import Dropdown from '@/components/common/molecules/Dropdown';
 import Searchbar from '@/components/common/molecules/Searchbar';
-import ArrowDown from '@/components/common/svg/ArrowDown';
 import CategoryButtons from '@/components/home/molecules/CategoryButtons';
 import HomeTitle from '@/components/home/molecules/HomeTitle';
 import React from 'react';
