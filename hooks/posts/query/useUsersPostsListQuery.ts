@@ -44,7 +44,7 @@ export function useUsersPostsListQuery(
 
   const parsed = getUsersPostsListRequestSchema.safeParse(params);
   if (!parsed.success) {
-    throw new Error(`Request schema validation failed: ${JSON.stringify(parsed.error.issues)}`);
+    throw new Error(`게시글 리스트 파싱 실패: ${JSON.stringify(parsed.error.issues)}`);
   }
 
   return usePostsQueryDto<GetUsersPostsListDataType, GetUsersPostsListResponseType>(
