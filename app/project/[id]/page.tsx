@@ -6,9 +6,9 @@ const mockData: Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'> = {
   profile: {
     name: '홍길동',
     affiliation: '가나다대학교',
-    imageUrl: '/path/to/image.jpg',
+    imageUrl: undefined,
   },
-  description: '프로젝트 설명입니다.',
+  description: '프로젝트 설명입니다. 프로젝트 설명입니다. 프로젝트 설명입니다.',
   endDate: new Date(),
   scrapedNumber: 200,
   conditions: [

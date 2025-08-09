@@ -7,13 +7,14 @@ import Button from '../atoms/Button';
 import Syren from '@/public/icons/applycard-icon/syren.svg';
 import Booking from '@/public/icons/applycard-icon/booking.svg';
 import Divider from '@/public/icons/applycard-icon/divider.svg';
+import UserProfile from '../svg/UserProfile';
 
 export interface ApplyCardProps {
   title: string;
   profile: {
     name: string;
     affiliation: string; // 소속
-    imageUrl: string;
+    imageUrl: string | undefined;
   };
   description: string;
   endDate: Date;
@@ -38,22 +39,35 @@ export default function ApplyCard({
   registerClicked,
 }: ApplyCardProps) {
   const [viewAll, setViewAll] = useState(false);
-  const endMonth = endDate.toLocaleString('default', { month: 'long' });
+  const endMonth = endDate.getMonth() + 1;
   const endDay = endDate.getDate();
 
   return (
-    <div className="w-[258px] p-3 flex flex-col flex-start gap-5">
+    <div className="w-[258px] p-3 flex flex-col flex-start gap-5 bg-White rounded-sm shadow-[0_0_10px_0_rgba(26,30,39,0.08)]">
       <div className="flex flex-col gap-4">
         <section className="flex flex-col gap-2">
           <h2 className="flex text-Black text-xl font-bold">{title}</h2>
-          <div className="flex items-center gap-2">
-            <Image src={profile.imageUrl} alt={profile.name} width={24} height={24} />
+          <div className="flex items-center gap-1 h-max">
+            {profile.imageUrl ? (
+              <Image
+                src={profile.imageUrl}
+                alt={profile.name}
+                width={24}
+                height={24}
+                onError={e => {
+                  const target = e.currentTarget as HTMLImageElement;
+                  target.style.display = 'none'; // 이미지 에러 시 숨김 처리 가능
+                }}
+              />
+            ) : (
+              <UserProfile className="w-6 h-6" />
+            )}
             <div className="flex flex-col gap-1">
               <p className="text-xs font-bold text-Dark-Gray">{profile.name}</p>
               <p className="text-xs font-bold text-Dark-Gray">{profile.affiliation}</p>
             </div>
           </div>
-          <div className="flex p-3 items-center justify-center">
+          <div className="flex p-3 items-center bg-Gray-50 rounded-sm">
             <p className="text-Dark-Gray text-sm">{description}</p>
           </div>
         </section>
@@ -85,11 +99,17 @@ export default function ApplyCard({
         />
       </div>
       <p className="text-right text-base text-Primary-500 font-bold">{attendees}명이 참가했어요!</p>
-      <div className="flex flex-col gap-[13px]">
-        <button onClick={scrapClicked} className="flex justify-center items-center p-2 ">
+      <div className="flex gap-[13px]">
+        <button onClick={scrapClicked} className="flex justify-center items-center w-11 h-11">
           <Image src={Booking} alt="Booking Logo" width={34} height={34} />
         </button>
-        <Button State="Primary" Size="lg" label="신청하기" onClick={registerClicked} />
+        <Button
+          State="Primary"
+          Size="lg"
+          label="신청하기"
+          onClick={registerClicked}
+          className="w-full flex-1"
+        />
       </div>
     </div>
   );
