@@ -8,15 +8,9 @@ export function useAuth() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const checkToken = () => {
-      const cookies = document.cookie.split(';');
-      const accessToken = cookies.find(cookie => cookie.trim().startsWith('accessToken='));
-
-      setIsLoggedIn(!!accessToken);
-      setIsLoading(false);
-    };
-
-    checkToken();
+    const token = localStorage.getItem('accessToken');
+    setIsLoggedIn(!!token);
+    setIsLoading(false);
   }, []);
 
   return {
