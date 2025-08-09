@@ -30,6 +30,9 @@
   --font-sans: 'SUIT Variable', sans-serif;
   --font-sd-gothic: 'Apple SD Gothic Neo', sans-serif;
 
+  /* semibold를 bold로 */
+  --font-weight-semibold: 700;
+
   /* 타이포그래피 스케일 정의 */
   --font-size-head: 2rem;
   --font-size-subtitle-01: 1.5rem;

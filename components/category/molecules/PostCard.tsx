@@ -1,12 +1,11 @@
-import { PostCardModel } from '@/types/models/postsModel';
+import { UsersPostsListItemType } from '@/hooks/posts/dto/postList';
 import Image from 'next/image';
-import Tag from '@/components/common/atoms/Tag';
 import { cn } from '@/lib/utils';
 import BookMark from '@/components/common/svg/BookMark';
 
 interface PostCardProps {
   className?: string;
-  post: PostCardModel;
+  post: UsersPostsListItemType;
 }
 
 export default function PostCard({ post, className }: PostCardProps) {
@@ -15,29 +14,6 @@ export default function PostCard({ post, className }: PostCardProps) {
 
   const allCategoryNames = [...mainCategoryNames, ...platformCategoryNames];
   const categoryText = allCategoryNames.join('  ·  ');
-
-  const calculateDday = (deadline: string): number => {
-    const today = new Date();
-    const deadlineDate = new Date(deadline);
-    const diffTime = deadlineDate.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
-
-  const dday = calculateDday(post.schedule.recruitmentDeadline);
-  const isTodayDeadline = dday === 0;
-
-  const getRewardTagStyle = (rewardType: string): 'orange' | 'black' => {
-    switch (rewardType) {
-      case 'CASH':
-      case 'GIFT_CARD':
-      case 'PRODUCT':
-        return 'orange';
-      case 'NONE':
-      default:
-        return 'black';
-    }
-  };
 
   return (
     <div
@@ -69,11 +45,6 @@ export default function PostCard({ post, className }: PostCardProps) {
         <p className="text-caption-02 mt-1 text-Dark-Gray font-medium line-clamp-2 w-full">
           {post.serviceSummary}
         </p>
-      </div>
-      <div className="flex flex-row gap-1">
-        {isTodayDeadline && <Tag style="purple" />}
-        {!isTodayDeadline && <Tag style="gray" dday={dday} />}
-        <Tag style={getRewardTagStyle(post.reward.rewardDescription)} />
       </div>
     </div>
   );

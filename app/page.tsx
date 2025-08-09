@@ -1,7 +1,5 @@
 'use client';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useState } from 'react';
 import Header from '@/components/common/organisms/Header';
 import { useAuth } from '@/hooks/useAuth';
 import HomeHeader from '@/components/home/organisms/HomeHeader';
@@ -11,8 +9,8 @@ import CardScroll from '@/components/home/molecules/CardScroll';
 import ViewAllButton from '@/components/home/atoms/ViewAllButton';
 import PostCard from '@/components/category/molecules/PostCard';
 import PostCardMini from '@/components/category/molecules/PostCardMini';
+import { useUsersPostsListQuery } from '@/hooks/posts/query/useUsersPostsListQuery';
 
-// 임시 mock 데이터 (추후 API 요청으로 대체)
 const mockPostData = {
   id: '1',
   title: '샘플 테스트 제목',
@@ -33,17 +31,12 @@ const mockPostData = {
 };
 
 export default function HomePage() {
-  const [queryClient] = useState(() => new QueryClient());
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <HomeContent />
-    </QueryClientProvider>
-  );
-}
-
-function HomeContent() {
   const { isLoggedIn, isLoading } = useAuth();
+  const {
+    data: postsPage,
+    isLoading: isPostsLoading,
+    error: postsError,
+  } = useUsersPostsListQuery({ sortBy: 'latest', page: 0, size: 8 });
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -57,10 +50,13 @@ function HomeContent() {
         <HomeSection>
           <SectionTitle className="w-full text-left">오늘의 추천 테스트</SectionTitle>
           <CardScroll>
-            <PostCard post={mockPostData} />
-            <PostCard post={mockPostData} />
-            <PostCard post={mockPostData} />
-            <PostCard post={mockPostData} />
+            {isPostsLoading && <div className="px-3 py-4 text-Gray-300">불러오는 중...</div>}
+            {!isPostsLoading && !!postsError && (
+              <div className="px-3 py-4 text-Error">목록을 불러오지 못했어요</div>
+            )}
+            {!isPostsLoading &&
+              !postsError &&
+              (postsPage?.content ?? []).map(post => <PostCard key={post.id} post={post} />)}
           </CardScroll>
           <ViewAllButton href="/category?category=recommend">
             오늘의 추천 테스트 전체보기
@@ -81,10 +77,10 @@ function HomeContent() {
         <HomeSection>
           <SectionTitle className="w-full text-left">인기있는 테스트에요</SectionTitle>
           <CardScroll>
-            <PostCard post={mockPostData} />
-            <PostCard post={mockPostData} />
-            <PostCard post={mockPostData} />
-            <PostCard post={mockPostData} />
+            <PostCardMini post={mockPostData} />
+            <PostCardMini post={mockPostData} />
+            <PostCardMini post={mockPostData} />
+            <PostCardMini post={mockPostData} />
           </CardScroll>
           <ViewAllButton href="/category?category=popular">인기 테스트 전체보기</ViewAllButton>
         </HomeSection>
