@@ -103,7 +103,7 @@ export function PostCardSkeleton({ className }: PostCardSkeletonProps) {
         className,
       )}
     >
-      <div className="relative rounded-[2px] w-full h-[146px] overflow-hidden">
+      <div className="relative rounded-[2px] w-[234px] h-[146px] overflow-hidden">
         <Skeleton className="w-full h-full" />
       </div>
       <div className="flex flex-col w-full max-w-[12.625rem] h-[91px] gap-2">

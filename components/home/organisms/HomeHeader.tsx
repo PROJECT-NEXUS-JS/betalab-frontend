@@ -1,30 +1,42 @@
+'use client';
+
 import Chip from '@/components/common/atoms/Chip';
 import { DropdownElementProps } from '@/components/common/atoms/DropdownElement';
 import Dropdown from '@/components/common/molecules/Dropdown';
 import Searchbar from '@/components/common/molecules/Searchbar';
 import CategoryButtons from '@/components/home/molecules/CategoryButtons';
 import HomeTitle from '@/components/home/molecules/HomeTitle';
+import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 import React from 'react';
-
-const DROPDOWN_ELEMENTS: DropdownElementProps[] = [
-  {
-    onClick: () => {},
-    children: <p className="text-caption-02 font-semibold">앱</p>,
-  },
-  {
-    onClick: () => {},
-    children: <p className="text-caption-02 font-semibold">웹</p>,
-  },
-  {
-    onClick: () => {},
-    children: <p className="text-caption-02 font-semibold">게임</p>,
-  },
-];
 
 interface HomeHeaderProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export default function HomeHeader({ className, ...props }: HomeHeaderProps) {
+  const router = useRouter();
+  const { isLoggedIn } = useAuth();
+
+  const DROPDOWN_ELEMENTS: DropdownElementProps[] = [
+    {
+      onClick: () => {
+        router.push(isLoggedIn ? '/category?category=앱앱' : '/login');
+      },
+      children: <p className="text-caption-02 font-semibold">앱</p>,
+    },
+    {
+      onClick: () => {
+        router.push(isLoggedIn ? '/category?category=웹' : '/login');
+      },
+      children: <p className="text-caption-02 font-semibold">웹</p>,
+    },
+    {
+      onClick: () => {
+        router.push(isLoggedIn ? '/category?category=게임' : '/login');
+      },
+      children: <p className="text-caption-02 font-semibold">게임</p>,
+    },
+  ];
   return (
     <header
       className={cn('w-full flex flex-col items-center justify-between', className)}
