@@ -32,7 +32,6 @@ async function fetchUsersPostsList(
   params: GetUsersPostsListRequestType,
 ): Promise<GetUsersPostsListResponseType> {
   const url = buildQueryParams(params);
-
   try {
     const res = await instance.get(url);
     return res.data as GetUsersPostsListResponseType;

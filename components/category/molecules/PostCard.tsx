@@ -41,7 +41,6 @@ export default function PostCard({ post, className, ranking }: PostCardProps) {
         return 'black';
     }
   };
-
   return (
     <div
       className={cn(

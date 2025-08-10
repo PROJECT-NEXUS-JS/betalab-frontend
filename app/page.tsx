@@ -7,6 +7,7 @@ import HomeSection from '@/components/home/organisms/HomeSection';
 import SectionTitle from '@/components/home/atoms/SectionTitle';
 import CardScroll from '@/components/home/molecules/CardScroll';
 import ViewAllButton from '@/components/home/atoms/ViewAllButton';
+
 import PostCard, { PostCardSkeleton } from '@/components/category/molecules/PostCard';
 import PostCardMini, { PostCardMiniSkeleton } from '@/components/category/molecules/PostCardMini';
 import { useUsersPostsListQuery } from '@/hooks/posts/query/useUsersPostsListQuery';
@@ -38,10 +39,15 @@ export default function HomePage() {
   } = useUsersPostsListQuery({ sortBy: 'popular', page: popularPage, size: 4 });
   const isLoading =
     recommendPostsLoading || deadlinePostsLoading || popularPostsLoading || isAuthLoading;
+
   const isError = recommendPostsError || deadlinePostsError || popularPostsError;
 
   if (isError) {
     console.log(recommendPostsError);
+    return <div>홈페이지에 문의하세요.</div>;
+  }
+
+  if (isError) {
     return <div>홈페이지에 문의하세요.</div>;
   }
 
@@ -68,6 +74,7 @@ export default function HomePage() {
           >
             {recommendPostsLoading &&
               Array.from({ length: 4 }).map((_, index) => <PostCardSkeleton key={index} />)}
+
             {recommendPosts?.content.length === 0 && (
               <div className="h-[146px] flex justify-center items-center">
                 <p className="text-body-01 text-Gray-300">오늘의 추천 테스트가 없어요.</p>
@@ -90,6 +97,7 @@ export default function HomePage() {
           >
             {deadlinePostsLoading &&
               Array.from({ length: 4 }).map((_, index) => <PostCardMiniSkeleton key={index} />)}
+
             {deadlinePosts?.content.length === 0 && (
               <div className="h-[146px] flex justify-center items-center">
                 <p className="text-body-01 text-Gray-300">곧 마감되는 테스트가 없어요.</p>
