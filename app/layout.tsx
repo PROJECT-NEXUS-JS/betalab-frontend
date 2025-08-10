@@ -16,8 +16,10 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className="antialiased bg-White">
-        <div className="max-w-[1280px] mx-auto">
-          <ReactQueryProvider>{children}</ReactQueryProvider>
+        <div className="w-full bg-gradient-to-b from-white">
+          <div className="min-w-[1280px] mx-auto">
+            <ReactQueryProvider>{children}</ReactQueryProvider>
+          </div>
         </div>
       </body>
     </html>
