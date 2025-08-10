@@ -73,7 +73,7 @@ export default function TestAddPurposePage() {
   const handleNext = () => {
     if (selectedByGroup.some(v => v === null)) return alert('각 항목에서 하나씩 선택해주세요!');
     localStorage.setItem(`temp-purpose-${category}`, JSON.stringify(selectedByGroup));
-    router.push(`/test-add/${category}/setting/method`);
+    router.push(`/test-add/${category}/setting`);
   };
 
   const handleSave = () => {
