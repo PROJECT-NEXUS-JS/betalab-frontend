@@ -25,7 +25,7 @@ interface TestAddLayoutProps {
 export default function TestAddLayout({
   children,
   leftImageSrc,
-  leftImageClassName = 'object-contain p-0',
+  leftImageClassName = 'object-contain',
   leftPanelClassName,
   stepIndex,
   totalSteps = 10,
