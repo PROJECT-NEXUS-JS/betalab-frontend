@@ -64,6 +64,7 @@ export default function WebGenre() {
                 variant={selectedGenre === genre ? 'active' : 'solid'}
                 size="sm"
                 onClick={() => setSelectedGenre(genre)}
+                showArrowIcon={false}
               >
                 {genre}
               </Chip>

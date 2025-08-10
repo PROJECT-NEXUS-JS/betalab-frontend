@@ -25,6 +25,7 @@ export default function CategorySelector({ selected, onSelect }: Props) {
           variant={selected === category ? 'active' : 'solid'}
           size="sm"
           onClick={() => onSelect(category as Category)}
+          showArrowIcon={false}
         >
           {category}
         </Chip>

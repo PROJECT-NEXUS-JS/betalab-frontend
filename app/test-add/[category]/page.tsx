@@ -75,6 +75,7 @@ export default function TestAddCategoryPage() {
                 variant={selectedPlatform === platform ? 'active' : 'solid'}
                 size="sm"
                 onClick={() => setSelectedPlatform(platform)}
+                showArrowIcon={false}
               >
                 {platform}
               </Chip>

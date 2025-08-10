@@ -107,6 +107,7 @@ export default function TestAddPurposePage() {
                     variant={selectedItems.includes(item) ? 'active' : 'solid'}
                     size="sm"
                     onClick={() => toggleItem(item)}
+                    showArrowIcon={false}
                   >
                     {item}
                   </Chip>
