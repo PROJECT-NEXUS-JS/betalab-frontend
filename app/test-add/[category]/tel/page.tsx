@@ -33,7 +33,7 @@ export default function TestAddIntroPage() {
 
   return (
     <main className="flex min-h-screen w-full">
-      <div className="w-1/4 bg-gradient-to-b from-white to-[#D4EED8] relative">
+      <div className="w-1/4 bg-gradient-to-b from-white relative">
         <Image src="/test2.png" alt="테스트 이미지" fill className="object-center" priority />
       </div>
       <div className="w-3/4 flex flex-col justify-between px-12 py-10">
