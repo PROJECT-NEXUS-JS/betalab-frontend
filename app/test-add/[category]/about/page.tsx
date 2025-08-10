@@ -18,6 +18,7 @@ export default function TestAddAboutPage() {
 
   const STEP_INDEX = 4;
   const MAX_LENGTH = 30;
+  const storageKey = `temp-title-${category}`;
 
   useEffect(() => {
     setSummary(typeof form.description === 'string' ? form.description : '');

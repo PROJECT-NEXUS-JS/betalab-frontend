@@ -18,6 +18,7 @@ export default function TestAddIntroPage() {
 
   const STEP_INDEX = 5;
   const MAX_LENGTH = 30;
+  const storageKey = `temp-title-${category}`;
 
   useEffect(() => {
     setIntro(typeof form.creatorIntroduction === 'string' ? form.creatorIntroduction : '');
