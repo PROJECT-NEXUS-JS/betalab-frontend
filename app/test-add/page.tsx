@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import CategorySelector from '@/components/common/molecules/CategorySelector';
+import Selector from '@/components/common/molecules/Selector';
 import StepNextButton from '@/components/common/molecules/StepNextButton';
 import CarouselBar from '@/components/common/molecules/CarouselBar';
 
@@ -36,7 +36,6 @@ export default function TestAddPage() {
       <div className="w-1/4 bg-gradient-to-b from-white to-[#D4EED8] relative">
         <Image src="/test1.png" alt="테스트 이미지" fill className="object-center" priority />
       </div>
-
       <div className="w-1/2 flex flex-col justify-between px-12 py-10">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-1">
@@ -48,7 +47,11 @@ export default function TestAddPage() {
             </p>
           </div>
 
-          <CategorySelector selected={selected} onSelect={setSelected} />
+          <Selector<Category>
+            options={Object.keys(CATEGORY_MAP) as Category[]}
+            selected={selected}
+            onSelect={setSelected}
+          />
         </div>
 
         <div className="flex items-center justify-between mt-6">
