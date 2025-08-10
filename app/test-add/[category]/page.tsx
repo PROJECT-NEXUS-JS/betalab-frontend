@@ -37,10 +37,10 @@ const PLATFORM_MAP: Record<string, string[]> = {
   ],
 };
 
-export default function TestAddPlatformStep() {
+export default function TestAddCategoryPage() {
   const { category } = useParams<{ category: string }>();
-  const STEP_INDEX = 1;
   const router = useRouter();
+  const STEP_INDEX = 1;
   const { form, update } = useTestAddForm();
 
   const options = useMemo(() => PLATFORM_MAP[category] ?? [], [category]);
