@@ -1,11 +1,8 @@
 'use client';
 
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import StepNextButton from '@/components/common/molecules/StepNextButton';
-import CarouselBar from '@/components/common/molecules/CarouselBar';
-import Chip from '@/components/common/atoms/Chip';
+import { useEffect, useMemo, useState } from 'react';
+import TestAddLayout from '@/components/test-add/layouts/TestAddLayout';
+import Selector from '@/components/common/molecules/Selector';
 
 const WEB_GENRES = [
   '생산성/협업툴',
@@ -20,67 +17,52 @@ const WEB_GENRES = [
   '채용/HR',
   '고객관리/세일즈',
   '기타',
-];
+] as const;
 
-export default function WebGenre() {
-  const router = useRouter();
+type WebGenre = (typeof WEB_GENRES)[number];
+
+export default function WebGenrePage() {
   const STEP_INDEX = 2;
-  const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
+  const storageKey = 'temp-genre-web';
 
-  const storageKey = `temp-genre-web`;
-  const handleNext = () => {
-    if (!selectedGenre) return alert('장르를 선택해주세요!');
-    console.log('선택된 장르:', selectedGenre);
-    router.push('/test-add/web/name');
-  };
+  const options = useMemo(() => [...WEB_GENRES] as WebGenre[], []);
+  const [selected, setSelected] = useState<WebGenre | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem(storageKey);
-    if (saved && WEB_GENRES.includes(saved)) {
-      setSelectedGenre(saved);
+    if (saved && options.includes(saved as WebGenre)) {
+      setSelected(saved as WebGenre);
     }
-  }, []);
+  }, [options]);
+
+  const handleSelect = (value: WebGenre) => {
+    setSelected(value);
+  };
+
+  const handleNext = () => {
+    if (!selected) return alert('장르를 선택해주세요!');
+    window.location.href = '/test-add/web/name';
+  };
 
   return (
-    <main className="flex min-h-screen w-full">
-      <div className="w-1/4 bg-gradient-to-b from-white to-[#D4EED8] relative">
-        <Image src="/test1.png" alt="테스트 이미지" fill className="object-center" priority />
-      </div>
-      <div className="w-1/2 flex flex-col justify-between px-12 py-10">
-        <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-1">
-            <p className="text-subtitle-01 font-bold">
-              어떤 장르의 베타서비스인가요?
-              <br />
-              선택한 카테고리는 나중에 언제든 바꾸실 수 있어요.
-            </p>
-            <p className="text-body-02 text-Gray-300">나중에 수정 가능하니 너무 걱정하지 마세요.</p>
-          </div>
-
-          <div className="flex gap-3 flex-wrap">
-            {WEB_GENRES.map(genre => (
-              <Chip
-                key={genre}
-                variant={selectedGenre === genre ? 'active' : 'solid'}
-                size="sm"
-                onClick={() => setSelectedGenre(genre)}
-                showArrowIcon={false}
-              >
-                {genre}
-              </Chip>
-            ))}
-          </div>
+    <TestAddLayout
+      leftImageSrc="/test1.png"
+      stepIndex={STEP_INDEX}
+      onNext={handleNext}
+      saveLabel="임시 저장"
+    >
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-1">
+          <p className="text-subtitle-01 font-bold">
+            어떤 장르의 베타서비스인가요?
+            <br />
+            선택한 카테고리는 나중에 언제든 바꾸실 수 있어요.
+          </p>
+          <p className="text-body-02 text-Gray-300">나중에 수정 가능하니 너무 걱정하지 마세요.</p>
         </div>
 
-        <div className="flex items-center justify-between mt-6">
-          <CarouselBar activeIndex={STEP_INDEX} total={10} />
-          <StepNextButton
-            onClick={() => {
-              handleNext();
-            }}
-          />
-        </div>
+        <Selector<WebGenre> options={options} selected={selected} onSelect={handleSelect} />
       </div>
-    </main>
+    </TestAddLayout>
   );
 }
