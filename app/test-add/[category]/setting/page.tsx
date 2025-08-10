@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import TestAddLayout from '@/components/test-add/layouts/TestAddLayout';
 import CheckTag from '@/components/common/atoms/CheckTag';
 import Chip from '@/components/common/atoms/Chip';
@@ -23,7 +24,6 @@ const TIME_OPTIONS = [
 export default function TestAddPurposePage() {
   const { category } = useParams();
   const router = useRouter();
-  const [step, setStep] = useState(1);
 
   const [feedbackTags, setFeedbackTags] = useState<string[]>([]);
   const [customFeedbackOpen, setCustomFeedbackOpen] = useState(false);
@@ -37,6 +37,8 @@ export default function TestAddPurposePage() {
   const [customRecruitOpen, setCustomRecruitOpen] = useState(false);
   const [customRecruitValue, setCustomRecruitValue] = useState('');
 
+  const [deadline, setDeadline] = useState('');
+
   const feedbackInputState: InputProps['state'] = useMemo(() => {
     if (!customFeedbackOpen) return 'no value';
     if (customFeedbackValue.length === 0) return 'no value';
@@ -48,6 +50,7 @@ export default function TestAddPurposePage() {
     if (customTimeValue.length === 0) return 'no value';
     return 'has value';
   }, [customTimeOpen, customTimeValue]);
+
   const recruitInputState: InputProps['state'] = useMemo(() => {
     if (!customRecruitOpen) return 'no value';
     if (customRecruitValue.length === 0) return 'no value';
@@ -63,25 +66,32 @@ export default function TestAddPurposePage() {
   };
 
   const handleNext = () => {
-    if (step < 3) {
-      setStep(prev => prev + 1);
-    } else {
-      const feedbackData = [...feedbackTags, ...(customFeedbackValue ? [customFeedbackValue] : [])];
-      const timeData = [...timeTags, ...(customTimeValue ? [customTimeValue] : [])];
-      const recruitData = customRecruitValue ? parseInt(customRecruitValue, 10) : recruitCount;
+    const feedbackData = [...feedbackTags, ...(customFeedbackValue ? [customFeedbackValue] : [])];
+    const timeData = [...timeTags, ...(customTimeValue ? [customTimeValue] : [])];
+    const recruitData = customRecruitValue ? parseInt(customRecruitValue, 10) : recruitCount;
 
-      localStorage.setItem(`temp-purpose-${category}`, JSON.stringify(feedbackData));
-      localStorage.setItem(`temp-time-${category}`, JSON.stringify(timeData));
-      localStorage.setItem(`temp-recruit-${category}`, JSON.stringify(recruitData));
+    localStorage.setItem(`temp-purpose-${category}`, JSON.stringify(feedbackData));
+    localStorage.setItem(`temp-time-${category}`, JSON.stringify(timeData));
+    localStorage.setItem(`temp-recruit-${category}`, JSON.stringify(recruitData));
+    localStorage.setItem(`temp-deadline-${category}`, deadline);
 
-      router.push(`/test-add/${category}/setting/summary`);
-    }
+    router.push(`/test-add/${category}/finish`);
   };
 
   const handleSave = () => {
     localStorage.setItem(`temp-purpose-${category}`, JSON.stringify(feedbackTags));
     localStorage.setItem(`temp-time-${category}`, JSON.stringify(timeTags));
     localStorage.setItem(`temp-recruit-${category}`, JSON.stringify(recruitCount));
+    localStorage.setItem(`temp-deadline-${category}`, deadline);
+  };
+
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.15, duration: 0.4 },
+    }),
   };
 
   return (
@@ -93,7 +103,13 @@ export default function TestAddPurposePage() {
       onSave={handleSave}
     >
       <div className="flex flex-col gap-10">
-        <div className="flex flex-col gap-6">
+        <motion.div
+          className="flex flex-col gap-6"
+          variants={sectionVariants}
+          initial="hidden"
+          animate="visible"
+          custom={0}
+        >
           <div className="flex items-center gap-2">
             <p className="text-subtitle-01 font-semibold">
               어떤 방식으로 피드백을 수집할 계획인가요?
@@ -134,95 +150,121 @@ export default function TestAddPurposePage() {
               />
             </div>
           )}
-        </div>
+        </motion.div>
 
-        {step >= 2 && (
-          <div className="flex flex-col gap-6">
-            <div className="flex items-center gap-2">
-              <p className="text-subtitle-01 font-semibold">
-                참여자가 테스트에 얼마의 시간을 들여야 할까요?
-              </p>
-              <CheckTag>중복 선택 가능</CheckTag>
-            </div>
-            <div className="flex gap-3 flex-wrap items-center">
-              {TIME_OPTIONS.map(option => (
-                <Chip
-                  key={option}
-                  variant={timeTags.includes(option) ? 'active' : 'solid'}
-                  size="sm"
-                  onClick={() => toggleTag(option, 'time')}
-                  showArrowIcon={false}
-                >
-                  {option}
-                </Chip>
-              ))}
+        <motion.div
+          className="flex flex-col gap-6"
+          variants={sectionVariants}
+          initial="hidden"
+          animate="visible"
+          custom={1}
+        >
+          <div className="flex items-center gap-2">
+            <p className="text-subtitle-01 font-semibold">
+              참여자가 테스트에 얼마의 시간을 들여야 할까요?
+            </p>
+            <CheckTag>중복 선택 가능</CheckTag>
+          </div>
+          <div className="flex gap-3 flex-wrap items-center">
+            {TIME_OPTIONS.map(option => (
               <Chip
-                variant={customTimeOpen ? 'active' : 'solid'}
+                key={option}
+                variant={timeTags.includes(option) ? 'active' : 'solid'}
                 size="sm"
-                onClick={() => setCustomTimeOpen(prev => !prev)}
+                onClick={() => toggleTag(option, 'time')}
                 showArrowIcon={false}
               >
-                직접 입력
+                {option}
               </Chip>
-            </div>
-            {customTimeOpen && (
-              <div className="flex flex-col gap-2">
-                <p className="text-body-01 font-semibold">직접 입력</p>
-                <Input
-                  type="text"
-                  size="xl"
-                  state={timeInputState}
-                  placeholder="테스트 소요 시간을 입력해주세요"
-                  value={customTimeValue}
-                  onChange={e => setCustomTimeValue(e.currentTarget.value)}
-                />
-              </div>
-            )}
-          </div>
-        )}
-
-        {step >= 3 && (
-          <div className="flex flex-col gap-6">
-            <p className="text-subtitle-01 font-semibold">몇 명의 참여자를 모집할까요?</p>
-            <div className="flex items-center gap-4">
-              <button
-                type="button"
-                onClick={() => setRecruitCount(prev => Math.max(prev - 1, 1))}
-                className="w-10 h-10 border rounded"
-              >
-                -
-              </button>
-              <div className="w-20 text-center bg-gray-50 py-2 rounded font-semibold">
-                {recruitCount}
-              </div>
-              <button
-                type="button"
-                onClick={() => setRecruitCount(prev => prev + 1)}
-                className="w-10 h-10 border rounded"
-              >
-                +
-              </button>
-            </div>
+            ))}
             <Chip
-              variant={customRecruitOpen ? 'active' : 'solid'}
+              variant={customTimeOpen ? 'active' : 'solid'}
               size="sm"
-              onClick={() => setCustomRecruitOpen(prev => !prev)}
+              onClick={() => setCustomTimeOpen(prev => !prev)}
               showArrowIcon={false}
             >
               직접 입력
             </Chip>
-            {customRecruitOpen && (
+          </div>
+          {customTimeOpen && (
+            <div className="flex flex-col gap-2">
+              <p className="text-body-01 font-semibold">직접 입력</p>
               <Input
                 type="text"
                 size="xl"
-                state={recruitInputState}
-                placeholder="참여자 수를 입력해주세요"
-                value={customRecruitValue}
-                onChange={e => setCustomRecruitValue(e.currentTarget.value)}
+                state={timeInputState}
+                placeholder="예: 평일 매일 30분, 총 3일 등"
+                value={customTimeValue}
+                onChange={e => setCustomTimeValue(e.currentTarget.value)}
               />
-            )}
+            </div>
+          )}
+        </motion.div>
+
+        <motion.div
+          className="flex flex-col gap-6"
+          variants={sectionVariants}
+          initial="hidden"
+          animate="visible"
+          custom={2}
+        >
+          <p className="text-subtitle-01 font-semibold">몇 명의 참여자를 모집할까요?</p>
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => setRecruitCount(prev => Math.max(prev - 1, 1))}
+              className="w-10 h-10 border rounded"
+            >
+              -
+            </button>
+            <div className="w-20 text-center bg-gray-50 py-2 rounded font-semibold">
+              {recruitCount}
+            </div>
+            <button
+              type="button"
+              onClick={() => setRecruitCount(prev => prev + 1)}
+              className="w-10 h-10 border rounded"
+            >
+              +
+            </button>
           </div>
-        )}
+          <Chip
+            variant={customRecruitOpen ? 'active' : 'solid'}
+            size="sm"
+            onClick={() => setCustomRecruitOpen(prev => !prev)}
+            showArrowIcon={false}
+          >
+            직접 입력
+          </Chip>
+          {customRecruitOpen && (
+            <Input
+              type="number"
+              size="xl"
+              placeholder="참여자 수를 입력해주세요"
+              state={recruitInputState}
+              value={customRecruitValue}
+              onChange={e => setCustomRecruitValue(e.currentTarget.value)}
+            />
+          )}
+        </motion.div>
+
+        <motion.div
+          className="flex flex-col gap-6"
+          variants={sectionVariants}
+          initial="hidden"
+          animate="visible"
+          custom={3}
+        >
+          <p className="text-subtitle-01 font-semibold">언제까지 참여자를 모집할까요?</p>
+          <Input
+            type="date"
+            size="xl"
+            placeholder="YYYY.MM.DD"
+            state="no value"
+            value={deadline}
+            onChange={e => setDeadline(e.currentTarget.value)}
+          />
+        </motion.div>
       </div>
     </TestAddLayout>
   );

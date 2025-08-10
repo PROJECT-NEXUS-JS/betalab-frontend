@@ -2,7 +2,7 @@ import Image from 'next/image';
 import CircleX from '@/public/icons/input-icon/circle-x.svg';
 
 export interface InputProps {
-  type: 'text' | 'text area';
+  type: 'text' | 'text area' | 'number' | 'date';
   state:
     | 'no value'
     | 'has value'
