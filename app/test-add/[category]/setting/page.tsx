@@ -44,8 +44,6 @@ export default function TestAddSettingPage() {
   const [customRecruitValue, setCustomRecruitValue] = useState('');
   const [recruitTouched, setRecruitTouched] = useState(false);
 
-  const [deadlineRange, setDeadlineRange] = useState<DateRange | undefined>();
-
   useEffect(() => {
     if (typeof form.feedbackMethod === 'string' && form.feedbackMethod.trim()) {
       const tokens = form.feedbackMethod
@@ -247,7 +245,6 @@ export default function TestAddSettingPage() {
             </p>
             <CheckTag>중복 선택 가능</CheckTag>
           </div>
-
           <div className="flex gap-3 flex-wrap items-center">
             {FEEDBACK_OPTIONS.map(option => (
               <Chip
@@ -269,7 +266,6 @@ export default function TestAddSettingPage() {
               직접 입력
             </Chip>
           </div>
-
           {customFeedbackOpen && (
             <div className="flex flex-col gap-2">
               <p className="text-body-01 font-semibold">직접 입력</p>
