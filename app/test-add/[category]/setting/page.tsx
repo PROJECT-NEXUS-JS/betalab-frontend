@@ -17,7 +17,6 @@ const FEEDBACK_OPTIONS = [
   '이메일 회신',
   '슬랙/디스코드 커뮤니티 댓글',
 ];
-
 const TIME_OPTIONS = [
   '하루 미만',
   '3일 이상 사용',
@@ -175,7 +174,6 @@ export default function TestAddPurposePage() {
             </p>
             <CheckTag>중복 선택 가능</CheckTag>
           </div>
-
           <div className="flex gap-3 flex-wrap items-center">
             {FEEDBACK_OPTIONS.map(option => (
               <Chip
@@ -197,7 +195,6 @@ export default function TestAddPurposePage() {
               직접 입력
             </Chip>
           </div>
-
           {customFeedbackOpen && (
             <div className="flex flex-col gap-2">
               <p className="text-body-01 font-semibold">직접 입력</p>
