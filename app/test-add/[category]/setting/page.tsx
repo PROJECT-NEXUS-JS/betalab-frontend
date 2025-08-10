@@ -87,6 +87,8 @@ export default function TestAddSettingPage() {
     }
   }, [form.feedbackMethod, form.durationTime, form.maxParticipants, form.startDate, form.endDate]);
 
+  const [deadline, setDeadline] = useState('');
+
   const feedbackInputState: InputProps['state'] = useMemo(() => {
     if (!customFeedbackOpen) return 'no value';
     return customFeedbackValue.length === 0 ? 'no value' : 'has value';
@@ -372,7 +374,7 @@ export default function TestAddSettingPage() {
                 }}
                 showArrowIcon={false}
               >
-                직접 입력
+                {option}
               </Chip>
 
               {customRecruitOpen && (
