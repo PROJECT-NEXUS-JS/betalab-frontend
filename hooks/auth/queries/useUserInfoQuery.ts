@@ -1,8 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { instance } from '@/apis/instance';
-import { MeResponseSchema } from '@/types/models/auth';
+import { MeResponseSchema } from '../dto/auth';
 
-export const useUserInfoQuery = () => {
+export const useUserInfoQuery = (enabled: boolean = true) => {
   return useQuery({
     queryKey: ['userInfo'],
     queryFn: async () => {
@@ -10,10 +10,11 @@ export const useUserInfoQuery = () => {
 
       const parsed = MeResponseSchema.safeParse(res.data);
       if (!parsed.success) {
-        throw new Error('유저 정보 파싱 실패');
+        throw new Error(`유저 정보 파싱 실패: ${parsed.error.toString()}`);
       }
 
       return parsed.data.data;
     },
+    enabled: enabled,
   });
 };

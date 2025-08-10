@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 export interface CategoryButtonProps {
   type: '앱' | '웹' | '인기순위' | '게임' | '마감 임박';
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 const ICON_MAP: Record<CategoryButtonProps['type'], { src: string; alt: string }> = {
@@ -13,7 +13,7 @@ const ICON_MAP: Record<CategoryButtonProps['type'], { src: string; alt: string }
   '마감 임박': { src: '/icons/category-icon/bomb.svg', alt: '마감 임박 아이콘' },
 };
 
-export default function CategoryButton({ type, onClick }: CategoryButtonProps) {
+export default function CategoryButton({ type, onClick = () => {} }: CategoryButtonProps) {
   const icon = ICON_MAP[type];
 
   return (

@@ -1,13 +1,16 @@
 // src/app/oidc-callback/page.tsx (최종 수정)
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getUserManager } from '@/lib/oidc-client';
 import type { User } from 'oidc-client-ts';
+import { useUserInfoQuery } from '@/hooks/auth/queries/useUserInfoQuery';
 
 export default function OidcCallbackPage() {
   const router = useRouter();
+  const [isTokenReady, setIsTokenReady] = useState(false);
+  const { data: user, isLoading } = useUserInfoQuery(isTokenReady);
 
   useEffect(() => {
     const processCallback = async () => {
@@ -27,8 +30,9 @@ export default function OidcCallbackPage() {
         const responseData = await res.json();
 
         if (responseData.success && responseData.accessToken) {
-          localStorage.setItem('accessToken', responseData.accessToken); // 👉 저장
-          window.location.href = '/';
+          // 액세스 토큰을 로컬 스토리지에 저장
+          localStorage.setItem('accessToken', responseData.accessToken);
+          setIsTokenReady(true);
         } else {
           throw new Error(responseData.message || '로그인 처리 실패');
         }
@@ -40,6 +44,18 @@ export default function OidcCallbackPage() {
 
     processCallback();
   }, [router]);
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      if (user.roleType === 'ROLE_GUEST') {
+        console.log('게스트 유저로 로그인되었습니다.');
+        router.replace('/login/survey');
+      } else {
+        console.log('일반 유저로 로그인되었습니다.');
+        router.replace('/');
+      }
+    }
+  }, [user, isLoading, router]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-900">
