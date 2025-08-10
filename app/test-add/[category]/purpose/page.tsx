@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import Chip from '@/components/common/atoms/Chip';
+import Selector from '@/components/common/molecules/Selector';
 import TestAddLayout from '@/components/test-add/layouts/TestAddLayout';
 
 const PURPOSE_GROUPS = [
@@ -54,29 +54,30 @@ const STEP_INDEX = 6;
 export default function TestAddPurposePage() {
   const { category } = useParams();
   const router = useRouter();
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+
+  const [selectedByGroup, setSelectedByGroup] = useState<(string | null)[]>(
+    Array(PURPOSE_GROUPS.length).fill(null),
+  );
 
   useEffect(() => {
     const savedPurpose = localStorage.getItem(`temp-purpose-${category}`);
     if (savedPurpose) {
-      setSelectedItems(JSON.parse(savedPurpose));
+      setSelectedByGroup(JSON.parse(savedPurpose));
     }
   }, [category]);
 
-  const toggleItem = (item: string) => {
-    setSelectedItems(prev =>
-      prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item],
-    );
+  const handleSelect = (groupIndex: number, value: string) => {
+    setSelectedByGroup(prev => prev.map((selected, i) => (i === groupIndex ? value : selected)));
   };
 
   const handleNext = () => {
-    if (selectedItems.length === 0) return alert('최소 한 가지 목적을 선택해주세요!');
-    localStorage.setItem(`temp-purpose-${category}`, JSON.stringify(selectedItems));
-    router.push(`/test-add/${category}/condition`);
+    if (selectedByGroup.some(v => v === null)) return alert('각 항목에서 하나씩 선택해주세요!');
+    localStorage.setItem(`temp-purpose-${category}`, JSON.stringify(selectedByGroup));
+    router.push(`/test-add/${category}/setting/method`);
   };
 
   const handleSave = () => {
-    localStorage.setItem(`temp-purpose-${category}`, JSON.stringify(selectedItems));
+    localStorage.setItem(`temp-purpose-${category}`, JSON.stringify(selectedByGroup));
   };
 
   return (
@@ -89,27 +90,15 @@ export default function TestAddPurposePage() {
       saveLabel="임시 저장"
     >
       <div className="flex flex-col gap-10">
-        <div className="flex flex-col gap-1">
-          <p className="text-subtitle-01 font-bold">
-            참여자들에게서 어떤 걸 알아보면 도움이 될까요?
-          </p>
-        </div>
-        {PURPOSE_GROUPS.map(({ title, items }) => (
+        <p className="text-subtitle-01 font-bold">참여자들에게서 어떤 걸 알아보면 도움이 될까요?</p>
+        {PURPOSE_GROUPS.map(({ title, items }, idx) => (
           <section key={title} className="flex flex-col gap-4">
             <p className="text-body-01 font-semibold">{title}</p>
-            <div className="flex gap-3 flex-wrap">
-              {items.map(item => (
-                <Chip
-                  key={item}
-                  variant={selectedItems.includes(item) ? 'active' : 'solid'}
-                  size="sm"
-                  onClick={() => toggleItem(item)}
-                  showArrowIcon={false}
-                >
-                  {item}
-                </Chip>
-              ))}
-            </div>
+            <Selector
+              options={items}
+              selected={selectedByGroup[idx]}
+              onSelect={value => handleSelect(idx, value)}
+            />
           </section>
         ))}
       </div>
