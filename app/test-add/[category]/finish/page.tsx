@@ -31,7 +31,7 @@ export default function TestAddFinishPage() {
           State="Sub"
           Size="lg"
           label="프로젝트 관리하러 가기"
-          onClick={() => router.push('/project/manage')}
+          onClick={() => router.push('/')}
         />
       </div>
     </div>
