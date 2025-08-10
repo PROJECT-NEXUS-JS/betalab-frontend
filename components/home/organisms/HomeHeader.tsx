@@ -4,6 +4,7 @@ import Dropdown from '@/components/common/molecules/Dropdown';
 import Searchbar from '@/components/common/molecules/Searchbar';
 import CategoryButtons from '@/components/home/molecules/CategoryButtons';
 import HomeTitle from '@/components/home/molecules/HomeTitle';
+import { cn } from '@/lib/utils';
 import React from 'react';
 
 const DROPDOWN_ELEMENTS: DropdownElementProps[] = [
@@ -21,9 +22,14 @@ const DROPDOWN_ELEMENTS: DropdownElementProps[] = [
   },
 ];
 
-export default function HomeHeader() {
+interface HomeHeaderProps extends React.HTMLAttributes<HTMLDivElement> {}
+
+export default function HomeHeader({ className, ...props }: HomeHeaderProps) {
   return (
-    <header className="w-full flex flex-col items-center justify-between">
+    <header
+      className={cn('w-full flex flex-col items-center justify-between', className)}
+      {...props}
+    >
       <div className="w-full flex flex-col items-center justify-center gap-5">
         <HomeTitle />
         <div className="flex flex-row gap-2">

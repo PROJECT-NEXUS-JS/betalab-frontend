@@ -32,15 +32,25 @@ async function fetchUsersPostsList(
   params: GetUsersPostsListRequestType,
 ): Promise<GetUsersPostsListResponseType> {
   const url = buildQueryParams(params);
-  const res = await instance.get(url);
-  return res.data as GetUsersPostsListResponseType;
+
+  try {
+    const res = await instance.get(url);
+    return res.data as GetUsersPostsListResponseType;
+  } catch (error: any) {
+    if (error.response?.status === 403) {
+      const res = await fetch(url);
+      const data = await res.json();
+      return data as GetUsersPostsListResponseType;
+    }
+    throw error;
+  }
 }
 
 export function useUsersPostsListQuery(
   params: GetUsersPostsListRequestType,
   options?: { enabled?: boolean },
 ) {
-  const key: QueryKey = ['usersPostsList', params];
+  const key: QueryKey = ['get-users-posts-list', params];
 
   const parsed = getUsersPostsListRequestSchema.safeParse(params);
   if (!parsed.success) {
