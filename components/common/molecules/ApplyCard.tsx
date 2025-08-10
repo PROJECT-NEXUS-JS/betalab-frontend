@@ -14,7 +14,7 @@ export interface ApplyCardProps {
   profile: {
     name: string;
     affiliation: string; // 소속
-    imageUrl: string | undefined;
+    imageUrl: string | undefined | null;
   };
   description: string;
   endDate: Date;
