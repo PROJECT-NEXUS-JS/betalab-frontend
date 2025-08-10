@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import PostCardMini from './PostCardMini';
-import { PostCardModel } from '@/types/models/postsModel';
+import { UsersPostsListItemType } from '@/hooks/posts/dto/postList';
 
 const meta: Meta<typeof PostCardMini> = {
   title: 'Category/PostCardMini',
@@ -20,8 +20,10 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 // 기본 데이터 템플릿 (미래 날짜로 설정)
-const createPostData = (overrides: Partial<PostCardModel> = {}): PostCardModel => ({
-  id: '1',
+const createPostData = (
+  overrides: Partial<UsersPostsListItemType> = {},
+): UsersPostsListItemType => ({
+  id: 1,
   title: '기본 제목',
   serviceSummary: '기본 서비스 요약입니다.',
   thumbnailUrl: 'https://picsum.photos/id/237/200/300',
@@ -33,6 +35,7 @@ const createPostData = (overrides: Partial<PostCardModel> = {}): PostCardModel =
     { code: 'MOBILE', name: '모바일' },
     { code: 'WEB', name: '웹' },
   ],
+  genreCategories: [{ code: 'ACTION', name: '액션' }],
   reward: {
     rewardType: 'CASH',
     rewardDescription: 'CASH',
@@ -91,6 +94,17 @@ export const ShortTitleNoReward: Story = {
         recruitmentDeadline: '2024-12-20',
         durationTime: '30분',
       },
+    }),
+  },
+};
+
+// 4. schedule과 reward가 없는 경우
+export const NoScheduleNoReward: Story = {
+  args: {
+    post: createPostData({
+      title: '스케줄과 리워드가 없는 서비스',
+      schedule: undefined,
+      reward: undefined,
     }),
   },
 };

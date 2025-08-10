@@ -1,10 +1,11 @@
 import BookMark from '@/components/common/svg/BookMark';
-import { PostCardModel } from '@/types/models/postsModel';
+import { UsersPostsListItemType } from '@/hooks/posts/dto/postList';
 import Tag from '@/components/common/atoms/Tag';
 import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface PostCardMiniProps {
-  post: PostCardModel;
+  post: UsersPostsListItemType;
   className?: string;
 }
 
@@ -23,7 +24,8 @@ export default function PostCardMini({ post, className }: PostCardMiniProps) {
     return diffDays;
   };
 
-  const dday = calculateDday(post.schedule.recruitmentDeadline);
+  // schedule이 없을 경우 기본값 처리
+  const dday = post.schedule ? calculateDday(post.schedule.recruitmentDeadline) : 0;
   const isTodayDeadline = dday === 0;
 
   const getRewardTagStyle = (rewardType: string): 'orange' | 'black' => {
@@ -50,9 +52,40 @@ export default function PostCardMini({ post, className }: PostCardMiniProps) {
         <div className="flex flex-row gap-1">
           {isTodayDeadline && <Tag style="purple" />}
           {!isTodayDeadline && <Tag style="gray" dday={dday} />}
-          <Tag style={getRewardTagStyle(post.reward.rewardDescription)} />
+          {post.reward && <Tag style={getRewardTagStyle(post.reward.rewardDescription)} />}
         </div>
         <BookMark className="size-6 fill-transparent text-transparent group-hover:fill-transparent group-hover:text-Gray-200 group-hover:stroke-Gray-200 group-hover:stroke-2" />
+      </div>
+    </div>
+  );
+}
+
+interface PostCardMiniSkeletonProps {
+  className?: string;
+}
+
+export function PostCardMiniSkeleton({ className }: PostCardMiniSkeletonProps) {
+  return (
+    <div
+      className={cn(
+        'relative bg-white min-w-[234px] rounded-sm px-3 py-[14.5px] flex flex-col gap-2 shadow-[0_0_10px_rgba(0,0,0,0.1)]',
+        className,
+      )}
+    >
+      <div className="relative rounded-[2px] w-full h-[146px] overflow-hidden">
+        <Skeleton className="w-full h-full" />
+      </div>
+      <div className="flex flex-col w-full max-w-[12.625rem] h-[91px] gap-2">
+        <Skeleton className="h-3 w-24" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-3 w-full" />
+        <Skeleton className="h-3 w-2/3" />
+      </div>
+      <div className="flex flex-row gap-1">
+        <Skeleton className="h-5 w-12 rounded-full" />
+        <Skeleton className="h-5 w-16 rounded-full" />
+        <Skeleton className="h-5 w-14 rounded-full" />
       </div>
     </div>
   );
