@@ -90,7 +90,9 @@ export default function TestAddPurposePage() {
       saveLabel="임시 저장"
     >
       <div className="flex flex-col gap-10">
-        <p className="text-subtitle-01 font-bold">참여자들에게서 어떤 걸 알아보면 도움이 될까요?</p>
+        <p className="text-subtitle-01 font-semibold">
+          참여자들에게서 어떤 걸 알아보면 도움이 될까요?
+        </p>
         {PURPOSE_GROUPS.map(({ title, items }, idx) => (
           <section key={title} className="flex flex-col gap-4">
             <p className="text-body-01 font-semibold">{title}</p>
