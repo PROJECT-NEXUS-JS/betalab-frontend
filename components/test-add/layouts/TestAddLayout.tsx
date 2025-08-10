@@ -57,9 +57,15 @@ export default function TestAddLayout({
           <div className="flex-1">{children}</div>
           {showSave ? (
             <div className="flex items-center justify-between mt-6">
-              <Button State="Sub" Size="xl" label={saveLabel} onClick={onSave} />
-              <div className="flex items-center gap-6">
+              <div className="flex-1">
+                <Button State="Sub" Size="xl" label={saveLabel} onClick={onSave} />
+              </div>
+
+              <div className="flex-1 flex justify-center">
                 <CarouselBar activeIndex={stepIndex} total={totalSteps} />
+              </div>
+
+              <div className="flex-1 flex justify-end">
                 <StepNextButton onClick={onNext} />
               </div>
             </div>
