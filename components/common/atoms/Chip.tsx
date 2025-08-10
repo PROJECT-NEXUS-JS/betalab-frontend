@@ -1,14 +1,18 @@
+'use client';
+
+import { useState } from 'react';
 import ArrowDown from '@/components/common/svg/ArrowDown';
 import { cn } from '@/lib/utils';
-import type { ReactNode } from 'react';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
-export interface ChipProps {
-  variant: 'default' | 'primary' | 'secondary' | 'solid' | 'sub' | 'active' | 'disabled';
-  size: 'xs' | 'sm' | 'md' | 'lg';
+export interface ChipProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onToggle'> {
+  variant?: 'default' | 'primary' | 'secondary' | 'solid' | 'sub' | 'active' | 'disabled';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   children?: ReactNode;
   value?: string;
-  onClick?: () => void;
+  defaultActive?: boolean;
   showArrowIcon?: boolean;
+  onToggleActive?: (active: boolean) => void;
 }
 
 export default function Chip({
@@ -16,10 +20,13 @@ export default function Chip({
   size = 'md',
   children,
   value,
-  onClick,
+  defaultActive = false,
   showArrowIcon = true,
+  onToggleActive,
   ...props
 }: ChipProps) {
+  const [isActive, setIsActive] = useState(defaultActive);
+
   const THEME_COLOR_CLASSNAME = {
     default: 'bg-Gray-100 text-Dark-Gray',
     primary: 'bg-Primary-500 text-White',
@@ -37,15 +44,21 @@ export default function Chip({
     lg: 'text-body-02 px-[20px] h-[44px]',
   };
 
+  const handleClick = () => {
+    const next = !isActive;
+    setIsActive(next);
+    onToggleActive?.(next);
+  };
+
   return (
     <button
       type="button"
       className={cn(
         'items-center relative justify-center group rounded-[2.5rem] flex flex-row w-fit font-semibold',
-        THEME_COLOR_CLASSNAME[variant],
+        THEME_COLOR_CLASSNAME[isActive ? 'active' : variant],
         THEME_SIZE_CLASSNAME[size],
       )}
-      onClick={onClick}
+      onClick={handleClick}
       {...props}
     >
       {children}
