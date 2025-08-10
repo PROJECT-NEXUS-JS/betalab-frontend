@@ -10,11 +10,10 @@ import { useRouter, useSearchParams } from 'next/navigation';
 type MainCategory = (typeof MAIN_CATEGORIES)[number];
 
 interface TabbarProps {
-  tabs: TabbarElementProps[];
   className?: string;
 }
 
-function TabbarContent({ tabs, className }: TabbarProps) {
+function TabbarContent({ className }: TabbarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { mainCategory, setMainCategory } = useCategoryStore();
@@ -25,33 +24,31 @@ function TabbarContent({ tabs, className }: TabbarProps) {
 
       const params = new URLSearchParams(searchParams.toString());
       params.set('category', category);
-      // mainCategory가 변경되면 genre와 platform 파라미터 삭제
       params.delete('genre');
       params.delete('platform');
-
       router.push(`/category?${params.toString()}`, { scroll: false });
     }
   };
 
   return (
     <div className={cn('flex flex-row items-center gap-10', className)}>
-      {tabs.map(tab => (
+      {MAIN_CATEGORIES.map(tab => (
         <TabbarElement
-          key={tab.children as string}
-          onClick={() => handleTabClick(tab.children as string)}
-          isActive={mainCategory === tab.children}
+          key={tab as string}
+          onClick={() => handleTabClick(tab as string)}
+          isActive={mainCategory === tab}
         >
-          {tab.children}
+          {tab}
         </TabbarElement>
       ))}
     </div>
   );
 }
 
-export default function Tabbar({ tabs, className }: TabbarProps) {
+export default function Tabbar({ className }: TabbarProps) {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <TabbarContent tabs={tabs} className={className} />
+      <TabbarContent className={className} />
     </Suspense>
   );
 }

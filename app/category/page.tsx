@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Sidebar from '@/components/category/molecules/Sidebar';
 import Tabbar from '@/components/category/molecules/Tabbar';
 import Header from '@/components/common/organisms/Header';
-import { TAB_CONFIG } from './const';
 import { useCategoryStore } from '@/stores/categoryStore';
 import { usePagination } from '@/hooks/usePagination';
 import Button from '@/components/common/atoms/Button';
@@ -44,10 +43,6 @@ function CategoryPageContent() {
     }
   }, [postsData, setTotalPages, setTotalElements]);
 
-  const tabs = TAB_CONFIG.map(tab => ({
-    ...tab,
-  }));
-
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -62,7 +57,7 @@ function CategoryPageContent() {
     return (
       <div className="flex flex-col">
         <Header isSearchbar isLogin={isLoggedIn} isAuthLoading={isAuthLoading} />
-        <Tabbar tabs={tabs} className="px-16 py-5" />
+        <Tabbar className="px-16 py-5" />
         <main className="flex pb-30 flex-row py-5 px-16 items-start justify-start gap-10">
           <Sidebar />
           <section className="flex flex-col items-center gap-10">
@@ -78,7 +73,7 @@ function CategoryPageContent() {
   return (
     <div className="flex flex-col">
       <Header isSearchbar isLogin={isLoggedIn} isAuthLoading={isAuthLoading} />
-      <Tabbar tabs={tabs} className="px-16 py-5" />
+      <Tabbar className="px-16 py-5" />
       <main className="flex pb-30 flex-row py-5 px-16 items-start justify-start gap-10">
         <Sidebar />
         <section className="flex flex-col items-center gap-10">
