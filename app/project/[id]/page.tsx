@@ -26,10 +26,14 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   const { id } = await params;
 
   return (
-    <div>
-      <h1>Project Detail Page</h1>
-      <p>id: {id}</p>
-      <ProjectDetailCardClient {...mockData} />
+    <div className="min-h-screen w-full flex justify-center">
+      <div className="flex gap-10">
+        <div className="flex flex-col">
+          <h1>Project Detail Page</h1>
+          <p>id: {id}</p>
+        </div>
+        <ProjectDetailCardClient {...mockData} />
+      </div>
     </div>
   );
 }

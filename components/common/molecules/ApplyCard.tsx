@@ -43,7 +43,7 @@ export default function ApplyCard({
   const endDay = endDate.getDate();
 
   return (
-    <div className="w-[258px] p-3 flex flex-col flex-start gap-5 bg-White rounded-sm shadow-[0_0_10px_0_rgba(26,30,39,0.08)]">
+    <div className="w-[258px] h-max p-3 flex flex-col flex-start gap-5 bg-White rounded-sm shadow-[0_0_10px_0_rgba(26,30,39,0.08)]">
       <div className="flex flex-col gap-4">
         <section className="flex flex-col gap-2">
           <h2 className="flex text-Black text-xl font-bold">{title}</h2>
