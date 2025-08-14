@@ -131,7 +131,7 @@ export default function DatePicker({
                     onChange(draft);
                     setOpen(false);
                   }}
-                  className="rounded-xl bg-Primary-500 px-4 py-2 text-caption-01 text-White hover:opacity-90 disabled:opacity-40"
+                  className="rounded-lg bg-Primary-500 px-4 py-2 text-caption-01 text-White hover:opacity-90 disabled:opacity-40"
                   disabled={!(draft?.from && draft?.to)}
                 >
                   확인
@@ -236,27 +236,41 @@ function Calendar({
           const { s, e, m } = badge(day);
 
           return (
-            <div key={day.toISOString()} className="relative h-10">
+            <div
+              key={day.toISOString()}
+              className="relative flex items-center justify-center"
+              style={{ ['--day' as any]: '40px' }}
+            >
               {m && (
-                <div className="absolute inset-y-0 left-0 right-0 rounded-none bg-Primary-100" />
+                <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[var(--day)] bg-Primary-100" />
+              )}
+              {range?.from && range?.to && s && (
+                <div className="absolute left-1/2 right-0 top-1/2 -translate-y-1/2 h-[var(--day)] bg-Primary-100" />
+              )}
+              {range?.from && range?.to && e && (
+                <div className="absolute left-0 right-1/2 top-1/2 -translate-y-1/2 h-[var(--day)] bg-Primary-100" />
               )}
               {s && (
-                <div className="absolute inset-y-0 left-0 right-1/2 rounded-l-full bg-Primary-500" />
+                <div className="absolute left-1/2 right-0 top-1/2 -translate-y-1/2 h-[var(--day)] bg-Primary-500" />
               )}
               {e && (
-                <div className="absolute inset-y-0 left-1/2 right-0 rounded-r-full bg-Primary-500" />
+                <div className="absolute left-0 right-1/2 top-1/2 -translate-y-1/2 h-[var(--day)] bg-Primary-500" />
               )}
-
               <button
                 type="button"
                 onClick={() => handleClickDay(day)}
                 disabled={disabled}
                 className={clsx(
-                  'relative z-[1] mx-auto flex size-9 items-center justify-center rounded-full text-body-02 transition',
-                  s || e ? 'text-White' : m ? 'text-Black' : out ? 'text-Gray-300' : 'text-Black',
-                  disabled ? 'opacity-30 cursor-not-allowed' : 'hover:bg-Gray-100 active:scale-95',
+                  'relative z-[1] mx-auto flex w-[var(--day)] h-[var(--day)] items-center justify-center rounded-full text-body-02 transition',
+                  s || e
+                    ? 'bg-Primary-500 text-White'
+                    : m
+                      ? 'text-Black'
+                      : out
+                        ? 'text-Gray-300'
+                        : 'text-Black',
+                  disabled ? 'opacity-30 cursor-not-allowed' : 'active:scale-95',
                 )}
-                aria-label={format(day, 'yyyy-MM-dd')}
               >
                 {format(day, 'd')}
               </button>
