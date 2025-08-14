@@ -24,10 +24,9 @@ jobs:
         id: deploy
 
         run: |
-    set -euo pipefail
-    vercel deploy --prebuilt --token="${{ secrets.VERCEL_TOKEN }}" | tee vercel-output.txt
-    URL="$(grep -Eo 'https://[a-zA-Z0-9.-]+\.vercel\.app' vercel-output.txt | tail -n 1 | tr -d '\r')"
-    echo "preview_url=$URL" >> "$GITHUB_OUTPUT"
+
+          vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} > vercel-output.txt
+          echo "preview_url=$(cat vercel-output.txt)" >> $GITHUB_OUTPUT
 
       - name: Comment PR with Preview URL
         uses: thollander/actions-comment-pull-request@v2
