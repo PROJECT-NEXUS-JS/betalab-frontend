@@ -263,7 +263,9 @@ export default function TestAddConditionsPage() {
                   <div className="flex items-center gap-3">
                     <Input
                       type="text"
-                      state={ageFrom ? 'has value' : 'no value'}
+                      state={
+                        ageMode === 'custom' ? (ageFrom ? 'has value' : 'no value') : 'disabled'
+                      }
                       size="sm"
                       placeholder="시작 연령"
                       value={ageFrom}
@@ -272,7 +274,7 @@ export default function TestAddConditionsPage() {
                     <span className="text-Gray-300">~</span>
                     <Input
                       type="text"
-                      state={ageTo ? 'has value' : 'no value'}
+                      state={ageMode === 'custom' ? (ageTo ? 'has value' : 'no value') : 'disabled'}
                       size="sm"
                       placeholder="종료 연령"
                       value={ageTo}
