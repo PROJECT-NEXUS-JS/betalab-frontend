@@ -87,7 +87,7 @@ export default function TestAddSettingPage() {
     }
   }, [form.feedbackMethod, form.durationTime, form.maxParticipants, form.startDate, form.endDate]);
 
-  const [deadline, setDeadline] = useState('');
+  const [deadlineRange, setDeadlineRange] = useState<DateRange | undefined>();
 
   const feedbackInputState: InputProps['state'] = useMemo(() => {
     if (!customFeedbackOpen) return 'no value';
@@ -144,6 +144,24 @@ export default function TestAddSettingPage() {
     } else {
       setTimeTags(prev => (prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]));
     }
+  };
+
+  const saveDeadlineToLS = (range: DateRange | undefined) => {
+    const formatted =
+      range?.from && range?.to
+        ? `${format(range.from, 'yyyy.MM.dd')} - ${format(range.to, 'yyyy.MM.dd')}`
+        : '';
+
+    const raw =
+      range?.from && range?.to
+        ? {
+            from: range.from.toISOString(),
+            to: range.to.toISOString(),
+          }
+        : null;
+
+    localStorage.setItem(`temp-deadline-${category}`, formatted);
+    localStorage.setItem(`temp-deadline-raw-${category}`, JSON.stringify(raw));
   };
 
   const handleNext = () => {
@@ -229,6 +247,7 @@ export default function TestAddSettingPage() {
             </p>
             <CheckTag>중복 선택 가능</CheckTag>
           </div>
+
           <div className="flex gap-3 flex-wrap items-center">
             {FEEDBACK_OPTIONS.map(option => (
               <Chip
@@ -250,6 +269,7 @@ export default function TestAddSettingPage() {
               직접 입력
             </Chip>
           </div>
+
           {customFeedbackOpen && (
             <div className="flex flex-col gap-2">
               <p className="text-body-01 font-semibold">직접 입력</p>
@@ -374,7 +394,7 @@ export default function TestAddSettingPage() {
                 }}
                 showArrowIcon={false}
               >
-                {option}
+                직접 입력
               </Chip>
 
               {customRecruitOpen && (
