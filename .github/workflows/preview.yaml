@@ -24,9 +24,9 @@ jobs:
         id: deploy
 
         run: |
-          vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} > deploy_result.txt
-          DEPLOY_URL=$(cat deploy_result.txt | grep -E "https://.*\.vercel\.app" | head -1 | awk '{print $NF}')
-          echo "preview_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+
+          vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} > vercel-output.txt
+          echo "preview_url=$(cat vercel-output.txt)" >> $GITHUB_OUTPUT
 
       - name: Comment PR with Preview URL
         uses: thollander/actions-comment-pull-request@v2
