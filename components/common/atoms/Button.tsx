@@ -60,7 +60,7 @@ const THEME_COLOR_CLASSNAME = {
   Solid: 'bg-White text-Dark-Gray border-[1px] border-Gray-100',
   Disabled: 'bg-Gray-100 text-Light-Gray cursor-not-allowed',
   Secondary: 'bg-Black text-White',
-  Focused: 'bg-White text-Primary-500 border-[1px] border-Primary-500 ',
+  Focused: 'bg-Primary-100 text-Primary-500 border-[1px] border-Primary-500 ',
   'Text btn': 'px-1 flex items-center justify-center text-Dark-Gray underline',
 };
 
