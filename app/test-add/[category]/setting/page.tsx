@@ -133,7 +133,7 @@ export default function TestAddPurposePage() {
     localStorage.setItem(`temp-recruit-${category}`, JSON.stringify(recruitData));
     saveDeadlineToLS(deadlineRange);
 
-    router.push(`/test-add/${category}/finish`);
+    router.push(`/test-add/${category}/condition`);
   };
 
   const handleSave = () => {
