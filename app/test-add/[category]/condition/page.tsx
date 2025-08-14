@@ -62,7 +62,7 @@ export default function TestAddConditionsPage() {
       leftImageSrc="/test2.png"
       leftImageClassName="object-cover"
       leftPanelClassName="from-White to-Gray-50"
-      stepIndex={6}
+      stepIndex={8}
       totalSteps={10}
       onNext={handleNext}
       onSave={handleSave}
