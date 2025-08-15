@@ -32,16 +32,27 @@ async function fetchUsersPostsList(
   params: GetUsersPostsListRequestType,
 ): Promise<GetUsersPostsListResponseType> {
   const url = buildQueryParams(params);
-  try {
-    const res = await instance.get(url);
-    return res.data as GetUsersPostsListResponseType;
-  } catch (error: any) {
-    if (error.response?.status === 403) {
-      const res = await fetch(url);
-      const data = await res.json();
-      return data as GetUsersPostsListResponseType;
+
+  const accessToken = localStorage.getItem('accessToken');
+
+  if (accessToken) {
+    try {
+      const res = await instance.get(url, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      return res.data as GetUsersPostsListResponseType;
+    } catch (error: any) {
+      if (error.response?.status === 403) {
+        const res = await fetch(url);
+        const data = await res.json();
+        return data as GetUsersPostsListResponseType;
+      }
+      throw error;
     }
-    throw error;
+  } else {
+    const res = await fetch(url);
+    const data = await res.json();
+    return data as GetUsersPostsListResponseType;
   }
 }
 

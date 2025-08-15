@@ -36,24 +36,10 @@ const postSummarySchema = z
     id: z.number(),
     title: z.string(),
     serviceSummary: z.string(),
-    thumbnailUrl: z.string().nullable(),
+    thumbnailUrl: z.string(),
     mainCategories: z.array(categorySchema),
     platformCategories: z.array(categorySchema),
     genreCategories: z.array(categorySchema),
-    schedule: z
-      .object({
-        startDate: z.string(),
-        endDate: z.string(),
-        recruitmentDeadline: z.string(),
-        durationTime: z.string(),
-      })
-      .optional(),
-    reward: z
-      .object({
-        rewardType: z.string(),
-        rewardDescription: z.enum(['CASH', 'GIFT_CARD', 'PRODUCT', 'NONE']),
-      })
-      .optional(),
   })
   .strict();
 
