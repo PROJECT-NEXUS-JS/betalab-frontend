@@ -209,7 +209,6 @@ export default function TestAddPurposePage() {
             </div>
           )}
         </motion.div>
-
         <AnimatePresence>
           {showTimeSection && (
             <motion.div
