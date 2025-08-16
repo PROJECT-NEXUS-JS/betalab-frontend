@@ -209,7 +209,6 @@ export default function TestAddPurposePage() {
             </div>
           )}
         </motion.div>
-
         <AnimatePresence>
           {showTimeSection && (
             <motion.div
@@ -308,6 +307,103 @@ export default function TestAddPurposePage() {
                 </button>
               </div>
 
+        <AnimatePresence>
+          {showTimeSection && (
+            <motion.div
+              ref={timeRef}
+              className="flex flex-col gap-6"
+              variants={sectionVariants}
+              initial="hidden"
+              animate="visible"
+              exit={{ opacity: 0, y: 10 }}
+              custom={1}
+              layout
+            >
+              <div className="flex items-center gap-2">
+                <p className="text-subtitle-01 font-semibold">
+                  참여자가 테스트에 얼마의 시간을 들여야 할까요?
+                </p>
+                <CheckTag>중복 선택 가능</CheckTag>
+              </div>
+
+              <div className="flex gap-3 flex-wrap items-center">
+                {TIME_OPTIONS.map(option => (
+                  <Chip
+                    key={option}
+                    variant={timeTags.includes(option) ? 'active' : 'solid'}
+                    size="sm"
+                    onClick={() => toggleTag(option, 'time')}
+                    showArrowIcon={false}
+                  >
+                    {option}
+                  </Chip>
+                ))}
+                <Chip
+                  variant={customTimeOpen ? 'active' : 'solid'}
+                  size="sm"
+                  onClick={() => setCustomTimeOpen(prev => !prev)}
+                  showArrowIcon={false}
+                >
+                  직접 입력
+                </Chip>
+              </div>
+
+              {customTimeOpen && (
+                <div className="flex flex-col gap-2">
+                  <p className="text-body-01 font-semibold">직접 입력</p>
+                  <Input
+                    type="text"
+                    size="xl"
+                    state={timeInputState}
+                    placeholder="예: 평일 매일 30분, 총 3일 등"
+                    value={customTimeValue}
+                    onChange={e => setCustomTimeValue(e.currentTarget.value)}
+                  />
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {showRecruitSection && (
+            <motion.div
+              ref={recruitRef}
+              className="flex flex-col gap-6"
+              variants={sectionVariants}
+              initial="hidden"
+              animate="visible"
+              exit={{ opacity: 0, y: 10 }}
+              custom={2}
+              layout
+            >
+              <p className="text-subtitle-01 font-semibold">몇 명의 참여자를 모집할까요?</p>
+
+              <div className="flex items-center gap-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRecruitTouched(true);
+                    setRecruitCount(prev => Math.max(prev - 1, 1));
+                  }}
+                  className="w-10 h-10 border rounded"
+                >
+                  -
+                </button>
+                <div className="w-20 text-center bg-Gray-50 py-2 rounded font-semibold">
+                  {recruitCount}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRecruitTouched(true);
+                    setRecruitCount(prev => prev + 1);
+                  }}
+                  className="w-10 h-10 border rounded"
+                >
+                  +
+                </button>
+              </div>
               <Chip
                 variant={customRecruitOpen ? 'active' : 'solid'}
                 size="sm"
