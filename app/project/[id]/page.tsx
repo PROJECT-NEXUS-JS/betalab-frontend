@@ -1,5 +1,6 @@
 import ProjectDetailCardClient from './ProjectDetailCardClient';
 import CustomImage from '@/components/common/atoms/CustomImage';
+import RemindCard from '@/components/common/atoms/RemindCard';
 import { mockProjectData, applyCardData } from './data';
 
 
@@ -8,7 +9,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   return (
     <div className="min-h-screen w-full flex justify-center">
       <div className="flex gap-10">
-        <div className="flex-1 w-full flex-col space-y-4">
+        <div className="flex-1 w-full flex-col space-y-10">
           <section className='flex flex-col gap-4'>
             <CustomImage
               src= {mockProjectData.thumbnailUrl}
@@ -31,7 +32,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               className="object-cover"
             />
           </section>
+          <RemindCard />
         </div>
+        
 
         <ProjectDetailCardClient {...applyCardData}/>
       </div>
