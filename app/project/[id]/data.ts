@@ -149,6 +149,19 @@ export const mockReviewData: ReviewResponse[] = [
       profileUrl: 'https://example.com/user3',
     },
   },
+  {
+    id: 4,
+    postId: 1,
+    rating: 2,
+    content: '아쉬운 점이 많았습니다.',
+    createdAt: new Date('2025-07-04T12:00:00Z'),
+    updatedAt: new Date('2025-07-04T12:00:00Z'),
+    writer: {
+      id: 1004,
+      nickname: '사용자4',
+      profileUrl: 'https://example.com/user4',
+    },
+  }
 ]
 
 export const reviewCardData: ReviewCardProps[] = mockReviewData.map(review => ({
