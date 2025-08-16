@@ -7,18 +7,21 @@ import Chip from '@/components/common/atoms/Chip';
 import ReviewCard from '@/components/common/molecules/ReviewCard';
 import ProjectDetailCardClient from './ProjectDetailCardClient';
 import Button from '@/components/common/atoms/Button';
+import PostCard from '@/components/category/molecules/PostCard';
 
 import { ProjectDataModel } from '@/hooks/posts/dto/postDetail';
 import { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
 import { ReviewCardProps } from '@/components/common/molecules/ReviewCard';
+import { SimilarPost } from "@/hooks/posts/dto/similarPost";
 
 interface ProjectDetailClientProps {
   projectData: ProjectDataModel;
   applyCardData: Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'>;
   reviewCardData: ReviewCardProps[];
-} 
+  similarPostData: SimilarPost[];
+}
 
-export default function ProjectDetailClient({ projectData, applyCardData, reviewCardData }: ProjectDetailClientProps) {
+export default function ProjectDetailClient({ projectData, applyCardData, reviewCardData, similarPostData }: ProjectDetailClientProps) {
   const [projectIntroduceFold, setProjectIntroduceFold] = useState(true);
   const [reviewFold, setReviewFold] = useState(true);
 
@@ -61,7 +64,7 @@ export default function ProjectDetailClient({ projectData, applyCardData, review
             <Button 
               State='Solid'
               Size='lg'
-              label={projectIntroduceFold ? '펼쳐보기' : '접기'}
+              label={projectIntroduceFold ? '프로젝트 소개 더보기' : '프로젝트 소개 접기'}
               onClick={() => setProjectIntroduceFold(prev => !prev)}
             />
           </section>
@@ -79,11 +82,23 @@ export default function ProjectDetailClient({ projectData, applyCardData, review
               <Button 
                 State='Solid'
                 Size='lg'
-                label={reviewFold ? '모든 리뷰 보기' : '리뷰 접기'}
+                label={reviewFold ? '리뷰 더보기' : '리뷰 접기'}
                 onClick={() => setReviewFold(prev => !prev)}
                 className='w-full'
               />
             )}
+          </section>
+          {/* 유사 프로젝트 */}
+          <section className='flex flex-col gap-5'>
+            <h3 className='text-xl text-Black font-bold'>유사 프로젝트</h3>
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
+              {similarPostData.map((post) => (
+                <PostCard
+                  key={post.id}
+                  post={post}
+                />
+              ))}
+            </div>
           </section>
         </div>
         <ProjectDetailCardClient {...applyCardData} />

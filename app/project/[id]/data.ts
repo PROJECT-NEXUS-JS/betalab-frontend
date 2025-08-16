@@ -1,9 +1,10 @@
-import { ConditionProps } from "@/components/common/atoms/Condition";
+import { ConditionProps } from '@/components/common/atoms/Condition';
 import { ProjectDataModel } from '@/hooks/posts/dto/postDetail';
 import { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
 import { BaseModel } from '@/types/models/base-model';
 import { ReviewResponse } from '@/hooks/review/dto';
 import { ReviewCardProps } from '@/components/common/molecules/ReviewCard';
+import { SimilarPost } from '@/hooks/posts/dto/similarPost';
 
 export const mockProjectData: ProjectDataModel = {
   id: 1,
@@ -20,9 +21,7 @@ export const mockProjectData: ProjectDataModel = {
     { code: 'PLT001', name: '웹' },
     { code: 'PLT002', name: '모바일' },
   ],
-  genreCategories: [
-    { code: 'GEN001', name: '연구' },
-  ],
+  genreCategories: [{ code: 'GEN001', name: '연구' }],
   status: 'ACTIVE',
   qnaMethod: '카카오톡 오픈채팅',
   likeCount: 123,
@@ -59,7 +58,7 @@ export const mockProjectData: ProjectDataModel = {
   createdBy: 1001,
   isLiked: true,
   isParticipated: false,
-}
+};
 
 const conditions: ConditionProps[] = [
   {
@@ -161,13 +160,13 @@ export const mockReviewData: ReviewResponse[] = [
       nickname: '사용자4',
       profileUrl: 'https://example.com/user4',
     },
-  }
-]
+  },
+];
 
 export const reviewCardData: ReviewCardProps[] = mockReviewData.map(review => ({
   id: review.id,
   content: review.content,
-  author: { 
+  author: {
     name: review.writer.nickname,
     imageUrl: review.writer.profileUrl,
   },
@@ -175,3 +174,37 @@ export const reviewCardData: ReviewCardProps[] = mockReviewData.map(review => ({
   date: review.createdAt,
   state: 'default',
 }));
+
+export const similarPostData: SimilarPost[] = [
+  {
+    id: 2,
+    thumbnailUrl:
+      'https://betalab-storage-250725.s3.ap-northeast-2.amazonaws.com/243a6be9-c704-494a-99db-fd73509f15b4.png',
+    categories: 'WEB · AI_AUTOMATION, MARKETING_PROMOTION',
+    title: '웹 프로젝트 베타테스터 모집',
+    oneLineIntro: 'AI 기반 마케팅 자동화 툴',
+    rewardProvided: true,
+    durationType: '단기 테스트',
+  },
+
+  {
+    id: 4,
+    thumbnailUrl:
+      'https://betalab-storage-250725.s3.ap-northeast-2.amazonaws.com/828c9a2f-1d81-4971-afd5-c221702a76a0.png',
+    categories: 'WEB · AI_AUTOMATION, COMMERCE_SHOPPING_WEB',
+    title: 'AI 쇼핑 추천 서비스 베타테스터',
+    oneLineIntro: '개인 맞춤형 AI 쇼핑 큐레이션 플랫폼',
+    rewardProvided: true,
+    durationType: '단기 테스트',
+  },
+  {
+    id: 7,
+    thumbnailUrl:
+      'https://betalab-storage-250725.s3.ap-northeast-2.amazonaws.com/8049e1c7-21b3-49f1-8111-a68df9ca8f5c.png',
+    categories: 'WEB · BUSINESS, PRODUCTIVITY_COLLABORATION',
+    title: '팀 협업 도구 베타테스터 모집',
+    oneLineIntro: '실시간 협업과 프로젝트 관리를 위한 올인원 플랫폼',
+    rewardProvided: true,
+    durationType: '중기 테스트',
+  },
+];
