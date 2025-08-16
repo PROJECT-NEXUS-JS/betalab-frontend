@@ -1,3 +1,4 @@
+'use client'
 import Image from 'next/image';
 import UserProfile from '../svg/UserProfile';
 import Button from '../atoms/Button';
@@ -13,6 +14,8 @@ export interface ReviewCardProps {
   rating: number;
   date: Date;
   state: 'default' | 'stroke';
+  showReplyButton?: boolean;
+  replyOnClick?: () => void;
 }
 
 export default function ReviewCard({
@@ -21,6 +24,8 @@ export default function ReviewCard({
   rating,
   date,
   state = 'default',
+  showReplyButton = false,
+  replyOnClick = () => {}
 }: ReviewCardProps) {
   const totalStars = 5;
   const fullStars = Math.floor(rating);
@@ -70,7 +75,7 @@ export default function ReviewCard({
             </div>
             <h4 className="flex text-xs font-bold text-Light-Gray">{author.name}</h4>
           </div>
-          <Button State="Sub" Size="lg" onClick={() => {}} label="답변하기" />
+          {showReplyButton && <Button State="Sub" Size="lg" onClick={replyOnClick} label="답변하기" />}
         </section>
         <section>
           <p className="text-sm text-Dark-Gray">{content}</p>

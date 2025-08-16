@@ -1,6 +1,9 @@
 import { ConditionProps } from "@/components/common/atoms/Condition";
 import { ProjectDataModel } from '@/hooks/posts/dto/postDetail';
 import { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
+import { BaseModel } from '@/types/models/base-model';
+import { ReviewResponse } from '@/hooks/review/dto';
+import { ReviewCardProps } from '@/components/common/molecules/ReviewCard';
 
 export const mockProjectData: ProjectDataModel = {
   id: 1,
@@ -105,3 +108,57 @@ export const applyCardData: Omit<ApplyCardProps, 'scrapClicked' | 'registerClick
   attendees: mockProjectData.currentParticipants,
   scraped: mockProjectData.isLiked,
 };
+
+export const mockReviewData: ReviewResponse[] = [
+  {
+    id: 1,
+    postId: 1,
+    rating: 5,
+    content: '훌륭한 프로젝트입니다!',
+    createdAt: new Date('2025-07-01T12:00:00Z'),
+    updatedAt: new Date('2025-07-01T12:00:00Z'),
+    writer: {
+      id: 1001,
+      nickname: '사용자1',
+      profileUrl: 'https://example.com/user1',
+    },
+  },
+  {
+    id: 2,
+    postId: 1,
+    rating: 4,
+    content: '좋은 아이디어지만, 개선이 필요합니다.',
+    createdAt: new Date('2025-07-02T12:00:00Z'),
+    updatedAt: new Date('2025-07-02T12:00:00Z'),
+    writer: {
+      id: 1002,
+      nickname: '사용자2',
+      profileUrl: 'https://example.com/user2',
+    },
+  },
+  {
+    id: 3,
+    postId: 1,
+    rating: 3,
+    content: '보통입니다.',
+    createdAt: new Date('2025-07-03T12:00:00Z'),
+    updatedAt: new Date('2025-07-03T12:00:00Z'),
+    writer: {
+      id: 1003,
+      nickname: '사용자3',
+      profileUrl: 'https://example.com/user3',
+    },
+  },
+]
+
+export const reviewCardData: ReviewCardProps[] = mockReviewData.map(review => ({
+  id: review.id,
+  content: review.content,
+  author: { 
+    name: review.writer.nickname,
+    imageUrl: review.writer.profileUrl,
+  },
+  rating: review.rating,
+  date: review.createdAt,
+  state: 'default',
+}));
