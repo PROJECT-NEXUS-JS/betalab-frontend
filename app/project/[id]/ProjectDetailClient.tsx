@@ -15,15 +15,19 @@ import { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
 import { ReviewCardProps } from '@/components/common/molecules/ReviewCard';
 import { SimilarPost } from '@/hooks/posts/dto/similarPost';
 
+import { useGetPostDetailQuery } from '@/hooks/posts/query/usePostDetailQuery';
+
 interface ProjectDetailClientProps {
-  projectData: ProjectDataModel;
+  // projectData: ProjectDataModel;
+  id: number;
   applyCardData: Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'>;
   reviewCardData: ReviewCardProps[];
   similarPostData: SimilarPost[];
 }
 
 export default function ProjectDetailClient({
-  projectData,
+  // projectData,
+  id,
   applyCardData,
   reviewCardData,
   similarPostData,
@@ -41,6 +45,14 @@ export default function ProjectDetailClient({
       ref.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  const { data: postDetailData, isLoading, isError } = useGetPostDetailQuery(Number(id));
+
+  if (isLoading) return <div>로딩 중...</div>;
+  if (isError) return <div>에러 발생</div>;
+
+  const projectData = postDetailData?.data;
+  if (!projectData) return <div>데이터 없음</div>;
 
   return (
     <div className="min-h-screen w-full flex justify-center mb-30 mt-6">

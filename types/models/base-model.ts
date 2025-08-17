@@ -5,7 +5,7 @@ export const BaseModelSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
     success: z.boolean(),
     code: z.string(),
     message: z.string(),
-    data: dataSchema.optional(),
+    data: dataSchema,
   });
 
 export type BaseModel<T extends z.ZodTypeAny> = z.infer<ReturnType<typeof BaseModelSchema<T>>>;
