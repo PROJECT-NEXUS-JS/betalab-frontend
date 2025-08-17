@@ -207,4 +207,14 @@ export const similarPostData: SimilarPost[] = [
     rewardProvided: true,
     durationType: '중기 테스트',
   },
+  {
+    id: 99999,
+    thumbnailUrl:
+      'https://betalab-storage-250725.s3.ap-northeast-2.amazonaws.com/828c9a2f-1d81-4971-afd5-c221702a76a0.png',
+    categories: 'WEB · AI_AUTOMATION, MARKETING_PROMOTION',
+    title: 'AI 기반 마케팅 자동화 툴 베타테스터 모집',
+    oneLineIntro: '효율적인 마케팅 캠페인을 위한 AI 도구',
+    rewardProvided: true,
+    durationType: '단기 테스트',
+  },
 ];

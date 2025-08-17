@@ -7,12 +7,12 @@ import Chip from '@/components/common/atoms/Chip';
 import ReviewCard from '@/components/common/molecules/ReviewCard';
 import ProjectDetailCardClient from './ProjectDetailCardClient';
 import Button from '@/components/common/atoms/Button';
-import PostCard from '@/components/category/molecules/PostCard';
+import SimilarPostCard from '@/components/project/SimilarPostCard';
 
 import { ProjectDataModel } from '@/hooks/posts/dto/postDetail';
 import { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
 import { ReviewCardProps } from '@/components/common/molecules/ReviewCard';
-import { SimilarPost } from "@/hooks/posts/dto/similarPost";
+import { SimilarPost } from '@/hooks/posts/dto/similarPost';
 
 interface ProjectDetailClientProps {
   projectData: ProjectDataModel;
@@ -21,7 +21,12 @@ interface ProjectDetailClientProps {
   similarPostData: SimilarPost[];
 }
 
-export default function ProjectDetailClient({ projectData, applyCardData, reviewCardData, similarPostData }: ProjectDetailClientProps) {
+export default function ProjectDetailClient({
+  projectData,
+  applyCardData,
+  reviewCardData,
+  similarPostData,
+}: ProjectDetailClientProps) {
   const [projectIntroduceFold, setProjectIntroduceFold] = useState(true);
   const [reviewFold, setReviewFold] = useState(true);
 
@@ -32,7 +37,7 @@ export default function ProjectDetailClient({ projectData, applyCardData, review
       <div className="flex gap-10">
         <div className="flex-1 w-full flex-col space-y-10">
           {/* 프로젝트 간단 정보 */}
-          <section className='flex flex-col gap-4'>
+          <section className="flex flex-col gap-4">
             <CustomImage
               src={projectData.thumbnailUrl}
               alt={projectData.description || 'default description'}
@@ -41,12 +46,12 @@ export default function ProjectDetailClient({ projectData, applyCardData, review
               state="default"
               className="object-cover"
             />
-            <p className='text-base text-Dark-Gray font-bold'>{projectData.description}</p>
+            <p className="text-base text-Dark-Gray font-bold">{projectData.description}</p>
           </section>
           {/* 프로젝트 상세 정보 */}
-          <section className='flex flex-col gap-5'>
-            <h3 className='text-xl text-Black font-bold'>프로젝트 소개</h3>
-            <div 
+          <section className="flex flex-col gap-5">
+            <h3 className="text-xl text-Black font-bold">프로젝트 소개</h3>
+            <div
               className={`relative overflow-hidden ${projectIntroduceFold ? 'max-h-[630px]' : ''}`}
             >
               <CustomImage
@@ -61,42 +66,41 @@ export default function ProjectDetailClient({ projectData, applyCardData, review
                 <div className="absolute bottom-0 w-full h-[150px] bg-gradient-to-t from-white to-transparent"></div>
               )}
             </div>
-            <Button 
-              State='Solid'
-              Size='lg'
+            <Button
+              State="Solid"
+              Size="lg"
               label={projectIntroduceFold ? '프로젝트 소개 더보기' : '프로젝트 소개 접기'}
               onClick={() => setProjectIntroduceFold(prev => !prev)}
             />
           </section>
           <RemindCard />
           {/* 프로젝트 리뷰 */}
-          <section className='flex flex-col items-start gap-5 self-stretch'>
-            <div className='flex justify-between items-start self-stretch'>
-              <h3 className='text-Black text-xl font-bold'>테스터들의 리뷰에요</h3>
-              <Chip variant='default' size='sm'>최신순</Chip>
+          <section className="flex flex-col items-start gap-5 self-stretch">
+            <div className="flex justify-between items-start self-stretch">
+              <h3 className="text-Black text-xl font-bold">테스터들의 리뷰에요</h3>
+              <Chip variant="default" size="sm">
+                최신순
+              </Chip>
             </div>
             {displayReviews.map((review, idx) => (
               <ReviewCard key={idx} {...review} />
             ))}
             {reviewCardData.length > 3 && (
-              <Button 
-                State='Solid'
-                Size='lg'
+              <Button
+                State="Solid"
+                Size="lg"
                 label={reviewFold ? '리뷰 더보기' : '리뷰 접기'}
                 onClick={() => setReviewFold(prev => !prev)}
-                className='w-full'
+                className="w-full"
               />
             )}
           </section>
           {/* 유사 프로젝트 */}
-          <section className='flex flex-col gap-5'>
-            <h3 className='text-xl text-Black font-bold'>유사 프로젝트</h3>
-            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
-              {similarPostData.map((post) => (
-                <PostCard
-                  key={post.id}
-                  post={post}
-                />
+          <section className="flex flex-col gap-4">
+            <h3 className="text-xl text-Black font-bold">비슷한 테스트는 어때요 ?</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+              {similarPostData.map(post => (
+                <SimilarPostCard key={post.id} post={post} />
               ))}
             </div>
           </section>
