@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 
-type ImageButtonProps = {
+export type ImageButtonProps = {
   current: number;
   total: number;
   onUpload?: (files: FileList | null) => void;
