@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import CircleX from '@/public/icons/input-icon/circle-x.svg';
 
@@ -30,9 +31,38 @@ export default function Input({
   value = '',
   onChange = () => {},
 }: InputProps) {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const baseClasses = `p-4 text-sm border rounded-[2px] focus:outline-none transition-colors ${THEME_COLOR_CLASSNAME[state]} ${THEME_SIZE_CLASSNAME[size]}`;
 
-  return type === 'text' ? (
+  const autoResize = () => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = '0px';
+    el.style.height = `${el.scrollHeight}px`;
+  };
+
+  useEffect(() => {
+    if (type === 'text area') autoResize();
+  }, [type, value]);
+
+  if (type === 'text area') {
+    return (
+      <textarea
+        ref={textareaRef}
+        className={`${baseClasses} resize-none overflow-hidden`}
+        placeholder={placeholder}
+        value={value}
+        onChange={e => {
+          onChange(e);
+          autoResize();
+        }}
+        onInput={autoResize}
+        disabled={state === 'disabled'}
+        rows={1}
+      />
+    );
+  }
+  return (
     <div className={`${baseClasses} flex justify-between items-center`}>
       <input
         type="text"
@@ -46,15 +76,6 @@ export default function Input({
         <Image src={CircleX} alt="Clear input" />
       </button>
     </div>
-  ) : (
-    <textarea
-      className={`${baseClasses} resize-none`}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-      disabled={state === 'disabled'}
-      rows={4}
-    />
   );
 }
 
