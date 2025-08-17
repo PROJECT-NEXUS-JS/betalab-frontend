@@ -1,6 +1,5 @@
 'use client';
 
-import Header from '@/components/common/organisms/Header';
 import { useAuth } from '@/hooks/useAuth';
 import HomeHeader from '@/components/home/organisms/HomeHeader';
 import HomeSection from '@/components/home/organisms/HomeSection';
@@ -54,8 +53,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="w-full flex flex-col">
-      <Header isLogin={isLoggedIn} isAuthLoading={isAuthLoading} />
+    <div className="w-full flex flex-col mt-10">
       <HomeHeader className="cursor-pointer" />
       <main className="px-14 flex flex-col gap-10 mb-30">
         <HomeSection>

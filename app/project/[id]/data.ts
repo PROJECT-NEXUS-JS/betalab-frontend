@@ -1,6 +1,10 @@
-import { ConditionProps } from "@/components/common/atoms/Condition";
+import { ConditionProps } from '@/components/common/atoms/Condition';
 import { ProjectDataModel } from '@/hooks/posts/dto/postDetail';
 import { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
+import { BaseModel } from '@/types/models/base-model';
+import { ReviewResponse } from '@/hooks/review/dto';
+import { ReviewCardProps } from '@/components/common/molecules/ReviewCard';
+import { SimilarPost } from '@/hooks/posts/dto/similarPost';
 
 export const mockProjectData: ProjectDataModel = {
   id: 1,
@@ -17,9 +21,7 @@ export const mockProjectData: ProjectDataModel = {
     { code: 'PLT001', name: '웹' },
     { code: 'PLT002', name: '모바일' },
   ],
-  genreCategories: [
-    { code: 'GEN001', name: '연구' },
-  ],
+  genreCategories: [{ code: 'GEN001', name: '연구' }],
   status: 'ACTIVE',
   qnaMethod: '카카오톡 오픈채팅',
   likeCount: 123,
@@ -56,7 +58,7 @@ export const mockProjectData: ProjectDataModel = {
   createdBy: 1001,
   isLiked: true,
   isParticipated: false,
-}
+};
 
 const conditions: ConditionProps[] = [
   {
@@ -105,3 +107,114 @@ export const applyCardData: Omit<ApplyCardProps, 'scrapClicked' | 'registerClick
   attendees: mockProjectData.currentParticipants,
   scraped: mockProjectData.isLiked,
 };
+
+export const mockReviewData: ReviewResponse[] = [
+  {
+    id: 1,
+    postId: 1,
+    rating: 5,
+    content: '훌륭한 프로젝트입니다!',
+    createdAt: new Date('2025-07-01T12:00:00Z'),
+    updatedAt: new Date('2025-07-01T12:00:00Z'),
+    writer: {
+      id: 1001,
+      nickname: '사용자1',
+      profileUrl: 'https://example.com/user1',
+    },
+  },
+  {
+    id: 2,
+    postId: 1,
+    rating: 4,
+    content: '좋은 아이디어지만, 개선이 필요합니다.',
+    createdAt: new Date('2025-07-02T12:00:00Z'),
+    updatedAt: new Date('2025-07-02T12:00:00Z'),
+    writer: {
+      id: 1002,
+      nickname: '사용자2',
+      profileUrl: 'https://example.com/user2',
+    },
+  },
+  {
+    id: 3,
+    postId: 1,
+    rating: 3,
+    content: '보통입니다.',
+    createdAt: new Date('2025-07-03T12:00:00Z'),
+    updatedAt: new Date('2025-07-03T12:00:00Z'),
+    writer: {
+      id: 1003,
+      nickname: '사용자3',
+      profileUrl: 'https://example.com/user3',
+    },
+  },
+  {
+    id: 4,
+    postId: 1,
+    rating: 2,
+    content: '아쉬운 점이 많았습니다.',
+    createdAt: new Date('2025-07-04T12:00:00Z'),
+    updatedAt: new Date('2025-07-04T12:00:00Z'),
+    writer: {
+      id: 1004,
+      nickname: '사용자4',
+      profileUrl: 'https://example.com/user4',
+    },
+  },
+];
+
+export const reviewCardData: ReviewCardProps[] = mockReviewData.map(review => ({
+  id: review.id,
+  content: review.content,
+  author: {
+    name: review.writer.nickname,
+    imageUrl: review.writer.profileUrl,
+  },
+  rating: review.rating,
+  date: review.createdAt,
+  state: 'default',
+}));
+
+export const similarPostData: SimilarPost[] = [
+  {
+    id: 2,
+    thumbnailUrl:
+      'https://betalab-storage-250725.s3.ap-northeast-2.amazonaws.com/243a6be9-c704-494a-99db-fd73509f15b4.png',
+    categories: 'WEB · AI_AUTOMATION, MARKETING_PROMOTION',
+    title: '웹 프로젝트 베타테스터 모집',
+    oneLineIntro: 'AI 기반 마케팅 자동화 툴',
+    rewardProvided: true,
+    durationType: '단기 테스트',
+  },
+
+  {
+    id: 4,
+    thumbnailUrl:
+      'https://betalab-storage-250725.s3.ap-northeast-2.amazonaws.com/828c9a2f-1d81-4971-afd5-c221702a76a0.png',
+    categories: 'WEB · AI_AUTOMATION, COMMERCE_SHOPPING_WEB',
+    title: 'AI 쇼핑 추천 서비스 베타테스터',
+    oneLineIntro: '개인 맞춤형 AI 쇼핑 큐레이션 플랫폼',
+    rewardProvided: true,
+    durationType: '단기 테스트',
+  },
+  {
+    id: 7,
+    thumbnailUrl:
+      'https://betalab-storage-250725.s3.ap-northeast-2.amazonaws.com/8049e1c7-21b3-49f1-8111-a68df9ca8f5c.png',
+    categories: 'WEB · BUSINESS, PRODUCTIVITY_COLLABORATION',
+    title: '팀 협업 도구 베타테스터 모집',
+    oneLineIntro: '실시간 협업과 프로젝트 관리를 위한 올인원 플랫폼',
+    rewardProvided: true,
+    durationType: '중기 테스트',
+  },
+  {
+    id: 99999,
+    thumbnailUrl:
+      'https://betalab-storage-250725.s3.ap-northeast-2.amazonaws.com/828c9a2f-1d81-4971-afd5-c221702a76a0.png',
+    categories: 'WEB · AI_AUTOMATION, MARKETING_PROMOTION',
+    title: 'AI 기반 마케팅 자동화 툴 베타테스터 모집',
+    oneLineIntro: '효율적인 마케팅 캠페인을 위한 AI 도구',
+    rewardProvided: true,
+    durationType: '단기 테스트',
+  },
+];

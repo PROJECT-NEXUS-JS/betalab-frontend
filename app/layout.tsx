@@ -1,7 +1,9 @@
+
 import type { Metadata } from 'next';
 import '@/styles/globals.css';
 import '@/styles/tailwind.css';
 import ReactQueryProvider from './ReactQueryProvider';
+import HeaderClientWrapper from '@/components/common/organisms/HeaderClientWrapper';
 
 export const metadata: Metadata = {
   title: 'Betalab',
@@ -18,7 +20,10 @@ export default function RootLayout({
       <body className="antialiased bg-White">
         <div className="w-full bg-gradient-to-b from-white">
           <div className="min-w-[1280px] mx-auto">
-            <ReactQueryProvider>{children}</ReactQueryProvider>
+            <ReactQueryProvider>
+              <HeaderClientWrapper />
+              <main>{children}</main>
+            </ReactQueryProvider>
           </div>
         </div>
       </body>
