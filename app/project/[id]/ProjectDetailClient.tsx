@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 import CustomImage from '@/components/common/atoms/CustomImage';
 import RemindCard from '@/components/common/atoms/RemindCard';
@@ -8,6 +8,7 @@ import ReviewCard from '@/components/common/molecules/ReviewCard';
 import ProjectDetailCardClient from './ProjectDetailCardClient';
 import Button from '@/components/common/atoms/Button';
 import SimilarPostCard from '@/components/project/SimilarPostCard';
+import CategoryBar from '@/components/common/atoms/CategoryBar';
 
 import { ProjectDataModel } from '@/hooks/posts/dto/postDetail';
 import { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
@@ -30,7 +31,16 @@ export default function ProjectDetailClient({
   const [projectIntroduceFold, setProjectIntroduceFold] = useState(true);
   const [reviewFold, setReviewFold] = useState(true);
 
+  const projectIntroduceRef = useRef<HTMLDivElement>(null);
+  const reviewRef = useRef<HTMLDivElement>(null);
+
   const displayReviews = reviewFold ? reviewCardData.slice(0, 3) : reviewCardData;
+
+  const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
+    if (ref.current) {
+      ref.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <div className="min-h-screen w-full flex justify-center mb-30 mt-6">
@@ -50,7 +60,21 @@ export default function ProjectDetailClient({
           </section>
           {/* 프로젝트 상세 정보 */}
           <section className="flex flex-col gap-5">
-            <h3 className="text-xl text-Black font-bold">프로젝트 소개</h3>
+            <div className="flex gap-2">
+              <CategoryBar
+                state="active"
+                size="md"
+                onClick={() => scrollToSection(projectIntroduceRef)}
+              >
+                프로젝트 소개
+              </CategoryBar>
+              <CategoryBar state="deactive" size="md" onClick={() => scrollToSection(reviewRef)}>
+                리뷰 보기
+              </CategoryBar>
+            </div>
+            <h3 className="text-xl text-Black font-bold" ref={projectIntroduceRef}>
+              프로젝트 소개
+            </h3>
             <div
               className={`relative overflow-hidden ${projectIntroduceFold ? 'max-h-[630px]' : ''}`}
             >
@@ -77,7 +101,9 @@ export default function ProjectDetailClient({
           {/* 프로젝트 리뷰 */}
           <section className="flex flex-col items-start gap-5 self-stretch">
             <div className="flex justify-between items-start self-stretch">
-              <h3 className="text-Black text-xl font-bold">테스터들의 리뷰에요</h3>
+              <h3 className="text-Black text-xl font-bold" ref={reviewRef}>
+                테스터들의 리뷰에요
+              </h3>
               <Chip variant="default" size="sm">
                 최신순
               </Chip>
