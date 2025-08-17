@@ -20,7 +20,12 @@ export default function Header({
   isAuthLoading = false,
 }: HeaderProps) {
   return (
-    <nav className={cn('w-full flex flex-row items-center px-16 py-4 justify-between', className)}>
+    <nav
+      className={cn(
+        'w-full flex flex-row items-center px-16 py-4 justify-between bg-White shadow-[0_0_10px_0_rgba(26,30,39,0.15)]',
+        className,
+      )}
+    >
       <div className="flex h-11 flex-row items-center gap-4">
         <BetalabTextLogo />
         {isSearchbar && <Searchbar />}

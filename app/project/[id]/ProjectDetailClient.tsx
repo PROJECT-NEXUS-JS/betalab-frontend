@@ -33,7 +33,7 @@ export default function ProjectDetailClient({
   const displayReviews = reviewFold ? reviewCardData.slice(0, 3) : reviewCardData;
 
   return (
-    <div className="min-h-screen w-full flex justify-center mb-30">
+    <div className="min-h-screen w-full flex justify-center mb-30 mt-6">
       <div className="flex gap-10">
         <div className="flex-1 w-full flex-col space-y-10">
           {/* 프로젝트 간단 정보 */}

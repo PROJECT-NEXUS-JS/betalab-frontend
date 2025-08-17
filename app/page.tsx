@@ -53,8 +53,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="w-full flex flex-col">
-      
+    <div className="w-full flex flex-col mt-10">
       <HomeHeader className="cursor-pointer" />
       <main className="px-14 flex flex-col gap-10 mb-30">
         <HomeSection>
