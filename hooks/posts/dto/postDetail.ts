@@ -1,5 +1,4 @@
-import { z } from "zod";
-import { BaseModelSchema } from '@/types/models/base-model';
+import { z } from 'zod';
 
 // Category
 const CategorySchema = z.object({
@@ -29,7 +28,7 @@ type RequirementModel = z.infer<typeof RequirementSchema>;
 
 // Reward
 const RewardSchema = z.object({
-  rewardType: z.enum(["CASH", "GIFT_CARD", "PRODUCT", "NONE"]), // "CASH" 혹은 string
+  rewardType: z.enum(['CASH', 'GIFT_CARD', 'PRODUCT', 'NONE']), // "CASH" 혹은 string
   rewardDescription: z.string(),
 });
 type RewardModel = z.infer<typeof RewardSchema>;
@@ -38,7 +37,7 @@ type RewardModel = z.infer<typeof RewardSchema>;
 const FeedbackSchema = z.object({
   feedbackMethod: z.string(),
   feedbackItems: z.array(z.string()),
-  privacyItems: z.array(z.enum(["NAME", "EMAIL", "CONTACT", "OTHER"])),
+  privacyItems: z.array(z.enum(['NAME', 'EMAIL', 'CONTACT', 'OTHER'])),
 });
 type FeedbackModel = z.infer<typeof FeedbackSchema>;
 
@@ -61,14 +60,7 @@ export const ProjectDataSchema = z.object({
   mainCategories: z.array(CategorySchema),
   platformCategories: z.array(CategorySchema),
   genreCategories: z.array(CategorySchema),
-  status: z.enum([
-    "DRAFT",
-    "ACTIVE",
-    "INACTIVE",
-    "COMPLETED",
-    "CANCELLED",
-    "EXPIRED",
-  ]),
+  status: z.enum(['DRAFT', 'ACTIVE', 'INACTIVE', 'COMPLETED', 'CANCELLED', 'EXPIRED']),
   qnaMethod: z.string(),
   likeCount: z.number(),
   viewCount: z.number(),
@@ -82,14 +74,6 @@ export const ProjectDataSchema = z.object({
   createdBy: z.number(),
   isLiked: z.boolean(),
   isParticipated: z.boolean(),
-})
+});
 
 export type ProjectDataModel = z.infer<typeof ProjectDataSchema>;
-
-export const ProjectDetailResponseSchema = BaseModelSchema(
-  z.object({
-    data: ProjectDataSchema,
-  })
-);
-
-export type ProjectDetailResponseModel = z.infer<typeof ProjectDetailResponseSchema>;
