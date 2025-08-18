@@ -96,8 +96,8 @@ const conditions: ConditionProps[] = [
 export const applyCardData: Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'> = {
   title: mockProjectData.title, // '더미 프로젝트 제목'
   profile: {
-    name: '창작자 이름 예시', // mockProjectData.creatorIntroduction에서 따로 빼거나, 별도로 지정 필요
-    affiliation: '소속 예시', // 이 정보가 없으면 빈 문자열 또는 추가 데이터 필요
+    name: '창작자 이름 예시',
+    affiliation: '소속 예시',
     imageUrl: mockProjectData.thumbnailUrl, // 대표 이미지 URL
   },
   description: mockProjectData.description,
