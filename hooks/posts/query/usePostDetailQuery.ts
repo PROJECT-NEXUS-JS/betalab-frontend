@@ -6,9 +6,9 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { instance } from '@/apis/instance';
 import { queryKeys } from '@/constants/query-keys';
 
-const ProjectDetailResponseSchema = BaseModelSchema(ProjectDataSchema);
+export const ProjectDetailResponseSchema = BaseModelSchema(ProjectDataSchema);
 
-type ProjectDetailResponseModel = z.infer<typeof ProjectDetailResponseSchema>;
+export type ProjectDetailResponseModel = z.infer<typeof ProjectDetailResponseSchema>;
 
 const BASE_PATH = '/v1/users/posts';
 
@@ -24,5 +24,8 @@ export const useGetPostDetailQuery = (
   return useQuery({
     queryKey: queryKeys.posts.detail(postId),
     queryFn: () => getPostDetail(postId),
+    staleTime: 1000 * 60 * 5, // 5분 동안 stale 아님
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 };
