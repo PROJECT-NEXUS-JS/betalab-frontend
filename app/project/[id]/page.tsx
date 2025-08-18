@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import { dehydrate, QueryClient, HydrationBoundary } from '@tanstack/react-query';
 import ProjectDetailClient from './ProjectDetailClient';
-import { applyCardData, reviewCardData, similarPostData } from './data';
+import { reviewCardData, similarPostData } from './data';
 import { queryKeys } from '@/constants/query-keys';
 
 import { ProjectDetailResponseSchema } from '@/hooks/posts/query/usePostDetailQuery';
@@ -25,13 +25,17 @@ export default async function ProjectDetailPage({
     queryFn: () => fetchProjectData(Number(id)),
   });
 
+  await queryClient.prefetchQuery({
+    queryKey: queryKeys.posts.rightSidebar(Number(id)),
+    queryFn: () => fetchRightSidebarData(Number(id)),
+  });
+
   const dehydratedState = dehydrate(queryClient);
 
   return (
     <HydrationBoundary state={dehydratedState}>
       <ProjectDetailClient
         id={Number(id)}
-        applyCardData={applyCardData}
         reviewCardData={reviewCardData}
         similarPostData={similarPostData}
       />
@@ -62,7 +66,7 @@ async function fetchProjectData(id: number) {
   return ProjectDetailResponseSchema.parse(data);
 }
 
-async function fetchRightSidebarData(postId: string) {
+async function fetchRightSidebarData(postId: number) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
 
@@ -71,7 +75,7 @@ async function fetchRightSidebarData(postId: string) {
     ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
   };
 
-  const response = await fetch(`${BACKEND_URL}/v1/users/posts/${postId}/right-sidebar`, {
+  const response = await fetch(`${BACKEND_URL}/v1/users/posts/${postId}/sidebar`, {
     method: 'GET',
     headers,
   });

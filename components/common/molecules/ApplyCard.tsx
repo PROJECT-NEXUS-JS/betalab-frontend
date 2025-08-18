@@ -38,9 +38,11 @@ export default function ApplyCard({
   scrapClicked,
   registerClicked,
 }: ApplyCardProps) {
-  const [viewAll, setViewAll] = useState(false);
+  const [viewMore, setViewMore] = useState(false);
   const endMonth = endDate.getMonth() + 1;
   const endDay = endDate.getDate();
+
+  const viewConditions = viewMore ? conditions : conditions.slice(0, 3);
 
   return (
     <div className="w-[258px] h-max p-3 flex flex-col flex-start gap-5 bg-White rounded-sm shadow-[0_0_10px_0_rgba(26,30,39,0.08)]">
@@ -86,16 +88,19 @@ export default function ApplyCard({
             <Image src={Booking} alt="Booking Logo" width={24} height={24} />
             <p className="text-sm text-Dark-Gray font-bold">{scrapedNumber}명이 스크랩했어요!</p>
           </div>
+
           <Image src={Divider} alt="Divider" width={258} height={2} className="flex" />
-          {conditions.map((condition, index) => (
+
+          {viewConditions.map((condition, index) => (
             <Condition key={index} {...condition} />
           ))}
         </section>
+
         <Button
           State="Solid"
           Size="lg"
-          label={viewAll ? '접기' : '전체보기'}
-          onClick={() => setViewAll(prev => !prev)}
+          label={viewMore ? '접기' : '전체보기'}
+          onClick={() => setViewMore(prev => !prev)}
         />
       </div>
       <p className="text-right text-base text-Primary-500 font-bold">{attendees}명이 참가했어요!</p>

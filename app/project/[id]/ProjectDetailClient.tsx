@@ -16,19 +16,18 @@ import { ReviewCardProps } from '@/components/common/molecules/ReviewCard';
 import { SimilarPost } from '@/hooks/posts/dto/similarPost';
 
 import { useGetPostDetailQuery } from '@/hooks/posts/query/usePostDetailQuery';
+import { useGetRightSidebar } from '@/hooks/posts/query/usePostRightSidebar';
+
+import { transformToApplyCardProps } from '@/lib/mapper/apply-card';
 
 interface ProjectDetailClientProps {
-  // projectData: ProjectDataModel;
   id: number;
-  applyCardData: Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'>;
   reviewCardData: ReviewCardProps[];
   similarPostData: SimilarPost[];
 }
 
 export default function ProjectDetailClient({
-  // projectData,
   id,
-  applyCardData,
   reviewCardData,
   similarPostData,
 }: ProjectDetailClientProps) {
@@ -47,9 +46,18 @@ export default function ProjectDetailClient({
   };
 
   const { data: postDetailData, isLoading, isError } = useGetPostDetailQuery(Number(id));
+  const {
+    data: rightSidebarData,
+    isLoading: isRightSidebarLoading,
+    isError: isRightSidebarError,
+  } = useGetRightSidebar(Number(id));
 
-  if (isLoading) return <div>로딩 중...</div>;
-  if (isError) return <div>에러 발생</div>;
+  const applyCardData: Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'> =
+    transformToApplyCardProps(rightSidebarData!.data);
+  // 이부분 조금 걸림... 그래도 동작하니까! 좋아쓰~
+
+  if (isLoading || isRightSidebarLoading) return <div>로딩 중...</div>;
+  if (isError || isRightSidebarError) return <div>에러 발생</div>;
 
   const projectData = postDetailData?.data;
   if (!projectData) return <div>데이터 없음</div>;

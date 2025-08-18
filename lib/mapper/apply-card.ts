@@ -34,7 +34,7 @@ export const transformToApplyCardProps = (
     profile: {
       name: data.recruiterName,
       affiliation: '소속 예시', // API에 없는 데이터는 임의로 처리
-      imageUrl: 'https://example.com/image.jpg', // API에 없는 데이터는 임의로 처리
+      imageUrl: null, // API에 없는 데이터는 임의로 처리
     },
     description: data.testSummary,
     endDate: new Date(new Date().getTime() + data.daysRemaining * 24 * 60 * 60 * 1000),
