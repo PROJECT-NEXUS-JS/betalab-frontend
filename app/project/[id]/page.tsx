@@ -1,11 +1,12 @@
 import { cookies } from 'next/headers';
 import { dehydrate, QueryClient, HydrationBoundary } from '@tanstack/react-query';
 import ProjectDetailClient from './ProjectDetailClient';
-import { reviewCardData, similarPostData } from './data';
+import { similarPostData } from './data';
 import { queryKeys } from '@/constants/query-keys';
 
 import { ProjectDetailResponseSchema } from '@/hooks/posts/query/usePostDetailQuery';
 import { RightSidebarResponseSchema } from '@/hooks/posts/query/usePostRightSidebar';
+import { PostReviewResponseSchema } from '@/hooks/review/quries/usePostReviewQuery';
 
 const BACKEND_URL = process.env.BACKEND_URL!;
 
@@ -30,15 +31,16 @@ export default async function ProjectDetailPage({
     queryFn: () => fetchRightSidebarData(Number(id)),
   });
 
+  await queryClient.prefetchQuery({
+    queryKey: queryKeys.reviews.post(Number(id)),
+    queryFn: () => fetchPostReviewData(Number(id)),
+  });
+
   const dehydratedState = dehydrate(queryClient);
 
   return (
     <HydrationBoundary state={dehydratedState}>
-      <ProjectDetailClient
-        id={Number(id)}
-        reviewCardData={reviewCardData}
-        similarPostData={similarPostData}
-      />
+      <ProjectDetailClient id={Number(id)} similarPostData={similarPostData} />
     </HydrationBoundary>
   );
 }
@@ -87,4 +89,27 @@ async function fetchRightSidebarData(postId: number) {
 
   const data = await response.json();
   return RightSidebarResponseSchema.parse(data);
+}
+
+async function fetchPostReviewData(postId: number) {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get('accessToken')?.value;
+
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+  };
+
+  const response = await fetch(`${BACKEND_URL}/v1/users/reviews/post/${postId}`, {
+    method: 'GET',
+    headers,
+  });
+
+  if (!response.ok) {
+    console.error('네트워크 응답이 올바르지 않습니다.', response);
+    throw new Error('네트워크 응답이 올바르지 않습니다.');
+  }
+
+  const data = await response.json();
+  return PostReviewResponseSchema.parse(data);
 }

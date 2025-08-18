@@ -2,7 +2,7 @@ import { ConditionProps } from '@/components/common/atoms/Condition';
 import { ProjectDataModel } from '@/hooks/posts/dto/postDetail';
 import { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
 import { BaseModel } from '@/types/models/base-model';
-import { ReviewResponse } from '@/hooks/review/dto';
+import { ReviewDataModel } from '@/hooks/review/dto';
 import { ReviewCardProps } from '@/components/common/molecules/ReviewCard';
 import { SimilarPost } from '@/hooks/posts/dto/similarPost';
 
@@ -108,7 +108,7 @@ export const applyCardData: Omit<ApplyCardProps, 'scrapClicked' | 'registerClick
   scraped: mockProjectData.isLiked,
 };
 
-export const mockReviewData: ReviewResponse[] = [
+export const mockReviewData: ReviewDataModel[] = [
   {
     id: 1,
     postId: 1,

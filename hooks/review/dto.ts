@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // WriterInfo에 대한 Zod 스키마 정의
 export const WriterInfoSchema = z.object({
@@ -7,8 +7,8 @@ export const WriterInfoSchema = z.object({
   profileUrl: z.url(),
 });
 
-// ReviewResponse에 대한 Zod 스키마 정의
-export const ReviewResponseSchema = z.object({
+// ReviewData에 대한 Zod 스키마 정의
+export const ReviewDataSchema = z.object({
   id: z.number(),
   postId: z.number(),
   rating: z.number(),
@@ -18,6 +18,5 @@ export const ReviewResponseSchema = z.object({
   writer: WriterInfoSchema,
 });
 
-
 export type WriterInfo = z.infer<typeof WriterInfoSchema>;
-export type ReviewResponse = z.infer<typeof ReviewResponseSchema>;
+export type ReviewDataModel = z.infer<typeof ReviewDataSchema>;

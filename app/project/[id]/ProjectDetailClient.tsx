@@ -17,27 +17,22 @@ import { SimilarPost } from '@/hooks/posts/dto/similarPost';
 
 import { useGetPostDetailQuery } from '@/hooks/posts/query/usePostDetailQuery';
 import { useGetRightSidebar } from '@/hooks/posts/query/usePostRightSidebar';
+import { usePostReviewQuery } from '@/hooks/review/quries/usePostReviewQuery';
 
 import { transformToApplyCardProps } from '@/lib/mapper/apply-card';
+import { transformToReviewCardProps } from '@/lib/mapper/review-card';
 
 interface ProjectDetailClientProps {
   id: number;
-  reviewCardData: ReviewCardProps[];
   similarPostData: SimilarPost[];
 }
 
-export default function ProjectDetailClient({
-  id,
-  reviewCardData,
-  similarPostData,
-}: ProjectDetailClientProps) {
+export default function ProjectDetailClient({ id, similarPostData }: ProjectDetailClientProps) {
   const [projectIntroduceFold, setProjectIntroduceFold] = useState(true);
   const [reviewFold, setReviewFold] = useState(true);
 
   const projectIntroduceRef = useRef<HTMLDivElement>(null);
   const reviewRef = useRef<HTMLDivElement>(null);
-
-  const displayReviews = reviewFold ? reviewCardData.slice(0, 3) : reviewCardData;
 
   const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
     if (ref.current) {
@@ -53,14 +48,36 @@ export default function ProjectDetailClient({
   } = useGetRightSidebar(Number(id));
 
   const applyCardData: Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'> =
-    transformToApplyCardProps(rightSidebarData!.data);
-  // 이부분 조금 걸림... 그래도 동작하니까! 좋아쓰~
+    transformToApplyCardProps(
+      rightSidebarData?.data ?? {
+        testName: '',
+        recruiterName: '',
+        testSummary: '',
+        daysRemaining: 0,
+        scrapCount: 0,
+        currentParticipants: 0,
+        participationTarget: '',
+        requiredDuration: '',
+        rewardInfo: '',
+        participationMethod: '',
+        qnaMethod: '',
+      },
+    );
 
-  if (isLoading || isRightSidebarLoading) return <div>로딩 중...</div>;
-  if (isError || isRightSidebarError) return <div>에러 발생</div>;
+  const {
+    data: reviewCardData,
+    isLoading: isReviewLoading,
+    isError: isReviewError,
+  } = usePostReviewQuery(Number(id));
+
+  if (isLoading || isRightSidebarLoading || isReviewLoading) return <div>로딩 중...</div>;
+  if (isError || isRightSidebarError || isReviewError) return <div>에러 발생</div>;
 
   const projectData = postDetailData?.data;
   if (!projectData) return <div>데이터 없음</div>;
+
+  const reviews = reviewCardData?.data.map(transformToReviewCardProps) ?? [];
+  const displayReviews = reviewFold ? reviews.slice(0, 3) : reviews;
 
   return (
     <div className="min-h-screen w-full flex justify-center mb-30 mt-6">
@@ -131,7 +148,7 @@ export default function ProjectDetailClient({
             {displayReviews.map((review, idx) => (
               <ReviewCard key={idx} {...review} />
             ))}
-            {reviewCardData.length > 3 && (
+            {reviews.length > 3 && (
               <Button
                 State="Solid"
                 Size="lg"

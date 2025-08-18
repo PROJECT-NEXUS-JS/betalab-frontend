@@ -11,4 +11,8 @@ export const queryKeys = {
     all: ['users'] as const,
     detail: (userId: number) => [...queryKeys.users.all, 'detail', userId] as const,
   },
+  reviews: {
+    all: ['reviews'] as const,
+    post: (postId: number) => [...queryKeys.reviews.all, 'post', postId] as const,
+  },
 };
