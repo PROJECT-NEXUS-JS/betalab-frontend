@@ -31,7 +31,7 @@
   --font-sd-gothic: 'Apple SD Gothic Neo', sans-serif;
 
   /* semibold를 bold로 */
-  --font-weight-semibold: 700;
+  --font-weight-semibold: 600;
 
   /* 타이포그래피 스케일 정의 */
   --font-size-head: 2rem;
