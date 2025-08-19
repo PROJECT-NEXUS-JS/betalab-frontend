@@ -1,6 +1,8 @@
 'use client';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
+
 import BetalabLogo from '@/components/common/svg/BetalabLogo';
 import Button from '@/components/common/atoms/Button';
 import KakaoButton from '@/components/auth/KakaoButton';
@@ -8,6 +10,14 @@ import { getUserManager } from '@/lib/oidc-client';
 
 export default function LoginPage() {
   const mgr = getUserManager();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const redirectedFrom = searchParams.get('redirectedFrom');
+    if (redirectedFrom) {
+      localStorage.setItem('redirectedFrom', redirectedFrom);
+    }
+  }, [searchParams]);
 
   const handleLogin = useCallback(() => {
     mgr.signinRedirect();
