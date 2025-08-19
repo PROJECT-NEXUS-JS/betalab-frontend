@@ -1,7 +1,7 @@
 'use client';
-
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+
 import { getUserManager } from '@/lib/oidc-client';
 import type { User } from 'oidc-client-ts';
 import { useUserInfoQuery } from '@/hooks/auth/queries/useUserInfoQuery';
