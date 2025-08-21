@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import Selector from '@/components/common/molecules/Selector';
 import Input from '@/components/common/atoms/Input';
 import Button from '@/components/common/atoms/Button';
@@ -8,20 +9,34 @@ import StorySection from '@/components/test-add/StorySection';
 import CarouselBar from '@/components/common/molecules/CarouselBar';
 import StepNextButton from '@/components/common/molecules/StepNextButton';
 import Image from 'next/image';
-import Header from '@/components/common/organisms/Header';
 import Card from '@/components/common/atoms/Card';
 import ImageStrip from '@/components/test-add/ImageStrip';
-import { useRouter, useParams } from 'next/navigation';
+import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
 
 const PI_OPTIONS = ['이름', '이메일', '연락처', '기타'] as const;
 type PI = (typeof PI_OPTIONS)[number];
+
+const UI_TO_API: Record<PI, 'NAME' | 'EMAIL' | 'CONTACT' | 'ETC'> = {
+  이름: 'NAME',
+  이메일: 'EMAIL',
+  연락처: 'CONTACT',
+  기타: 'ETC',
+};
+const API_TO_UI: Record<string, PI> = {
+  NAME: '이름',
+  EMAIL: '이메일',
+  CONTACT: '연락처',
+  ETC: '기타',
+};
 
 const valueState = (v: string) => (v.trim() ? 'has value' : 'no value');
 
 export default function TestAddSettingPage() {
   const router = useRouter();
-  const [piSelected, setPiSelected] = useState<PI | null>(null);
   const { category } = useParams<{ category?: string }>();
+  const { form, update, save } = useTestAddForm();
+
+  const [piSelected, setPiSelected] = useState<PI | null>(null);
   const [piPurpose, setPiPurpose] = useState('');
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
@@ -33,16 +48,38 @@ export default function TestAddSettingPage() {
   const totalSteps = 10;
   const total = 10;
 
+  useEffect(() => {
+    const firstPI = Array.isArray(form.privacyItems) ? form.privacyItems[0] : undefined;
+    setPiSelected(firstPI ? (API_TO_UI[firstPI] ?? null) : null);
+
+    setTitle(typeof form.title === 'string' ? form.title : '');
+    setSummary(typeof form.serviceSummary === 'string' ? form.serviceSummary : '');
+    setVideoUrl(typeof form.mediaUrl === 'string' ? form.mediaUrl : '');
+  }, [form.privacyItems, form.title, form.serviceSummary, form.mediaUrl]);
+
   const onSave = () => {
-    localStorage.setItem('temp-pi-selected', JSON.stringify(piSelected));
-    localStorage.setItem('temp-pi-purpose', piPurpose);
-    localStorage.setItem('temp-title', title);
-    localStorage.setItem('temp-summary', summary);
-    localStorage.setItem('temp-video-url', videoUrl);
+    const patch: Partial<Parameters<typeof update>[0]> = {
+      title: title.trim() || undefined,
+      serviceSummary: summary.trim() || undefined,
+      privacyItems: piSelected ? [UI_TO_API[piSelected]] : undefined,
+      mediaUrl: mediaTab === 'video' && videoUrl.trim() ? videoUrl.trim() : undefined,
+    };
+    update(patch);
+    save();
     alert('임시 저장되었습니다.');
   };
 
   const onNext = () => {
+    if (!title.trim()) return alert('제목을 입력해주세요.');
+    if (!summary.trim()) return alert('한 줄 소개를 입력해주세요.');
+
+    const patch: Partial<Parameters<typeof update>[0]> = {
+      title: title.trim(),
+      serviceSummary: summary.trim(),
+      privacyItems: piSelected ? [UI_TO_API[piSelected]] : undefined,
+      mediaUrl: mediaTab === 'video' && videoUrl.trim() ? videoUrl.trim() : undefined,
+    };
+    update(patch);
     router.push(`/test-add/${category}/finish`);
   };
 
@@ -66,7 +103,7 @@ export default function TestAddSettingPage() {
           필요한 개인 정보 항목을 선택해주세요.
         </p>
 
-        <Selector options={[...PI_OPTIONS]} selected={piSelected} onSelect={setPiSelected} />
+        <Selector<PI> options={PI_OPTIONS} selected={piSelected} onSelect={setPiSelected} />
 
         <div className="mt-4 pb-5">
           <p className="mb-2 text-body-01 font-semibold">목적</p>
