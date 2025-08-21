@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { TestAddState } from '@/types/test-add';
 
-const STORAGE_KEY = 'testAddForm_v1';
+const STORAGE_KEY = 'testAddForm';
 
 export function useTestAddForm(initial?: TestAddState) {
   const [form, setForm] = useState<TestAddState>(() => {

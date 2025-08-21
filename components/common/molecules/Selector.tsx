@@ -3,13 +3,13 @@
 import Chip from '../atoms/Chip';
 
 interface SelectorProps<T extends string> {
-  options: T[];
+  options: readonly T[];
   selected: T | null;
   onSelect: (value: T) => void;
 }
 
 export default function Selector<T extends string>({
-  options = [] as T[],
+  options,
   selected,
   onSelect,
 }: SelectorProps<T>) {
@@ -17,7 +17,7 @@ export default function Selector<T extends string>({
     <div className="flex gap-3 flex-wrap">
       {options.map(option => (
         <Chip
-          key={option}
+          key={option as string}
           variant={selected === option ? 'active' : 'solid'}
           size="sm"
           onClick={() => onSelect(option)}

@@ -1,36 +1,44 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
 import Input from '@/components/common/atoms/Input';
 import TextCounter from '@/components/test-add/TextCounter';
 import type { InputProps } from '@/components/common/atoms/Input';
 import TestAddLayout from '@/components/test-add/layouts/TestAddLayout';
+import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
 
 export default function TestAddIntroPage() {
-  const { category } = useParams();
+  const { category } = useParams<{ category: string }>();
   const router = useRouter();
-  const [title, setTitle] = useState('');
+  const { form, update, save } = useTestAddForm();
+
+  const [intro, setIntro] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
   const STEP_INDEX = 5;
   const MAX_LENGTH = 30;
-  const storageKey = `temp-title-${category}`;
+
+  useEffect(() => {
+    setIntro(typeof form.creatorIntroduction === 'string' ? form.creatorIntroduction : '');
+  }, [form.creatorIntroduction]);
 
   const getInputState = (): InputProps['state'] => {
-    if (title.length === 0) return 'no value';
+    if (intro.length === 0) return 'no value';
     if (isFocused) return 'focused';
     return 'has value';
   };
 
   const handleNext = () => {
-    if (!title.trim()) return alert('소속이나 이름을 입력해주세요!');
-    localStorage.setItem(storageKey, title.trim());
+    const trimmed = intro.trim();
+    if (!trimmed) return alert('소속이나 이름을 입력해주세요!');
+    update({ creatorIntroduction: trimmed });
     router.push(`/test-add/${category}/tel`);
   };
 
   const handleSave = () => {
-    localStorage.setItem(storageKey, title);
+    update({ creatorIntroduction: intro });
+    save();
   };
 
   return (
@@ -54,19 +62,17 @@ export default function TestAddIntroPage() {
             state={getInputState()}
             size="xl"
             placeholder="ex. 베타랩 팀, S대 팀 프로젝트"
-            value={title}
+            value={intro}
             onChange={e => {
-              const inputValue = e.target.value;
-              if (inputValue.length <= MAX_LENGTH) {
-                setTitle(inputValue);
-              }
+              const v = e.target.value;
+              if (v.length <= MAX_LENGTH) setIntro(v);
             }}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             maxLength={MAX_LENGTH}
           />
           <div className="absolute right-1">
-            <TextCounter value={title} maxLength={MAX_LENGTH} />
+            <TextCounter value={intro} maxLength={MAX_LENGTH} />
           </div>
         </div>
       </div>

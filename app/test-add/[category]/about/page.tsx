@@ -1,36 +1,44 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
 import Input from '@/components/common/atoms/Input';
 import TextCounter from '@/components/test-add/TextCounter';
 import type { InputProps } from '@/components/common/atoms/Input';
 import TestAddLayout from '@/components/test-add/layouts/TestAddLayout';
+import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
 
 export default function TestAddAboutPage() {
-  const { category } = useParams();
+  const { category } = useParams<{ category: string }>();
   const router = useRouter();
-  const [title, setTitle] = useState('');
+  const { form, update, save } = useTestAddForm();
+
+  const [summary, setSummary] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
   const STEP_INDEX = 4;
   const MAX_LENGTH = 30;
-  const storageKey = `temp-title-${category}`;
+
+  useEffect(() => {
+    setSummary(typeof form.serviceSummary === 'string' ? form.serviceSummary : '');
+  }, [form.serviceSummary]);
 
   const getInputState = (): InputProps['state'] => {
-    if (title.length === 0) return 'no value';
+    if (summary.length === 0) return 'no value';
     if (isFocused) return 'focused';
     return 'has value';
   };
 
   const handleNext = () => {
-    if (!title.trim()) return alert('한줄 소개를 입력해주세요!');
-    localStorage.setItem(storageKey, title.trim());
+    const trimmed = summary.trim();
+    if (!trimmed) return alert('한줄 소개를 입력해주세요!');
+    update({ serviceSummary: trimmed });
     router.push(`/test-add/${category}/intro`);
   };
 
   const handleSave = () => {
-    localStorage.setItem(storageKey, title);
+    update({ serviceSummary: summary });
+    save();
   };
 
   return (
@@ -49,9 +57,7 @@ export default function TestAddAboutPage() {
             <br />
             한줄로 소개해주세요.
           </p>
-          <p className="text-body-02 text-Gray-300">
-            참여자들에게 직접 보여지는 썸네일 제목입니다.
-          </p>
+          <p className="text-body-02 text-Gray-300">참여자들에게 직접 보여지는 한 줄 소개입니다.</p>
         </div>
 
         <div className="relative w-fit">
@@ -59,20 +65,18 @@ export default function TestAddAboutPage() {
             type="text"
             state={getInputState()}
             size="xl"
-            placeholder="ex. 비효율적인 베타 테스트 ? 베타랩이 해결합니다"
-            value={title}
+            placeholder="ex. 비효율적인 베타 테스트? 베타랩이 해결합니다"
+            value={summary}
             onChange={e => {
-              const inputValue = e.target.value;
-              if (inputValue.length <= MAX_LENGTH) {
-                setTitle(inputValue);
-              }
+              const v = e.target.value;
+              if (v.length <= MAX_LENGTH) setSummary(v);
             }}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             maxLength={MAX_LENGTH}
           />
           <div className="absolute right-1">
-            <TextCounter value={title} maxLength={MAX_LENGTH} />
+            <TextCounter value={summary} maxLength={MAX_LENGTH} />
           </div>
         </div>
       </div>

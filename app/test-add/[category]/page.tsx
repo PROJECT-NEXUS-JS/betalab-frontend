@@ -4,6 +4,24 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import TestAddLayout from '@/components/test-add/layouts/TestAddLayout';
 import Selector from '@/components/common/molecules/Selector';
+import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
+import { makeHandleNext } from '@/lib/make-handle-next';
+
+const UI_TO_API: Record<string, string> = {
+  Android: 'ANDROID',
+  iOS: 'IOS',
+  무관: 'ANY',
+  'PC 클라이언트': 'PC',
+  'Stream VR': 'STEAM_VR',
+  'Play Station': 'PLAYSTATION',
+  Xbox: 'XBOX',
+  'Meta Quest': 'META_QUEST',
+  기타: 'ETC',
+};
+
+const API_TO_UI: Record<string, string> = Object.fromEntries(
+  Object.entries(UI_TO_API).map(([ui, api]) => [api, ui]),
+);
 
 const PLATFORM_MAP: Record<string, string[]> = {
   app: ['Android', 'iOS', '무관'],
@@ -19,30 +37,26 @@ const PLATFORM_MAP: Record<string, string[]> = {
   ],
 };
 
-export default function TestAddCategoryPage() {
+export default function TestAddPlatformStep() {
   const { category } = useParams<{ category: string }>();
-  const router = useRouter();
   const STEP_INDEX = 1;
+  const router = useRouter();
+  const { form, update } = useTestAddForm();
 
-  const platforms = useMemo(() => PLATFORM_MAP[category], [category]);
-  const storageKey = useMemo(() => `temp-platform-${category}`, [category]);
-
-  const [selectedPlatform, setSelectedPlatform] = useState<string | null>(null);
+  const options = useMemo(() => PLATFORM_MAP[category] ?? [], [category]);
+  const [selected, setSelected] = useState<string | null>(null);
 
   useEffect(() => {
-    const saved = typeof window !== 'undefined' ? localStorage.getItem(storageKey) : null;
-    if (saved && platforms?.includes(saved)) setSelectedPlatform(saved);
-  }, [storageKey, platforms]);
+    const api = Array.isArray(form.platformCategory) ? form.platformCategory[0] : undefined;
+    const ui = api ? API_TO_UI[api] : undefined;
+    if (ui && options.includes(ui)) setSelected(ui);
+  }, [form.platformCategory, options]);
 
-  const handleSelect = (value: string) => {
-    setSelectedPlatform(value);
-    localStorage.setItem(storageKey, value);
-  };
-
-  const handleNext = () => {
-    if (!selectedPlatform) return alert('플랫폼을 선택해주세요!');
-    router.push(`/test-add/${category}/genre`);
-  };
+  const handleNext = makeHandleNext(form, update, router.push, {
+    select: () => ({ platformCategory: selected ? [UI_TO_API[selected]] : [] }),
+    validate: () => (selected ? null : '플랫폼을 선택해주세요!'),
+    next: `/test-add/${category}/genre`,
+  });
 
   return (
     <TestAddLayout leftImageSrc="/test1.png" stepIndex={STEP_INDEX} onNext={handleNext}>
@@ -52,7 +66,7 @@ export default function TestAddCategoryPage() {
           <p className="text-body-02 text-Gray-300">선택한 항목은 나중에도 변경할 수 있어요.</p>
         </div>
 
-        <Selector<string> options={platforms} selected={selectedPlatform} onSelect={handleSelect} />
+        <Selector<string> options={options} selected={selected} onSelect={setSelected} />
       </div>
     </TestAddLayout>
   );
