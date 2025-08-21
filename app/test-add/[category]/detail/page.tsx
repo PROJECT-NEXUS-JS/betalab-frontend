@@ -55,7 +55,6 @@ export default function TestAddSettingPage() {
 
   return (
     <main className="w-full px-16 pb-[120px]">
-      <Header isLogin />
       <section className="w-[1152px] mt-10 mb-8 flex items-center gap-2 rounded-lg bg-Gray-50 p-6">
         <Image src="/beaker.png" alt="Beaker Icon" width={44} height={44} />
         <p className="text-body-01 font-semibold">테스트 등록</p>
