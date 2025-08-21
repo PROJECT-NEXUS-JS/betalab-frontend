@@ -1,3 +1,4 @@
+// components/test-add/layouts/TestAddLayout.tsx
 'use client';
 
 import React from 'react';
@@ -51,28 +52,21 @@ export default function TestAddLayout({
             priority
           />
         </div>
+
         <div className="flex-1 flex flex-col px-12 py-10">
           <div className="flex-1">{children}</div>
-          {showSave ? (
-            <div className="flex items-center justify-between mt-6">
-              <div className="flex-1">
-                <Button State="Sub" Size="xl" label={saveLabel} onClick={onSave} />
-              </div>
-
-              <div className="flex-1 flex justify-center">
-                <CarouselBar activeIndex={stepIndex} total={totalSteps} />
-              </div>
-
-              <div className="flex-1 flex justify-end">
-                <StepNextButton onClick={onNext} />
-              </div>
+          <div className="flex items-center justify-between mt-6 gap-4">
+            <div className="flex items-center gap-2">
+              {showSave && <Button State="Sub" Size="xl" label={saveLabel} onClick={onSave} />}
             </div>
-          ) : (
-            <div className="flex items-center justify-between mt-6">
+
+            <div className="flex-1 flex justify-center">
               <CarouselBar activeIndex={stepIndex} total={totalSteps} />
+            </div>
+            <div className="flex justify-end">
               <StepNextButton onClick={onNext} />
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

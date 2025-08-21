@@ -24,16 +24,16 @@ const WEB_GENRES = [
 type WebGenre = (typeof WEB_GENRES)[number];
 
 const UI_TO_API: Record<WebGenre, string> = {
-  '생산성/협업툴': 'PRODUCTIVITY_COLLABORATION',
-  '커머스/쇼핑': 'COMMERCE_SHOPPING_WEB',
+  '생산성/협업툴': 'PRODUCTIVITY_COLLAB',
+  '커머스/쇼핑': 'COMMERCE_SHOPPING',
   '마케팅/홍보툴': 'MARKETING_PROMOTION',
-  '커뮤니티/소셜': 'COMMUNITY_SOCIAL_WEB',
-  '교육/콘텐츠': 'EDUCATION_CONTENT',
+  '커뮤니티/소셜': 'COMMUNITY_SOCIAL',
+  '교육/콘텐츠': 'EDU_CONTENT',
   '금융/자산관리': 'FINANCE_ASSET',
   'AI/자동화 도구': 'AI_AUTOMATION',
-  '실험적 웹툴': 'EXPERIMENTAL_WEB',
+  '실험적 웹툴': 'EXPERIMENTAL_WEBTOOL',
   '라이프스타일/취미': 'LIFESTYLE_HOBBY',
-  '채용/HR': 'RECRUITMENT_HR',
+  '채용/HR': 'RECRUIT_HR',
   '고객관리/세일즈': 'CRM_SALES',
   기타: 'ETC',
 };

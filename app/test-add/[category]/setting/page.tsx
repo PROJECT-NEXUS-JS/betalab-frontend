@@ -87,6 +87,47 @@ export default function TestAddSettingPage() {
 
   const [deadlineRange, setDeadlineRange] = useState<DateRange | undefined>();
 
+  useEffect(() => {
+    if (typeof form.feedbackMethod === 'string' && form.feedbackMethod.trim()) {
+      const tokens = form.feedbackMethod
+        .split(',')
+        .map(t => t.trim())
+        .filter(Boolean);
+      const inList = tokens.filter(t => FEEDBACK_OPTIONS.includes(t as any));
+      const extras = tokens.filter(t => !FEEDBACK_OPTIONS.includes(t as any));
+      setFeedbackTags(inList);
+      if (extras.length) {
+        setCustomFeedbackOpen(true);
+        setCustomFeedbackValue(extras.join(', '));
+      }
+    }
+
+    if (typeof form.durationTime === 'string' && form.durationTime.trim()) {
+      const tokens = form.durationTime
+        .split(',')
+        .map(t => t.trim())
+        .filter(Boolean);
+      const inList = tokens.filter(t => TIME_OPTIONS.includes(t as any));
+      const extras = tokens.filter(t => !TIME_OPTIONS.includes(t as any));
+      setTimeTags(inList);
+      if (extras.length) {
+        setCustomTimeOpen(true);
+        setCustomTimeValue(extras.join(', '));
+      }
+    }
+
+    if (typeof form.maxParticipants === 'number') {
+      setRecruitCount(form.maxParticipants);
+      setRecruitTouched(true);
+    }
+
+    const from = form.startDate ? new Date(form.startDate) : undefined;
+    const to = form.endDate ? new Date(form.endDate) : undefined;
+    if (from && to && !Number.isNaN(+from) && !Number.isNaN(+to)) {
+      setDeadlineRange({ from, to });
+    }
+  }, [form.feedbackMethod, form.durationTime, form.maxParticipants, form.startDate, form.endDate]);
+
   const feedbackInputState: InputProps['state'] = useMemo(() => {
     if (!customFeedbackOpen) return 'no value';
     return customFeedbackValue.length === 0 ? 'no value' : 'has value';
@@ -142,24 +183,6 @@ export default function TestAddSettingPage() {
     } else {
       setTimeTags(prev => (prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]));
     }
-  };
-
-  const saveDeadlineToLS = (range: DateRange | undefined) => {
-    const formatted =
-      range?.from && range?.to
-        ? `${format(range.from, 'yyyy.MM.dd')} - ${format(range.to, 'yyyy.MM.dd')}`
-        : '';
-
-    const raw =
-      range?.from && range?.to
-        ? {
-            from: range.from.toISOString(),
-            to: range.to.toISOString(),
-          }
-        : null;
-
-    localStorage.setItem(`temp-deadline-${category}`, formatted);
-    localStorage.setItem(`temp-deadline-raw-${category}`, JSON.stringify(raw));
   };
 
   const handleNext = () => {

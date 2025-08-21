@@ -23,7 +23,7 @@ const UI_TO_API: Record<GameGenre, string> = {
   캐주얼: 'CASUAL',
   '퍼즐/보드': 'PUZZLE_BOARD',
   'RPG/어드벤처': 'RPG_ADVENTURE',
-  시뮬레이션: 'SIMULATION_GAME',
+  시뮬레이션: 'SIMULATION',
   '전략/카드': 'STRATEGY_CARD',
   '스포츠/레이싱': 'SPORTS_RACING',
   '멀티플레이/소셜': 'MULTIPLAYER_SOCIAL',

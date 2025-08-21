@@ -9,7 +9,7 @@ interface SelectorProps<T extends string> {
 }
 
 export default function Selector<T extends string>({
-  options = [] as T[],
+  options,
   selected,
   onSelect,
 }: SelectorProps<T>) {

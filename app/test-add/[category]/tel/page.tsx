@@ -16,9 +16,12 @@ export default function TestAddContactPage() {
   const [contact, setContact] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
-  const STEP_INDEX = 5;
+  const STEP_INDEX = 6;
   const MAX_LENGTH = 30;
-  const storageKey = `temp-title-${category}`;
+
+  useEffect(() => {
+    setContact(typeof form.qnaMethod === 'string' ? form.qnaMethod : '');
+  }, [form.qnaMethod]);
 
   useEffect(() => {
     setContact(typeof form.qnaMethod === 'string' ? form.qnaMethod : '');
