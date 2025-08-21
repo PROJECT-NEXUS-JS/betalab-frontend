@@ -3,7 +3,6 @@
 import React from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
-import Header from '@/components/common/organisms/Header';
 import Button from '@/components/common/atoms/Button';
 import CarouselBar from '@/components/common/molecules/CarouselBar';
 import StepNextButton from '@/components/common/molecules/StepNextButton';
@@ -37,7 +36,6 @@ export default function TestAddLayout({
 }: TestAddLayoutProps) {
   return (
     <div className={cn('min-h-screen w-full flex flex-col bg-White', className)}>
-      <Header isLogin />
       <div className="flex flex-1 w-full">
         <div
           className={cn(
