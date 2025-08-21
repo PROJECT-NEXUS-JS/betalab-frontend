@@ -90,7 +90,7 @@ export default function TestAddPurposePage() {
       saveLabel="임시 저장"
     >
       <div className="flex flex-col gap-10">
-        <p className="text-subtdETCitle-01 font-semibold">
+        <p className="text-subtitle-01 font-semibold">
           참여자들에게서 어떤 걸 알아보면 도움이 될까요?
         </p>
         {PURPOSE_GROUPS.map(({ title, items }, idx) => (
