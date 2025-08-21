@@ -25,16 +25,16 @@ type AppGenre = (typeof APP_GENRES)[number];
 
 const UI_TO_API: Record<AppGenre, string> = {
   '라이프 스타일': 'LIFESTYLE',
-  '교육/학습': 'EDU_CONTENT',
-  '소셜/커뮤니티': 'COMMUNITY_SOCIAL',
+  '교육/학습': 'EDUCATION',
+  '소셜/커뮤니티': 'SOCIAL',
   'AI/실험적 기능': 'AI_EXPERIMENTAL',
-  '생산성/도구': 'PRODUCTIVITY_TOOL',
-  '커머스/쇼핑': 'COMMERCE_SHOPPING',
+  '생산성/도구': 'PRODUCTIVITY',
+  '커머스/쇼핑': 'COMMERCE',
   '건강/운동': 'HEALTH_FITNESS',
   엔터테인먼트: 'ENTERTAINMENT',
-  '금융/자산관리': 'FINANCE_ASSET',
+  '금융/자산관리': 'FINANCE',
   '비즈니스/직장인': 'BUSINESS',
-  '사진/영상': 'PHOTO_VIDEO',
+  '사진/영상': 'MEDIA',
   기타: 'ETC',
 };
 
