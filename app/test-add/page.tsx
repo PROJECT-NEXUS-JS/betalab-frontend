@@ -5,7 +5,7 @@ import { useState, useMemo } from 'react';
 import TestAddLayout from '@/components/test-add/layouts/TestAddLayout';
 import Selector from '@/components/common/molecules/Selector';
 import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
-import { makeHandleNext } from '@/lib/make-handle-next';
+import { makeHandleNext } from '@/lib/test-add/make-handle-next';
 
 const CATEGORY_MAP = {
   앱: 'app',

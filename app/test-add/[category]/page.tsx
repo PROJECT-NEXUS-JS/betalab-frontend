@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import TestAddLayout from '@/components/test-add/layouts/TestAddLayout';
 import Selector from '@/components/common/molecules/Selector';
 import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
-import { makeHandleNext } from '@/lib/make-handle-next';
+import { makeHandleNext } from '@/lib/test-add/make-handle-next';
 
 const UI_TO_API: Record<string, string> = {
   Android: 'ANDROID',
