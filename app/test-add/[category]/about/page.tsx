@@ -20,8 +20,8 @@ export default function TestAddAboutPage() {
   const MAX_LENGTH = 30;
 
   useEffect(() => {
-    setSummary(typeof form.serviceSummary === 'string' ? form.serviceSummary : '');
-  }, [form.serviceSummary]);
+    setSummary(typeof form.description === 'string' ? form.description : '');
+  }, [form.description]);
 
   useEffect(() => {
     setSummary(typeof form.description === 'string' ? form.description : '');
