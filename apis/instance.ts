@@ -63,7 +63,7 @@ instance.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const res = await axios.post(`${BACKEND_URL}/api/auth/refresh`, null, {
+        const res = await axios.post('/api/auth/reissue', null, {
           withCredentials: true,
         });
 
