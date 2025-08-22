@@ -1,6 +1,10 @@
-// app/admin/page.tsx
+'use client';
 import { redirect } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function AdminPage() {
-  redirect('/admin/dashboard');
+  useEffect(() => {
+    alert('잘못된 접근입니다.');
+    redirect(`/`);
+  }, []);
 }

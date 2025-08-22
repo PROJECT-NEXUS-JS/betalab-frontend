@@ -13,11 +13,22 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminLayout({
+  params,
   children,
 }: Readonly<{
+  params: Promise<{ id: string }>;
   children: React.ReactNode;
 }>) {
   const queryClient = new QueryClient();
+  const { id } = await params;
+
+  const SIDEBAR_ITEMS = [
+    { label: '대시보드', path: `/admin/${id}/dashboard` },
+    { label: '내 프로필', path: `/admin/${id}/profile` },
+    { label: '프로젝트 관리', path: `/admin/${id}/project-manage` },
+    { label: '리뷰', path: `/admin/${id}/review` },
+    { label: '리워드 지급관리', path: `/admin/${id}/reward` },
+  ];
 
   await queryClient.prefetchQuery({
     queryKey: ['profile'],
@@ -35,14 +46,6 @@ export default async function AdminLayout({
     </div>
   );
 }
-
-const SIDEBAR_ITEMS = [
-  { label: '대시보드', path: '/admin/dashboard' },
-  { label: '내 프로필', path: '/admin/profile' },
-  { label: '프로젝트 관리', path: '/admin/project-manage' },
-  { label: '리뷰', path: '/admin/review' },
-  { label: '리워드 지급관리', path: '/admin/reward' },
-];
 
 async function getProfile() {
   const cookieStore = await cookies();
