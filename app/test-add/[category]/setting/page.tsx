@@ -166,6 +166,7 @@ export default function TestAddSettingPage() {
       maxParticipants: Number.isFinite(participants) ? participants : undefined,
       startDate: deadlineRange?.from?.toISOString(),
       endDate: deadlineRange?.to?.toISOString(),
+      recruitmentDeadline: deadlineRange?.to?.toISOString(),
     });
 
     router.push(`/test-add/${category}/condition`);
@@ -188,6 +189,7 @@ export default function TestAddSettingPage() {
       maxParticipants: Number.isFinite(participants) ? participants : undefined,
       startDate: deadlineRange?.from?.toISOString(),
       endDate: deadlineRange?.to?.toISOString(),
+      recruitmentDeadline: deadlineRange?.to?.toISOString(),
     });
 
     save();

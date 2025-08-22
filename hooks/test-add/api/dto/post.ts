@@ -39,7 +39,6 @@ export const CreatePostPayloadSchema = z
 
 export type CreatePostPayload = z.infer<typeof CreatePostPayloadSchema>;
 
-/** 서버가 돌려주는 단일 Post (정확 스펙 모르면 passthrough) */
 export const UserPostSchema = z
   .object({
     id: z.string().or(z.number()).transform(String),
@@ -51,7 +50,6 @@ export const UserPostSchema = z
   .passthrough();
 export type UserPostModel = z.infer<typeof UserPostSchema>;
 
-/** 목록 응답(유연) */
 export const UserPostListSchema = z
   .object({
     items: z.array(UserPostSchema),

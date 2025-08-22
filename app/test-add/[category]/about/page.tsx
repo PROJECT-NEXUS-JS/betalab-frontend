@@ -20,8 +20,8 @@ export default function TestAddAboutPage() {
   const MAX_LENGTH = 30;
 
   useEffect(() => {
-    setSummary(typeof form.serviceSummary === 'string' ? form.serviceSummary : '');
-  }, [form.serviceSummary]);
+    setSummary(typeof form.description === 'string' ? form.description : '');
+  }, [form.description]);
 
   const getInputState = (): InputProps['state'] => {
     if (summary.length === 0) return 'no value';
@@ -32,12 +32,12 @@ export default function TestAddAboutPage() {
   const handleNext = () => {
     const trimmed = summary.trim();
     if (!trimmed) return alert('한줄 소개를 입력해주세요!');
-    update({ serviceSummary: trimmed });
+    update({ description: trimmed });
     router.push(`/test-add/${category}/intro`);
   };
 
   const handleSave = () => {
-    update({ serviceSummary: summary });
+    update({ description: summary });
     save();
   };
 
