@@ -4,16 +4,24 @@ import { dehydrate, QueryClient, HydrationBoundary } from '@tanstack/react-query
 
 import Toggle from '@/components/common/atoms/Toggle';
 import StatsCardClientWrapper from './StatsCardClientWrapper';
-import { CustomBarChart } from '@/components/admin/CustomBarChart';
+import BarChartClientWrapper from './BarChartClientWrapper';
 
 export default async function AdminDashboardPage({ params }: { params: Promise<{ id: number }> }) {
   const { id } = await params;
   const queryClient = new QueryClient();
+
   await queryClient.prefetchQuery({
     queryKey: ['stats', id],
-    queryFn: getStats,
+    queryFn: () => getStats(id),
   });
+
+  await queryClient.prefetchQuery({
+    queryKey: ['barChart', id],
+    queryFn: () => getBarChart(id),
+  });
+
   const dehydratedState = dehydrate(queryClient);
+
   return (
     <div className="flex flex-col w-full max-w-[854px] mb-40">
       <section className="flex justify-between items-center w-full">
@@ -34,24 +42,27 @@ export default async function AdminDashboardPage({ params }: { params: Promise<{
       <section className="flex flex-col items-start gap-3 mt-10">
         <h3 className="text-base font-bold text-Dark-Gray">데이터 분석 그래프</h3>
         <div className="w-full">
-          <CustomBarChart chartData={chartData} />
+          <HydrationBoundary state={dehydratedState}>
+            <BarChartClientWrapper postId={id} />
+          </HydrationBoundary>
         </div>
       </section>
     </div>
   );
 }
 
-async function getStats() {
+async function getStats(postId: number) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
-  const response = await serverInstance(accessToken).get('/admin/stats');
+  const response = await serverInstance(accessToken).get(`/v1/users/dashboard/${postId}/stats`);
   return response.data;
 }
 
-const chartData = [
-  { category: 'chrome', value: 275 },
-  { category: 'safari', value: 200 },
-  { category: 'firefox', value: 187 },
-  { category: 'edge', value: 173 },
-  { category: 'other', value: 90 },
-];
+async function getBarChart(postId: number) {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get('accessToken')?.value;
+  const response = await serverInstance(accessToken).get(
+    `/v1/users/dashboard/${postId}/analytics/bar-chart`,
+  );
+  return response.data;
+}
