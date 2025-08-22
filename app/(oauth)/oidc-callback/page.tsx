@@ -53,8 +53,8 @@ export default function OidcCallbackPage() {
         console.log('일반 유저로 로그인되었습니다.');
         console.log('원래 URL로 리다이렉트:', originalUrl);
         router.replace(originalUrl);
+        localStorage.removeItem('redirectedFrom');
       }
-      localStorage.removeItem('redirectedFrom');
     }
   }, [user, isLoading, router]);
 

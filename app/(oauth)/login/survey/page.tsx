@@ -1,5 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
 import Tag from '@/components/common/atoms/Tag';
 import Button from '@/components/common/atoms/Button';
 import Chip from '@/components/common/atoms/Chip';
@@ -19,7 +21,16 @@ export default function SurveyPage() {
   const [showToast, setShowToast] = useState(false);
   const [isDirectlyInputValid, setIsDirectlyInputValid] = useState(true);
 
-  const mutation = useProfileEditMutation();
+  const { mutate, isSuccess } = useProfileEditMutation();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isSuccess) {
+      const originalUrl = localStorage.getItem('redirectedFrom') || '/';
+      router.replace(originalUrl);
+      localStorage.removeItem('redirectedFrom');
+    }
+  }, [isSuccess, router]);
 
   const handleTagClick = (tag: string) => {
     const isSelected = selectedTags.includes(tag);
@@ -64,7 +75,7 @@ export default function SurveyPage() {
       job: inputValue,
       interests: [...selectedTags, enterDirectly ? enterDirectlyValue : ''],
     };
-    mutation.mutate(formData);
+    mutate(formData);
   };
 
   return (
