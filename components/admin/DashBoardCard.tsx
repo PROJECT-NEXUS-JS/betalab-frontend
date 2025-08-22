@@ -1,10 +1,16 @@
 import Image from 'next/image';
 
+export type DashboardConfigEnum =
+  | 'likes'
+  | 'pendingApplications'
+  | 'approvedParticipants'
+  | 'reviews'
+  | 'views';
 export interface DashBoardCardProps {
   current: number;
   previousDay: number;
   changeAmount: number;
-  type: 'likes' | 'pendingApplications' | 'approvedParticipants' | 'reviews' | 'views';
+  type: DashboardConfigEnum;
 }
 
 export default function DashBoardCard({
