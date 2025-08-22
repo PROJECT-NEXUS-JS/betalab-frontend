@@ -45,7 +45,6 @@ export default function TestAddSettingPage() {
   const [images, setImages] = useState<File[]>([]);
   const [mediaTab, setMediaTab] = useState<'video' | 'photo'>('video');
   const [submitting, setSubmitting] = useState(false);
-
   const stepIndex = 9;
   const totalSteps = 10;
   const total = 10;
