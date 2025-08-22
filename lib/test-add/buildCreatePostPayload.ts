@@ -22,7 +22,6 @@ export type CreatePostPayload = {
   description: string;
   mainCategory: string[];
   platformCategory: string[];
-  status: string;
   startDate: string;
   endDate: string;
   recruitmentDeadline: string;
@@ -51,7 +50,6 @@ export function buildCreatePostPayload(form: TestAddState): CreatePostPayload {
   if (!form.description) throw new Error('description이 없습니다.');
   if (!form.mainCategory?.length) throw new Error('mainCategory가 비어있습니다.');
   if (!form.platformCategory?.length) throw new Error('platformCategory가 비어있습니다.');
-  if (!form.status) throw new Error('status가 없습니다.');
   if (!form.durationTime) throw new Error('durationTime이 없습니다.');
   if (!form.feedbackMethod) throw new Error('feedbackMethod가 없습니다.');
   if (!form.participationMethod) throw new Error('participationMethod가 없습니다.');
@@ -64,7 +62,6 @@ export function buildCreatePostPayload(form: TestAddState): CreatePostPayload {
     description: form.description,
     mainCategory: form.mainCategory,
     platformCategory: form.platformCategory,
-    status: form.status,
     startDate: mustISO('startDate', form.startDate),
     endDate: mustISO('endDate', form.endDate),
     recruitmentDeadline: mustISO('recruitmentDeadline', form.recruitmentDeadline),

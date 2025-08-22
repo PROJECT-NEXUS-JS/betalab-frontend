@@ -70,7 +70,6 @@ export default function TestAddSettingPage() {
     serviceSummary: summary.trim() || undefined,
     privacyItems: piSelected ? [UI_TO_API[piSelected]] : undefined,
     mediaUrl: mediaTab === 'video' && videoUrl.trim() ? videoUrl.trim() : undefined,
-    status: 'COMPLETED' as const,
     participationMethod: '온라인' as const,
   });
 
@@ -81,11 +80,12 @@ export default function TestAddSettingPage() {
 
     const patch = buildPatch();
     const merged = { ...form, ...patch };
+
     setSubmitting(true);
     try {
+      const created = await createUserPostFromForm(merged);
       update(patch);
-
-      router.replace(`/test-add/${category}/finish`);
+      router.replace(`/test-add/${category}/finish${created?.id ? `?id=${created.id}` : ''}`);
     } catch (e: any) {
       console.error('생성 실패:', e);
       alert(e?.message ?? '등록에 실패했습니다.');
