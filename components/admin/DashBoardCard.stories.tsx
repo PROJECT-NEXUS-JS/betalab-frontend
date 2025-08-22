@@ -22,11 +22,11 @@ export const Default: Story = {
   },
 };
 
-export const Active: Story = {
+export const ChangeAmountMinus: Story = {
   args: {
     current: 120,
     previousDay: 100,
-    changeAmount: 20,
+    changeAmount: -20,
     type: 'likes',
   },
 };
