@@ -3,7 +3,8 @@ import ProfileCard from '@/components/mypage/atoms/ProfileCard';
 import TestCard from '@/components/mypage/atoms/TestCard';
 import Sidebar from '@/components/mypage/organisms/Sidebar';
 import MainContent from '@/components/mypage/organisms/MainContent';
-import PostedTestsContent from '@/components/mypage/organisms/PostedTestsContent';
+import MyPostContent from '@/components/mypage/organisms/MyPostContent';
+import MyParticipateContent from '@/components/mypage/organisms/MyParticipateContent';
 import Breadcrumb from '@/components/common/atoms/Breadcrumb';
 import { useMyPageProfileQuery } from '@/hooks/mypage/queries/useMyPageProfileQuery';
 import { MyPageMenuKey, getBreadcrumbItems } from '@/components/mypage/const';
@@ -11,6 +12,8 @@ import { cn } from '@/lib/utils';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import Button from '@/components/common/atoms/Button';
+import MyBookmarkContent from '@/components/mypage/organisms/MyBookmarkContent';
 
 export default function MyPage() {
   const { data: profile, isLoading, isError, error } = useMyPageProfileQuery();
@@ -30,9 +33,10 @@ export default function MyPage() {
     router.push(`/mypage?tab=${menuKey}`, { scroll: false });
   };
 
-  // 탭별 컴포넌트 매핑
   const tabComponents = {
-    'posted-tests': <PostedTestsContent />,
+    'posted-tests': <MyPostContent />,
+    'participated-tests': <MyParticipateContent />,
+    'bookmarked-tests': <MyBookmarkContent />,
   };
 
   const renderMainContent = () => {
@@ -87,9 +91,22 @@ export default function MyPage() {
           </>
         )}
       </div>
-      <div className="flex-1">
-        {activeTab && <Breadcrumb className="mb-2" items={getBreadcrumbItems(activeTab)} />}
-        <h1 className="text-subtitle-01 font-semibold text-Black">대시보드</h1>
+      <div className="flex flex-col w-full">
+        <div className="flex w-full flex-row justify-between">
+          <div className="flex flex-col">
+            {activeTab && <Breadcrumb className="mb-2" items={getBreadcrumbItems(activeTab)} />}
+            <h1 className="text-subtitle-01 font-semibold text-Black">대시보드</h1>
+          </div>
+          <Button
+            label="테스트 등록하기"
+            Size="xl"
+            State="Primary"
+            className="cursor-pointer"
+            onClick={() => {
+              router.push('/test-add');
+            }}
+          />
+        </div>
         {renderMainContent()}
       </div>
     </div>

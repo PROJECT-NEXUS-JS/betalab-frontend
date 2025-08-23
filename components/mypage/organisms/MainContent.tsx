@@ -7,7 +7,6 @@ import PostCard from '@/components/category/molecules/PostCard';
 import CardScroll from '@/components/home/molecules/CardScroll';
 import EmptyCard from '../molecules/EmptyCard';
 import { useRouter } from 'next/navigation';
-import { TestCardType } from '@/types/models/testCard';
 
 interface MainContentProps {
   className?: string;
@@ -18,6 +17,7 @@ export default function MainContent({ className }: MainContentProps) {
   const [recentlyViewedPage, setRecentlyViewedPage] = useState(0);
   const { data: watchlistData, isLoading: watchlistLoading } = useWatchlistQuery();
   const { data: dashboardData, isLoading: dashboardLoading } = useDashboardQuery();
+
   const router = useRouter();
 
   const handleWatchlistPageChange = (page: number) => {

@@ -1,15 +1,11 @@
-<<<<<<< HEAD
 import Link from 'next/link';
-import { UsersPostsListItemType } from '@/hooks/posts/dto/postList';
-=======
-import { TestCardType } from '@/types/models/testCard';
->>>>>>> 78023c6 (feat: 마이페이지 구현중)
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import BookMark from '@/components/common/svg/BookMark';
 import Tag from '@/components/common/atoms/Tag';
 import { Skeleton } from '@/components/ui/skeleton';
 import RankingArticle from '@/components/common/svg/RankingArticle';
+import { TestCardType } from '@/types/models/testCard';
 
 interface PostCardProps {
   className?: string;

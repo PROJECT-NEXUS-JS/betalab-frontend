@@ -1,11 +1,12 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { GetMyPostsRequestType, GetMyPostsResponseType } from '../dto/myPosts';
+import { GetMyBookmarksRequestType, GetMyBookmarksResponseType } from '../dto/myBookmarks';
 import { instance } from '@/apis/instance';
-import { queryKeys } from '@/constants/query-keys';
 
-const BASE_PATH = '/v1/users/posts/my';
+const BASE_PATH = '/v1/users/posts/likes';
 
-const getMyPosts = async (params: GetMyPostsRequestType): Promise<GetMyPostsResponseType> => {
+const getMyBookmarks = async (
+  params: GetMyBookmarksRequestType,
+): Promise<GetMyBookmarksResponseType> => {
   const searchParams = new URLSearchParams();
 
   if (params.page !== undefined) {
@@ -22,12 +23,12 @@ const getMyPosts = async (params: GetMyPostsRequestType): Promise<GetMyPostsResp
   return response.data;
 };
 
-export const useMyPostsQuery = (
-  params: GetMyPostsRequestType = { page: 0, size: 9 },
-): UseQueryResult<GetMyPostsResponseType> => {
+export const useMyBookmarksQuery = (
+  params: GetMyBookmarksRequestType = { page: 0, size: 9 },
+): UseQueryResult<GetMyBookmarksResponseType> => {
   return useQuery({
-    queryKey: ['myPosts', params],
-    queryFn: () => getMyPosts(params),
+    queryKey: ['myBookmarks', params],
+    queryFn: () => getMyBookmarks(params),
     staleTime: 1000 * 60 * 5, // 5분
     refetchOnMount: false,
     refetchOnWindowFocus: false,

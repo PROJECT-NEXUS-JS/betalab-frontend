@@ -6,10 +6,10 @@ import { serverInstance } from '@/apis/server-instance';
 import ProjectDetailClient from './ProjectDetailClient';
 import Logger from '@/lib/logger';
 
-import { ProjectDetailResponseSchema } from '@/hooks/posts/query/usePostDetailQuery';
-import { RightSidebarResponseSchema } from '@/hooks/posts/query/usePostRightSidebar';
+import { ProjectDetailResponseSchema } from '@/hooks/posts/queries/usePostDetailQuery';
+import { RightSidebarResponseSchema } from '@/hooks/posts/queries/usePostRightSidebar';
 import { PostReviewResponseSchema } from '@/hooks/review/quries/usePostReviewQuery';
-import { SimilarPostResponseSchema } from '@/hooks/posts/query/useSimilarPostQuery';
+import { SimilarPostResponseSchema } from '@/hooks/posts/queries/useSimilarPostQuery';
 
 export default async function ProjectDetailPage({
   params,

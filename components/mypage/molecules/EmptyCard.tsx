@@ -1,10 +1,9 @@
-import React from 'react';
 import { cn } from '@/lib/utils';
 import Button from '@/components/common/atoms/Button';
 
 interface EmptyCardProps {
   className?: string;
-  title: string;
+  title: React.ReactNode;
   buttonLabel: string;
   onClick: () => void;
 }
@@ -18,7 +17,7 @@ export default function EmptyCard({ className, title, buttonLabel, onClick }: Em
       )}
     >
       <div className="flex flex-col gap-5 items-center">
-        <h3 className="text-subtitle-02 font-semibold text-Light-Gray">{title}</h3>
+        <h3 className="text-subtitle-02 font-semibold text-Light-Gray text-center">{title}</h3>
         <Button
           State="Default"
           Size="md"

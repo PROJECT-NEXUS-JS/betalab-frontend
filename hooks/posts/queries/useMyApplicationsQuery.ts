@@ -1,11 +1,12 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { GetMyPostsRequestType, GetMyPostsResponseType } from '../dto/myPosts';
+import { GetMyApplicationsRequestType, GetMyApplicationsResponseType } from '../dto/myApplications';
 import { instance } from '@/apis/instance';
-import { queryKeys } from '@/constants/query-keys';
 
-const BASE_PATH = '/v1/users/posts/my';
+const BASE_PATH = '/v1/users/posts/applications';
 
-const getMyPosts = async (params: GetMyPostsRequestType): Promise<GetMyPostsResponseType> => {
+const getMyApplications = async (
+  params: GetMyApplicationsRequestType,
+): Promise<GetMyApplicationsResponseType> => {
   const searchParams = new URLSearchParams();
 
   if (params.page !== undefined) {
@@ -22,12 +23,12 @@ const getMyPosts = async (params: GetMyPostsRequestType): Promise<GetMyPostsResp
   return response.data;
 };
 
-export const useMyPostsQuery = (
-  params: GetMyPostsRequestType = { page: 0, size: 9 },
-): UseQueryResult<GetMyPostsResponseType> => {
+export const useMyApplicationsQuery = (
+  params: GetMyApplicationsRequestType = { page: 0, size: 9 },
+): UseQueryResult<GetMyApplicationsResponseType> => {
   return useQuery({
-    queryKey: ['myPosts', params],
-    queryFn: () => getMyPosts(params),
+    queryKey: ['myApplications', params],
+    queryFn: () => getMyApplications(params),
     staleTime: 1000 * 60 * 5, // 5분
     refetchOnMount: false,
     refetchOnWindowFocus: false,

@@ -54,7 +54,19 @@ export default function Sidebar({
               title={item.title}
               count={getCountValue(item.countKey)}
               isActive={activeTab === item.key}
-              onClick={() => handleItemClick(item.key)}
+              onClick={() =>
+                item.key === 'announcements'
+                  ? window.open(
+                      'https://lydian-tip-26b.notion.site/2500d9441db0808bbc9def67eaf49aff?source=copy_link',
+                      '_blank',
+                    )
+                  : item.key === 'betalab-guide'
+                    ? window.open(
+                        'https://lydian-tip-26b.notion.site/24f0d9441db080c3980dfab18eee03e2?source=copy_link',
+                        '_blank',
+                      )
+                    : handleItemClick(item.key)
+              }
             />
           ))}
         </SidebarSection>

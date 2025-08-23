@@ -10,15 +10,12 @@ import Button from '@/components/common/atoms/Button';
 import SimilarPostCard from '@/components/project/SimilarPostCard';
 import CategoryBar from '@/components/common/atoms/CategoryBar';
 
-import { ProjectDataModel } from '@/hooks/posts/dto/postDetail';
 import { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
-import { ReviewCardProps } from '@/components/common/molecules/ReviewCard';
-import { SimilarPost } from '@/hooks/posts/dto/similarPost';
 
-import { useGetPostDetailQuery } from '@/hooks/posts/query/usePostDetailQuery';
-import { useGetRightSidebar } from '@/hooks/posts/query/usePostRightSidebar';
+import { useGetPostDetailQuery } from '@/hooks/posts/queries/usePostDetailQuery';
+import { useGetRightSidebar } from '@/hooks/posts/queries/usePostRightSidebar';
 import { usePostReviewQuery } from '@/hooks/review/quries/usePostReviewQuery';
-import { useSimilarPosts } from '@/hooks/posts/query/useSimilarPostQuery';
+import { useSimilarPosts } from '@/hooks/posts/queries/useSimilarPostQuery';
 
 import { transformToApplyCardProps } from '@/lib/mapper/apply-card';
 import { transformToReviewCardProps } from '@/lib/mapper/review-card';

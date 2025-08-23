@@ -52,9 +52,9 @@ export default function HomePage() {
   }
 
   return (
-    <div className="w-full flex flex-col mt-10">
+    <div className="w-full flex flex-col  items-center mt-10">
       <HomeHeader className="cursor-pointer" />
-      <main className="px-14 flex flex-col gap-10 mb-30">
+      <main className="px-14 flex flex-col gap-10 mb-30 max-w-[1280px] ">
         <HomeSection>
           <SectionTitle className="w-full text-left">오늘의 추천 테스트</SectionTitle>
           <CardScroll
