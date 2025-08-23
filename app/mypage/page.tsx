@@ -13,7 +13,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import Button from '@/components/common/atoms/Button';
-import MyBookmarkContent from '@/components/mypage/organisms/MyBookmarkContent';
+import MyBookmarkContent from '@/components/mypage/organisms/MyBookmarkContent
 import MyReviewContent from '@/components/mypage/organisms/MyReviewContent';
 
 export default function MyPage() {
