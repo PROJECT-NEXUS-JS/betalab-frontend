@@ -1,9 +1,11 @@
 import { cookies } from 'next/headers';
 import { dehydrate, QueryClient, HydrationBoundary } from '@tanstack/react-query';
-import ProjectDetailClient from './ProjectDetailClient';
-import { similarPostData } from './data';
 import { queryKeys } from '@/constants/query-keys';
 import { serverInstance } from '@/apis/server-instance';
+
+import ProjectDetailClient from './ProjectDetailClient';
+import { similarPostData } from './data';
+import Logger from '@/lib/logger';
 
 import { ProjectDetailResponseSchema } from '@/hooks/posts/query/usePostDetailQuery';
 import { RightSidebarResponseSchema } from '@/hooks/posts/query/usePostRightSidebar';
@@ -50,14 +52,14 @@ async function fetchProjectData(id: number) {
 
   try {
     const response = await serverInstance(accessToken).get(`/v1/users/posts/${id}`);
-    console.log('ProjectData 원본:', response.data);
+    Logger.log('ProjectData 원본:', response.data);
 
     const parsedData = ProjectDetailResponseSchema.parse(response.data);
-    console.log('ProjectData 파싱 성공:', parsedData);
+    Logger.log('ProjectData 파싱 성공:', parsedData);
 
     return parsedData;
   } catch (err) {
-    console.error('ProjectData 파싱 실패:', err);
+    Logger.error('ProjectData 파싱 실패:', err);
     throw err; // 필요하면 에러를 상위로 던짐
   }
 }
@@ -68,14 +70,14 @@ async function fetchRightSidebarData(postId: number) {
 
   try {
     const response = await serverInstance(accessToken).get(`/v1/users/posts/${postId}/sidebar`);
-    console.log('RightSidebarData 원본:', response.data);
+    Logger.log('RightSidebarData 원본:', response.data);
 
     const parsedData = RightSidebarResponseSchema.parse(response.data);
-    console.log('RightSidebarData 파싱 성공:', parsedData);
+    Logger.log('RightSidebarData 파싱 성공:', parsedData);
 
     return parsedData;
   } catch (err) {
-    console.error('RightSidebarData 파싱 실패:', err);
+    Logger.error('RightSidebarData 파싱 실패:', err);
     throw err;
   }
 }
@@ -86,14 +88,14 @@ async function fetchPostReviewData(postId: number) {
 
   try {
     const response = await serverInstance(accessToken).get(`/v1/users/reviews/post/${postId}`);
-    console.log('PostReviewData 원본:', response.data);
+    Logger.log('PostReviewData 원본:', response.data);
 
     const parsedData = PostReviewResponseSchema.parse(response.data);
-    console.log('PostReviewData 파싱 성공:', parsedData);
+    Logger.log('PostReviewData 파싱 성공:', parsedData);
 
     return parsedData;
   } catch (err) {
-    console.error('PostReviewData 파싱 실패:', err);
+    Logger.error('PostReviewData 파싱 실패:', err);
     throw err;
   }
 }
