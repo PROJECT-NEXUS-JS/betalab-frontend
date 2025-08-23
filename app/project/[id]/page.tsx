@@ -10,6 +10,7 @@ import Logger from '@/lib/logger';
 import { ProjectDetailResponseSchema } from '@/hooks/posts/query/usePostDetailQuery';
 import { RightSidebarResponseSchema } from '@/hooks/posts/query/usePostRightSidebar';
 import { PostReviewResponseSchema } from '@/hooks/review/quries/usePostReviewQuery';
+import { SimilarPostResponseSchema } from '@/hooks/posts/query/useSimilarPostQuery';
 
 export default async function ProjectDetailPage({
   params,
@@ -37,11 +38,16 @@ export default async function ProjectDetailPage({
     queryFn: () => fetchPostReviewData(Number(id)),
   });
 
+  await queryClient.prefetchQuery({
+    queryKey: queryKeys.posts.similarPosts(Number(id)),
+    queryFn: () => fetchSimilarPostsData(Number(id)),
+  });
+
   const dehydratedState = dehydrate(queryClient);
 
   return (
     <HydrationBoundary state={dehydratedState}>
-      <ProjectDetailClient id={Number(id)} similarPostData={similarPostData} />
+      <ProjectDetailClient id={Number(id)} />
     </HydrationBoundary>
   );
 }
@@ -91,6 +97,24 @@ async function fetchPostReviewData(postId: number) {
     Logger.log('PostReviewData 원본:', response.data);
 
     const parsedData = PostReviewResponseSchema.parse(response.data);
+    Logger.log('PostReviewData 파싱 성공:', parsedData);
+
+    return parsedData;
+  } catch (err) {
+    Logger.error('PostReviewData 파싱 실패:', err);
+    throw err;
+  }
+}
+
+async function fetchSimilarPostsData(postId: number) {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get('accessToken')?.value;
+
+  try {
+    const response = await serverInstance(accessToken).get(`/v1/users/posts/${postId}/similar`);
+    Logger.log('PostReviewData 원본:', response.data);
+
+    const parsedData = SimilarPostResponseSchema.parse(response.data);
     Logger.log('PostReviewData 파싱 성공:', parsedData);
 
     return parsedData;

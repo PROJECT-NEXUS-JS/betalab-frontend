@@ -18,16 +18,16 @@ import { SimilarPost } from '@/hooks/posts/dto/similarPost';
 import { useGetPostDetailQuery } from '@/hooks/posts/query/usePostDetailQuery';
 import { useGetRightSidebar } from '@/hooks/posts/query/usePostRightSidebar';
 import { usePostReviewQuery } from '@/hooks/review/quries/usePostReviewQuery';
+import { useSimilarPosts } from '@/hooks/posts/query/useSimilarPostQuery';
 
 import { transformToApplyCardProps } from '@/lib/mapper/apply-card';
 import { transformToReviewCardProps } from '@/lib/mapper/review-card';
 
 interface ProjectDetailClientProps {
   id: number;
-  similarPostData: SimilarPost[];
 }
 
-export default function ProjectDetailClient({ id, similarPostData }: ProjectDetailClientProps) {
+export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
   const [projectIntroduceFold, setProjectIntroduceFold] = useState(true);
   const [reviewFold, setReviewFold] = useState(true);
 
@@ -70,8 +70,16 @@ export default function ProjectDetailClient({ id, similarPostData }: ProjectDeta
     isError: isReviewError,
   } = usePostReviewQuery(Number(id));
 
-  if (isLoading || isRightSidebarLoading || isReviewLoading) return <div>로딩 중...</div>;
-  if (isError || isRightSidebarError || isReviewError) return <div>에러 발생</div>;
+  const {
+    data: similarPostData,
+    isLoading: isSimilarPostLoading,
+    isError: isSimilarPostError,
+  } = useSimilarPosts(Number(id));
+
+  if (isLoading || isRightSidebarLoading || isReviewLoading || isSimilarPostLoading)
+    return <div>로딩 중...</div>;
+  if (isError || isRightSidebarError || isReviewError || isSimilarPostError)
+    return <div>에러 발생</div>;
 
   const projectData = postDetailData?.data;
   if (!projectData) return <div>데이터 없음</div>;
@@ -162,7 +170,7 @@ export default function ProjectDetailClient({ id, similarPostData }: ProjectDeta
           <section className="flex flex-col gap-4">
             <h3 className="text-xl text-Black font-bold">비슷한 테스트는 어때요 ?</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
-              {similarPostData.map(post => (
+              {similarPostData?.data.map(post => (
                 <SimilarPostCard key={post.id} post={post} />
               ))}
             </div>
