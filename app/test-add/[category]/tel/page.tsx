@@ -1,36 +1,44 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
 import Input from '@/components/common/atoms/Input';
 import TextCounter from '@/components/test-add/TextCounter';
 import type { InputProps } from '@/components/common/atoms/Input';
 import TestAddLayout from '@/components/test-add/layouts/TestAddLayout';
+import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
 
 export default function TestAddContactPage() {
-  const { category } = useParams();
+  const { category } = useParams<{ category: string }>();
   const router = useRouter();
-  const [title, setTitle] = useState('');
+  const { form, update, save } = useTestAddForm();
+
+  const [contact, setContact] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
-  const STEP_INDEX = 5;
+  const STEP_INDEX = 6;
   const MAX_LENGTH = 30;
-  const storageKey = `temp-title-${category}`;
+
+  useEffect(() => {
+    setContact(typeof form.qnaMethod === 'string' ? form.qnaMethod : '');
+  }, [form.qnaMethod]);
 
   const getInputState = (): InputProps['state'] => {
-    if (title.length === 0) return 'no value';
+    if (contact.length === 0) return 'no value';
     if (isFocused) return 'focused';
     return 'has value';
   };
 
   const handleNext = () => {
-    if (!title.trim()) return alert('연락처를 입력해주세요!');
-    localStorage.setItem(storageKey, title.trim());
+    const trimmed = contact.trim();
+    if (!trimmed) return alert('연락처를 입력해주세요!');
+    update({ qnaMethod: trimmed });
     router.push(`/test-add/${category}/purpose`);
   };
 
   const handleSave = () => {
-    localStorage.setItem(storageKey, title);
+    update({ qnaMethod: contact });
+    save();
   };
 
   return (
@@ -56,19 +64,17 @@ export default function TestAddContactPage() {
             state={getInputState()}
             size="xl"
             placeholder="예: open.kakao.com/abcd1234 또는 BetaLab@email.com"
-            value={title}
+            value={contact}
             onChange={e => {
-              const inputValue = e.target.value;
-              if (inputValue.length <= MAX_LENGTH) {
-                setTitle(inputValue);
-              }
+              const v = e.target.value;
+              if (v.length <= MAX_LENGTH) setContact(v);
             }}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             maxLength={MAX_LENGTH}
           />
           <div className="absolute right-1">
-            <TextCounter value={title} maxLength={MAX_LENGTH} />
+            <TextCounter value={contact} maxLength={MAX_LENGTH} />
           </div>
         </div>
       </div>

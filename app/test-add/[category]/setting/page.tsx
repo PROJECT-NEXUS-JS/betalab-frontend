@@ -10,23 +10,26 @@ import Input, { type InputProps } from '@/components/common/atoms/Input';
 import DatePicker from '@/components/common/molecules/DatePicker';
 import type { DateRange } from 'react-day-picker';
 import { format } from 'date-fns';
+import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
 
 const FEEDBACK_OPTIONS = [
   '구글폼 제출',
   '앱 내 피드백 경로',
   '이메일 회신',
   '슬랙/디스코드 커뮤니티 댓글',
-];
+] as const;
+
 const TIME_OPTIONS = [
   '하루 미만',
   '3일 이상 사용',
   '일주일 이상 사용',
   '하루 미만 사용 (간단 테스트)',
-];
+] as const;
 
-export default function TestAddPurposePage() {
-  const { category } = useParams();
+export default function TestAddSettingPage() {
+  const { category } = useParams<{ category: string }>();
   const router = useRouter();
+  const { form, update, save } = useTestAddForm();
 
   const [feedbackTags, setFeedbackTags] = useState<string[]>([]);
   const [customFeedbackOpen, setCustomFeedbackOpen] = useState(false);
@@ -42,6 +45,47 @@ export default function TestAddPurposePage() {
   const [recruitTouched, setRecruitTouched] = useState(false);
 
   const [deadlineRange, setDeadlineRange] = useState<DateRange | undefined>();
+
+  useEffect(() => {
+    if (typeof form.feedbackMethod === 'string' && form.feedbackMethod.trim()) {
+      const tokens = form.feedbackMethod
+        .split(',')
+        .map(t => t.trim())
+        .filter(Boolean);
+      const inList = tokens.filter(t => FEEDBACK_OPTIONS.includes(t as any));
+      const extras = tokens.filter(t => !FEEDBACK_OPTIONS.includes(t as any));
+      setFeedbackTags(inList);
+      if (extras.length) {
+        setCustomFeedbackOpen(true);
+        setCustomFeedbackValue(extras.join(', '));
+      }
+    }
+
+    if (typeof form.durationTime === 'string' && form.durationTime.trim()) {
+      const tokens = form.durationTime
+        .split(',')
+        .map(t => t.trim())
+        .filter(Boolean);
+      const inList = tokens.filter(t => TIME_OPTIONS.includes(t as any));
+      const extras = tokens.filter(t => !TIME_OPTIONS.includes(t as any));
+      setTimeTags(inList);
+      if (extras.length) {
+        setCustomTimeOpen(true);
+        setCustomTimeValue(extras.join(', '));
+      }
+    }
+
+    if (typeof form.maxParticipants === 'number') {
+      setRecruitCount(form.maxParticipants);
+      setRecruitTouched(true);
+    }
+
+    const from = form.startDate ? new Date(form.startDate) : undefined;
+    const to = form.endDate ? new Date(form.endDate) : undefined;
+    if (from && to && !Number.isNaN(+from) && !Number.isNaN(+to)) {
+      setDeadlineRange({ from, to });
+    }
+  }, [form.feedbackMethod, form.durationTime, form.maxParticipants, form.startDate, form.endDate]);
 
   const feedbackInputState: InputProps['state'] = useMemo(() => {
     if (!customFeedbackOpen) return 'no value';
@@ -100,47 +144,53 @@ export default function TestAddPurposePage() {
     }
   };
 
-  const saveDeadlineToLS = (range: DateRange | undefined) => {
-    const formatted =
-      range?.from && range?.to
-        ? `${format(range.from, 'yyyy.MM.dd')} - ${format(range.to, 'yyyy.MM.dd')}`
-        : '';
-
-    const raw =
-      range?.from && range?.to
-        ? {
-            from: range.from.toISOString(),
-            to: range.to.toISOString(),
-          }
-        : null;
-
-    localStorage.setItem(`temp-deadline-${category}`, formatted);
-    localStorage.setItem(`temp-deadline-raw-${category}`, JSON.stringify(raw));
-  };
-
   const handleNext = () => {
     if (!canProceed) {
       alert('모든 항목을 입력/선택해 주세요.');
       return;
     }
 
-    const feedbackData = [...feedbackTags, ...(customFeedbackValue ? [customFeedbackValue] : [])];
-    const timeData = [...timeTags, ...(customTimeValue ? [customTimeValue] : [])];
-    const recruitData = customRecruitValue ? parseInt(customRecruitValue, 10) : recruitCount;
+    const feedbackData = [
+      ...feedbackTags,
+      ...(customFeedbackOpen && customFeedbackValue ? [customFeedbackValue.trim()] : []),
+    ];
+    const timeData = [
+      ...timeTags,
+      ...(customTimeOpen && customTimeValue ? [customTimeValue.trim()] : []),
+    ];
+    const participants = customRecruitOpen ? parseInt(customRecruitValue, 10) : recruitCount;
 
-    localStorage.setItem(`temp-purpose-${category}`, JSON.stringify(feedbackData));
-    localStorage.setItem(`temp-time-${category}`, JSON.stringify(timeData));
-    localStorage.setItem(`temp-recruit-${category}`, JSON.stringify(recruitData));
-    saveDeadlineToLS(deadlineRange);
+    update({
+      feedbackMethod: feedbackData.join(', '),
+      durationTime: timeData.join(', '),
+      maxParticipants: Number.isFinite(participants) ? participants : undefined,
+      startDate: deadlineRange?.from?.toISOString(),
+      endDate: deadlineRange?.to?.toISOString(),
+    });
 
     router.push(`/test-add/${category}/condition`);
   };
 
   const handleSave = () => {
-    localStorage.setItem(`temp-purpose-${category}`, JSON.stringify(feedbackTags));
-    localStorage.setItem(`temp-time-${category}`, JSON.stringify(timeTags));
-    localStorage.setItem(`temp-recruit-${category}`, JSON.stringify(recruitCount));
-    saveDeadlineToLS(deadlineRange);
+    const feedbackData = [
+      ...feedbackTags,
+      ...(customFeedbackOpen && customFeedbackValue ? [customFeedbackValue.trim()] : []),
+    ];
+    const timeData = [
+      ...timeTags,
+      ...(customTimeOpen && customTimeValue ? [customTimeValue.trim()] : []),
+    ];
+    const participants = customRecruitOpen ? parseInt(customRecruitValue, 10) : recruitCount;
+
+    update({
+      feedbackMethod: feedbackData.join(', '),
+      durationTime: timeData.join(', '),
+      maxParticipants: Number.isFinite(participants) ? participants : undefined,
+      startDate: deadlineRange?.from?.toISOString(),
+      endDate: deadlineRange?.to?.toISOString(),
+    });
+
+    save();
   };
 
   const sectionVariants = {
@@ -155,12 +205,13 @@ export default function TestAddPurposePage() {
   return (
     <TestAddLayout
       leftImageSrc="/test2.png"
-      stepIndex={7}
+      stepIndex={8}
       onNext={handleNext}
       showSave
       onSave={handleSave}
     >
       <div className="flex flex-col gap-10">
+        {/* 피드백 수집 방식 */}
         <motion.div
           className="flex flex-col gap-6"
           variants={sectionVariants}
@@ -209,8 +260,10 @@ export default function TestAddPurposePage() {
             </div>
           )}
         </motion.div>
+
+        {/* 소요 시간 */}
         <AnimatePresence>
-          {showTimeSection && (
+          {(feedbackTags.length > 0 || (customFeedbackOpen && !!customFeedbackValue.trim())) && (
             <motion.div
               ref={timeRef}
               className="flex flex-col gap-6"
@@ -267,8 +320,9 @@ export default function TestAddPurposePage() {
           )}
         </AnimatePresence>
 
+        {/* 모집 인원 */}
         <AnimatePresence>
-          {showRecruitSection && (
+          {(timeTags.length > 0 || (customTimeOpen && !!customTimeValue.trim())) && (
             <motion.div
               ref={recruitRef}
               className="flex flex-col gap-6"
@@ -336,22 +390,31 @@ export default function TestAddPurposePage() {
           )}
         </AnimatePresence>
 
+        {/* 기간 선택 */}
         <AnimatePresence>
-          {showDeadlineSection && (
-            <motion.div
-              ref={deadlineRef}
-              className="flex flex-col gap-4"
-              variants={sectionVariants}
-              initial="hidden"
-              animate="visible"
-              exit={{ opacity: 0, y: 10 }}
-              custom={3}
-              layout
-            >
-              <p className="text-subtitle-01 font-semibold">언제까지 참여자를 모집할까요?</p>
-              <DatePicker value={deadlineRange} onChange={setDeadlineRange} />
-            </motion.div>
-          )}
+          {recruitTouched &&
+            (customRecruitOpen ? Number(customRecruitValue) > 0 : recruitCount > 0) && (
+              <motion.div
+                ref={deadlineRef}
+                className="flex flex-col gap-4"
+                variants={sectionVariants}
+                initial="hidden"
+                animate="visible"
+                exit={{ opacity: 0, y: 10 }}
+                custom={3}
+                layout
+              >
+                <p className="text-subtitle-01 font-semibold">언제까지 참여자를 모집할까요?</p>
+                <DatePicker value={deadlineRange} onChange={setDeadlineRange} />
+                {/* 미리보기 텍스트 (선택됨) */}
+                {deadlineRange?.from && deadlineRange?.to && (
+                  <p className="text-body-02 text-Gray-300">
+                    {format(deadlineRange.from, 'yyyy.MM.dd')} -{' '}
+                    {format(deadlineRange.to, 'yyyy.MM.dd')}
+                  </p>
+                )}
+              </motion.div>
+            )}
         </AnimatePresence>
       </div>
     </TestAddLayout>

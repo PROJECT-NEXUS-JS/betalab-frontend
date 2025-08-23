@@ -1,10 +1,9 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import AppGenre from '@/components/test-add/AppGenre';
-import GameGenre from '@/components/test-add/GameGenre';
-import WebGenre from '@/components/test-add/WebGenre';
+import { useParams } from 'next/navigation';
+import AppGenre from '@/components/test-add/genre/AppGenre';
+import GameGenre from '@/components/test-add/genre/GameGenre';
+import WebGenre from '@/components/test-add/genre/WebGenre';
 
 export default function TestAddGenrePage() {
   const { category } = useParams();

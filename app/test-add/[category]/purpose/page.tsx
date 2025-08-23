@@ -4,8 +4,10 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Selector from '@/components/common/molecules/Selector';
 import TestAddLayout from '@/components/test-add/layouts/TestAddLayout';
+import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
+type PurposeGroup = { title: string; items: readonly string[] };
 
-const PURPOSE_GROUPS = [
+const PURPOSE_GROUPS: readonly PurposeGroup[] = [
   {
     title: '사용성 및 인터페이스 피드백',
     items: [
@@ -47,37 +49,44 @@ const PURPOSE_GROUPS = [
       '사용 로그 데이터 수집 동의',
     ],
   },
-];
-
-const STEP_INDEX = 6;
+] as const;
+const STEP_INDEX = 7;
 
 export default function TestAddPurposePage() {
-  const { category } = useParams();
+  const { category } = useParams<{ category: string }>();
   const router = useRouter();
+  const { form, update, save } = useTestAddForm();
 
   const [selectedByGroup, setSelectedByGroup] = useState<(string | null)[]>(
     Array(PURPOSE_GROUPS.length).fill(null),
   );
 
   useEffect(() => {
-    const savedPurpose = localStorage.getItem(`temp-purpose-${category}`);
-    if (savedPurpose) {
-      setSelectedByGroup(JSON.parse(savedPurpose));
-    }
-  }, [category]);
+    const feedback = Array.isArray(form.feedbackItems) ? form.feedbackItems : [];
+    const restored = PURPOSE_GROUPS.map(group => {
+      const match = feedback.find(item => group.items.includes(item));
+      return match ?? null;
+    });
+    setSelectedByGroup(restored);
+  }, [form.feedbackItems]);
 
   const handleSelect = (groupIndex: number, value: string) => {
-    setSelectedByGroup(prev => prev.map((selected, i) => (i === groupIndex ? value : selected)));
+    setSelectedByGroup(prev => prev.map((sel, i) => (i === groupIndex ? value : sel)));
   };
 
   const handleNext = () => {
-    if (selectedByGroup.some(v => v === null)) return alert('각 항목에서 하나씩 선택해주세요!');
-    localStorage.setItem(`temp-purpose-${category}`, JSON.stringify(selectedByGroup));
+    if (selectedByGroup.some(v => v === null)) {
+      alert('각 항목에서 하나씩 선택해주세요!');
+      return;
+    }
+    update({ feedbackItems: selectedByGroup as string[] });
     router.push(`/test-add/${category}/setting`);
   };
 
   const handleSave = () => {
-    localStorage.setItem(`temp-purpose-${category}`, JSON.stringify(selectedByGroup));
+    const picked = selectedByGroup.filter(Boolean) as string[];
+    update({ feedbackItems: picked });
+    save();
   };
 
   return (
@@ -90,13 +99,14 @@ export default function TestAddPurposePage() {
       saveLabel="임시 저장"
     >
       <div className="flex flex-col gap-10">
-        <p className="text-subtdETCitle-01 font-semibold">
+        <p className="text-subtitle-01 font-semibold">
           참여자들에게서 어떤 걸 알아보면 도움이 될까요?
         </p>
+
         {PURPOSE_GROUPS.map(({ title, items }, idx) => (
           <section key={title} className="flex flex-col gap-4">
             <p className="text-body-01 font-semibold">{title}</p>
-            <Selector
+            <Selector<string>
               options={items}
               selected={selectedByGroup[idx]}
               onSelect={value => handleSelect(idx, value)}

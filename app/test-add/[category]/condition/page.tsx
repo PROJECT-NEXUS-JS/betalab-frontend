@@ -1,18 +1,33 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import TestAddLayout from '@/components/test-add/layouts/TestAddLayout';
 import ConditionCard from '@/components/test-add/ConditionCard';
 import Input from '@/components/common/atoms/Input';
 import Button from '@/components/common/atoms/Button';
 import Chip from '@/components/common/atoms/Chip';
+import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
 
 type ButtonState = 'Focused' | 'Solid';
+type RewardUI = 'cash' | 'gift' | 'product' | 'etc';
+const UI_TO_API: Record<RewardUI, string> = {
+  cash: 'CASH',
+  gift: 'GIFT_CARD',
+  product: 'PRODUCT',
+  etc: 'ETC',
+};
+const API_TO_UI: Record<string, RewardUI> = {
+  CASH: 'cash',
+  GIFT_CARD: 'gift',
+  PRODUCT: 'product',
+  ETC: 'etc',
+};
 
 export default function TestAddConditionsPage() {
   const router = useRouter();
   const { category } = useParams<{ category?: string }>();
+  const { form, update, save } = useTestAddForm();
 
   const [openGender, setOpenGender] = useState(false);
   const [openAge, setOpenAge] = useState(false);
@@ -24,34 +39,150 @@ export default function TestAddConditionsPage() {
   const [ageFrom, setAgeFrom] = useState('');
   const [ageTo, setAgeTo] = useState('');
   const [otherConditions, setOtherConditions] = useState('');
-  const [rewardType, setRewardType] = useState<'cash' | 'gift' | 'product' | 'etc' | null>(null);
+  const [rewardType, setRewardType] = useState<RewardUI | null>(null);
   const [rewardDesc, setRewardDesc] = useState('');
   const [rewardRule, setRewardRule] = useState('');
 
-  const storageKey = `test-add:conditions:${category ?? 'default'}`;
+  useEffect(() => {
+    if (form.genderRequirement === '남성') {
+      setOpenGender(true);
+      setGender('male');
+    } else if (form.genderRequirement === '여성') {
+      setOpenGender(true);
+      setGender('female');
+    } else if (form.genderRequirement === '무관') {
+      setOpenGender(false);
+      setGender(null);
+    }
+
+    if (typeof form.ageMin === 'number' || typeof form.ageMax === 'number') {
+      setOpenAge(true);
+      if (form.ageMin && !form.ageMax && form.ageMin >= 19) {
+        setAgeMode('adult');
+      } else {
+        setAgeMode('custom');
+        setAgeFrom(form.ageMin ? String(form.ageMin) : '');
+        setAgeTo(form.ageMax ? String(form.ageMax) : '');
+      }
+    }
+
+    if (typeof form.additionalRequirements === 'string') {
+      setOpenOther(!!form.additionalRequirements);
+      setOtherConditions(form.additionalRequirements || '');
+    }
+
+    if (form.rewardType) {
+      setOpenReward(true);
+      const ui = API_TO_UI[form.rewardType] ?? null;
+      setRewardType(ui);
+    }
+    if (typeof form.rewardDescription === 'string') {
+      const desc = form.rewardDescription;
+      const [d, rule] = desc.split('지급 조건:');
+      setRewardDesc(d?.trim() ?? '');
+      setRewardRule(rule?.trim() ?? '');
+    }
+  }, [
+    form.genderRequirement,
+    form.ageMin,
+    form.ageMax,
+    form.additionalRequirements,
+    form.rewardType,
+    form.rewardDescription,
+  ]);
 
   const handleSave = () => {
-    const payload = {
-      open: { gender: openGender, age: openAge, other: openOther, reward: openReward },
-      gender,
-      age: {
-        from: ageFrom ? Number(ageFrom) : null,
-        to: ageTo ? Number(ageTo) : null,
-      },
-      other: otherConditions.trim(),
-      reward: {
-        type: rewardType,
-        desc: rewardDesc.trim(),
-        rule: rewardRule.trim(),
-      },
-      savedAt: new Date().toISOString(),
+    // 부분 저장(검증 약하게)
+    const patch: any = {
+      genderRequirement: openGender
+        ? gender === 'male'
+          ? '남성'
+          : gender === 'female'
+            ? '여성'
+            : undefined
+        : '무관',
+      additionalRequirements: openOther ? otherConditions || undefined : undefined,
+      rewardType: openReward && rewardType ? UI_TO_API[rewardType] : undefined,
+      rewardDescription:
+        openReward && (rewardDesc || rewardRule)
+          ? [rewardDesc?.trim(), rewardRule?.trim() ? `지급 조건: ${rewardRule.trim()}` : '']
+              .filter(Boolean)
+              .join(' ')
+          : undefined,
     };
-    localStorage.setItem(storageKey, JSON.stringify(payload));
+
+    if (openAge) {
+      if (ageMode === 'adult') {
+        patch.ageMin = 19;
+        patch.ageMax = undefined;
+      } else if (ageMode === 'custom') {
+        patch.ageMin = ageFrom ? Number(ageFrom) : undefined;
+        patch.ageMax = ageTo ? Number(ageTo) : undefined;
+      }
+    } else {
+      patch.ageMin = undefined;
+      patch.ageMax = undefined;
+    }
+
+    update(patch);
+    save();
     alert('임시 저장되었습니다.');
   };
 
   const handleNext = () => {
-    handleSave();
+    if (openGender && !gender) {
+      alert('성별을 선택해주세요.');
+      return;
+    }
+    if (openAge) {
+      if (ageMode === 'adult') {
+      } else if (ageMode === 'custom') {
+        const min = Number(ageFrom);
+        const max = Number(ageTo);
+        if (!ageFrom || !ageTo || Number.isNaN(min) || Number.isNaN(max)) {
+          alert('연령을 숫자로 입력해주세요.');
+          return;
+        }
+        if (min < 0 || max < 0 || min > max) {
+          alert('유효한 연령 범위를 입력해주세요.');
+          return;
+        }
+      } else {
+        alert('연령 모드를 선택해주세요.');
+        return;
+      }
+    }
+    if (openReward && !rewardType) {
+      alert('리워드 종류를 선택해주세요.');
+      return;
+    }
+
+    const patch: any = {
+      genderRequirement: openGender ? (gender === 'male' ? '남성' : '여성') : '무관',
+      additionalRequirements: openOther ? otherConditions.trim() || undefined : undefined,
+      rewardType: openReward && rewardType ? UI_TO_API[rewardType] : undefined,
+      rewardDescription:
+        openReward && (rewardDesc || rewardRule)
+          ? [rewardDesc.trim(), rewardRule.trim() ? `지급 조건: ${rewardRule.trim()}` : '']
+              .filter(Boolean)
+              .join(' ')
+          : undefined,
+    };
+
+    if (openAge) {
+      if (ageMode === 'adult') {
+        patch.ageMin = 19;
+        patch.ageMax = undefined;
+      } else {
+        patch.ageMin = Number(ageFrom);
+        patch.ageMax = Number(ageTo);
+      }
+    } else {
+      patch.ageMin = undefined;
+      patch.ageMax = undefined;
+    }
+
+    update(patch);
     router.push(`/test-add/${category}/detail`);
   };
 
@@ -132,9 +263,7 @@ export default function TestAddConditionsPage() {
                   <div className="flex items-center gap-3">
                     <Input
                       type="text"
-                      state={
-                        ageMode === 'custom' ? (ageFrom ? 'has value' : 'no value') : 'disabled'
-                      }
+                      state={ageFrom ? 'has value' : 'no value'}
                       size="sm"
                       placeholder="시작 연령"
                       value={ageFrom}
@@ -143,7 +272,7 @@ export default function TestAddConditionsPage() {
                     <span className="text-Gray-300">~</span>
                     <Input
                       type="text"
-                      state={ageMode === 'custom' ? (ageTo ? 'has value' : 'no value') : 'disabled'}
+                      state={ageTo ? 'has value' : 'no value'}
                       size="sm"
                       placeholder="종료 연령"
                       value={ageTo}

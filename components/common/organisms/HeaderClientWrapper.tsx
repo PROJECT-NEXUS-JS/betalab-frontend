@@ -1,7 +1,7 @@
 'use client';
 import { useAuth } from '@/hooks/useAuth';
 import { usePathname } from 'next/navigation';
-import Header from '@/components/common/organisms/Header';
+import Header, { HeaderAdmin } from '@/components/common/organisms/Header';
 
 const HIDDEN_HEADER_ROUTES = ['/login', '/login/survey'];
 
@@ -11,6 +11,9 @@ export default function HeaderClientWrapper() {
 
   if (pathname && HIDDEN_HEADER_ROUTES.includes(pathname)) {
     return null;
+  }
+  if (pathname && pathname.startsWith('/admin')) {
+    return <HeaderAdmin />;
   }
   return <Header isLogin={isLoggedIn} isAuthLoading={isAuthLoading} />;
 }

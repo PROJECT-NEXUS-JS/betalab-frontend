@@ -1,6 +1,8 @@
 'use client';
-import { useCallback } from 'react';
+import { useCallback, useEffect, Suspense } from 'react';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
+
 import BetalabLogo from '@/components/common/svg/BetalabLogo';
 import Button from '@/components/common/atoms/Button';
 import KakaoButton from '@/components/auth/KakaoButton';
@@ -29,6 +31,21 @@ export default function LoginPage() {
         />
         <Button Size="md" State="Text btn" label="그냥 둘러보기" onClick={() => {}} />
       </div>
+      <Suspense fallback={<div>Loading...</div>}>
+        <RedirectUrlSetter />
+      </Suspense>
     </div>
   );
+}
+
+function RedirectUrlSetter() {
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const redirectedFrom = searchParams.get('redirectedFrom');
+    if (redirectedFrom) {
+      localStorage.setItem('redirectedFrom', redirectedFrom);
+    }
+  }, [searchParams]);
+  return null;
 }

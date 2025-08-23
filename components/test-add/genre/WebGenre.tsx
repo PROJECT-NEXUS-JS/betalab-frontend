@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import TestAddLayout from '@/components/test-add/layouts/TestAddLayout';
 import Selector from '@/components/common/molecules/Selector';
+import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
 
 const WEB_GENRES = [
   '생산성/협업툴',
@@ -21,19 +23,39 @@ const WEB_GENRES = [
 
 type WebGenre = (typeof WEB_GENRES)[number];
 
+const UI_TO_API: Record<WebGenre, string> = {
+  '생산성/협업툴': 'PRODUCTIVITY_COLLAB',
+  '커머스/쇼핑': 'COMMERCE_SHOPPING',
+  '마케팅/홍보툴': 'MARKETING_PROMOTION',
+  '커뮤니티/소셜': 'COMMUNITY_SOCIAL',
+  '교육/콘텐츠': 'EDU_CONTENT',
+  '금융/자산관리': 'FINANCE_ASSET',
+  'AI/자동화 도구': 'AI_AUTOMATION',
+  '실험적 웹툴': 'EXPERIMENTAL_WEBTOOL',
+  '라이프스타일/취미': 'LIFESTYLE_HOBBY',
+  '채용/HR': 'RECRUIT_HR',
+  '고객관리/세일즈': 'CRM_SALES',
+  기타: 'ETC',
+};
+
+const API_TO_UI: Record<string, WebGenre> = Object.fromEntries(
+  Object.entries(UI_TO_API).map(([ui, api]) => [api, ui as WebGenre]),
+) as Record<string, WebGenre>;
+
 export default function WebGenrePage() {
   const STEP_INDEX = 2;
-  const storageKey = 'temp-genre-web';
+  const router = useRouter();
+  const { form, update, save } = useTestAddForm();
 
   const options = useMemo(() => [...WEB_GENRES] as WebGenre[], []);
   const [selected, setSelected] = useState<WebGenre | null>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem(storageKey);
-    if (saved && options.includes(saved as WebGenre)) {
-      setSelected(saved as WebGenre);
+    const api = Array.isArray(form.genreCategories) ? form.genreCategories[0] : undefined;
+    if (api && API_TO_UI[api] && options.includes(API_TO_UI[api])) {
+      setSelected(API_TO_UI[api]);
     }
-  }, [options]);
+  }, [form.genreCategories, options]);
 
   const handleSelect = (value: WebGenre) => {
     setSelected(value);
@@ -41,7 +63,8 @@ export default function WebGenrePage() {
 
   const handleNext = () => {
     if (!selected) return alert('장르를 선택해주세요!');
-    window.location.href = '/test-add/web/name';
+    update({ genreCategories: [UI_TO_API[selected]] });
+    router.push('/test-add/web/name');
   };
 
   return (
@@ -49,6 +72,8 @@ export default function WebGenrePage() {
       leftImageSrc="/test1.png"
       stepIndex={STEP_INDEX}
       onNext={handleNext}
+      showSave
+      onSave={save}
       saveLabel="임시 저장"
     >
       <div className="flex flex-col gap-6">
