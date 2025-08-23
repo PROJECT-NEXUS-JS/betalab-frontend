@@ -27,7 +27,7 @@ export default function ProfileCard({
       ) : (
         <UserProfile className="size-9" />
       )}
-      <div className="text-center">
+      <div className="text-start">
         <h3 className="text-body-01 font-semibold text-Dark-Gray">{nickname}</h3>
         {affiliation && (
           <p className="text-caption-01 font-medium text-Light-Gray">{affiliation}</p>

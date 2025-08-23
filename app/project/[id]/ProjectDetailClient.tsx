@@ -14,7 +14,7 @@ import { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
 
 import { useGetPostDetailQuery } from '@/hooks/posts/queries/usePostDetailQuery';
 import { useGetRightSidebar } from '@/hooks/posts/queries/usePostRightSidebar';
-import { usePostReviewQuery } from '@/hooks/review/quries/usePostReviewQuery';
+import { usePostReviewQuery } from '@/hooks/review/queries/usePostReviewQuery';
 import { useSimilarPosts } from '@/hooks/posts/queries/useSimilarPostQuery';
 
 import { transformToApplyCardProps } from '@/lib/mapper/apply-card';
@@ -173,7 +173,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
             </div>
           </section>
         </div>
-        <ProjectDetailCardClient {...applyCardData} />
+        <ProjectDetailCardClient {...applyCardData} postId={Number(id)} />
       </div>
     </div>
   );

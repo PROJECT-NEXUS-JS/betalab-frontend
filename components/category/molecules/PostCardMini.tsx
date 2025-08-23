@@ -1,4 +1,3 @@
-import BookMark from '@/components/common/svg/BookMark';
 import { TestCardType } from '@/types/models/testCard';
 import Tag from '@/components/common/atoms/Tag';
 import { cn } from '@/lib/utils';
@@ -53,7 +52,7 @@ export default function PostCardMini({ post, className }: PostCardMiniProps) {
           {!isTodayDeadline && <Tag style="gray" dday={dday} />}
           {post.reward && <Tag style={getRewardTagStyle(post.reward.rewardDescription)} />}
         </div>
-        <BookMark className="size-6 fill-transparent text-transparent group-hover:fill-transparent group-hover:text-Gray-200 group-hover:stroke-Gray-200 group-hover:stroke-2" />
+        {/* <BookMark className="size-6 fill-transparent text-transparent group-hover:fill-transparent group-hover:text-Gray-200 group-hover:stroke-Gray-200 group-hover:stroke-2" /> */}
       </div>
     </div>
   );

@@ -8,7 +8,7 @@ import Logger from '@/lib/logger';
 
 import { ProjectDetailResponseSchema } from '@/hooks/posts/queries/usePostDetailQuery';
 import { RightSidebarResponseSchema } from '@/hooks/posts/queries/usePostRightSidebar';
-import { PostReviewResponseSchema } from '@/hooks/review/quries/usePostReviewQuery';
+import { PostReviewResponseSchema } from '@/hooks/review/queries/usePostReviewQuery';
 import { SimilarPostResponseSchema } from '@/hooks/posts/queries/useSimilarPostQuery';
 
 export default async function ProjectDetailPage({

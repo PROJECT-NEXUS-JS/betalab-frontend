@@ -8,12 +8,7 @@ import { TestCardType } from '@/types/models/testCard';
 
 export default function MyPostContent() {
   const [currentPage, setCurrentPage] = useState(0);
-  const {
-    data: myPostsData,
-    isLoading,
-    error,
-    isError,
-  } = useMyPostsQuery({ page: currentPage, size: 9 });
+  const { data: myPostsData, isLoading } = useMyPostsQuery({ page: currentPage, size: 9 });
   const router = useRouter();
 
   const handlePageChange = (page: number) => {
@@ -21,7 +16,7 @@ export default function MyPostContent() {
   };
 
   const handlePostClick = (postId: number) => {
-    router.push(`/project/${postId}`);
+    router.push(`/admin/${postId}`);
   };
 
   return (

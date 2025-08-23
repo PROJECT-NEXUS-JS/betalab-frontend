@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import Pagination from '@/components/category/molecules/Pagination';
 import EmptyCard from '../molecules/EmptyCard';
 import { TestCardType } from '@/types/models/testCard';
+import { useWrittenReviewsQuery } from '@/hooks/review/queries/useWrittenReviewsQuery';
+import MyReviewCard from '@/components/common/molecules/MyReviewCard';
 
 export default function MyReviewContent() {
   const [selectedTab, setSelectedTab] = useState<'writable' | 'written'>('writable');
@@ -14,6 +16,10 @@ export default function MyReviewContent() {
     page: currentPage,
     size: 9,
   });
+  const { data: writtenReviewsData, isLoading: isWrittenReviewsLoading } = useWrittenReviewsQuery({
+    page: currentPage,
+    size: 10,
+  });
   const router = useRouter();
 
   const handlePageChange = (page: number) => {
@@ -21,8 +27,7 @@ export default function MyReviewContent() {
   };
 
   const handlePostClick = (postId: number) => {
-    // 리뷰 작성 페이지로 이동 (예: /review/write/{postId})
-    router.push(`/review/write/${postId}`);
+    router.push(`/project/${postId}`);
   };
 
   return (
@@ -108,14 +113,40 @@ export default function MyReviewContent() {
 
       {selectedTab === 'written' && (
         <div className="flex flex-col mt-10">
-          <EmptyCard
-            className="w-full py-[100px]"
-            title="아직 작성한 리뷰가 없어요"
-            buttonLabel="테스트 보러가기"
-            onClick={() => {
-              router.push('/category');
-            }}
-          />
+          {isWrittenReviewsLoading ? (
+            <div className="flex flex-col gap-4">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <div key={index} className="w-full h-32 bg-gray-200 animate-pulse rounded-lg" />
+              ))}
+            </div>
+          ) : !writtenReviewsData?.data?.content || writtenReviewsData.data.content.length === 0 ? (
+            <EmptyCard
+              className="w-full py-[100px]"
+              title="아직 작성한 리뷰가 없어요"
+              buttonLabel="테스트 보러가기"
+              onClick={() => {
+                router.push('/category');
+              }}
+            />
+          ) : (
+            <>
+              <div className="flex flex-col gap-10">
+                {writtenReviewsData.data.content.map(review => (
+                  <div key={review.reviewId}>
+                    <MyReviewCard review={review} />
+                  </div>
+                ))}
+              </div>
+
+              {writtenReviewsData.data.totalPages > 1 && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={writtenReviewsData.data.totalPages}
+                  onPageChange={handlePageChange}
+                />
+              )}
+            </>
+          )}
         </div>
       )}
     </div>
