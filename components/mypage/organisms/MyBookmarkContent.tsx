@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useMyBookmarksQuery } from '@/hooks/posts/queries/useMyBookmarksQuery';
 import PostCard, { PostCardSkeleton } from '@/components/category/molecules/PostCard';
 import { useRouter } from 'next/navigation';

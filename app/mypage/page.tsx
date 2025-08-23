@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import Button from '@/components/common/atoms/Button';
 import MyBookmarkContent from '@/components/mypage/organisms/MyBookmarkContent';
+import MyReviewContent from '@/components/mypage/organisms/MyReviewContent';
 
 export default function MyPage() {
   const { data: profile, isLoading, isError, error } = useMyPageProfileQuery();
@@ -37,6 +38,7 @@ export default function MyPage() {
     'posted-tests': <MyPostContent />,
     'participated-tests': <MyParticipateContent />,
     'bookmarked-tests': <MyBookmarkContent />,
+    'my-reviews': <MyReviewContent />,
   };
 
   const renderMainContent = () => {
