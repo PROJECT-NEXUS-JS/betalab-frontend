@@ -25,7 +25,7 @@ interface TestAddLayoutProps {
 export default function TestAddLayout({
   children,
   leftImageSrc,
-  leftImageClassName = 'object-contain',
+  leftImageClassName = 'object-contain object-top',
   leftPanelClassName,
   stepIndex,
   totalSteps = 10,
@@ -53,9 +53,10 @@ export default function TestAddLayout({
           />
         </div>
 
-        <div className="flex-1 flex flex-col px-12 py-10">
+        <div className="flex-1 flex flex-col px-12">
           <div className="flex-1">{children}</div>
-          <div className="flex items-center justify-between mt-6 gap-4">
+          <div className="flex items-center justify-between mt-6 gap-4 pb-22">
+
             <div className="flex items-center gap-2">
               {showSave && <Button State="Sub" Size="xl" label={saveLabel} onClick={onSave} />}
             </div>

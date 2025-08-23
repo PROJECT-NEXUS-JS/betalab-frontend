@@ -4,36 +4,43 @@ import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Sidebar from '@/components/category/molecules/Sidebar';
 import Tabbar from '@/components/category/molecules/Tabbar';
-import Header from '@/components/common/organisms/Header';
 import { useCategoryStore } from '@/stores/categoryStore';
 import { usePagination } from '@/hooks/usePagination';
 import Button from '@/components/common/atoms/Button';
 import Pagination from '@/components/category/molecules/Pagination';
 import PostCard, { PostCardSkeleton } from '@/components/category/molecules/PostCard';
 import { useUsersPostsListQuery } from '@/hooks/posts/query/useUsersPostsListQuery';
-import { useAuth } from '@/hooks/useAuth';
+import { createApiParams } from '@/app/category/const';
+import PopularPage from './popular/page';
 
 function CategoryPageContent() {
   const router = useRouter();
-  const { isLoggedIn, isLoading: isAuthLoading } = useAuth();
   const searchParams = useSearchParams();
-  const { initializeFromURL } = useCategoryStore();
+  const { mainCategory, genreCategory, platformCategory, initializeFromURL } = useCategoryStore();
   const { currentPage, pageSize, setCurrentPage, setTotalPages, setTotalElements } =
     usePagination();
+
+  const keyword = searchParams.get('keyword') || '';
 
   useEffect(() => {
     initializeFromURL(searchParams);
   }, [searchParams, initializeFromURL]);
+
+  useEffect(() => {
+    if (mainCategory === '인기순위') {
+      router.push('/category/popular?category=all', { scroll: false });
+    }
+  }, [mainCategory, router]);
 
   const {
     data: postsData,
     isLoading,
     error,
   } = useUsersPostsListQuery({
-    mainCategory: 'APP',
+    ...createApiParams(mainCategory, platformCategory, genreCategory),
+    ...(keyword && { keyword }),
     page: currentPage - 1,
     size: pageSize,
-    sortBy: 'latest',
   });
 
   useEffect(() => {
@@ -48,15 +55,22 @@ function CategoryPageContent() {
   };
 
   useEffect(() => {
+    setCurrentPage(1);
+  }, [mainCategory, genreCategory, platformCategory, keyword, setCurrentPage]);
+
+  useEffect(() => {
     if (error) {
       router.push('/');
     }
   }, [error, router]);
 
+  if (mainCategory === '인기순위') {
+    return <PopularPage />;
+  }
+
   if (error) {
     return (
       <div className="flex flex-col">
-        <Header isSearchbar isLogin={isLoggedIn} isAuthLoading={isAuthLoading} />
         <Tabbar className="px-16 py-5" />
         <main className="flex pb-30 flex-row py-5 px-16 items-start justify-start gap-10">
           <Sidebar />
@@ -72,9 +86,8 @@ function CategoryPageContent() {
 
   return (
     <div className="flex flex-col">
-      <Header isSearchbar isLogin={isLoggedIn} isAuthLoading={isAuthLoading} />
       <Tabbar className="px-16 py-5" />
-      <main className="flex pb-30 flex-row py-5 px-16 items-start justify-start gap-10">
+      <main className="flex pb-30 flex-row py-10 px-16 items-start justify-start gap-10">
         <Sidebar />
         <section className="flex flex-col items-center gap-10">
           <div className="grid grid-cols-3 gap-x-4 gap-y-10 w-full">
@@ -94,7 +107,7 @@ function CategoryPageContent() {
       </main>
       <Button
         onClick={() => router.push('/test-add')}
-        className="fixed bottom-[30px] right-[31px]"
+        className="fixed bottom-[30px] right-[31px] cursor-pointer"
         label="테스트 등록"
         Size="xxl"
         State="Primary"

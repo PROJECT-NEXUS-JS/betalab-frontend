@@ -1,6 +1,8 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useSearchStore } from '@/stores/searchStore';
+import { usePathname } from 'next/navigation';
 
 interface SearchbarProps {
   className?: string;
@@ -14,9 +16,20 @@ export default function Searchbar({
   onSearch,
 }: SearchbarProps) {
   const searchRef = useRef<HTMLInputElement>(null);
+  const pathname = usePathname();
+  const { setQuery, getQuery } = useSearchStore();
+
+  useEffect(() => {
+    const currentQuery = getQuery(pathname);
+    if (searchRef.current && currentQuery) {
+      searchRef.current.value = currentQuery;
+    }
+  }, [pathname, getQuery]);
 
   const handleSearch = () => {
-    onSearch?.(searchRef.current?.value || '');
+    const searchValue = searchRef.current?.value || '';
+    setQuery(pathname, searchValue);
+    onSearch?.(searchValue);
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {

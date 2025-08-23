@@ -12,6 +12,7 @@ import Image from 'next/image';
 import Card from '@/components/common/atoms/Card';
 import ImageStrip from '@/components/test-add/ImageStrip';
 import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
+import { createUserPostFromForm } from '@/lib/test-add/api';
 
 const PI_OPTIONS = ['이름', '이메일', '연락처', '기타'] as const;
 type PI = (typeof PI_OPTIONS)[number];
@@ -43,7 +44,7 @@ export default function TestAddSettingPage() {
   const [videoUrl, setVideoUrl] = useState('');
   const [images, setImages] = useState<File[]>([]);
   const [mediaTab, setMediaTab] = useState<'video' | 'photo'>('video');
-
+  const [submitting, setSubmitting] = useState(false);
   const stepIndex = 9;
   const totalSteps = 10;
   const total = 10;
@@ -58,29 +59,38 @@ export default function TestAddSettingPage() {
   }, [form.privacyItems, form.title, form.serviceSummary, form.mediaUrl]);
 
   const onSave = () => {
-    const patch: Partial<Parameters<typeof update>[0]> = {
-      title: title.trim() || undefined,
-      serviceSummary: summary.trim() || undefined,
-      privacyItems: piSelected ? [UI_TO_API[piSelected]] : undefined,
-      mediaUrl: mediaTab === 'video' && videoUrl.trim() ? videoUrl.trim() : undefined,
-    };
+    const patch = buildPatch();
     update(patch);
     save();
     alert('임시 저장되었습니다.');
   };
+  const buildPatch = () => ({
+    title: title.trim() || undefined,
+    serviceSummary: summary.trim() || undefined,
+    privacyItems: piSelected ? [UI_TO_API[piSelected]] : undefined,
+    mediaUrl: mediaTab === 'video' && videoUrl.trim() ? videoUrl.trim() : undefined,
+    participationMethod: '온라인' as const,
+  });
 
-  const onNext = () => {
+  const onNext = async () => {
     if (!title.trim()) return alert('제목을 입력해주세요.');
     if (!summary.trim()) return alert('한 줄 소개를 입력해주세요.');
+    if (submitting) return;
 
-    const patch: Partial<Parameters<typeof update>[0]> = {
-      title: title.trim(),
-      serviceSummary: summary.trim(),
-      privacyItems: piSelected ? [UI_TO_API[piSelected]] : undefined,
-      mediaUrl: mediaTab === 'video' && videoUrl.trim() ? videoUrl.trim() : undefined,
-    };
-    update(patch);
-    router.push(`/test-add/${category}/finish`);
+    const patch = buildPatch();
+    const merged = { ...form, ...patch };
+
+    setSubmitting(true);
+    try {
+      const created = await createUserPostFromForm(merged);
+      update(patch);
+      router.replace(`/test-add/${category}/finish${created?.id ? `?id=${created.id}` : ''}`);
+    } catch (e: any) {
+      console.error('생성 실패:', e);
+      alert(e?.message ?? '등록에 실패했습니다.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleUpload = (files: FileList) => {

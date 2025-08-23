@@ -20,11 +20,8 @@ export default function TestAddNamePage() {
   const MAX_LENGTH = 30;
 
   useEffect(() => {
-    const legacyKey = `temp-title-${category}`;
-    const legacy = typeof window !== 'undefined' ? localStorage.getItem(legacyKey) : null;
-    const initial = (typeof form.title === 'string' && form.title) || legacy || '';
-    setTitle(initial);
-  }, [form.title, category]);
+    setTitle(typeof form.title === 'string' ? form.title : '');
+  }, [form.title]);
 
   const getInputState = (): InputProps['state'] => {
     if (title.length === 0) return 'no value';
