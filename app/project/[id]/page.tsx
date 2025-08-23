@@ -4,7 +4,6 @@ import { queryKeys } from '@/constants/query-keys';
 import { serverInstance } from '@/apis/server-instance';
 
 import ProjectDetailClient from './ProjectDetailClient';
-import { similarPostData } from './data';
 import Logger from '@/lib/logger';
 
 import { ProjectDetailResponseSchema } from '@/hooks/posts/query/usePostDetailQuery';
