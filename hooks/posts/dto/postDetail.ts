@@ -19,32 +19,32 @@ type ScheduleModel = z.infer<typeof ScheduleSchema>;
 // Requirement
 const RequirementSchema = z.object({
   maxParticipants: z.number(),
-  genderRequirement: z.string(),
-  ageMin: z.number(),
-  ageMax: z.number(),
-  additionalRequirements: z.string(),
+  genderRequirement: z.string().nullable(),
+  ageMin: z.number().nullable(),
+  ageMax: z.number().nullable(),
+  additionalRequirements: z.string().nullable(),
 });
 type RequirementModel = z.infer<typeof RequirementSchema>;
 
 // Reward
 const RewardSchema = z.object({
   rewardType: z.enum(['CASH', 'GIFT_CARD', 'PRODUCT', 'NONE']), // "CASH" 혹은 string
-  rewardDescription: z.string(),
+  rewardDescription: z.string().nullable(),
 });
 type RewardModel = z.infer<typeof RewardSchema>;
 
 // Feedback
 const FeedbackSchema = z.object({
-  feedbackMethod: z.string(),
-  feedbackItems: z.array(z.string()),
+  feedbackMethod: z.string().nullable(),
+  feedbackItems: z.array(z.string()).nullable(),
   privacyItems: z.array(z.enum(['NAME', 'EMAIL', 'CONTACT', 'OTHER'])),
 });
 type FeedbackModel = z.infer<typeof FeedbackSchema>;
 
 // Content
 const ContentSchema = z.object({
-  participationMethod: z.string(),
-  storyGuide: z.string(),
+  participationMethod: z.string().nullable(),
+  storyGuide: z.string().nullable(),
   mediaUrl: z.string().or(z.null()).optional(), // mediaUrl는 선택적이며, null일 수 있음
 });
 type ContentModel = z.infer<typeof ContentSchema>;

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { UsersPostsListItemType } from '@/hooks/posts/dto/postList';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
@@ -42,7 +43,8 @@ export default function PostCard({ post, className, ranking }: PostCardProps) {
     }
   };
   return (
-    <div
+    <Link
+      href={`/project/${post.id}`}
       className={cn(
         'relative cursor-pointer bg-white min-w-[234px] group rounded-sm px-3 py-[14.5px] flex flex-col gap-2 shadow-[0_0_10px_rgba(0,0,0,0.1)]',
         className,
@@ -87,7 +89,7 @@ export default function PostCard({ post, className, ranking }: PostCardProps) {
           </div>
         </div>
       )}
-    </div>
+    </Link>
   );
 }
 
