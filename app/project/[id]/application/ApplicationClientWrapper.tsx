@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { applicationSchema, ApplicationFormData } from '@/hooks/application/dto/apply';
 
 import Label from '@/components/common/molecules/Label';
 import ApplyCard, { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
@@ -10,7 +11,7 @@ import { transformToApplyCardProps } from '@/lib/mapper/apply-card';
 import { useGetRightSidebar } from '@/hooks/posts/query/usePostRightSidebar';
 
 export default function ApplicationClientWrapper({ id }: { id: number }) {
-  const [applicationData, setApplicationData] = useState({
+  const [applicationData, setApplicationData] = useState<ApplicationFormData>({
     applicantName: '',
     contactNumber: '',
     applicantEmail: '',
@@ -18,6 +19,7 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
     privacyAgreement: false,
     termsAgreement: false,
   });
+  const [errors, setErrors] = useState<Partial<Record<keyof ApplicationFormData, string>>>({});
 
   const {
     data: rightSidebarData,
@@ -45,7 +47,24 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
   };
 
   const handleSubmit = () => {
-    // Handle form submission
+    const result = applicationSchema.safeParse(applicationData);
+
+    if (!result.success) {
+      // 유효성 검사 실패 시 에러 상태 업데이트
+      const fieldErrors: { [key: string]: string } = {};
+      for (const issue of result.error.issues) {
+        const key = issue.path[0] as keyof ApplicationFormData;
+        fieldErrors[key] = issue.message;
+      }
+      setErrors(fieldErrors);
+      return; // 제출 중단
+    }
+
+    // 유효성 검사 성공 시
+    setErrors({}); // 에러 메시지 초기화
+    console.log('유효성 검사 통과! 제출할 데이터:', result.data);
+    // TODO: 이 곳에 서버로 데이터를 전송하는 API 호출 로직을 구현하세요.
+    // 예: const { data } = await api.post('/applications', result.data);
   };
 
   if (isRightSidebarLoading) return <div>로딩 중...</div>;
@@ -62,7 +81,6 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
             <div className="flex items-start gap-10 w-max self-stretch">
               <Label
                 size="md"
-                help={false}
                 label={true}
                 labelText="이름"
                 placeholder="이름을 입력해주세요."
@@ -75,10 +93,11 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
                 onChange={e =>
                   setApplicationData({ ...applicationData, applicantName: e.target.value })
                 }
+                help={!!errors.applicantName}
+                helpText={errors.applicantName}
               />
               <Label
                 size="md"
-                help={false}
                 label={true}
                 labelText="연락처"
                 placeholder="숫자만 입력해주세요."
@@ -91,11 +110,12 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
                 onChange={e =>
                   setApplicationData({ ...applicationData, contactNumber: e.target.value })
                 }
+                help={!!errors.contactNumber}
+                helpText={errors.contactNumber}
               />
             </div>
             <Label
               size="xl"
-              help={false}
               label={true}
               labelText="이메일"
               placeholder="올바른 형식의 이메일을 입력해주세요."
@@ -105,12 +125,13 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
               className="!max-w-full"
               value={applicationData.applicantEmail}
               onChange={e =>
-                setApplicationData({ ...applicationData, applicantEmail: e.target.value })
+                setApplicationData({ ...applicationData, applicantName: e.target.value })
               }
+              help={!!errors.applicantEmail}
+              helpText={errors.applicantEmail}
             />
             <Label
               size="xl"
-              help={false}
               label={true}
               labelText="신청 이유"
               placeholder="테스트에 신청한 이유를 간단하게 적어주세요."
@@ -123,6 +144,8 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
               onChange={e =>
                 setApplicationData({ ...applicationData, applicationReason: e.target.value })
               }
+              help={!!errors.applicationReason}
+              helpText={errors.applicationReason}
             />
           </section>
           <section className="w-full flex flex-col items-start justify-center gap-4">
@@ -132,9 +155,9 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
                 id="privacyAgreement"
                 className="appearance-none border-[2px] border-Gray-100 rounded-sm bg-White w-5 h-5"
                 checked={applicationData.privacyAgreement}
-                onChange={e =>
-                  setApplicationData({ ...applicationData, privacyAgreement: e.target.checked })
-                }
+                onChange={e => {
+                  setApplicationData({ ...applicationData, privacyAgreement: e.target.checked });
+                }}
               />
               <p className="text-sm font-bold text-Dark-Gray">개인정보 동의</p>
             </div>
@@ -144,9 +167,9 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
                 id="termsAgreement"
                 className="appearance-none border-[2px] border-Gray-100 rounded-sm bg-White w-5 h-5"
                 checked={applicationData.termsAgreement}
-                onChange={e =>
-                  setApplicationData({ ...applicationData, termsAgreement: e.target.checked })
-                }
+                onChange={e => {
+                  setApplicationData({ ...applicationData, termsAgreement: e.target.checked });
+                }}
               />
               <p className="text-sm font-bold text-Dark-Gray">참여조건 동의</p>
             </div>

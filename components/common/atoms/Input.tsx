@@ -2,7 +2,11 @@ import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import CircleX from '@/public/icons/input-icon/circle-x.svg';
 
-export interface InputProps {
+export interface InputProps
+  extends Omit<
+    React.InputHTMLAttributes<HTMLInputElement> & React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+    'type' | 'size' // 기존 size prop과 충돌 방지
+  > {
   type: 'text' | 'text area' | 'number' | 'date';
   state:
     | 'no value'
@@ -17,9 +21,6 @@ export interface InputProps {
 
   placeholder?: string;
   value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  onFocus?: () => void;
-  onBlur?: () => void;
   maxLength?: number;
 }
 
@@ -30,6 +31,7 @@ export default function Input({
   placeholder = '',
   value = '',
   onChange = () => {},
+  ...rest
 }: InputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const baseClasses = `p-4 text-sm border rounded-[2px] focus:outline-none transition-colors ${THEME_COLOR_CLASSNAME[state]} ${THEME_SIZE_CLASSNAME[size]}`;
@@ -71,6 +73,7 @@ export default function Input({
         value={value}
         onChange={onChange}
         disabled={state === 'disabled'}
+        {...rest}
       />
       <button className={`${THEME_BUTTON_SHOW[state]}`}>
         <Image src={CircleX} alt="Clear input" />

@@ -4,7 +4,11 @@ import Tag from '@/components/common/atoms/Tag';
 import Input from '@/components/common/atoms/Input';
 import HelpText from '@/components/common/atoms/HelpText';
 
-export interface LabelProps {
+export interface LabelProps
+  extends Omit<
+    React.InputHTMLAttributes<HTMLInputElement> & React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+    'size' | 'type' // 기존 size prop과 충돌 방지
+  > {
   size: 'sm' | 'md' | 'lg' | 'xl';
   help: boolean;
   label: boolean;
@@ -20,7 +24,6 @@ export interface LabelProps {
   value?: string;
   helpText?: string;
   maxLength?: number;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   className?: string;
 }
 
@@ -40,16 +43,10 @@ export default function Label({
   value = '',
   helpText = '',
   maxLength = 30,
-  onChange = () => {},
   className = '',
+  ...rest
 }: LabelProps) {
   const [inputValueLength, setInputValueLength] = useState(value.length);
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setInputValueLength(e.target.value.length);
-    if (onChange) {
-      onChange(e);
-    }
-  };
 
   return (
     <div className={`flex flex-col gap-1 ${THEME_SIZE_CLASSNAME[size]} ${className}`}>
@@ -66,7 +63,7 @@ export default function Label({
         size={size}
         placeholder={placeholder}
         value={value}
-        onChange={handleInputChange}
+        {...rest}
       />
       <div className="flex items-center justify-between">
         {help && <HelpText style="error" text={helpText} />}
