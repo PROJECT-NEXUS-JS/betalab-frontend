@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import { within, userEvent, screen } from '@storybook/test';
+import { within, userEvent, screen } from 'storybook/test';
 import StorySection from './StorySection';
 
 const meta = {
