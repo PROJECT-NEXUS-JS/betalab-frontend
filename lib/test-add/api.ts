@@ -31,12 +31,18 @@ const log = {
   },
 };
 
-export async function createUserPostFromForm(form: any): Promise<UserPostModel> {
+export async function createUserPostFromForm(
+  form: any,
+  opts?: { thumbnail?: File | null },
+): Promise<UserPostModel> {
   const payload = buildCreatePostPayload(form);
-  return createUserPost(payload);
+  return createUserPost(payload, opts?.thumbnail ?? null);
 }
 
-export async function createUserPost(payload: CreatePostPayload): Promise<UserPostModel> {
+export async function createUserPost(
+  payload: CreatePostPayload,
+  thumbnail?: File | null,
+): Promise<UserPostModel> {
   try {
     CreatePostPayloadSchema.parse(payload);
   } catch (e) {
@@ -48,10 +54,19 @@ export async function createUserPost(payload: CreatePostPayload): Promise<UserPo
     throw e;
   }
 
-  const url = `/v1/users/posts`;
-  log.req('POST /v1/users/posts', `${BASE_URL}${url}`, 'POST', payload);
+  const path = '/v1/users/posts';
+  const url = `${BASE_URL}${path}`;
 
-  const res = await instance.post(url, payload);
+  const fd = new FormData();
+  fd.append('data', new Blob([JSON.stringify(payload)], { type: 'application/json' }));
+  if (thumbnail instanceof File) fd.append('thumbnail', thumbnail, thumbnail.name);
+
+  log.req('POST /v1/users/posts', url, 'POST', { hasThumbnail: !!thumbnail });
+
+  const res = await instance.post(path, fd, {
+    headers: { 'Content-Type': undefined }, // 인스턴스의 application/json 제거
+  });
+
   log.res('POST /v1/users/posts', res.status, res.data);
 
   const parsed = UserPostSchema.safeParse(res.data);
