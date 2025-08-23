@@ -5,15 +5,12 @@ import CustomImage from '@/components/common/atoms/CustomImage';
 import RemindCard from '@/components/common/atoms/RemindCard';
 import Chip from '@/components/common/atoms/Chip';
 import ReviewCard from '@/components/common/molecules/ReviewCard';
-import ProjectDetailCardClient from './ProjectDetailCardClient';
 import Button from '@/components/common/atoms/Button';
 import SimilarPostCard from '@/components/project/SimilarPostCard';
 import CategoryBar from '@/components/common/atoms/CategoryBar';
 
-import { ProjectDataModel } from '@/hooks/posts/dto/postDetail';
+import ProjectDetailCardClient from './ProjectDetailCardClient';
 import { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
-import { ReviewCardProps } from '@/components/common/molecules/ReviewCard';
-import { SimilarPost } from '@/hooks/posts/dto/similarPost';
 
 import { useGetPostDetailQuery } from '@/hooks/posts/query/usePostDetailQuery';
 import { useGetRightSidebar } from '@/hooks/posts/query/usePostRightSidebar';

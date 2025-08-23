@@ -22,8 +22,9 @@ export interface ApplyCardProps {
   conditions: ConditionProps[];
   attendees: number;
   scraped: boolean;
-  scrapClicked: () => void;
-  registerClicked: () => void;
+  scrapedAndRegisterShow?: boolean;
+  scrapClicked?: () => void;
+  registerClicked?: () => void;
 }
 
 export default function ApplyCard({
@@ -34,6 +35,7 @@ export default function ApplyCard({
   scrapedNumber,
   conditions,
   attendees,
+  scrapedAndRegisterShow = true,
   scraped,
   scrapClicked,
   registerClicked,
@@ -103,19 +105,25 @@ export default function ApplyCard({
           onClick={() => setViewMore(prev => !prev)}
         />
       </div>
-      <p className="text-right text-base text-Primary-500 font-bold">{attendees}명이 참가했어요!</p>
-      <div className="flex gap-[13px]">
-        <button onClick={scrapClicked} className="flex justify-center items-center w-11 h-11">
-          <Image src={Booking} alt="Booking Logo" width={34} height={34} />
-        </button>
-        <Button
-          State="Primary"
-          Size="lg"
-          label="신청하기"
-          onClick={registerClicked}
-          className="w-full flex-1"
-        />
-      </div>
+      {scrapedAndRegisterShow && (
+        <>
+          <p className="text-right text-base text-Primary-500 font-bold">
+            {attendees}명이 참가했어요!
+          </p>
+          <div className="flex gap-[13px]">
+            <button onClick={scrapClicked} className="flex justify-center items-center w-11 h-11">
+              <Image src={Booking} alt="Booking Logo" width={34} height={34} />
+            </button>
+            <Button
+              State="Primary"
+              Size="lg"
+              label="신청하기"
+              onClick={registerClicked}
+              className="w-full flex-1"
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }
