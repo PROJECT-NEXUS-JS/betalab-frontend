@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense } from 'react';
-import Breadcrumb from '@/components/category/atoms/Breadcrumb';
+import Breadcrumb from '@/components/common/atoms/Breadcrumb';
 import SidetabElement from '@/components/category/atoms/SidetabElement';
 import SidetabHeader from '@/components/category/atoms/SidetabHeader';
 import { useCategoryStore } from '@/stores/categoryStore';

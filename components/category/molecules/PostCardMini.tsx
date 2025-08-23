@@ -1,11 +1,11 @@
 import BookMark from '@/components/common/svg/BookMark';
-import { UsersPostsListItemType } from '@/hooks/posts/dto/postList';
+import { TestCardType } from '@/types/models/testCard';
 import Tag from '@/components/common/atoms/Tag';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface PostCardMiniProps {
-  post: UsersPostsListItemType;
+  post: TestCardType;
   className?: string;
 }
 
@@ -24,7 +24,6 @@ export default function PostCardMini({ post, className }: PostCardMiniProps) {
     return diffDays;
   };
 
-  // schedule이 없을 경우 기본값 처리
   const dday = post.schedule ? calculateDday(post.schedule.recruitmentDeadline) : 0;
   const isTodayDeadline = dday === 0;
 

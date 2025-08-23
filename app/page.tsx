@@ -8,7 +8,7 @@ import CardScroll from '@/components/home/molecules/CardScroll';
 import ViewAllButton from '@/components/home/atoms/ViewAllButton';
 import PostCard, { PostCardSkeleton } from '@/components/category/molecules/PostCard';
 import PostCardMini from '@/components/category/molecules/PostCardMini';
-import { useUsersPostsListQuery } from '@/hooks/posts/query/useUsersPostsListQuery';
+import { useUsersPostsListQuery } from '@/hooks/posts/queries/useUsersPostsListQuery';
 import { useState } from 'react';
 
 export default function HomePage() {

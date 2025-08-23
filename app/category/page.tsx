@@ -9,7 +9,7 @@ import { usePagination } from '@/hooks/usePagination';
 import Button from '@/components/common/atoms/Button';
 import Pagination from '@/components/category/molecules/Pagination';
 import PostCard, { PostCardSkeleton } from '@/components/category/molecules/PostCard';
-import { useUsersPostsListQuery } from '@/hooks/posts/query/useUsersPostsListQuery';
+import { useUsersPostsListQuery } from '@/hooks/posts/queries/useUsersPostsListQuery';
 import { createApiParams } from '@/app/category/const';
 import PopularPage from './popular/page';
 

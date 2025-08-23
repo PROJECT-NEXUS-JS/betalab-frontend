@@ -1,31 +1,20 @@
 import { z } from 'zod';
 import { BaseModelSchema } from '@/types/models/base-model';
-import { categorySchema, scheduleSchema, rewardSchema } from '@/types/models/testCard';
+import { categorySchema } from '@/types/models/testCard';
 
-export const getUsersPostsListRequestSchema = z
+// 내 게시글 조회 요청 스키마
+export const getMyPostsRequestSchema = z
   .object({
-    mainCategory: z.string().optional(),
-    platformCategory: z.string().optional(),
-    genreCategory: z.string().optional(),
-    keyword: z.string().optional(),
-    sortBy: z.enum(['latest', 'popular', 'deadline', 'viewCount']).optional(),
     page: z.number().int().nonnegative().optional(),
     size: z.number().int().positive().optional(),
     sort: z.array(z.string()).optional(),
   })
   .strict();
 
-export type GetUsersPostsListRequestType = z.infer<typeof getUsersPostsListRequestSchema>;
+export type GetMyPostsRequestType = z.infer<typeof getMyPostsRequestSchema>;
 
-const pageableMetaSchema = z
-  .object({
-    empty: z.boolean(),
-    sorted: z.boolean(),
-    unsorted: z.boolean(),
-  })
-  .strict();
-
-const postSummarySchema = z
+// 내 게시글 아이템 스키마 (실제 API 응답과 정확히 일치)
+const myPostSchema = z
   .object({
     id: z.number(),
     title: z.string(),
@@ -34,19 +23,27 @@ const postSummarySchema = z
     mainCategories: z.array(categorySchema),
     platformCategories: z.array(categorySchema),
     genreCategories: z.array(categorySchema),
-    schedule: scheduleSchema.optional(),
-    reward: rewardSchema.optional(),
   })
   .strict();
 
-export type UsersPostsListItemType = z.infer<typeof postSummarySchema>;
+export type MyPostType = z.infer<typeof myPostSchema>;
 
+// 페이지네이션 메타 스키마
+const pageableMetaSchema = z
+  .object({
+    empty: z.boolean(),
+    sorted: z.boolean(),
+    unsorted: z.boolean(),
+  })
+  .strict();
+
+// 페이지 스키마
 const pageSchema = z
   .object({
     totalElements: z.number(),
     totalPages: z.number(),
     size: z.number(),
-    content: z.array(postSummarySchema),
+    content: z.array(myPostSchema),
     number: z.number(),
     sort: pageableMetaSchema,
     numberOfElements: z.number(),
@@ -66,7 +63,7 @@ const pageSchema = z
   })
   .strict();
 
-export const getUsersPostsListResponseSchema = BaseModelSchema(pageSchema);
+export const getMyPostsResponseSchema = BaseModelSchema(pageSchema);
 
-export type GetUsersPostsListResponseType = z.infer<typeof getUsersPostsListResponseSchema>;
-export type GetUsersPostsListDataType = z.infer<typeof pageSchema> | undefined;
+export type GetMyPostsResponseType = z.infer<typeof getMyPostsResponseSchema>;
+export type GetMyPostsDataType = z.infer<typeof pageSchema> | undefined;
