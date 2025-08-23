@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import BetalabTextLogo from '../atoms/BetalabTextLogo';
 import { LoaderCircle } from 'lucide-react';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
 interface HeaderProps {
   isLogin?: boolean;
@@ -19,6 +20,20 @@ export default function Header({
   className,
   isAuthLoading = false,
 }: HeaderProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
+  const handleSearch = (searchValue: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (searchValue) {
+      params.set('q', searchValue);
+    } else {
+      params.delete('q');
+    }
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
   return (
     <nav
       className={cn(
@@ -28,7 +43,7 @@ export default function Header({
     >
       <div className="flex h-11 flex-row items-center gap-4">
         <BetalabTextLogo />
-        {isSearchbar && <Searchbar />}
+        {isSearchbar && <Searchbar onSearch={handleSearch} />}
       </div>
       {isAuthLoading ? (
         <LoaderCircle className="animate-spin" />

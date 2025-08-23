@@ -10,10 +10,9 @@ import PostCard, { PostCardSkeleton } from '@/components/category/molecules/Post
 import PostCardMini from '@/components/category/molecules/PostCardMini';
 import { useUsersPostsListQuery } from '@/hooks/posts/query/useUsersPostsListQuery';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 export default function HomePage() {
-  const { isLoggedIn, isLoading: isAuthLoading } = useAuth();
+  const { isLoggedIn } = useAuth();
 
   const [recommendPage, setRecommendPage] = useState(0);
   const [deadlinePage, setDeadlinePage] = useState(0);
