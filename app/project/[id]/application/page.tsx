@@ -16,11 +16,14 @@ export default async function ProjectApplicationPage({
 }) {
   const { id } = await params;
   const queryClient = new QueryClient();
+
   await queryClient.prefetchQuery({
     queryKey: queryKeys.posts.rightSidebar(Number(id)),
     queryFn: () => fetchRightSidebarData(Number(id)),
   });
+
   const dehydratedState = dehydrate(queryClient);
+
   return (
     <HydrationBoundary state={dehydratedState}>
       <ApplicationClientWrapper id={Number(id)} />

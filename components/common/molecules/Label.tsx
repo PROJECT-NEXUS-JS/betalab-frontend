@@ -21,6 +21,7 @@ export interface LabelProps {
   helpText?: string;
   maxLength?: number;
   onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  className?: string;
 }
 
 export default function Label({
@@ -40,6 +41,7 @@ export default function Label({
   helpText = '',
   maxLength = 30,
   onChange = () => {},
+  className = '',
 }: LabelProps) {
   const [inputValueLength, setInputValueLength] = useState(value.length);
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -50,7 +52,7 @@ export default function Label({
   };
 
   return (
-    <div className={`flex flex-col gap-1 ${THEME_SIZE_CLASSNAME[size]}`}>
+    <div className={`flex flex-col gap-1 ${THEME_SIZE_CLASSNAME[size]} ${className}`}>
       {label && (
         <div className="flex items-center justify-start gap-1">
           {label && <label className="text-base font-semibold text-Black">{labelText}</label>}

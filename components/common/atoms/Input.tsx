@@ -63,10 +63,10 @@ export default function Input({
     );
   }
   return (
-    <div className={`${baseClasses} flex justify-between items-center`}>
+    <div className={`${baseClasses} flex justify-between items-center max-w-full`}>
       <input
         type="text"
-        className="w-full pr-10 focus:outline-none"
+        className="w-full pr-10 focus:outline-none max-w-full"
         placeholder={placeholder}
         value={value}
         onChange={onChange}
