@@ -93,12 +93,19 @@ export async function createUserPost(payload: CreatePostPayload): Promise<UserPo
   }
 
   const url = `${BASE_URL}/v1/users/posts`;
+
+  const formData = new FormData();
+  // JSON payload를 string으로 변환해서 'data' 필드에 넣기
+  formData.append("data", JSON.stringify(payload));
+  // thumbnail이 없으면 그냥 빈 Blob 넣어주기 (curl이랑 동일하게)
+  formData.append("thumbnail", new Blob([]), "");
+
   const init: RequestInit = withAuth({
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
-    body: JSON.stringify(payload),
+    body: formData,
   });
+  console.log(init);
 
   logReq('POST /v1/users/posts', url, init, payload);
   const res = await fetch(url, init);
