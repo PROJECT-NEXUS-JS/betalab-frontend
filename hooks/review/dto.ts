@@ -13,8 +13,8 @@ export const ReviewDataSchema = z.object({
   postId: z.number(),
   rating: z.number(),
   content: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.string().transform(dateString => new Date(dateString)),
+  updatedAt: z.string().transform(dateString => new Date(dateString)),
   writer: WriterInfoSchema,
 });
 

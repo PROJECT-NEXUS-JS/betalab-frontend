@@ -55,6 +55,7 @@ export const ProjectDataSchema = z.object({
   title: z.string(),
   serviceSummary: z.string(),
   creatorIntroduction: z.string(),
+  creatorProfileUrl: z.string().or(z.null()), // 개발 편의상 이미지가 없어서 테스트시 널
   description: z.string(),
   thumbnailUrl: z.string().or(z.null()).optional(), // 개발 편의상 이미지가 없어서 테스트시 널
   mainCategories: z.array(CategorySchema),

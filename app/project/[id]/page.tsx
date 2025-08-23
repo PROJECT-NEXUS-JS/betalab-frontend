@@ -3,12 +3,11 @@ import { dehydrate, QueryClient, HydrationBoundary } from '@tanstack/react-query
 import ProjectDetailClient from './ProjectDetailClient';
 import { similarPostData } from './data';
 import { queryKeys } from '@/constants/query-keys';
+import { serverInstance } from '@/apis/server-instance';
 
 import { ProjectDetailResponseSchema } from '@/hooks/posts/query/usePostDetailQuery';
 import { RightSidebarResponseSchema } from '@/hooks/posts/query/usePostRightSidebar';
 import { PostReviewResponseSchema } from '@/hooks/review/quries/usePostReviewQuery';
-
-const BACKEND_URL = process.env.BACKEND_URL!;
 
 export default async function ProjectDetailPage({
   params,
@@ -49,67 +48,52 @@ async function fetchProjectData(id: number) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
 
-  const headers = {
-    'Content-Type': 'application/json',
-    ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
-  };
+  try {
+    const response = await serverInstance(accessToken).get(`/v1/users/posts/${id}`);
+    console.log('ProjectData 원본:', response.data);
 
-  const response = await fetch(`${BACKEND_URL}/v1/users/posts/${id}`, {
-    method: 'GET',
-    headers,
-  });
+    const parsedData = ProjectDetailResponseSchema.parse(response.data);
+    console.log('ProjectData 파싱 성공:', parsedData);
 
-  if (!response.ok) {
-    console.error('네트워크 응답이 올바르지 않습니다.', response);
-    throw new Error('네트워크 응답이 올바르지 않습니다.');
+    return parsedData;
+  } catch (err) {
+    console.error('ProjectData 파싱 실패:', err);
+    throw err; // 필요하면 에러를 상위로 던짐
   }
-
-  const data = await response.json();
-  return ProjectDetailResponseSchema.parse(data);
 }
 
 async function fetchRightSidebarData(postId: number) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
 
-  const headers = {
-    'Content-Type': 'application/json',
-    ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
-  };
+  try {
+    const response = await serverInstance(accessToken).get(`/v1/users/posts/${postId}/sidebar`);
+    console.log('RightSidebarData 원본:', response.data);
 
-  const response = await fetch(`${BACKEND_URL}/v1/users/posts/${postId}/sidebar`, {
-    method: 'GET',
-    headers,
-  });
+    const parsedData = RightSidebarResponseSchema.parse(response.data);
+    console.log('RightSidebarData 파싱 성공:', parsedData);
 
-  if (!response.ok) {
-    console.error('네트워크 응답이 올바르지 않습니다.', response);
-    throw new Error('네트워크 응답이 올바르지 않습니다.');
+    return parsedData;
+  } catch (err) {
+    console.error('RightSidebarData 파싱 실패:', err);
+    throw err;
   }
-
-  const data = await response.json();
-  return RightSidebarResponseSchema.parse(data);
 }
 
 async function fetchPostReviewData(postId: number) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
 
-  const headers = {
-    'Content-Type': 'application/json',
-    ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
-  };
+  try {
+    const response = await serverInstance(accessToken).get(`/v1/users/reviews/post/${postId}`);
+    console.log('PostReviewData 원본:', response.data);
 
-  const response = await fetch(`${BACKEND_URL}/v1/users/reviews/post/${postId}`, {
-    method: 'GET',
-    headers,
-  });
+    const parsedData = PostReviewResponseSchema.parse(response.data);
+    console.log('PostReviewData 파싱 성공:', parsedData);
 
-  if (!response.ok) {
-    console.error('네트워크 응답이 올바르지 않습니다.', response);
-    throw new Error('네트워크 응답이 올바르지 않습니다.');
+    return parsedData;
+  } catch (err) {
+    console.error('PostReviewData 파싱 실패:', err);
+    throw err;
   }
-
-  const data = await response.json();
-  return PostReviewResponseSchema.parse(data);
 }
