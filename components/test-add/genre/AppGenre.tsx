@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import TestAddLayout from '@/components/test-add/layouts/TestAddLayout';
-import Selector from '@/components/common/molecules/Selector';
 import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
 import CheckTag from '@/components/common/atoms/CheckTag';
 import Chip from '@/components/common/atoms/Chip';
