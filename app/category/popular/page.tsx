@@ -7,7 +7,7 @@ import Button from '@/components/common/atoms/Button';
 import PostCard, { PostCardSkeleton } from '@/components/category/molecules/PostCard';
 import PostCardLong, { PostCardLongSkeleton } from '@/components/category/molecules/PostCardLong';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useUsersPostsListQuery } from '@/hooks/posts/query/useUsersPostsListQuery';
+import { useUsersPostsListQuery } from '@/hooks/posts/queries/useUsersPostsListQuery';
 import { useCategoryStore } from '@/stores/categoryStore';
 import { getApiParams } from './utils';
 

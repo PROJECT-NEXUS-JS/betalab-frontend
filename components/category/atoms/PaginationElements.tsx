@@ -18,7 +18,7 @@ export default function PaginationElements({
   return (
     <button
       className={cn(
-        'w-fit h-fit py-[3.5px] text-body-02 font-semibold text-Dark-Gray bg-White px-[9px] hover:bg-Gray-100 text-body-01 ',
+        'w-fit h-fit py-[3.5px] text-body-02 font-semibold text-Dark-Gray bg-White px-[9px] hover:bg-Gray-100 text-body-01 rounded-[2px]',
         isActive && 'text-White bg-Dark-Gray font-semibold',
         className,
       )}
@@ -64,5 +64,9 @@ export function PaginationArrowRight({
 }
 
 export function PaginationEllipsis({ className }: { className?: string }) {
-  return <p className="text-body-02 font-semibold py-[3.5px] text-Dark-Gray px-[6.5px]">...</p>;
+  return (
+    <p className="text-body-02 font-semibold py-[3.5px] rounded-[2px] text-Dark-Gray px-[6.5px]">
+      ...
+    </p>
+  );
 }

@@ -3,9 +3,16 @@ interface StarProps {
   width?: number;
   height?: number;
   fill?: boolean;
+  onClick?: () => void;
 }
 
-export default function Star({ className, width = 24, height = 24, fill = false }: StarProps) {
+export default function Star({
+  className,
+  width = 24,
+  height = 24,
+  fill = false,
+  onClick,
+}: StarProps) {
   return (
     <svg
       width={width}
@@ -14,6 +21,7 @@ export default function Star({ className, width = 24, height = 24, fill = false 
       fill={fill ? 'currentColor' : 'none'}
       xmlns="http://www.w3.org/2000/svg"
       className={className}
+      onClick={onClick}
     >
       <g clipPath="url(#clip0_2366_24)">
         <path

@@ -64,7 +64,7 @@ export async function createUserPost(
   log.req('POST /v1/users/posts', url, 'POST', { hasThumbnail: !!thumbnail });
 
   const res = await instance.post(path, fd, {
-    headers: { 'Content-Type': undefined }, // 인스턴스의 application/json 제거
+    headers: { 'Content-Type': 'multipart/form-data' }
   });
 
   log.res('POST /v1/users/posts', res.status, res.data);

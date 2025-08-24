@@ -10,37 +10,79 @@ import Button from '@/components/common/atoms/Button';
 import SimilarPostCard from '@/components/project/SimilarPostCard';
 import CategoryBar from '@/components/common/atoms/CategoryBar';
 
-import { ProjectDataModel } from '@/hooks/posts/dto/postDetail';
 import { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
-import { ReviewCardProps } from '@/components/common/molecules/ReviewCard';
-import { SimilarPost } from '@/hooks/posts/dto/similarPost';
+
+import { useGetPostDetailQuery } from '@/hooks/posts/queries/usePostDetailQuery';
+import { useGetRightSidebar } from '@/hooks/posts/queries/usePostRightSidebar';
+import { usePostReviewQuery } from '@/hooks/review/queries/usePostReviewQuery';
+import { useSimilarPosts } from '@/hooks/posts/queries/useSimilarPostQuery';
+
+import { transformToApplyCardProps } from '@/lib/mapper/apply-card';
+import { transformToReviewCardProps } from '@/lib/mapper/review-card';
 
 interface ProjectDetailClientProps {
-  projectData: ProjectDataModel;
-  applyCardData: Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'>;
-  reviewCardData: ReviewCardProps[];
-  similarPostData: SimilarPost[];
+  id: number;
 }
 
-export default function ProjectDetailClient({
-  projectData,
-  applyCardData,
-  reviewCardData,
-  similarPostData,
-}: ProjectDetailClientProps) {
+export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
   const [projectIntroduceFold, setProjectIntroduceFold] = useState(true);
   const [reviewFold, setReviewFold] = useState(true);
 
   const projectIntroduceRef = useRef<HTMLDivElement>(null);
   const reviewRef = useRef<HTMLDivElement>(null);
 
-  const displayReviews = reviewFold ? reviewCardData.slice(0, 3) : reviewCardData;
-
   const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
     if (ref.current) {
       ref.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  const { data: postDetailData, isLoading, isError } = useGetPostDetailQuery(Number(id));
+  const {
+    data: rightSidebarData,
+    isLoading: isRightSidebarLoading,
+    isError: isRightSidebarError,
+  } = useGetRightSidebar(Number(id));
+
+  const applyCardData: Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'> =
+    transformToApplyCardProps(
+      rightSidebarData?.data ?? {
+        testName: '',
+        recruiterName: '',
+        testSummary: '',
+        daysRemaining: 0,
+        scrapCount: 0,
+        currentParticipants: 0,
+        participationTarget: '',
+        requiredDuration: '',
+        rewardInfo: '',
+        participationMethod: '',
+        qnaMethod: '',
+      },
+    );
+
+  const {
+    data: reviewCardData,
+    isLoading: isReviewLoading,
+    isError: isReviewError,
+  } = usePostReviewQuery(Number(id));
+
+  const {
+    data: similarPostData,
+    isLoading: isSimilarPostLoading,
+    isError: isSimilarPostError,
+  } = useSimilarPosts(Number(id));
+
+  if (isLoading || isRightSidebarLoading || isReviewLoading || isSimilarPostLoading)
+    return <div>로딩 중...</div>;
+  if (isError || isRightSidebarError || isReviewError || isSimilarPostError)
+    return <div>에러 발생</div>;
+
+  const projectData = postDetailData?.data;
+  if (!projectData) return <div>데이터 없음</div>;
+
+  const reviews = reviewCardData?.data.map(transformToReviewCardProps) ?? [];
+  const displayReviews = reviewFold ? reviews.slice(0, 3) : reviews;
 
   return (
     <div className="min-h-screen w-full flex justify-center mb-30 mt-6">
@@ -111,7 +153,7 @@ export default function ProjectDetailClient({
             {displayReviews.map((review, idx) => (
               <ReviewCard key={idx} {...review} />
             ))}
-            {reviewCardData.length > 3 && (
+            {reviews.length > 3 && (
               <Button
                 State="Solid"
                 Size="lg"
@@ -125,13 +167,13 @@ export default function ProjectDetailClient({
           <section className="flex flex-col gap-4">
             <h3 className="text-xl text-Black font-bold">비슷한 테스트는 어때요 ?</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
-              {similarPostData.map(post => (
+              {similarPostData?.data.map(post => (
                 <SimilarPostCard key={post.id} post={post} />
               ))}
             </div>
           </section>
         </div>
-        <ProjectDetailCardClient {...applyCardData} />
+        <ProjectDetailCardClient {...applyCardData} postId={Number(id)} />
       </div>
     </div>
   );

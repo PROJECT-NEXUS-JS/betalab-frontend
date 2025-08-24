@@ -1,4 +1,4 @@
-import Breadcrumb from '../atoms/Breadcrumb';
+import Breadcrumb from '../../common/atoms/Breadcrumb';
 import TabbarElement from '../atoms/TabbarElement';
 import { POPULAR_CATEGORIES } from '@/app/category/popular/utils';
 

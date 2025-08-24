@@ -1,14 +1,14 @@
-import { UsersPostsListItemType } from '@/hooks/posts/dto/postList';
+import Link from 'next/link';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
-import BookMark from '@/components/common/svg/BookMark';
 import Tag from '@/components/common/atoms/Tag';
 import { Skeleton } from '@/components/ui/skeleton';
 import RankingArticle from '@/components/common/svg/RankingArticle';
+import { TestCardType } from '@/types/models/testCard';
 
 interface PostCardProps {
   className?: string;
-  post: UsersPostsListItemType;
+  post: TestCardType;
   ranking?: number;
 }
 
@@ -42,7 +42,8 @@ export default function PostCard({ post, className, ranking }: PostCardProps) {
     }
   };
   return (
-    <div
+    <Link
+      href={`/project/${post.id}`}
       className={cn(
         'relative cursor-pointer bg-white min-w-[234px] group rounded-sm px-3 py-[14.5px] flex flex-col gap-2 shadow-[0_0_10px_rgba(0,0,0,0.1)]',
         className,
@@ -63,7 +64,7 @@ export default function PostCard({ post, className, ranking }: PostCardProps) {
         ) : (
           <div className="w-[234px] h-[146px] bg-Gray-100" />
         )}
-        <BookMark className="absolute bottom-2 right-2 size-5 fill-transparent text-transparent group-hover:fill-transparent group-hover:text-Gray-200 group-hover:stroke-Gray-200 group-hover:stroke-2" />
+        {/* <BookMark className="absolute bottom-2 right-2 size-5 fill-transparent text-transparent group-hover:fill-transparent group-hover:text-Gray-200 group-hover:stroke-Gray-200 group-hover:stroke-2" /> */}
       </div>
       <div className="flex flex-col w-full max-w-[12.625rem] h-[91px]">
         <p className="text-caption-02 font-medium text-Light-Gray">{categoryText}</p>
@@ -87,7 +88,7 @@ export default function PostCard({ post, className, ranking }: PostCardProps) {
           </div>
         </div>
       )}
-    </div>
+    </Link>
   );
 }
 

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { BaseModelSchema } from '@/types/models/base-model';
+import { categorySchema, scheduleSchema, rewardSchema } from '@/types/models/testCard';
 
 export const getUsersPostsListRequestSchema = z
   .object({
@@ -15,13 +16,6 @@ export const getUsersPostsListRequestSchema = z
   .strict();
 
 export type GetUsersPostsListRequestType = z.infer<typeof getUsersPostsListRequestSchema>;
-
-const categorySchema = z
-  .object({
-    code: z.string(),
-    name: z.string(),
-  })
-  .strict();
 
 const pageableMetaSchema = z
   .object({
@@ -40,20 +34,8 @@ const postSummarySchema = z
     mainCategories: z.array(categorySchema),
     platformCategories: z.array(categorySchema),
     genreCategories: z.array(categorySchema),
-    schedule: z
-      .object({
-        startDate: z.string(),
-        endDate: z.string(),
-        recruitmentDeadline: z.string(),
-        durationTime: z.string(),
-      })
-      .optional(),
-    reward: z
-      .object({
-        rewardType: z.string(),
-        rewardDescription: z.enum(['CASH', 'GIFT_CARD', 'PRODUCT', 'NONE']),
-      })
-      .optional(),
+    schedule: scheduleSchema.optional(),
+    reward: rewardSchema.optional(),
   })
   .strict();
 

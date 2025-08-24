@@ -19,6 +19,7 @@ export default function UserProfileCard({
     <div className="flex items-center gap-3 h-max px-3 py-5 border border-Gray-100 rounded-sm">
       {profileImageUrl ? (
         <Image
+          className="rounded-full"
           src={profileImageUrl}
           alt={name}
           width={imageSize}

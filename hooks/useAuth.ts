@@ -1,5 +1,6 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
 export function useAuth() {
@@ -10,6 +11,7 @@ export function useAuth() {
     const token = localStorage.getItem('accessToken');
     setIsLoggedIn(!!token);
     setIsLoading(false);
+    handleLoginSuccess;
   }, []);
 
   return {
@@ -17,3 +19,9 @@ export function useAuth() {
     isLoading,
   };
 }
+
+export const handleLoginSuccess = () => {
+  const queryClient = useQueryClient();
+  queryClient.invalidateQueries({ queryKey: ['get-my-page-profile'] });
+  queryClient.invalidateQueries({ queryKey: ['user'] });
+};
