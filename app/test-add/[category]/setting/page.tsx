@@ -493,7 +493,6 @@ export default function TestAddSettingPage() {
               >
                 <p className="text-subtitle-01 font-semibold">언제까지 참여자를 모집할까요?</p>
                 <DatePicker value={deadlineRange} onChange={setDeadlineRange} />
-                {/* 미리보기 텍스트 (선택됨) */}
                 {deadlineRange?.from && deadlineRange?.to && (
                   <p className="text-body-02 text-Gray-300">
                     {format(deadlineRange.from, 'yyyy.MM.dd')} -{' '}
