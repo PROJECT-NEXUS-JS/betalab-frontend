@@ -377,58 +377,102 @@ export default function TestAddSettingPage() {
               layout
             >
               <p className="text-subtitle-01 font-semibold">몇 명의 참여자를 모집할까요?</p>
+              {(() => {
+                const STEP = 10;
+                const MIN = 0;
 
-              <div className="flex items-center gap-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setRecruitTouched(true);
-                    setRecruitCount(prev => Math.max(prev - 1, 1));
-                  }}
-                  className="w-10 h-10 border rounded"
-                >
-                  -
-                </button>
-                <div className="w-20 text-center bg-Gray-50 py-2 rounded font-semibold">
-                  {recruitCount}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setRecruitTouched(true);
-                    setRecruitCount(prev => prev + 1);
-                  }}
-                  className="w-10 h-10 border rounded"
-                >
-                  +
-                </button>
-              </div>
+                const clamp = (n: number) => Math.max(MIN, n);
 
-              <Chip
-                variant={customRecruitOpen ? 'active' : 'solid'}
-                size="sm"
-                onClick={() => {
+                const inc = () => {
+                  setRecruitTouched(true);
+                  setRecruitCount(prev => {
+                    const next = clamp(prev + STEP);
+                    setCustomRecruitValue(String(next));
+                    return next;
+                  });
+                };
+
+                const dec = () => {
+                  setRecruitTouched(true);
+                  setRecruitCount(prev => {
+                    const next = clamp(prev - STEP);
+                    setCustomRecruitValue(String(next));
+                    return next;
+                  });
+                };
+
+                const openDirectInput = () => {
                   setRecruitTouched(true);
                   setCustomRecruitOpen(prev => !prev);
-                }}
-                showArrowIcon={false}
-              >
-                직접 입력
-              </Chip>
+                  if (!customRecruitOpen) setCustomRecruitValue(String(recruitCount));
+                };
 
-              {customRecruitOpen && (
-                <Input
-                  type="number"
-                  size="xl"
-                  placeholder="참여자 수를 입력해주세요"
-                  state={recruitInputState}
-                  value={customRecruitValue}
-                  onChange={e => {
-                    setRecruitTouched(true);
-                    setCustomRecruitValue(e.currentTarget.value);
-                  }}
-                />
-              )}
+                const onInputChange: React.ChangeEventHandler<HTMLInputElement> = e => {
+                  setRecruitTouched(true);
+                  const raw = e.currentTarget.value;
+                  setCustomRecruitValue(raw);
+                  if (raw.trim() === '') return;
+                  const num = Number(raw);
+                  if (!Number.isNaN(num)) {
+                    const next = clamp(Math.floor(num));
+                    setRecruitCount(next);
+                  }
+                };
+
+                const onInputBlur: React.FocusEventHandler<HTMLInputElement> = e => {
+                  const num = Number(e.currentTarget.value);
+                  const normalized = Number.isNaN(num) ? recruitCount : clamp(Math.floor(num));
+                  setRecruitCount(normalized);
+                  setCustomRecruitValue(String(normalized));
+                };
+
+                return (
+                  <>
+                    <div className="flex items-center gap-4">
+                      <button
+                        type="button"
+                        onClick={dec}
+                        className="w-10 h-10 border rounded"
+                        aria-label="10명 감소"
+                      >
+                        -
+                      </button>
+                      <div className="w-20 text-center bg-Gray-50 py-2 rounded font-semibold">
+                        {recruitCount}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={inc}
+                        className="w-10 h-10 border rounded"
+                        aria-label="10명 증가"
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    <Chip
+                      variant={customRecruitOpen ? 'active' : 'solid'}
+                      size="sm"
+                      onClick={openDirectInput}
+                      showArrowIcon={false}
+                    >
+                      직접 입력
+                    </Chip>
+
+                    {customRecruitOpen && (
+                      <Input
+                        type="number"
+                        size="xl"
+                        placeholder="참여자 수를 입력해주세요"
+                        state={recruitInputState}
+                        value={customRecruitValue}
+                        onChange={onInputChange}
+                        onBlur={onInputBlur}
+                      />
+                    )}
+                  </>
+                );
+              })()}
             </motion.div>
           )}
         </AnimatePresence>
