@@ -4,6 +4,7 @@ import { ApplicationSchema, StatusEnum } from '../dto/application';
 
 import { instance } from '@/apis/instance';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { queryKeys } from '@/constants/query-keys';
 
 export const ApplicationResponseSchema = BaseModelSchema(ApplicationSchema);
 export type ApplicationResponseModel = z.infer<typeof ApplicationResponseSchema>;
@@ -33,7 +34,7 @@ export const useApplicationQuery = (
   status: StatusEnum,
 ): UseQueryResult<ApplicationResponseModel> => {
   return useQuery({
-    queryKey: ['application', postId, status],
+    queryKey: queryKeys.dashboard.application(postId, status),
     queryFn: () => getApplication(postId, status),
     staleTime: 1000 * 60 * 5, // 5분 동안 stale 아님
     refetchOnMount: false,

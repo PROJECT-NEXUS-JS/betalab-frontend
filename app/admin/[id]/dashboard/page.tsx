@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { serverInstance } from '@/apis/server-instance';
 import { dehydrate, QueryClient, HydrationBoundary } from '@tanstack/react-query';
+import { queryKeys } from '@/constants/query-keys';
 
 import Toggle from '@/components/common/atoms/Toggle';
 import StatsCardClientWrapper from './StatsCardClientWrapper';
@@ -11,19 +12,18 @@ import { StatsResponseSchema } from '@/hooks/dashboard/quries/useStatsQuery';
 import { BarChartResponseSchema } from '@/hooks/dashboard/quries/useBarChartQuery';
 
 import QuickActionSheet from '@/components/admin/QuickActionSheet';
-import { ca } from 'date-fns/locale';
 
 export default async function AdminDashboardPage({ params }: { params: Promise<{ id: number }> }) {
   const { id } = await params;
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ['stats', id],
+    queryKey: queryKeys.dashboard.stats(id),
     queryFn: () => getStats(id),
   });
 
   await queryClient.prefetchQuery({
-    queryKey: ['barChart', id],
+    queryKey: queryKeys.dashboard.barChart(id),
     queryFn: () => getBarChart(id),
   });
 

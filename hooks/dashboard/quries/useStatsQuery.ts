@@ -4,6 +4,7 @@ import { StatsSchema } from '../dto/stats';
 
 import { instance } from '@/apis/instance';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { queryKeys } from '@/constants/query-keys';
 
 export const StatsResponseSchema = BaseModelSchema(StatsSchema);
 export type StatsResponseModel = z.infer<typeof StatsResponseSchema>;
@@ -29,7 +30,7 @@ export const getStats = async (postId: number) => {
 
 export const useStatsQuery = (postId: number): UseQueryResult<StatsResponseModel> => {
   return useQuery({
-    queryKey: ['stats', postId],
+    queryKey: queryKeys.dashboard.stats(postId),
     queryFn: () => getStats(postId),
     staleTime: 1000 * 60 * 5, // 5분 동안 stale 아님
     refetchOnMount: false,
