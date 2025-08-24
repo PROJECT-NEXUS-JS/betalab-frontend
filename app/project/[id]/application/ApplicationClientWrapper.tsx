@@ -10,6 +10,8 @@ import Button from '@/components/common/atoms/Button';
 import { transformToApplyCardProps } from '@/lib/mapper/apply-card';
 import { useGetRightSidebar } from '@/hooks/posts/query/usePostRightSidebar';
 
+import { usePostApplyMutation } from '@/hooks/application/mutations/usePostApplyMutation';
+
 export default function ApplicationClientWrapper({ id }: { id: number }) {
   const [applicationData, setApplicationData] = useState<ApplicationFormData>({
     applicantName: '',
@@ -156,7 +158,7 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
               <input
                 type="checkbox"
                 id="privacyAgreement"
-                className="appearance-none border-[2px] border-Gray-100 rounded-sm bg-White w-5 h-5"
+                className="!border-[2px] border-Gray-100 rounded-sm bg-White w-5 h-5"
                 checked={applicationData.privacyAgreement}
                 onChange={e => {
                   // @ts-ignore
@@ -172,7 +174,7 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
               <input
                 type="checkbox"
                 id="termsAgreement"
-                className="appearance-none border-[2px] border-Gray-100 rounded-sm bg-White w-5 h-5"
+                className="!border-[2px] border-Gray-100 rounded-sm bg-White w-5 h-5"
                 checked={applicationData.termsAgreement}
                 onChange={e => {
                   // @ts-ignore
