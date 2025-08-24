@@ -147,7 +147,7 @@ export default function CheckDropDown({
       {open && (
         <div
           role="presentation"
-          className="absolute left-[425px] top-full mt-2 z-50 min-w-[108px] w-max max-w-[90vw] border border-Gray-100)]
+          className="absolute left-[445px] top-full mt-2 z-50 min-w-[108px] w-max max-w-[90vw] border border-Gray-100)]
                      bg-white shadow-card"
         >
           <ul
