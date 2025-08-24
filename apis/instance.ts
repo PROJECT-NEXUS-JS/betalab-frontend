@@ -6,7 +6,7 @@ export const instance = axios.create({
   baseURL: BACKEND_URL,
   responseType: 'json',
   headers: { 'Content-Type': 'application/json' },
-  timeout: 5000,
+  timeout: 10000,
   withCredentials: true,
 });
 
