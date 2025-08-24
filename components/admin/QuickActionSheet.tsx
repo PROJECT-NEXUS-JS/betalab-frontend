@@ -14,11 +14,19 @@ import Button from '../common/atoms/Button';
 import UserProfile from '../common/svg/UserProfile';
 
 import { useApplicationQuery } from '@/hooks/dashboard/quries/useApplicationQuery';
+import {
+  useApproveApplicationMutation,
+  useRejectApplicationMutation,
+} from '@/hooks/dashboard/mutations/useApplicationMutation';
 
 export default function QuickActionSheet({ postId }: { postId: number }) {
   const [showAll, setShowAll] = useState(false);
   const { data: applicationData, isLoading, isError } = useApplicationQuery(postId, 'PENDING');
   const applications = applicationData?.data?.content ?? [];
+
+  const { mutate: approveApplication } = useApproveApplicationMutation(postId);
+  const { mutate: rejectApplication } = useRejectApplicationMutation(postId);
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -58,8 +66,8 @@ export default function QuickActionSheet({ postId }: { postId: number }) {
                   name={item.applicantName}
                   imageUrl="" // 이미지 URL이 없으므로 빈 문자열 전달
                   applyDate={item.appliedAt || '날짜가 없음'}
-                  handleApprove={() => console.log('Approved', item.id)}
-                  handleReject={() => console.log('Rejected', item.id)}
+                  handleApprove={() => approveApplication(item.id)}
+                  handleReject={() => rejectApplication(item.id)}
                 />
               ))}
             </div>
