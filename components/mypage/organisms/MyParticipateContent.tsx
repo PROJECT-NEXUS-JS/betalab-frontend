@@ -42,7 +42,7 @@ export default function MyApplicationContent() {
             }
             buttonLabel="테스트 보러가기"
             onClick={() => {
-              router.push('/category');
+              router.push('/');
             }}
           />
         ) : (

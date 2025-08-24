@@ -68,7 +68,7 @@ export default function MyReviewContent() {
                 title="아직 리뷰를 작성할 수 있는 테스트가 없어요"
                 buttonLabel="테스트 보러가기"
                 onClick={() => {
-                  router.push('/category');
+                  router.push('/');
                 }}
               />
             ) : (
