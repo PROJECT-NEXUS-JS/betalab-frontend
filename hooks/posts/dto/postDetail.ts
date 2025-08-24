@@ -68,7 +68,7 @@ export const ProjectDataSchema = z.object({
   currentParticipants: z.number(),
   schedule: ScheduleSchema,
   requirement: RequirementSchema,
-  reward: RewardSchema,
+  reward: RewardSchema.nullable(),
   feedback: FeedbackSchema,
   content: ContentSchema,
   createdAt: z.string(),
