@@ -4,6 +4,7 @@ import '@/styles/globals.css';
 import '@/styles/tailwind.css';
 import ReactQueryProvider from './ReactQueryProvider';
 import HeaderClientWrapper from '@/components/common/organisms/HeaderClientWrapper';
+import ProgressProviderWrapper from './ProgressProviderWrapper';
 
 export const metadata: Metadata = {
   title: 'Betalab',
@@ -16,18 +17,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning>
       <body className="antialiased bg-White">
-        <Suspense>
-          <div className="w-full bg-gradient-to-b from-white">
-            <div className="min-w-[1280px] mx-auto">
-              <ReactQueryProvider>
-                <HeaderClientWrapper />
-                <main>{children}</main>
-              </ReactQueryProvider>
+        <ProgressProviderWrapper>
+          <Suspense>
+            <div className="w-full bg-gradient-to-b from-white">
+              <div className="min-w-[1280px] mx-auto">
+                <ReactQueryProvider>
+                  <HeaderClientWrapper />
+                  <main>{children}</main>
+                </ReactQueryProvider>
+              </div>
             </div>
-          </div>
-        </Suspense>
+          </Suspense>
+        </ProgressProviderWrapper>
       </body>
     </html>
   );

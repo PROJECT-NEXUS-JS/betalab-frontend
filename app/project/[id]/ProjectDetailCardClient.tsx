@@ -1,37 +1,40 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import ApplyCard, { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
 import { usePostLikeCountQuery, usePostLikeMutation, usePostLikeStatusQuery } from '@/hooks/like';
 
-type Props = Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'> & {
-  postId: number;
-};
+interface Props {
+  projectId: number;
+  ApplyCardProps: Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'>;
+}
 
-export default function ProjectDetailCardClient(props: Props) {
+export default function ProjectDetailCardClient({ projectId, ApplyCardProps }: Props) {
+  const router = useRouter();
   const queryClient = useQueryClient();
-  const { postId, ...applyCardProps } = props;
 
-  const { data: isLiked } = usePostLikeStatusQuery(postId);
-  const { data: likeCount } = usePostLikeCountQuery(postId);
+  const { data: isLiked } = usePostLikeStatusQuery(projectId);
+  const { data: likeCount } = usePostLikeCountQuery(projectId);
 
   const postLikeMutation = usePostLikeMutation();
 
   const handleScrap = () => {
-    postLikeMutation.mutate(postId, {
+    postLikeMutation.mutate(projectId, {
       onSuccess: data => {
-        queryClient.invalidateQueries({ queryKey: ['postLikeStatus', postId] });
-        queryClient.invalidateQueries({ queryKey: ['postLikeCount', postId] });
+        queryClient.invalidateQueries({ queryKey: ['postLikeStatus', projectId] });
+        queryClient.invalidateQueries({ queryKey: ['postLikeCount', projectId] });
+        queryClient.invalidateQueries({ queryKey: ['myBookmarks'] });
       },
     });
   };
 
   const handleRegister = () => {
-    console.log('register clicked');
+    router.push(`/project/${projectId}/application`);
   };
 
   const updatedProps = {
-    ...applyCardProps,
+    ...ApplyCardProps,
     scrapedNumber: likeCount?.data || 0,
     scraped: isLiked?.data || false,
   };

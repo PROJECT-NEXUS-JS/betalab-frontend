@@ -5,11 +5,11 @@ import CustomImage from '@/components/common/atoms/CustomImage';
 import RemindCard from '@/components/common/atoms/RemindCard';
 import Chip from '@/components/common/atoms/Chip';
 import ReviewCard from '@/components/common/molecules/ReviewCard';
-import ProjectDetailCardClient from './ProjectDetailCardClient';
 import Button from '@/components/common/atoms/Button';
 import SimilarPostCard from '@/components/project/SimilarPostCard';
 import CategoryBar from '@/components/common/atoms/CategoryBar';
 
+import ProjectDetailCardClient from './ProjectDetailCardClient';
 import { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
 
 import { useGetPostDetailQuery } from '@/hooks/posts/queries/usePostDetailQuery';
@@ -173,7 +173,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
             </div>
           </section>
         </div>
-        <ProjectDetailCardClient {...applyCardData} postId={Number(id)} />
+        <ProjectDetailCardClient projectId={projectData.id} ApplyCardProps={applyCardData} />
       </div>
     </div>
   );

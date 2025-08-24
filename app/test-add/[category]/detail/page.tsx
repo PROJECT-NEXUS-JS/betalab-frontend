@@ -146,7 +146,6 @@ export default function TestAddSettingPage() {
               </Chip>
             ))}
           </div>
-
           <div className="mt-4 pb-5">
             <p className="mb-2 text-body-01 font-semibold">목적</p>
             <Input
@@ -199,7 +198,6 @@ export default function TestAddSettingPage() {
             state={valueState(summary)}
           />
         </section>
-
         <section className="mb-10">
           <h2 className="mb-2 text-subtitle-01 font-semibold">대표 이미지</h2>
           <p className="mb-2 text-caption-01 text-Gray-300">

@@ -51,7 +51,6 @@ export default function Input(props: InputProps) {
     maxLength,
     className,
   } = props;
-
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const baseClasses = [
@@ -101,7 +100,7 @@ export default function Input(props: InputProps) {
   const { onChange, onFocus, onBlur } = props as InputKindProps;
 
   return (
-    <div className={`${baseClasses} flex justify-between items-center`}>
+    <div className={`${baseClasses} flex justify-between items-center max-w-full`}>
       <input
         type={type} // 'text' | 'number' | 'date'
         className="w-full pr-10 focus:outline-none"

@@ -1,18 +1,15 @@
 import { z } from 'zod';
 import { BaseModelSchema } from '@/types/models/base-model';
-import { categorySchema, scheduleSchema, rewardSchema } from '@/types/models/testCard';
 
+// API 응답 구조에 맞는 RecentlyViewedTestDto
 const recentlyViewedTestSchema = z
   .object({
-    id: z.number(),
+    postId: z.number(),
+    category: z.string(),
     title: z.string(),
-    serviceSummary: z.string(),
-    thumbnailUrl: z.string().nullable(),
-    mainCategories: z.array(categorySchema),
-    platformCategories: z.array(categorySchema),
-    genreCategories: z.array(categorySchema),
-    schedule: scheduleSchema.optional(),
-    reward: rewardSchema.optional(),
+    oneLineIntro: z.string(),
+    tags: z.array(z.string()),
+    viewedAt: z.string(),
   })
   .strict();
 

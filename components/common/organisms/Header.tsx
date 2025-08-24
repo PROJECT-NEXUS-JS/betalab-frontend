@@ -33,9 +33,9 @@ export default function Header({
   const handleSearch = (searchValue: string) => {
     const params = new URLSearchParams(searchParams.toString());
     if (searchValue) {
-      params.set('q', searchValue);
+      params.set('keyword', searchValue);
     } else {
-      params.delete('q');
+      params.delete('keyword');
     }
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
