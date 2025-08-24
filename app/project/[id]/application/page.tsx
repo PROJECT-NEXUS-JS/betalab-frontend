@@ -5,7 +5,7 @@ import { serverInstance } from '@/apis/server-instance';
 import Logger from '@/lib/logger';
 
 import ApplicationClientWrapper from './ApplicationClientWrapper';
-import { RightSidebarResponseSchema } from '@/hooks/posts/query/usePostRightSidebar';
+import { RightSidebarResponseSchema } from '@/hooks/posts/queries/usePostRightSidebar';
 
 export default async function ProjectApplicationPage({
   params,

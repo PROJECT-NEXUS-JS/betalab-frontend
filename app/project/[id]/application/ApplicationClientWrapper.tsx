@@ -9,7 +9,7 @@ import RemindCard from '@/components/common/atoms/RemindCard';
 import Button from '@/components/common/atoms/Button';
 
 import { transformToApplyCardProps } from '@/lib/mapper/apply-card';
-import { useGetRightSidebar } from '@/hooks/posts/query/usePostRightSidebar';
+import { useGetRightSidebar } from '@/hooks/posts/queries/usePostRightSidebar';
 
 import { usePostApplyMutation } from '@/hooks/application/mutations/usePostApplyMutation';
 import { Modal } from '@/components/category/molecules/Modal';
