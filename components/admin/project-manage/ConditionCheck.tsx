@@ -1,4 +1,3 @@
-// components/admin/project-manage/ConditionCheck.tsx
 'use client';
 
 import React, { useRef, useState } from 'react';
