@@ -12,6 +12,7 @@ import PostCard, { PostCardSkeleton } from '@/components/category/molecules/Post
 import { useUsersPostsListQuery } from '@/hooks/posts/queries/useUsersPostsListQuery';
 import { createApiParams } from '@/app/category/const';
 import PopularPage from './popular/page';
+import EmptyCard from '@/components/mypage/molecules/EmptyCard';
 
 function CategoryPageContent() {
   const router = useRouter();
@@ -87,21 +88,39 @@ function CategoryPageContent() {
   return (
     <div className="flex flex-col">
       <Tabbar className="px-16 py-5" />
-      <main className="flex pb-30 flex-row py-10 px-16 items-start justify-start gap-10">
+      <main className="flex pb-30 flex-row py-10 px-16 items-start justify-start gap-10 w-full">
         <Sidebar />
-        <section className="flex flex-col items-center gap-10">
-          <div className="grid grid-cols-3 gap-x-4 gap-y-10 w-full">
-            {isLoading
-              ? Array.from({ length: 12 }, (_, index) => <PostCardSkeleton key={index} />)
-              : postsData?.content.map(post => <PostCard key={post.id} post={post} />)}
-          </div>
-
-          {postsData && postsData.totalPages > 1 && (
-            <Pagination
-              currentPage={currentPage}
-              totalPages={postsData.totalPages}
-              onPageChange={handlePageChange}
+        <section className="flex flex-col items-start gap-10 w-full">
+          {isLoading ? (
+            <div className="grid grid-cols-3 gap-x-4 gap-y-10">
+              {Array.from({ length: 12 }, (_, index) => (
+                <PostCardSkeleton key={index} />
+              ))}
+            </div>
+          ) : postsData?.content.length === 0 ? (
+            <EmptyCard
+              title="아직 테스트가 없어요."
+              buttonLabel="테스트 등록하기"
+              onClick={() => router.push('/test-add')}
+              className="w-full py-[200px]"
             />
+          ) : (
+            <>
+              <div className="grid grid-cols-3 gap-x-4 gap-y-10">
+                {postsData?.content.map(post => (
+                  <PostCard key={post.id} post={post} />
+                ))}
+              </div>
+              {postsData && postsData.totalPages > 1 && (
+                <div className="flex justify-center w-[800px]">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={postsData.totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                </div>
+              )}
+            </>
           )}
         </section>
       </main>
