@@ -6,6 +6,13 @@ import Toggle from '@/components/common/atoms/Toggle';
 import StatsCardClientWrapper from './StatsCardClientWrapper';
 import BarChartClientWrapper from './BarChartClientWrapper';
 
+import Logger from '@/lib/logger';
+import { StatsResponseSchema } from '@/hooks/dashboard/quries/useStatsQuery';
+import { BarChartResponseSchema } from '@/hooks/dashboard/quries/useBarChartQuery';
+
+import QuickActionSheet from '@/components/admin/QuickActionSheet';
+import { ca } from 'date-fns/locale';
+
 export default async function AdminDashboardPage({ params }: { params: Promise<{ id: number }> }) {
   const { id } = await params;
   const queryClient = new QueryClient();
@@ -47,6 +54,7 @@ export default async function AdminDashboardPage({ params }: { params: Promise<{
           </HydrationBoundary>
         </div>
       </section>
+      <QuickActionSheet />
     </div>
   );
 }
@@ -54,15 +62,30 @@ export default async function AdminDashboardPage({ params }: { params: Promise<{
 async function getStats(postId: number) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
-  const response = await serverInstance(accessToken).get(`/v1/users/dashboard/${postId}/stats`);
-  return response.data;
+  try {
+    const response = await serverInstance(accessToken).get(`/v1/users/dashboard/${postId}/stats`);
+    const parsedData = StatsResponseSchema.parse(response.data);
+    Logger.log('ProjectData 파싱 성공:', parsedData);
+    return response.data;
+  } catch (err) {
+    Logger.error('ProjectData 파싱 실패:', err);
+    throw err;
+  }
 }
 
 async function getBarChart(postId: number) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
-  const response = await serverInstance(accessToken).get(
-    `/v1/users/dashboard/${postId}/analytics/bar-chart`,
-  );
-  return response.data;
+
+  try {
+    const response = await serverInstance(accessToken).get(
+      `/v1/users/dashboard/${postId}/analytics/bar-chart`,
+    );
+    const parsedData = BarChartResponseSchema.parse(response.data);
+    Logger.log('BarChartData 파싱 성공:', parsedData);
+    return response.data;
+  } catch (err) {
+    Logger.error('BarChartData 파싱 실패:', err);
+    throw err;
+  }
 }
