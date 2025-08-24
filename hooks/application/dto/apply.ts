@@ -2,7 +2,11 @@ import { z } from 'zod';
 
 export const applicationSchema = z.object({
   applicantName: z.string().min(1, '이름을 입력해주세요.'),
-  contactNumber: z.string().regex(/^[0-9]+$/, '숫자만 입력해주세요.'),
+  contactNumber: z
+    .string()
+    .regex(/^[0-9]+$/, '숫자만 입력해주세요.')
+    .min(10, '10-11자리 숫자로 입력해주세요.')
+    .max(11, '10-11자리 숫자로 입력해주세요.'),
   applicantEmail: z.string().refine(
     val => {
       return val === '' || z.email().safeParse(val).success;
@@ -13,9 +17,8 @@ export const applicationSchema = z.object({
   ),
   applicationReason: z
     .string()
-    .min(0, '신청 이유를 입력해주세요.')
-    .max(100, '100자 이내로 작성해주세요.')
-    .optional(),
+    .min(1, '신청 이유를 입력해주세요.')
+    .max(100, '100자 이내로 작성해주세요.'),
   privacyAgreement: z.literal(true, {
     message: '개인정보 수집 및 이용에 동의해야 합니다.',
   }),

@@ -20,11 +20,6 @@ export const usePostApplyMutation = (postId: number) => {
     mutationFn: (data: ApplicationFormData) => postApply(postId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['postDetail', postId] as QueryKey });
-      router.push('/mypage');
-      console.log('신청 성공');
-    },
-    onError: error => {
-      alert(`신청 실패: ${error.message}`);
     },
   });
 };
