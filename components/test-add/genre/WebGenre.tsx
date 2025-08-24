@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import TestAddLayout from '@/components/test-add/layouts/TestAddLayout';
-import Selector from '@/components/common/molecules/Selector';
+import Chip from '@/components/common/atoms/Chip';
+import CheckTag from '@/components/common/atoms/CheckTag';
 import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
 
 const WEB_GENRES = [
@@ -48,22 +49,24 @@ export default function WebGenrePage() {
   const { form, update, save } = useTestAddForm();
 
   const options = useMemo(() => [...WEB_GENRES] as WebGenre[], []);
-  const [selected, setSelected] = useState<WebGenre | null>(null);
+  const [selected, setSelected] = useState<WebGenre[]>([]);
 
   useEffect(() => {
-    const api = Array.isArray(form.genreCategories) ? form.genreCategories[0] : undefined;
-    if (api && API_TO_UI[api] && options.includes(API_TO_UI[api])) {
-      setSelected(API_TO_UI[api]);
+    if (Array.isArray(form.genreCategories)) {
+      const mapped = form.genreCategories
+        .map(api => API_TO_UI[api])
+        .filter((v): v is WebGenre => !!v);
+      setSelected(mapped);
     }
-  }, [form.genreCategories, options]);
+  }, [form.genreCategories]);
 
   const handleSelect = (value: WebGenre) => {
-    setSelected(value);
+    setSelected(prev => (prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]));
   };
 
   const handleNext = () => {
-    if (!selected) return alert('장르를 선택해주세요!');
-    update({ genreCategories: [UI_TO_API[selected]] });
+    if (selected.length === 0) return alert('장르를 하나 이상 선택해주세요!');
+    update({ genreCategories: selected.map(v => UI_TO_API[v]) });
     router.push('/test-add/web/name');
   };
 
@@ -84,9 +87,26 @@ export default function WebGenrePage() {
             선택한 카테고리는 나중에 언제든 바꾸실 수 있어요.
           </p>
           <p className="text-body-02 text-Gray-300">나중에 수정 가능하니 너무 걱정하지 마세요.</p>
+          <div className="flex items-center gap-2 mt-1">
+            <CheckTag>중복 선택 가능</CheckTag>
+          </div>
         </div>
-
-        <Selector<WebGenre> options={options} selected={selected} onSelect={handleSelect} />
+        <div role="listbox" aria-label="베타서비스 장르 선택" className="flex flex-wrap gap-2">
+          {options.map(option => {
+            const isSelected = selected.includes(option);
+            return (
+              <Chip
+                key={option}
+                variant={isSelected ? 'active' : 'solid'}
+                size="sm"
+                onClick={() => handleSelect(option)}
+                showArrowIcon={false}
+              >
+                {option}
+              </Chip>
+            );
+          })}
+        </div>
       </div>
     </TestAddLayout>
   );

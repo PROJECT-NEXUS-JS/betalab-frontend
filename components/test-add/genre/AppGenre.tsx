@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import TestAddLayout from '@/components/test-add/layouts/TestAddLayout';
 import Selector from '@/components/common/molecules/Selector';
 import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
+import CheckTag from '@/components/common/atoms/CheckTag';
+import Chip from '@/components/common/atoms/Chip';
 
 const APP_GENRES = [
   '라이프 스타일',
@@ -48,19 +50,25 @@ export default function AppGenreStep() {
   const { form, update, save } = useTestAddForm();
 
   const options = useMemo(() => [...APP_GENRES] as AppGenre[], []);
-  const [selected, setSelected] = useState<AppGenre | null>(null);
-
+  const [selected, setSelected] = useState<AppGenre[]>([]);
   useEffect(() => {
-    const api = Array.isArray(form.genreCategories) ? form.genreCategories[0] : undefined;
-    const ui = api ? API_TO_UI[api] : undefined;
-    if (ui && options.includes(ui)) setSelected(ui);
+    if (Array.isArray(form.genreCategories)) {
+      const mapped = form.genreCategories
+        .map((api: string) => API_TO_UI[api])
+        .filter((v): v is AppGenre => !!v && options.includes(v));
+      setSelected(mapped);
+    } else {
+      setSelected([]);
+    }
   }, [form.genreCategories, options]);
 
-  const handleSelect = (value: AppGenre) => setSelected(value);
+  const handleSelect = (value: AppGenre) => {
+    setSelected(prev => (prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]));
+  };
 
   const handleNext = () => {
-    if (!selected) return alert('장르를 선택해주세요!');
-    update({ genreCategories: [UI_TO_API[selected]] });
+    if (selected.length === 0) return alert('장르를 하나 이상 선택해주세요!');
+    update({ genreCategories: selected.map(v => UI_TO_API[v]) });
     router.push('/test-add/app/name');
   };
 
@@ -81,9 +89,26 @@ export default function AppGenreStep() {
             선택한 카테고리는 나중에 언제든 바꾸실 수 있어요.
           </p>
           <p className="text-body-02 text-Gray-300">나중에 수정 가능하니 너무 걱정하지 마세요.</p>
+          <div className="flex items-center gap-2 pb-10">
+            <CheckTag>중복 선택 가능</CheckTag>
+          </div>
         </div>
-
-        <Selector<AppGenre> options={options} selected={selected} onSelect={handleSelect} />
+      </div>
+      <div role="listbox" aria-label="베타서비스 장르 선택" className="flex flex-wrap gap-2">
+        {options.map(option => {
+          const isSelected = selected.includes(option);
+          return (
+            <Chip
+              key={option}
+              variant={isSelected ? 'active' : 'solid'}
+              size="sm"
+              onClick={() => handleSelect(option)}
+              showArrowIcon={false}
+            >
+              {option}
+            </Chip>
+          );
+        })}
       </div>
     </TestAddLayout>
   );
