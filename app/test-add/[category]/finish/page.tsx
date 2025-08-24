@@ -1,11 +1,18 @@
 'use client';
 
+import { useEffect } from 'react';
 import Image from 'next/image';
 import Button from '@/components/common/atoms/Button';
 import { useRouter } from 'next/navigation';
 
 export default function TestAddFinishPage() {
   const router = useRouter();
+
+  useEffect(() => {
+    try {
+      localStorage.removeItem('testAddForm');
+    } catch {}
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen gap-8">
