@@ -3,6 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { usePathname } from 'next/navigation';
 import Header, { HeaderAdmin } from '@/components/common/organisms/Header';
 import { useMyPageProfileQuery } from '@/hooks/mypage/queries/useMyPageProfileQuery';
+import { useEffect } from 'react';
 
 const HIDDEN_HEADER_ROUTES = ['/login', '/login/survey'];
 

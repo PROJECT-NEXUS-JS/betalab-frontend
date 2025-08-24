@@ -22,6 +22,7 @@ export default function ProjectDetailCardClient(props: Props) {
       onSuccess: data => {
         queryClient.invalidateQueries({ queryKey: ['postLikeStatus', postId] });
         queryClient.invalidateQueries({ queryKey: ['postLikeCount', postId] });
+        queryClient.invalidateQueries({ queryKey: ['myBookmarks'] });
       },
     });
   };

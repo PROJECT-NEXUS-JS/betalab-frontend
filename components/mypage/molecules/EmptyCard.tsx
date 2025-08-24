@@ -12,7 +12,7 @@ export default function EmptyCard({ className, title, buttonLabel, onClick }: Em
   return (
     <div
       className={cn(
-        'w-full h-32 border-1 border-dashed border-Gray-200 rounded-lg flex items-center justify-center custom-dashed',
+        'w-full h-32 border-1 border-dashed border-Gray-200 rounded-lg flex items-center justify-center custom-dashed bg-Gray-50',
         className,
       )}
     >

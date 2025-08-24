@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useWatchlistQuery } from '@/hooks/mypage/queries/useWatchlistQuery';
 import { useDashboardQuery } from '@/hooks/mypage/queries/useDashboardQuery';
-import PostCardMini from '@/components/category/molecules/PostCardMini';
-import PostCard from '@/components/category/molecules/PostCard';
-import CardScroll from '@/components/home/molecules/CardScroll';
-import EmptyCard from '../molecules/EmptyCard';
 import { useRouter } from 'next/navigation';
+import CardScroll from '@/components/home/molecules/CardScroll';
+import PostCard from '@/components/category/molecules/PostCard';
+import PostCardMini from '@/components/category/molecules/PostCardMini';
+import EmptyCard from '../molecules/EmptyCard';
+import { mapToTestCard } from '@/lib/mapper/test-card';
 
 interface MainContentProps {
   className?: string;
@@ -29,7 +30,7 @@ export default function MainContent({ className }: MainContentProps) {
   };
 
   return (
-    <section className={cn('gap-10 flex flex-col', className)}>
+    <section className={cn('gap-10 flex flex-col bg-Gray-50', className)}>
       <div className="flex flex-col gap-5 p-5">
         <h3 className="text-body-01 font-semibold text-Dark-Gray">최근 본 테스트</h3>
 
@@ -50,9 +51,14 @@ export default function MainContent({ className }: MainContentProps) {
           >
             {dashboardData.recentlyViewedTests
               .slice(recentlyViewedPage * 3, recentlyViewedPage * 3 + 3)
-              .map(test => (
-                <PostCard key={test.id} post={test} />
-              ))}
+              .map(test => {
+                const mappedTest = mapToTestCard(test);
+                return (
+                  <div onClick={() => router.push(`/project/${mappedTest.id}`)}>
+                    <PostCard key={mappedTest.id} post={mappedTest} />
+                  </div>
+                );
+              })}
           </CardScroll>
         ) : (
           <EmptyCard
@@ -89,7 +95,12 @@ export default function MainContent({ className }: MainContentProps) {
             {watchlistData.testsNearingDeadline
               .slice(watchlistPage * 3, watchlistPage * 3 + 3)
               .map(test => (
-                <PostCardMini key={test.id} post={test} />
+                <div
+                  className="cursor-pointer"
+                  onClick={() => router.push(`/project/${test.postId}`)}
+                >
+                  <PostCardMini key={test.postId} post={mapToTestCard(test)} />
+                </div>
               ))}
           </CardScroll>
         ) : (

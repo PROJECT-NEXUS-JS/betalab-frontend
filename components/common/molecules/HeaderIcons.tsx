@@ -32,6 +32,10 @@ const HeaderIcons = ({ userData }: HeaderIconsProps) => {
     setIsLogoutModalOpen(true);
   };
 
+  const handleHelpClick = () => {
+    window.open('https://forms.gle/FBRFunCT8Mkufrj76', '_blank');
+  };
+
   const DROPDOWN_ELEMENTS: DropdownElementProps[] = [
     {
       onClick: () => {
@@ -53,7 +57,7 @@ const HeaderIcons = ({ userData }: HeaderIconsProps) => {
     },
     {
       onClick: () => {
-        router.push('/mypage');
+        handleHelpClick();
       },
       children: <p className="text-caption-02 font-semibold">도움말/문의</p>,
     },

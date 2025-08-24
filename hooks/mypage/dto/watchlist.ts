@@ -1,28 +1,23 @@
 import { z } from 'zod';
 import { BaseModelSchema } from '@/types/models/base-model';
-import { categorySchema, scheduleSchema, rewardSchema } from '@/types/models/testCard';
 
-// 관심 목록 테스트 아이템 스키마 (TestCardType과 동일)
-const watchlistTestSchema = z
+// 마감 임박 테스트 아이템 스키마 (API 스키마에 맞춤)
+const testDeadlineSchema = z
   .object({
-    id: z.number(),
+    postId: z.number(),
+    category: z.string(),
     title: z.string(),
-    serviceSummary: z.string(),
-    thumbnailUrl: z.string().nullable(),
-    mainCategories: z.array(categorySchema),
-    platformCategories: z.array(categorySchema),
-    genreCategories: z.array(categorySchema),
-    schedule: scheduleSchema.optional(),
-    reward: rewardSchema.optional(),
+    tags: z.array(z.string()),
+    deadline: z.string(), // "2025-08-24" 형태의 날짜 문자열
   })
   .strict();
 
-export type WatchlistTestType = z.infer<typeof watchlistTestSchema>;
+export type TestDeadlineType = z.infer<typeof testDeadlineSchema>;
 
 // 관심 목록 응답 데이터 스키마
 const watchlistDataSchema = z
   .object({
-    testsNearingDeadline: z.array(watchlistTestSchema),
+    testsNearingDeadline: z.array(testDeadlineSchema),
   })
   .strict();
 
