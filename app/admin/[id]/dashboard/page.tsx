@@ -10,6 +10,7 @@ import BarChartClientWrapper from './BarChartClientWrapper';
 import Logger from '@/lib/logger';
 import { StatsResponseSchema } from '@/hooks/dashboard/quries/useStatsQuery';
 import { BarChartResponseSchema } from '@/hooks/dashboard/quries/useBarChartQuery';
+import { ApplicationResponseSchema } from '@/hooks/dashboard/quries/useApplicationQuery';
 
 import QuickActionSheet from '@/components/admin/QuickActionSheet';
 
@@ -25,6 +26,11 @@ export default async function AdminDashboardPage({ params }: { params: Promise<{
   await queryClient.prefetchQuery({
     queryKey: queryKeys.dashboard.barChart(id),
     queryFn: () => getBarChart(id),
+  });
+
+  await queryClient.prefetchQuery({
+    queryKey: queryKeys.dashboard.application(id, 'PENDING'),
+    queryFn: () => getApplication(id, 'PENDING'),
   });
 
   const dehydratedState = dehydrate(queryClient);
@@ -54,7 +60,9 @@ export default async function AdminDashboardPage({ params }: { params: Promise<{
           </HydrationBoundary>
         </div>
       </section>
-      <QuickActionSheet />
+      <HydrationBoundary state={dehydratedState}>
+        <QuickActionSheet postId={id} />
+      </HydrationBoundary>
     </div>
   );
 }
@@ -86,6 +94,23 @@ async function getBarChart(postId: number) {
     return response.data;
   } catch (err) {
     Logger.error('BarChartData 파싱 실패:', err);
+    throw err;
+  }
+}
+
+async function getApplication(postId: number, status: string) {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get('accessToken')?.value;
+
+  try {
+    const response = await serverInstance(accessToken).get(
+      `/v1/users/posts/${postId}/applications/${status}`,
+    );
+    const parsedData = ApplicationResponseSchema.parse(response.data);
+    Logger.log('ApplicationData 파싱 성공:', parsedData);
+    return response.data;
+  } catch (err) {
+    Logger.error('ApplicationData 파싱 실패:', err);
     throw err;
   }
 }

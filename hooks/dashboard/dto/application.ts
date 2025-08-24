@@ -20,8 +20,8 @@ export const PageableSchema = z.object({
 
 export const ApplicationContentSchema = z.object({
   id: z.number(),
-  appliedAt: z.string().transform(date => new Date(date)),
-  approvedAt: z.string().transform(date => new Date(date)),
+  appliedAt: z.string().nullable(),
+  approvedAt: z.string().nullable(),
   status: z.enum(['PENDING', 'APPROVED', 'REJECTED']),
   applicantName: z.string(),
   contactNumber: z.string(),
