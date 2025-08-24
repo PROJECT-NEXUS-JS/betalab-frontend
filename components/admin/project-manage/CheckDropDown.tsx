@@ -95,7 +95,7 @@ export default function CheckDropDown({
       >
         <div className="fflex-1 flex flex-wrap items-center gap-2">
           {chips.length === 0 ? (
-            <span className="text-subtitle-02 text-[var(--color-Gray-300)]">{placeholder}</span>
+            <span className="text-body-02 text-Dark-Gray">{placeholder}</span>
           ) : (
             chips.map(chip => (
               <span
