@@ -43,12 +43,13 @@ export default function TestAddSettingPage() {
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
-  const [images, setImages] = useState<File[]>([]);
   const [mediaTab, setMediaTab] = useState<'video' | 'photo'>('video');
   const [submitting, setSubmitting] = useState(false);
   const stepIndex = 9;
   const totalSteps = 10;
   const total = 10;
+  const [thumbnailImages, setThumbnailImages] = useState<File[]>([]); // 썸네일
+  const [galleryImages, setGalleryImages] = useState<File[]>([]);
 
   useEffect(() => {
     const pis = Array.isArray(form.privacyItems) ? form.privacyItems : [];
@@ -88,7 +89,9 @@ export default function TestAddSettingPage() {
 
     setSubmitting(true);
     try {
-      const created = await createUserPostFromForm(merged, { thumbnail: images[0] ?? null });
+      const created = await createUserPostFromForm(merged, {
+        thumbnail: thumbnailImages[0] ?? null,
+      });
       update(patch);
       router.replace(`/test-add/${category}/finish${created?.id ? `?id=${created.id}` : ''}`);
     } catch (e: any) {
@@ -99,11 +102,18 @@ export default function TestAddSettingPage() {
     }
   };
 
-  const handleUpload = (files: FileList) => {
-    setImages(prev => [...prev, ...Array.from(files)].slice(0, total));
+  const handleThumbnailUpload = (files: FileList) => {
+    setThumbnailImages(prev => [...prev, ...Array.from(files)].slice(0, 1)); // 1장 제한
   };
-  const handleRemove = (index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
+  const handleThumbnailRemove = (index: number) => {
+    setThumbnailImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleGalleryUpload = (files: FileList) => {
+    setGalleryImages(prev => [...prev, ...Array.from(files)].slice(0, total)); // total=10
+  };
+  const handleGalleryRemove = (index: number) => {
+    setGalleryImages(prev => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -206,7 +216,12 @@ export default function TestAddSettingPage() {
           icon={<Image src="/icons/road.svg" alt="guide" width={24} height={24} />}
         />
         <div className="mt-3">
-          <ImageStrip files={images} total={1} onUpload={handleUpload} onRemove={handleRemove} />
+          <ImageStrip
+            files={thumbnailImages}
+            total={1}
+            onUpload={handleThumbnailUpload}
+            onRemove={handleThumbnailRemove}
+          />
         </div>
       </section>
 
@@ -270,10 +285,10 @@ export default function TestAddSettingPage() {
             />
             <div className="mt-6">
               <ImageStrip
-                files={images}
+                files={galleryImages}
                 total={total}
-                onUpload={handleUpload}
-                onRemove={handleRemove}
+                onUpload={handleGalleryUpload}
+                onRemove={handleGalleryRemove}
               />
             </div>
           </>
