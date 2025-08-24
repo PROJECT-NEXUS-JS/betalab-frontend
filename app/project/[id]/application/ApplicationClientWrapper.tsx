@@ -16,7 +16,10 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
     contactNumber: '',
     applicantEmail: '',
     applicationReason: '',
+    // @ts-ignore
+    // 형식 할당 오류 나오는데 true로 동의 안하면 zod 스키마 에러 나게 하려고...
     privacyAgreement: false,
+    // @ts-ignore
     termsAgreement: false,
   });
   const [errors, setErrors] = useState<Partial<Record<keyof ApplicationFormData, string>>>({});
@@ -125,7 +128,7 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
               className="!max-w-full"
               value={applicationData.applicantEmail}
               onChange={e =>
-                setApplicationData({ ...applicationData, applicantName: e.target.value })
+                setApplicationData({ ...applicationData, applicantEmail: e.target.value })
               }
               help={!!errors.applicantEmail}
               helpText={errors.applicantEmail}
@@ -156,11 +159,15 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
                 className="appearance-none border-[2px] border-Gray-100 rounded-sm bg-White w-5 h-5"
                 checked={applicationData.privacyAgreement}
                 onChange={e => {
+                  // @ts-ignore
                   setApplicationData({ ...applicationData, privacyAgreement: e.target.checked });
                 }}
               />
               <p className="text-sm font-bold text-Dark-Gray">개인정보 동의</p>
             </div>
+            {!!errors.privacyAgreement && (
+              <p className="text-xs font-bold text-Error">{errors.privacyAgreement}</p>
+            )}
             <div className="flex gap-2">
               <input
                 type="checkbox"
@@ -168,11 +175,15 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
                 className="appearance-none border-[2px] border-Gray-100 rounded-sm bg-White w-5 h-5"
                 checked={applicationData.termsAgreement}
                 onChange={e => {
+                  // @ts-ignore
                   setApplicationData({ ...applicationData, termsAgreement: e.target.checked });
                 }}
               />
               <p className="text-sm font-bold text-Dark-Gray">참여조건 동의</p>
             </div>
+            {!!errors.termsAgreement && (
+              <p className="text-xs font-bold text-Error">{errors.termsAgreement}</p>
+            )}
           </section>
           <RemindCard />
           <Button State="Primary" Size="xxxl" label="신청하기" onClick={() => handleSubmit()} />
