@@ -76,7 +76,7 @@ export default function Dropdown({
   };
 
   return (
-    <div ref={wrapperRef} className={`relative w-full ${className}`} onKeyDown={onKeyDown}>
+    <div ref={wrapperRef} className={`relative w-[230px] ${className}`} onKeyDown={onKeyDown}>
       <button
         ref={buttonRef}
         id={`dropdown-button-${id}`}
