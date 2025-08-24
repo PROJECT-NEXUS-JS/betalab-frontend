@@ -15,6 +15,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import Button from '@/components/common/atoms/Button';
 import MyBookmarkContent from '@/components/mypage/organisms/MyBookmarkContent';
 import MyReviewContent from '@/components/mypage/organisms/MyReviewContent';
+import AccountContent from '@/components/mypage/organisms/AccountContent';
 
 export default function MyPage() {
   const { data: profile, isLoading, isError, error } = useMyPageProfileQuery();
@@ -39,6 +40,7 @@ export default function MyPage() {
     'participated-tests': <MyParticipateContent />,
     'bookmarked-tests': <MyBookmarkContent />,
     'my-reviews': <MyReviewContent />,
+    'account-management': <AccountContent />,
   };
 
   const renderMainContent = () => {

@@ -15,10 +15,6 @@ export const MY_PAGE_MENUS = {
     title: '내 피드백',
     items: [{ key: 'my-reviews', title: '내가 작성한 리뷰', countKey: 'reviewCount' }],
   },
-  NOTIFICATION: {
-    title: '알림',
-    items: [{ key: 'notification-settings', title: '알림 설정', countKey: undefined }],
-  },
   SETTINGS: {
     title: '설정',
     items: [
