@@ -1,11 +1,10 @@
-import BookMark from '@/components/common/svg/BookMark';
-import { UsersPostsListItemType } from '@/hooks/posts/dto/postList';
+import { TestCardType } from '@/types/models/testCard';
 import Tag from '@/components/common/atoms/Tag';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface PostCardMiniProps {
-  post: UsersPostsListItemType;
+  post: TestCardType;
   className?: string;
 }
 
@@ -24,7 +23,6 @@ export default function PostCardMini({ post, className }: PostCardMiniProps) {
     return diffDays;
   };
 
-  // schedule이 없을 경우 기본값 처리
   const dday = post.schedule ? calculateDday(post.schedule.recruitmentDeadline) : 0;
   const isTodayDeadline = dday === 0;
 
@@ -54,7 +52,7 @@ export default function PostCardMini({ post, className }: PostCardMiniProps) {
           {!isTodayDeadline && <Tag style="gray" dday={dday} />}
           {post.reward && <Tag style={getRewardTagStyle(post.reward.rewardDescription)} />}
         </div>
-        <BookMark className="size-6 fill-transparent text-transparent group-hover:fill-transparent group-hover:text-Gray-200 group-hover:stroke-Gray-200 group-hover:stroke-2" />
+        {/* <BookMark className="size-6 fill-transparent text-transparent group-hover:fill-transparent group-hover:text-Gray-200 group-hover:stroke-Gray-200 group-hover:stroke-2" /> */}
       </div>
     </div>
   );

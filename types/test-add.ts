@@ -19,7 +19,7 @@ export const TestAddSchema = z
     creatorIntroduction: z.string().min(1),
     description: z.string().min(1),
     mainCategory: z.array(z.string()).nonempty(),
-    platformCategory: z.array(z.string()).nonempty(),
+    platformCategory: z.array(z.string()),
     status: PostStatus,
     startDate: iso,
     endDate: iso,

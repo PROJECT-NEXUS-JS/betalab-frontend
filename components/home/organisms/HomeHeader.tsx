@@ -47,15 +47,24 @@ export default function HomeHeader({ className, ...props }: HomeHeaderProps) {
 
   const handleSearch = (searchValue: string) => {
     if (isLoggedIn) {
-      const params = new URLSearchParams();
-      if (selectedCategory) {
-        params.set('category', selectedCategory);
+      if (selectedCategory === '전체') {
+        const params = new URLSearchParams();
+        if (searchValue) {
+          params.set('keyword', searchValue);
+        }
+        const queryString = params.toString();
+        router.push(`/category/popular${queryString ? `?${queryString}` : ''}`);
+      } else {
+        const params = new URLSearchParams();
+        if (selectedCategory) {
+          params.set('category', selectedCategory);
+        }
+        if (searchValue) {
+          params.set('keyword', searchValue);
+        }
+        const queryString = params.toString();
+        router.push(`/category${queryString ? `?${queryString}` : ''}`);
       }
-      if (searchValue) {
-        params.set('q', searchValue);
-      }
-      const queryString = params.toString();
-      router.push(`/category${queryString ? `?${queryString}` : ''}`);
     } else {
       router.push('/login');
     }

@@ -1,15 +1,14 @@
 import Link from 'next/link';
-import { UsersPostsListItemType } from '@/hooks/posts/dto/postList';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
-import BookMark from '@/components/common/svg/BookMark';
 import Tag from '@/components/common/atoms/Tag';
 import { Skeleton } from '@/components/ui/skeleton';
 import RankingArticle from '@/components/common/svg/RankingArticle';
+import { TestCardType } from '@/types/models/testCard';
 
 interface PostCardProps {
   className?: string;
-  post: UsersPostsListItemType;
+  post: TestCardType;
   ranking?: number;
 }
 
@@ -65,7 +64,7 @@ export default function PostCard({ post, className, ranking }: PostCardProps) {
         ) : (
           <div className="w-[234px] h-[146px] bg-Gray-100" />
         )}
-        <BookMark className="absolute bottom-2 right-2 size-5 fill-transparent text-transparent group-hover:fill-transparent group-hover:text-Gray-200 group-hover:stroke-Gray-200 group-hover:stroke-2" />
+        {/* <BookMark className="absolute bottom-2 right-2 size-5 fill-transparent text-transparent group-hover:fill-transparent group-hover:text-Gray-200 group-hover:stroke-Gray-200 group-hover:stroke-2" /> */}
       </div>
       <div className="flex flex-col w-full max-w-[12.625rem] h-[91px]">
         <p className="text-caption-02 font-medium text-Light-Gray">{categoryText}</p>

@@ -12,10 +12,10 @@ import CategoryBar from '@/components/common/atoms/CategoryBar';
 import ProjectDetailCardClient from './ProjectDetailCardClient';
 import { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
 
-import { useGetPostDetailQuery } from '@/hooks/posts/query/usePostDetailQuery';
-import { useGetRightSidebar } from '@/hooks/posts/query/usePostRightSidebar';
-import { usePostReviewQuery } from '@/hooks/review/quries/usePostReviewQuery';
-import { useSimilarPosts } from '@/hooks/posts/query/useSimilarPostQuery';
+import { useGetPostDetailQuery } from '@/hooks/posts/queries/usePostDetailQuery';
+import { useGetRightSidebar } from '@/hooks/posts/queries/usePostRightSidebar';
+import { usePostReviewQuery } from '@/hooks/review/queries/usePostReviewQuery';
+import { useSimilarPosts } from '@/hooks/posts/queries/useSimilarPostQuery';
 
 import { transformToApplyCardProps } from '@/lib/mapper/apply-card';
 import { transformToReviewCardProps } from '@/lib/mapper/review-card';

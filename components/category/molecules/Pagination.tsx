@@ -59,7 +59,7 @@ export default function Pagination({
   }
 
   return (
-    <div className={`flex items-center gap-2 ${className || ''}`}>
+    <div className={`flex items-center gap-4 ${className || ''}`}>
       <PaginationArrowLeft
         onClick={handlePrevPage}
         className={currentPage <= 1 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}

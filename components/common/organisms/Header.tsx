@@ -12,6 +12,11 @@ interface HeaderProps {
   isSearchbar?: boolean;
   className?: string;
   isAuthLoading?: boolean;
+  userData?: {
+    nickname: string;
+    avatar: string | null;
+    affiliation: string | null;
+  };
 }
 
 export default function Header({
@@ -19,6 +24,7 @@ export default function Header({
   isSearchbar = false,
   className,
   isAuthLoading = false,
+  userData,
 }: HeaderProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -27,9 +33,9 @@ export default function Header({
   const handleSearch = (searchValue: string) => {
     const params = new URLSearchParams(searchParams.toString());
     if (searchValue) {
-      params.set('q', searchValue);
+      params.set('keyword', searchValue);
     } else {
-      params.delete('q');
+      params.delete('keyword');
     }
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
@@ -48,7 +54,7 @@ export default function Header({
       {isAuthLoading ? (
         <LoaderCircle className="animate-spin" />
       ) : isLogin ? (
-        <HeaderIcons />
+        <HeaderIcons userData={userData} />
       ) : (
         <Link href="/login" passHref>
           <Button State="Sub" Size="xs" label="로그인/회원가입" className="cursor-pointer" />

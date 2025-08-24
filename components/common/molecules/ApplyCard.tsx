@@ -3,11 +3,8 @@ import Image from 'next/image';
 import { useState } from 'react';
 import Condition, { ConditionProps } from '../atoms/Condition';
 import Button from '../atoms/Button';
-
-import Syren from '@/public/icons/applycard-icon/syren.svg';
-import Booking from '@/public/icons/applycard-icon/booking.svg';
-import Divider from '@/public/icons/applycard-icon/divider.svg';
 import UserProfile from '../svg/UserProfile';
+import BookMark from '../svg/BookMark';
 
 export interface ApplyCardProps {
   title: string;
@@ -77,7 +74,12 @@ export default function ApplyCard({
         </section>
         <section className="flex flex-col gap-4">
           <div className="flex items-center gap-2 self-stretch">
-            <Image src={Syren} alt="Syren Logo" width={24} height={24} />
+            <Image
+              src={'/icons/applycard-icon/syren.svg'}
+              alt="Syren Logo"
+              width={24}
+              height={24}
+            />
             <p className="text-sm text-Primary-500 font-bold">
               마감까지 {Math.ceil((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))}일
               남았어요!
@@ -87,11 +89,17 @@ export default function ApplyCard({
             </p>
           </div>
           <div className="flex items-center gap-2 self-stretch">
-            <Image src={Booking} alt="Booking Logo" width={24} height={24} />
+            <BookMark className="size-6 fill-transparent text-Gray-300 stroke-Gray-300 stroke-2" />
             <p className="text-sm text-Dark-Gray font-bold">{scrapedNumber}명이 스크랩했어요!</p>
           </div>
 
-          <Image src={Divider} alt="Divider" width={258} height={2} className="flex" />
+          <Image
+            src={'/icons/applycard-icon/divider.svg'}
+            alt="Divider"
+            width={258}
+            height={2}
+            className="flex"
+          />
 
           {viewConditions.map((condition, index) => (
             <Condition key={index} {...condition} />
@@ -112,7 +120,13 @@ export default function ApplyCard({
           </p>
           <div className="flex gap-[13px]">
             <button onClick={scrapClicked} className="flex justify-center items-center w-11 h-11">
-              <Image src={Booking} alt="Booking Logo" width={34} height={34} />
+              <BookMark
+                className={`size-8 cursor-pointer ${
+                  scraped
+                    ? 'fill-Gray-300 text-Gray-300'
+                    : 'fill-transparent text-Gray-300 stroke-Gray-300 stroke-2'
+                }`}
+              />
             </button>
             <Button
               State="Primary"

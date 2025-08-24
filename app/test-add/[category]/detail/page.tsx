@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import Selector from '@/components/common/molecules/Selector';
 import Input from '@/components/common/atoms/Input';
 import Button from '@/components/common/atoms/Button';
 import StorySection from '@/components/test-add/StorySection';
@@ -13,6 +12,8 @@ import Card from '@/components/common/atoms/Card';
 import ImageStrip from '@/components/test-add/ImageStrip';
 import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
 import { createUserPostFromForm } from '@/lib/test-add/api';
+import Chip from '@/components/common/atoms/Chip';
+import CheckTag from '@/components/common/atoms/CheckTag';
 
 const PI_OPTIONS = ['이름', '이메일', '연락처', '기타'] as const;
 type PI = (typeof PI_OPTIONS)[number];
@@ -37,7 +38,7 @@ export default function TestAddSettingPage() {
   const { category } = useParams<{ category?: string }>();
   const { form, update, save } = useTestAddForm();
 
-  const [piSelected, setPiSelected] = useState<PI | null>(null);
+  const [piSelected, setPiSelected] = useState<PI[]>([]);
   const [piPurpose, setPiPurpose] = useState('');
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
@@ -50,13 +51,18 @@ export default function TestAddSettingPage() {
   const total = 10;
 
   useEffect(() => {
-    const firstPI = Array.isArray(form.privacyItems) ? form.privacyItems[0] : undefined;
-    setPiSelected(firstPI ? (API_TO_UI[firstPI] ?? null) : null);
-
+    const pis = Array.isArray(form.privacyItems) ? form.privacyItems : [];
+    const restored = pis
+      .map(api => API_TO_UI[api])
+      .filter((v): v is PI => !!v && (PI_OPTIONS as readonly string[]).includes(v));
+    setPiSelected(restored);
     setTitle(typeof form.title === 'string' ? form.title : '');
     setSummary(typeof form.serviceSummary === 'string' ? form.serviceSummary : '');
     setVideoUrl(typeof form.mediaUrl === 'string' ? form.mediaUrl : '');
   }, [form.privacyItems, form.title, form.serviceSummary, form.mediaUrl]);
+
+  const togglePI = (opt: PI) =>
+    setPiSelected(prev => (prev.includes(opt) ? prev.filter(v => v !== opt) : [...prev, opt]));
 
   const onSave = () => {
     const patch = buildPatch();
@@ -67,7 +73,7 @@ export default function TestAddSettingPage() {
   const buildPatch = () => ({
     title: title.trim() || undefined,
     serviceSummary: summary.trim() || undefined,
-    privacyItems: piSelected ? [UI_TO_API[piSelected]] : undefined,
+    privacyItems: piSelected.length ? piSelected.map(p => UI_TO_API[p]) : undefined,
     mediaUrl: mediaTab === 'video' && videoUrl.trim() ? videoUrl.trim() : undefined,
     participationMethod: '온라인' as const,
   });
@@ -82,7 +88,7 @@ export default function TestAddSettingPage() {
 
     setSubmitting(true);
     try {
-      const created = await createUserPostFromForm(merged);
+      const created = await createUserPostFromForm(merged, { thumbnail: images[0] ?? null });
       update(patch);
       router.replace(`/test-add/${category}/finish${created?.id ? `?id=${created.id}` : ''}`);
     } catch (e: any) {
@@ -108,12 +114,27 @@ export default function TestAddSettingPage() {
       </section>
 
       <section className="mb-10">
-        <p className="mb-2 text-subtitle-01 font-semibold">개인 정보 수집</p>
+        <div className="flex items-center gap-2">
+          <p className="mb-2 text-subtitle-01 font-semibold">개인 정보 수집</p>
+          <CheckTag>중복 선택 가능</CheckTag>
+        </div>
         <p className="mb-4 text-body-01 font-medium text-Dark-Gray">
           필요한 개인 정보 항목을 선택해주세요.
         </p>
 
-        <Selector<PI> options={PI_OPTIONS} selected={piSelected} onSelect={setPiSelected} />
+        <div className="flex flex-wrap gap-2">
+          {PI_OPTIONS.map(option => (
+            <Chip
+              key={option}
+              variant={piSelected.includes(option) ? 'active' : 'solid'}
+              size="sm"
+              onClick={() => togglePI(option)}
+              showArrowIcon={false}
+            >
+              {option}
+            </Chip>
+          ))}
+        </div>
 
         <div className="mt-4 pb-5">
           <p className="mb-2 text-body-01 font-semibold">목적</p>
@@ -185,12 +206,7 @@ export default function TestAddSettingPage() {
           icon={<Image src="/icons/road.svg" alt="guide" width={24} height={24} />}
         />
         <div className="mt-3">
-          <ImageStrip
-            files={images}
-            total={total}
-            onUpload={handleUpload}
-            onRemove={handleRemove}
-          />
+          <ImageStrip files={images} total={1} onUpload={handleUpload} onRemove={handleRemove} />
         </div>
       </section>
 
