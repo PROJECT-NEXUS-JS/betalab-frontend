@@ -2,9 +2,11 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import Selector from '@/components/common/molecules/Selector';
 import TestAddLayout from '@/components/test-add/layouts/TestAddLayout';
 import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
+import CheckTag from '@/components/common/atoms/CheckTag';
+import Chip from '@/components/common/atoms/Chip';
+
 type PurposeGroup = { title: string; items: readonly string[] };
 
 const PURPOSE_GROUPS: readonly PurposeGroup[] = [
@@ -50,6 +52,7 @@ const PURPOSE_GROUPS: readonly PurposeGroup[] = [
     ],
   },
 ] as const;
+
 const STEP_INDEX = 7;
 
 export default function TestAddPurposePage() {
@@ -57,35 +60,28 @@ export default function TestAddPurposePage() {
   const router = useRouter();
   const { form, update, save } = useTestAddForm();
 
-  const [selectedByGroup, setSelectedByGroup] = useState<(string | null)[]>(
-    Array(PURPOSE_GROUPS.length).fill(null),
-  );
+  const [selected, setSelected] = useState<string[]>([]);
 
   useEffect(() => {
-    const feedback = Array.isArray(form.feedbackItems) ? form.feedbackItems : [];
-    const restored = PURPOSE_GROUPS.map(group => {
-      const match = feedback.find(item => group.items.includes(item));
-      return match ?? null;
-    });
-    setSelectedByGroup(restored);
+    const init = Array.isArray(form.feedbackItems) ? form.feedbackItems : [];
+    setSelected(init);
   }, [form.feedbackItems]);
 
-  const handleSelect = (groupIndex: number, value: string) => {
-    setSelectedByGroup(prev => prev.map((sel, i) => (i === groupIndex ? value : sel)));
-  };
+  const toggle = (value: string) =>
+    setSelected(prev => (prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]));
 
   const handleNext = () => {
-    if (selectedByGroup.some(v => v === null)) {
-      alert('각 항목에서 하나씩 선택해주세요!');
+    const missingGroup = PURPOSE_GROUPS.some(group => !group.items.some(i => selected.includes(i)));
+    if (missingGroup) {
+      alert('각 그룹에서 최소 1개 이상 선택해주세요!');
       return;
     }
-    update({ feedbackItems: selectedByGroup as string[] });
+    update({ feedbackItems: selected });
     router.push(`/test-add/${category}/setting`);
   };
 
   const handleSave = () => {
-    const picked = selectedByGroup.filter(Boolean) as string[];
-    update({ feedbackItems: picked });
+    update({ feedbackItems: selected });
     save();
   };
 
@@ -99,18 +95,29 @@ export default function TestAddPurposePage() {
       saveLabel="임시 저장"
     >
       <div className="flex flex-col gap-10">
-        <p className="text-subtitle-01 font-semibold">
-          참여자들에게서 어떤 걸 알아보면 도움이 될까요?
-        </p>
+        <div className="flex items-center gap-2">
+          <p className="text-subtitle-01 font-semibold">
+            참여자들에게서 어떤 걸 알아보면 도움이 될까요?
+          </p>
+          <CheckTag>중복 선택 가능</CheckTag>
+        </div>
 
-        {PURPOSE_GROUPS.map(({ title, items }, idx) => (
-          <section key={title} className="flex flex-col gap-4">
+        {PURPOSE_GROUPS.map(({ title, items }) => (
+          <section key={title} className="flex flex-col gap-3">
             <p className="text-body-01 font-semibold">{title}</p>
-            <Selector<string>
-              options={items}
-              selected={selectedByGroup[idx]}
-              onSelect={value => handleSelect(idx, value)}
-            />
+            <div className="flex flex-wrap gap-2">
+              {items.map(option => (
+                <Chip
+                  key={option}
+                  variant={selected.includes(option) ? 'active' : 'solid'}
+                  size="sm"
+                  onClick={() => toggle(option)}
+                  showArrowIcon={false}
+                >
+                  {option}
+                </Chip>
+              ))}
+            </div>
           </section>
         ))}
       </div>
