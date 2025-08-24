@@ -83,13 +83,14 @@ export default function CheckDropDown({
 
   return (
     <div ref={wrapperRef} className={`relative w-556 ${className}`} onKeyDown={onKeyDown}>
-      <button
-        ref={buttonRef}
+      <div
         id={`chkdd-btn-${id}`}
+        role="button"
+        tabIndex={0}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={`chkdd-list-${id}`}
-        onClick={() => setOpen(v => !v)}
+        onClick={() => setOpen(o => !o)}
         className="w-[556px] min-h-[48px] text-left rounded-[1px] border border-Gray-100 bg-white)]
                    px-3 py-4 outline-none flex items-center justify-between"
       >
@@ -141,13 +142,13 @@ export default function CheckDropDown({
         >
           <path d="M6 9l6 6 6-6" />
         </svg>
-      </button>
+      </div>
 
       {open && (
         <div
           role="presentation"
           className="absolute left-[425px] top-full mt-2 z-50 min-w-[108px] w-max max-w-[90vw] border border-Gray-100)]
-                     bg-white] shadow-card"
+                     bg-white shadow-card"
         >
           <ul
             ref={listRef}
