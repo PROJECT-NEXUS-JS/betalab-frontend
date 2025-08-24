@@ -6,8 +6,8 @@ import ArrowDown from '@/components/common/svg/ArrowDown';
 import Dropdown from './Dropdown';
 import { DropdownElementProps } from '../atoms/DropdownElement';
 import { useRouter } from 'next/navigation';
-import LogoutModal from './LogoutModal';
 import Link from 'next/link';
+import BetaLabModal from './BetalabModal';
 
 interface HeaderIconsProps {
   userData?: {
@@ -51,7 +51,7 @@ const HeaderIcons = ({ userData }: HeaderIconsProps) => {
     },
     {
       onClick: () => {
-        router.push('/mypage');
+        router.push('/mypage?tab=account-management');
       },
       children: <p className="text-caption-02 font-semibold">프로필 설정</p>,
     },
@@ -92,7 +92,7 @@ const HeaderIcons = ({ userData }: HeaderIconsProps) => {
         </div>
       </div>
 
-      <LogoutModal
+      <BetaLabModal
         isOpen={isLogoutModalOpen}
         onClose={() => setIsLogoutModalOpen(false)}
         onConfirm={handleLogout}

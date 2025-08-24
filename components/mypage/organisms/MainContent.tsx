@@ -38,7 +38,7 @@ export default function MainContent({ className }: MainContentProps) {
           <div className="flex gap-4">
             {Array.from({ length: 3 }).map((_, index) => (
               <div
-                key={index}
+                key={index + 'recentlyViewed'}
                 className="w-[200px] h-[120px] bg-Gray-100 rounded-lg animate-pulse"
               />
             ))}
@@ -54,8 +54,8 @@ export default function MainContent({ className }: MainContentProps) {
               .map(test => {
                 const mappedTest = mapToTestCard(test);
                 return (
-                  <div onClick={() => router.push(`/project/${mappedTest.id}`)}>
-                    <PostCard key={mappedTest.id} post={mappedTest} />
+                  <div key={mappedTest.id} onClick={() => router.push(`/project/${mappedTest.id}`)}>
+                    <PostCard post={mappedTest} />
                   </div>
                 );
               })}
@@ -81,7 +81,7 @@ export default function MainContent({ className }: MainContentProps) {
           <div className="flex gap-4">
             {Array.from({ length: 3 }).map((_, index) => (
               <div
-                key={index}
+                key={index + 'watchlist'}
                 className="w-[200px] h-[120px] bg-Gray-100 rounded-lg animate-pulse"
               />
             ))}
@@ -96,10 +96,11 @@ export default function MainContent({ className }: MainContentProps) {
               .slice(watchlistPage * 3, watchlistPage * 3 + 3)
               .map(test => (
                 <div
+                  key={test.postId}
                   className="cursor-pointer"
                   onClick={() => router.push(`/project/${test.postId}`)}
                 >
-                  <PostCardMini key={test.postId} post={mapToTestCard(test)} />
+                  <PostCardMini post={mapToTestCard(test)} />
                 </div>
               ))}
           </CardScroll>
@@ -113,6 +114,13 @@ export default function MainContent({ className }: MainContentProps) {
             }}
           />
         )}
+        <h3 className="text-body-01 font-semibold text-Dark-Gray">알림</h3>
+        <EmptyCard
+          className="w-full py-[100px]"
+          title="알림 기능은 개발중이에요."
+          buttonLabel="베타랩 운영진에게 문의하기"
+          onClick={() => window.open('https://forms.gle/FBRFunCT8Mkufrj76', '_blank')}
+        />
       </div>
     </section>
   );
