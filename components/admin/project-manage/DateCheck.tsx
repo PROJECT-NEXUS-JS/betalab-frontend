@@ -85,7 +85,7 @@ export default function DateCheck({
         <div
           ref={overlayRef}
           onClick={handleBackdrop}
-          className="fixed inset-0 z-[1000] flex items-center justify-center bg-white p-4"
+          className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 p-4"
           role="dialog"
           aria-modal="true"
         >

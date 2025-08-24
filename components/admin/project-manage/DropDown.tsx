@@ -113,7 +113,7 @@ export default function Dropdown({
         <div
           role="presentation"
           className="absolute left-[150px] top-full mt-2 z-50  min-w-[108px] w-max max-w-[90vw] border border-Gray-100)]
-                     bg-white] shadow-card"
+                     bg-white shadow-card"
         >
           <ul
             ref={listRef}

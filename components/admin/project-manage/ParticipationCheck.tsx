@@ -110,7 +110,7 @@ export default function ParticipationCheck({
           />
         </svg>
       </button>
-      <div className="text-subtitle-02 font-[700] text-Dark-Gray">
+      <div className="text-body-02 font-semibold text-Dark-Gray">
         {current}
         {suffix}
       </div>
