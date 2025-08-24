@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import '@/styles/globals.css';
 import '@/styles/tailwind.css';
@@ -17,14 +18,16 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className="antialiased bg-White">
-        <div className="w-full bg-gradient-to-b from-white">
-          <div className="min-w-[1280px] mx-auto">
-            <ReactQueryProvider>
-              <HeaderClientWrapper />
-              <main>{children}</main>
-            </ReactQueryProvider>
+        <Suspense>
+          <div className="w-full bg-gradient-to-b from-white">
+            <div className="min-w-[1280px] mx-auto">
+              <ReactQueryProvider>
+                <HeaderClientWrapper />
+                <main>{children}</main>
+              </ReactQueryProvider>
+            </div>
           </div>
-        </div>
+        </Suspense>
       </body>
     </html>
   );

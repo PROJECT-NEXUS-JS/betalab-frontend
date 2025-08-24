@@ -1,5 +1,6 @@
-'use client'
+'use client';
 import Image from 'next/image';
+import { useState, useRef, useEffect } from 'react';
 import UserProfile from '../svg/UserProfile';
 import Button from '../atoms/Button';
 import Star from '../svg/Star';
@@ -25,11 +26,25 @@ export default function ReviewCard({
   date,
   state = 'default',
   showReplyButton = false,
-  replyOnClick = () => {}
+  replyOnClick = () => {},
 }: ReviewCardProps) {
-  const totalStars = 5;
-  const fullStars = Math.floor(rating);
-  const hasHalfStar = rating % 1 !== 0;
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [showMoreButton, setShowMoreButton] = useState(false);
+  const contentRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    if (contentRef.current) {
+      const lineHeight = parseInt(window.getComputedStyle(contentRef.current).lineHeight);
+      const height = contentRef.current.scrollHeight;
+      const maxHeight = lineHeight * 3;
+      setShowMoreButton(height > maxHeight);
+    }
+  }, [content]);
+
+  const toggleExpanded = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   return (
     <div
       className={cn(
@@ -40,6 +55,7 @@ export default function ReviewCard({
       <div className="flex items-start">
         {author.imageUrl ? (
           <Image
+            className="rounded-full"
             src={author.imageUrl}
             alt={author.name}
             width={24}
@@ -75,14 +91,31 @@ export default function ReviewCard({
             </div>
             <h4 className="flex text-xs font-bold text-Light-Gray">{author.name}</h4>
           </div>
-          {showReplyButton && <Button State="Sub" Size="lg" onClick={replyOnClick} label="답변하기" />}
+          {showReplyButton && (
+            <Button State="Sub" Size="lg" onClick={replyOnClick} label="답변하기" />
+          )}
         </section>
         <section>
-          <p className="text-sm text-Dark-Gray">{content}</p>
+          <p
+            ref={contentRef}
+            className={cn(
+              'text-sm text-Dark-Gray',
+              !isExpanded && showMoreButton && 'line-clamp-3',
+            )}
+          >
+            {content}
+          </p>
         </section>
-        <section className="w-full flex justify-end">
-          <Button State="Text btn" Size="sm" onClick={() => {}} label="더보기" />
-        </section>
+        {showMoreButton && (
+          <section className="w-full flex justify-end">
+            <Button
+              State="Text btn"
+              Size="sm"
+              onClick={toggleExpanded}
+              label={isExpanded ? '접기' : '더보기'}
+            />
+          </section>
+        )}
       </div>
     </div>
   );

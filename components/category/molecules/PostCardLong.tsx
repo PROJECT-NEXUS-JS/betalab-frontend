@@ -1,7 +1,6 @@
 import { UsersPostsListItemType } from '@/hooks/posts/dto/postList';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
-import BookMark from '@/components/common/svg/BookMark';
 import Tag from '@/components/common/atoms/Tag';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -62,7 +61,7 @@ export default function PostCardLong({ post, className }: PostCardLongProps) {
         ) : (
           <div className="w-[158px] h-[110px] bg-Gray-100" />
         )}
-        <BookMark className="absolute bottom-2 right-2 size-5 fill-transparent text-transparent group-hover:fill-transparent group-hover:text-Gray-200 group-hover:stroke-Gray-200 group-hover:stroke-2" />
+        {/* <BookMark className="absolute bottom-2 right-2 size-5 fill-transparent text-transparent group-hover:fill-transparent group-hover:text-Gray-200 group-hover:stroke-Gray-200 group-hover:stroke-2" /> */}
       </div>
 
       <div className="flex flex-col justify-between flex-1 min-w-0">

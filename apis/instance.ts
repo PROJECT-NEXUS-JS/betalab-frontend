@@ -68,7 +68,7 @@ instance.interceptors.response.use(
         });
 
         const newAccessToken = res.data.accessToken;
-        localStorage.setItem('access_token', newAccessToken);
+        localStorage.setItem('accessToken', newAccessToken);
 
         processQueue(null, newAccessToken);
 
@@ -76,7 +76,7 @@ instance.interceptors.response.use(
         return instance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
-        localStorage.removeItem('access_token');
+        localStorage.removeItem('accessToken');
         window.location.href = '/login';
         return Promise.reject(refreshError);
       } finally {

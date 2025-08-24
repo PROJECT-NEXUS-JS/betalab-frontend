@@ -1,5 +1,7 @@
-import { SimilarPost } from '@/hooks/posts/dto/similarPost';
+import Link from 'next/link';
 import Image from 'next/image';
+
+import { SimilarPost } from '@/hooks/posts/dto/similarPost';
 import { cn } from '@/lib/utils';
 import BookMark from '@/components/common/svg/BookMark';
 import Tag from '@/components/common/atoms/Tag';
@@ -23,7 +25,8 @@ export default function SimilarPostCard({ post, className }: SimilarPostCardProp
   };
 
   return (
-    <div
+    <Link
+      href={`/project/${post.id}`}
       className={cn(
         'relative cursor-pointer bg-white w-max min-w-[234px] group rounded-sm px-3 py-[14.5px] flex flex-col gap-2 shadow-[0_0_10px_rgba(0,0,0,0.1)]',
         className,
@@ -57,7 +60,7 @@ export default function SimilarPostCard({ post, className }: SimilarPostCardProp
         <Tag style={getRewardTagStyle(post.rewardProvided)} />
         <Tag style="green" label={post.durationType} />
       </div>
-    </div>
+    </Link>
   );
 }
 
