@@ -49,6 +49,8 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
       rightSidebarData?.data ?? {
         testName: '',
         recruiterName: '',
+        recruiterAffiliation: '',
+        profileUrl: '',
         testSummary: '',
         daysRemaining: 0,
         scrapCount: 0,
