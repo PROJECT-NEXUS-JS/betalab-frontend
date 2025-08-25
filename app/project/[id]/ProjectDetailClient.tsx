@@ -93,6 +93,9 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
         <div className="flex-1 w-full flex-col space-y-10">
           {/* 프로젝트 간단 정보 */}
           <section className="flex flex-col gap-4">
+            <p className="text-base font-bold text-Gray-200">
+              {`홈 > ${projectData.mainCategories[0]?.name} > ${projectData.genreCategories.map(cat => cat.name).join(', ')}`}{' '}
+            </p>
             <CustomImage
               src={projectData.thumbnailUrl}
               alt={projectData.description || 'default description'}
