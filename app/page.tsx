@@ -8,7 +8,7 @@ import CardScroll from '@/components/home/molecules/CardScroll';
 import ViewAllButton from '@/components/home/atoms/ViewAllButton';
 import PostCard, { PostCardSkeleton } from '@/components/category/molecules/PostCard';
 import PostCardMini from '@/components/category/molecules/PostCardMini';
-import { useUsersPostsListQuery } from '@/hooks/posts/queries/useUsersPostsListQuery';
+import { usePostsListHomeQuery } from '@/hooks/posts/queries/usePostsListHomeQuery';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -35,27 +35,34 @@ export default function HomePage() {
     data: recommendPosts,
     isLoading: recommendPostsLoading,
     error: recommendPostsError,
-  } = useUsersPostsListQuery({ sortBy: 'latest', page: recommendPage, size: 4 });
+  } = usePostsListHomeQuery({ sortBy: 'latest', page: recommendPage, size: 4 });
   const {
     data: deadlinePosts,
     isLoading: deadlinePostsLoading,
     error: deadlinePostsError,
-  } = useUsersPostsListQuery({ sortBy: 'deadline', page: deadlinePage, size: 4 });
+  } = usePostsListHomeQuery({ sortBy: 'deadline', page: deadlinePage, size: 4 });
   const {
     data: popularPosts,
     isLoading: popularPostsLoading,
     error: popularPostsError,
-  } = useUsersPostsListQuery({ sortBy: 'popular', page: popularPage, size: 4 });
+  } = usePostsListHomeQuery({ sortBy: 'popular', page: popularPage, size: 4 });
 
-  const isError = recommendPostsError || deadlinePostsError || popularPostsError;
+  const hasError = recommendPostsError || deadlinePostsError || popularPostsError;
 
-  if (isError) {
+  if (hasError) {
     router.push('/login');
   }
 
   return (
     <div className="w-full flex flex-col  items-center mt-10">
-      <HomeHeader className="cursor-pointer" />
+      <HomeHeader
+        className="cursor-pointer"
+        onClick={() => {
+          if (!isLoggedIn) {
+            router.push('/login');
+          }
+        }}
+      />
       <main className="px-14 flex flex-col gap-10 mb-30 max-w-[1280px] ">
         <HomeSection>
           <SectionTitle className="w-full text-left">오늘의 추천 테스트</SectionTitle>
@@ -75,7 +82,7 @@ export default function HomePage() {
               <PostCard key={post.id} post={post} />
             ))}
           </CardScroll>
-          <ViewAllButton href={isLoggedIn ? '/category?category=recommend' : '/login'}>
+          <ViewAllButton href={isLoggedIn ? '/category?mainCategory=인기순위' : '/login'}>
             오늘의 추천 테스트 전체보기
           </ViewAllButton>
         </HomeSection>
@@ -94,7 +101,13 @@ export default function HomePage() {
               </div>
             )}
             {deadlinePosts?.content.map(post => (
-              <PostCardMini key={post.id} post={post} />
+              <div
+                key={post.id}
+                className="cursor-pointer"
+                onClick={() => router.push(`/project/${post.id}`)}
+              >
+                <PostCardMini key={post.id} post={post} />
+              </div>
             ))}
           </CardScroll>
           <ViewAllButton href={isLoggedIn ? '/category?category=마감임박' : '/login'}>
@@ -112,14 +125,14 @@ export default function HomePage() {
               Array.from({ length: 4 }).map((_, index) => <PostCardSkeleton key={index} />)}
             {popularPosts?.content.length === 0 && (
               <div className="h-[146px] flex justify-center items-center">
-                <p className="text-body-01 text-Gray-300">인기 테스트가 없어요.</p>
+                <p className="text-body-300">인기 테스트가 없어요.</p>
               </div>
             )}
             {popularPosts?.content.map(post => (
               <PostCard key={post.id} post={post} />
             ))}
           </CardScroll>
-          <ViewAllButton href={isLoggedIn ? '/category?category=인기순위' : '/login'}>
+          <ViewAllButton href={isLoggedIn ? '/category/popular' : '/login'}>
             인기 테스트 전체보기
           </ViewAllButton>
         </HomeSection>

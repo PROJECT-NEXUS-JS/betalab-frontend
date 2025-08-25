@@ -19,10 +19,10 @@ function buildQueryParams(params: GetUsersPostsListRequestType): string {
   if (params.keyword) qp.set('keyword', params.keyword);
   if (params.sortBy) qp.set('sortBy', params.sortBy);
 
-  // pageable 객체 형태로 전송 (API 문서에 맞춤)
-  if (typeof params.page === 'number') qp.set('pageable[page]', String(params.page));
-  if (typeof params.size === 'number') qp.set('pageable[size]', String(params.size));
-  (params.sort ?? []).forEach(s => qp.append('pageable[sort]', s));
+  // page, size를 직접 전송 (useUsersPostsListQuery와 동일하게)
+  if (typeof params.page === 'number') qp.set('page', String(params.page));
+  if (typeof params.size === 'number') qp.set('size', String(params.size));
+  (params.sort ?? []).forEach(s => qp.append('sort', s));
 
   const qs = qp.toString();
   return qs ? `${BASE_PATH}?${qs}` : BASE_PATH;

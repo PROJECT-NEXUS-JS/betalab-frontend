@@ -10,11 +10,12 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useUsersPostsListQuery } from '@/hooks/posts/queries/useUsersPostsListQuery';
 import { useCategoryStore } from '@/stores/categoryStore';
 import { getApiParams } from './utils';
+import EmptyCard from '@/components/mypage/molecules/EmptyCard';
 
 export default function PopularPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { initializeFromURL } = useCategoryStore();
+  const { initializeFromURL, setMainCategory } = useCategoryStore();
 
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || '전체');
 
@@ -24,11 +25,14 @@ export default function PopularPage() {
   useEffect(() => {
     initializeFromURL(searchParams);
 
+    // popular 페이지에서는 mainCategory를 "인기순위"로 설정
+    setMainCategory('인기순위');
+
     const categoryFromURL = searchParams.get('category');
     if (categoryFromURL) {
       setSelectedCategory(categoryFromURL);
     }
-  }, [searchParams, initializeFromURL]);
+  }, [searchParams, initializeFromURL, setMainCategory]);
 
   const { data: topPostsData, isLoading: isLoadingTop } = useUsersPostsListQuery({
     sortBy: 'popular',
@@ -68,23 +72,44 @@ export default function PopularPage() {
             selectedCategory={selectedCategory}
             onCategoryClick={handleCategoryClick}
           />
-          <div className="flex flex-row gap-10 w-full justify-start">
-            {isLoadingTop
-              ? Array.from({ length: 4 }, (_, index) => <PostCardSkeleton key={index} />)
-              : topPostsData?.content
-                  .slice(0, 4)
-                  .map((post, index) => <PostCard key={post.id} post={post} ranking={index + 1} />)}
-          </div>
-          <div className="grid grid-cols-2 gap-10 justify-items-start">
-            {isLoadingNext
-              ? Array.from({ length: 4 }, (_, index) => <PostCardLongSkeleton key={index} />)
-              : nextPostsData?.content.slice(0, 4).map((post, index) => (
+          {isLoadingTop || isLoadingNext ? (
+            <>
+              <div className="flex flex-row gap-10 w-full justify-start">
+                {Array.from({ length: 4 }, (_, index) => (
+                  <PostCardSkeleton key={index} />
+                ))}
+              </div>
+              <div className="grid grid-cols-2 gap-10 justify-items-start">
+                {Array.from({ length: 4 }, (_, index) => (
+                  <PostCardLongSkeleton key={index} />
+                ))}
+              </div>
+            </>
+          ) : (!topPostsData?.content || topPostsData.content.length === 0) &&
+            (!nextPostsData?.content || nextPostsData.content.length === 0) ? (
+            <EmptyCard
+              title="아직 테스트가 없어요."
+              buttonLabel="테스트 등록하기"
+              onClick={() => router.push('/test-add')}
+              className="w-full py-[200px]"
+            />
+          ) : (
+            <>
+              <div className="flex flex-row gap-10 w-full justify-start">
+                {topPostsData?.content.slice(0, 4).map((post, index) => (
+                  <PostCard key={post.id} post={post} ranking={index + 1} />
+                ))}
+              </div>
+              <div className="grid grid-cols-2 gap-10 justify-items-start">
+                {nextPostsData?.content.slice(0, 4).map((post, index) => (
                   <div key={post.id} className="flex-row flex items-start gap-6">
                     <h3 className="text-head text-Gray-300 font-bold">{index + 5}</h3>
                     <PostCardLong post={post} />
                   </div>
                 ))}
-          </div>
+              </div>
+            </>
+          )}
         </section>
       </main>
       <Button
