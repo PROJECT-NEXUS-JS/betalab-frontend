@@ -7,7 +7,7 @@ const updateBasicInfo = async (
 ): Promise<UpdateBasicInfoResponseType> => {
   const formData = new FormData();
 
-  // basicInfo를 JSON 문자열로 변환하여 추가
+  // basicInfo를 JSON 문자열로 전송
   formData.append('basicInfo', JSON.stringify(data.basicInfo));
 
   // profileImage가 있으면 추가
@@ -18,6 +18,9 @@ const updateBasicInfo = async (
   try {
     const response = await instance.put('/auth/account/basic-info', formData, {
       timeout: 60000,
+      headers: {
+        'Content-Type': undefined,
+      },
     });
 
     return response.data;
@@ -35,7 +38,7 @@ export const useUpdateBasicInfoMutation = () => {
   return useMutation({
     mutationFn: updateBasicInfo,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['myPageProfile'] });
+      queryClient.invalidateQueries({ queryKey: ['get-my-page-profile'] });
     },
   });
 };

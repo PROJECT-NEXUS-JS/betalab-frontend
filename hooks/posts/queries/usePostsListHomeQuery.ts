@@ -1,5 +1,4 @@
 import { QueryKey } from '@tanstack/react-query';
-import { instance } from '@/apis/instance';
 import { usePostsQueryDto } from '../usePostsQueryDto';
 import {
   getUsersPostsListRequestSchema,
@@ -20,6 +19,7 @@ function buildQueryParams(params: GetUsersPostsListRequestType): string {
   if (params.keyword) qp.set('keyword', params.keyword);
   if (params.sortBy) qp.set('sortBy', params.sortBy);
 
+  // page, size를 직접 전송 (useUsersPostsListQuery와 동일하게)
   if (typeof params.page === 'number') qp.set('page', String(params.page));
   if (typeof params.size === 'number') qp.set('size', String(params.size));
   (params.sort ?? []).forEach(s => qp.append('sort', s));
@@ -28,19 +28,27 @@ function buildQueryParams(params: GetUsersPostsListRequestType): string {
   return qs ? `${BASE_PATH}?${qs}` : BASE_PATH;
 }
 
-async function fetchUsersPostsList(
+async function fetchPostsListHome(
   params: GetUsersPostsListRequestType,
 ): Promise<GetUsersPostsListResponseType> {
   const url = buildQueryParams(params);
-  const res = await instance.get(url);
-  return res.data as GetUsersPostsListResponseType;
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const fullUrl = `${backendUrl}${url}`;
+
+  const res = await fetch(fullUrl);
+  if (!res.ok) {
+    throw new Error(`HTTP error! status: ${res.status}`);
+  }
+
+  const data = await res.json();
+  return data as GetUsersPostsListResponseType;
 }
 
-export function useUsersPostsListQuery(
+export function usePostsListHomeQuery(
   params: GetUsersPostsListRequestType,
   options?: { enabled?: boolean },
 ) {
-  const key: QueryKey = ['get-users-posts-list', params];
+  const key: QueryKey = ['get-posts-list-home', params];
 
   const parsed = getUsersPostsListRequestSchema.safeParse(params);
   if (!parsed.success) {
@@ -49,7 +57,7 @@ export function useUsersPostsListQuery(
 
   return usePostsQueryDto<GetUsersPostsListDataType, GetUsersPostsListResponseType>(
     key,
-    () => fetchUsersPostsList(parsed.data),
+    () => fetchPostsListHome(parsed.data),
     getUsersPostsListResponseSchema,
     {
       select: data => data.data,

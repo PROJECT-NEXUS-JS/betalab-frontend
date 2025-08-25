@@ -10,17 +10,8 @@ import {
 const BASE_PATH = '/v1/users/mypage/profile';
 
 async function fetchMyPageProfile(): Promise<GetMyPageProfileResponseType> {
-  try {
-    const res = await instance.get(BASE_PATH);
-    return res.data as GetMyPageProfileResponseType;
-  } catch (error: any) {
-    if (error.response?.status === 403) {
-      const res = await fetch(BASE_PATH);
-      const data = await res.json();
-      return data as GetMyPageProfileResponseType;
-    }
-    throw error;
-  }
+  const res = await instance.get(BASE_PATH);
+  return res.data as GetMyPageProfileResponseType;
 }
 
 export function useMyPageProfileQuery(options?: { enabled?: boolean }) {
@@ -32,7 +23,9 @@ export function useMyPageProfileQuery(options?: { enabled?: boolean }) {
     getMyPageProfileResponseSchema,
     {
       select: data => data.data,
-      enabled: options?.enabled,
+      enabled: options?.enabled ?? false,
+      retry: false,
+      staleTime: 5 * 60 * 1000,
     },
   );
 }

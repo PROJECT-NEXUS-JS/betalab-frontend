@@ -7,9 +7,11 @@ import UserProfile from '@/components/common/svg/UserProfile';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMyPageProfileQuery } from '@/hooks/mypage/queries/useMyPageProfileQuery';
 import { useUpdateBasicInfoMutation } from '@/hooks/mypage/mutations/useUpdateBasicInfoMutation';
+import { useWithdrawMutation } from '@/hooks/mypage/mutations/useWithdrawMutation';
 import { useKakaoToken } from '@/hooks/common/useKakaoToken';
 import { useRouter } from 'next/navigation';
 import { useState, useRef } from 'react';
+import imageCompression from 'browser-image-compression';
 
 const ProfileSkeleton = () => {
   return (
@@ -30,7 +32,7 @@ export default function AccountContent() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-  const [isSignOutOpen, setIsSignOutOpen] = useState(false);
+  // const [isSignOutOpen, setIsSignOutOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [nickname, setNickname] = useState('');
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -38,7 +40,6 @@ export default function AccountContent() {
 
   const { data: userData, isLoading } = useMyPageProfileQuery();
   const updateBasicInfoMutation = useUpdateBasicInfoMutation();
-  const { kakaoAccessToken } = useKakaoToken();
 
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
@@ -51,22 +52,25 @@ export default function AccountContent() {
     setIsLogoutModalOpen(true);
   };
 
-  const handleSignOutClick = () => {
-    setIsSignOutOpen(true);
-  };
+  // const handleSignOutClick = () => {
+  //   setIsSignOutOpen(true);
+  // };
 
-  const handleSignOut = async () => {
-    try {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      setIsSignOutOpen(false);
-      alert('계정이 성공적으로 탈퇴 처리되었습니다.');
-      router.push('/login');
-    } catch (error) {
-      console.error('계정 탈퇴 실패:', error);
-      alert('계정 탈퇴에 실패했습니다. 다시 시도해주세요.');
-    }
-  };
+  // const handleSignOut = async () => {
+  //   try {
+  //     await withdrawMutation.mutateAsync({
+  //       confirmation: '계정 탈퇴',
+  //       kakaoAccessToken: kakaoAccessToken || undefined,
+  //     });
+
+  //     localStorage.removeItem('accessToken');
+  //     localStorage.removeItem('refreshToken');
+  //     setIsSignOutOpen(false);
+  //     router.push('/login');
+  //   } catch (error) {
+  //     console.error('계정 탈퇴 실패:', error);
+  //   }
+  // };
 
   const handleEditClick = () => {
     setIsEditMode(true);
@@ -82,15 +86,54 @@ export default function AccountContent() {
     setPreviewImage(null);
   };
 
-  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const compressImage = async (file: File): Promise<File> => {
+    const options = {
+      maxSizeMB: 0.8,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+      fileType: file.type || 'image/jpeg',
+    };
+
+    try {
+      const compressedFile = await imageCompression(file, options);
+
+      if (compressedFile && compressedFile instanceof File) {
+        const finalFile = new File([compressedFile], file.name, {
+          type: file.type,
+          lastModified: Date.now(),
+        });
+        return finalFile;
+      } else {
+        console.warn('압축된 파일이 유효하지 않습니다. 원본 파일을 사용합니다.');
+        return file;
+      }
+    } catch (error) {
+      console.error('이미지 압축 실패:', error);
+      return file;
+    }
+  };
+
+  const handleImageSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setSelectedImage(file);
-      const reader = new FileReader();
-      reader.onload = e => {
-        setPreviewImage(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+      try {
+        const compressedFile = await compressImage(file);
+        setSelectedImage(compressedFile);
+
+        const reader = new FileReader();
+        reader.onload = e => {
+          setPreviewImage(e.target?.result as string);
+        };
+        reader.readAsDataURL(compressedFile);
+      } catch (error) {
+        console.error('이미지 처리 실패:', error);
+        setSelectedImage(file);
+        const reader = new FileReader();
+        reader.onload = e => {
+          setPreviewImage(e.target?.result as string);
+        };
+        reader.readAsDataURL(file);
+      }
     }
   };
 
@@ -107,10 +150,8 @@ export default function AccountContent() {
       setNickname('');
       setSelectedImage(null);
       setPreviewImage(null);
-      alert('프로필이 성공적으로 업데이트되었습니다.');
     } catch (error) {
       console.error('프로필 업데이트 실패:', error);
-      alert('프로필 업데이트에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
@@ -225,8 +266,8 @@ export default function AccountContent() {
           <ArrowRight className="size-6" />
         </button>
       </div>
-      {/* <div className="w-full h-[1.5px] bg-Gray-100" />
-      <div className="flex flex-row justify-between w-full items-center">
+      <div className="w-full h-[1.5px] bg-Gray-100" />
+      {/* <div className="flex flex-row justify-between w-full items-center">
         <h2 className="text-subtitle-02 font-semibold text-Black">탈퇴하기</h2>
         <button className="cursor-pointer" onClick={handleSignOutClick}>
           <ArrowRight className="size-6" />
@@ -237,7 +278,7 @@ export default function AccountContent() {
         onClose={() => setIsLogoutModalOpen(false)}
         onConfirm={handleLogout}
       />
-      <BetaLabModal
+      {/* <BetaLabModal
         isOpen={isSignOutOpen}
         onClose={handleSignOut}
         onConfirm={() => setIsSignOutOpen(false)}
@@ -251,7 +292,7 @@ export default function AccountContent() {
         }
         rightLabel="계정 탈퇴"
         leftLabel="다시 생각 해볼게요!"
-      />
+      /> */}
     </section>
   );
 }
