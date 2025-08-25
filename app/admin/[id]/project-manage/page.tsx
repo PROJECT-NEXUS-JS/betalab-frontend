@@ -22,7 +22,7 @@ const TEST_TYPES: { label: string; value: TestType }[] = [
 ];
 
 const DURATIONS = [
-  { label: '하루 사용', value: '1d' },
+  { label: '하루 미만', value: '1d' },
   { label: '3일 미만 사용', value: '3d-' },
   { label: '1주 이상 사용', value: '1w+' },
 ];
@@ -163,6 +163,7 @@ const DUR_API_TO_UI: Record<string, string> = {
   '3D_PLUS': '3d+',
   '1W_PLUS': '1w+',
 };
+
 function Row({ label, children }: React.PropsWithChildren<{ label: string }>) {
   return (
     <div className="grid grid-cols-[120px_1fr] items-center gap-4">
@@ -173,10 +174,15 @@ function Row({ label, children }: React.PropsWithChildren<{ label: string }>) {
 }
 
 const parseISOorNull = (s?: string | null) => (s ? new Date(s) : undefined);
+const firstArray = <T,>(...cands: unknown[]): T[] => {
+  const arr = cands.find(Array.isArray) as unknown[] | undefined;
+  return (arr ?? []) as T[];
+};
+
 export default function Page() {
   const searchParams = useSearchParams();
   const routeParams = useParams<{ id?: string }>();
-  const productId = React.useMemo(() => {
+  const productId = useMemo(() => {
     const q = searchParams?.get('id');
     const p = routeParams?.id;
     const num = Number(q ?? p);
@@ -213,57 +219,93 @@ export default function Page() {
   useEffect(() => {
     setGenres(prev => prev.filter(v => genreOptions.some(o => o.value === v)));
   }, [testType, genreOptions]);
+
   useEffect(() => {
     if (!productId) return;
-
     (async () => {
       try {
         const { data } = await instance.get(`/v1/users/posts/${productId}`);
         const d = data?.data ?? data;
+
+        // ① 개인정보 항목
+        type PIItem = string | { code?: string; value?: string; name?: string };
+        const rawPI = firstArray<PIItem>(
+          d?.privacyItems,
+          d?.requirements?.privacyItems,
+          d?.privacy?.items,
+          d?.requiredPrivacyItems,
+          d?.piItems,
+        );
+        const piCodes = rawPI.map(x =>
+          typeof x === 'string' ? x : (x?.code ?? x?.value ?? x?.name ?? ''),
+        );
         const PI_API_TO_UI: Record<string, string> = {
           NAME: '이름',
           EMAIL: '이메일',
           CONTACT: '연락처',
           ETC: '기타',
+          이름: '이름',
+          이메일: '이메일',
+          연락처: '연락처',
+          기타: '기타',
         };
+        const mappedPI = piCodes
+          .map(k => (PI_API_TO_UI as Record<string, string>)[String(k)] ?? String(k))
+          .filter(Boolean);
+
         setDetailInitial({
           title: d?.title ?? '',
           serviceSummary: d?.serviceSummary ?? '',
           mediaUrl: d?.mediaUrl ?? '',
-          privacyItems: Array.isArray(d?.privacyItems)
-            ? d.privacyItems.map((k: string) => PI_API_TO_UI[k] ?? k)
-            : [],
-          thumbnailUrl: d?.thumbnailUrl ?? undefined,
+          privacyItems: mappedPI,
+          thumbnailUrl: d?.thumbnailUrl ?? d?.thumbnail ?? undefined,
           galleryUrls:
             d?.mediaImages ??
             d?.images ??
             (Array.isArray(d?.galleryUrls) ? d.galleryUrls : undefined),
         });
         if (d?.title) setTitle(d.title);
+
+        // ② 메인 카테고리 → 테스트 타입
         const mainCode: string | undefined = d?.mainCategories?.[0]?.code;
         const tt: TestType = MAIN_API_TO_UI[mainCode ?? ''] ?? 'web';
         setTestType(tt);
 
-        const platformCodes: string[] = Array.isArray(d?.platformCategories)
-          ? d.platformCategories.map((x: any) => x?.code ?? x)
-          : [];
-        setPlatforms(platformCodes.map(c => PLATFORM_API_TO_UI[c]).filter(Boolean));
+        // ③ 플랫폼
+        const platformCodes = firstArray<string>(
+          d?.platformCategories?.map((x: any) => x?.code ?? x),
+          d?.platforms,
+        );
+        setPlatforms(platformCodes.map(c => PLATFORM_API_TO_UI[c] ?? c).filter(Boolean));
 
-        const genreCodes: string[] = Array.isArray(d?.genreCategories)
-          ? d.genreCategories.map((x: any) => x?.code ?? x)
-          : [];
+        // ④ 장르
+        const genreCodes = firstArray<string>(
+          d?.genreCategories?.map((x: any) => x?.code ?? x),
+          d?.genres,
+        );
         const genreMap = pickGenreMap(tt);
-        setGenres(genreCodes.map(c => genreMap[c]).filter(Boolean));
+        setGenres(genreCodes.map(c => genreMap[c] ?? c).filter(Boolean));
 
-        const fb = Array.isArray(d?.feedbacks) ? d.feedbacks : [];
-        setFeedbacks(fb.map((k: string) => FEEDBACK_API_TO_UI[k]).filter(Boolean));
+        // ⑤ 피드백 방식
+        const fb = firstArray<string>(d?.feedbacks, d?.feedbackTypes);
+        setFeedbacks(fb.map(k => FEEDBACK_API_TO_UI[k] ?? k).filter(Boolean));
 
+        // ⑥ 소요시간
         const durServer = d?.durationTimeCode || d?.durationTime;
-        setDuration(DUR_API_TO_UI[durServer] ?? '3d+');
+        setDuration(
+          DUR_API_TO_UI[durServer] ?? (typeof durServer === 'string' ? durServer : '3d+'),
+        );
 
-        const maxP = d?.recruitment?.maxParticipants ?? d?.participants ?? d?.recruitCount ?? 50;
+        // ⑦ 인원
+        const maxP =
+          d?.recruitment?.maxParticipants ??
+          d?.participants ??
+          d?.recruitCount ??
+          d?.maxParticipants ??
+          50;
         setPeople(Number(maxP) || 50);
 
+        // ⑧ 일정
         const start = d?.schedule?.startDate ?? d?.startDate;
         const end = d?.schedule?.endDate ?? d?.endDate;
         setRange({
@@ -276,14 +318,6 @@ export default function Page() {
     })();
   }, [productId]);
 
-  useEffect(() => console.log('testType:', testType), [testType]);
-  useEffect(() => console.log('duration:', duration), [duration]);
-  useEffect(() => console.log('platforms:', platforms), [platforms]);
-  useEffect(() => console.log('genres:', genres), [genres]);
-  useEffect(() => console.log('feedbacks:', feedbacks), [feedbacks]);
-  useEffect(() => console.log('people:', people), [people]);
-  useEffect(() => console.log('range:', range), [range]);
-
   const save = () => {
     console.log({ title, testType, duration, platforms, genres, feedbacks, people, range });
     alert('임시로 상태를 콘솔에 출력했어요!');
@@ -291,7 +325,6 @@ export default function Page() {
 
   return (
     <div className="mx-auto w-full max-w-[920px] px-6 py-8">
-      {/* 제목 */}
       <div className="mb-8">
         {!editingTitle ? (
           <p
@@ -316,13 +349,12 @@ export default function Page() {
         )}
       </div>
 
-      {/* 폼 */}
       <div className="space-y-5">
         <Row label="테스트 종류">
           <div className="w-[340px]">
             <Dropdown
               value={testType}
-              onChange={v => setTestType(v as TestType)}
+              onChange={(v: unknown) => setTestType(v as TestType)}
               options={TEST_TYPES}
               placeholder="선택하세요"
             />
@@ -331,19 +363,34 @@ export default function Page() {
 
         <Row label="플랫폼 종류">
           <div className="w-[540px]">
-            <CheckDropDown options={PLATFORMS} value={platforms} onChange={setPlatforms} />
+            <CheckDropDown
+              key={`platforms-${platforms.join('|')}`}
+              options={PLATFORMS}
+              value={platforms}
+              onChange={(v: unknown) => setPlatforms(Array.isArray(v) ? (v as string[]) : [])}
+            />
           </div>
         </Row>
 
         <Row label="장르 종류">
           <div className="w-[540px]">
-            <CheckDropDown options={genreOptions} value={genres} onChange={setGenres} />
+            <CheckDropDown
+              key={`genres-${testType}`}
+              options={genreOptions}
+              value={genres}
+              onChange={(v: unknown) => setGenres(Array.isArray(v) ? (v as string[]) : [])}
+            />
           </div>
         </Row>
 
         <Row label="피드백 방식">
           <div className="w-[540px]">
-            <CheckDropDown options={FEEDBACKS} value={feedbacks} onChange={setFeedbacks} />
+            <CheckDropDown
+              key={`feedbacks-${feedbacks.join('|')}`}
+              options={FEEDBACKS}
+              value={feedbacks}
+              onChange={(v: unknown) => setFeedbacks(Array.isArray(v) ? (v as string[]) : [])}
+            />
           </div>
         </Row>
 
@@ -351,7 +398,7 @@ export default function Page() {
           <div className="w-[340px]">
             <Dropdown
               value={duration}
-              onChange={setDuration}
+              onChange={(v: unknown) => setDuration(String(v))}
               options={DURATIONS}
               placeholder="선택하세요"
             />
@@ -360,13 +407,19 @@ export default function Page() {
 
         <Row label="모집 인원">
           <div className="w-[340px]">
-            <ParticipationCheck value={people} onChange={setPeople} step={10} min={0} suffix="명" />
+            <ParticipationCheck
+              value={people}
+              onChange={(v: unknown) => setPeople(Number(v))}
+              step={10}
+              min={0}
+              suffix="명"
+            />
           </div>
         </Row>
 
         <Row label="모집 마감일">
           <div className="w-[420px]">
-            <DateCheck value={range} onChange={setRange} />
+            <DateCheck value={range} onChange={(v: DateRange | undefined) => setRange(v)} />
           </div>
         </Row>
 
@@ -374,11 +427,13 @@ export default function Page() {
           <ConditionCheck className="!mx-0" />
         </Row>
       </div>
+
       {showDetail && (
         <div className="mt-10">
           <DetailCheck key={productId ?? 'new'} initial={detailInitial} />
         </div>
       )}
+
       <div className="mt-10 space-y-3">
         <Button
           State="Default"
