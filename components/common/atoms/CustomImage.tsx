@@ -19,7 +19,7 @@ export default function CustomImage({
   className,
 }: CustomImageProps) {
   return (
-    <div className={cn('rounded-lg bg-Gray-100', className)}>
+    <div className={cn('rounded-lg', className)}>
       {src ? (
         <Image
           src={src}
