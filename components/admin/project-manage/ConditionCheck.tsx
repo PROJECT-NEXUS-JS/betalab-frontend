@@ -73,7 +73,7 @@ export default function ConditionCheck({ className }: Props) {
   const rewardText = openReward && rewardType ? rewardLabel[rewardType] : '리워드 미설정';
 
   return (
-    <div className={clsx('mx-auto w-full max-w-[1100px]', className)}>
+    <div className={clsx('mx-auto w-full max-w-[556px]', className)}>
       {/*성별 */}
       <Row ref={genderRowRef}>
         <SummaryCard
@@ -207,29 +207,33 @@ export default function ConditionCheck({ className }: Props) {
           checked={openReward}
           onToggle={() => setOpenReward(v => !v)}
         >
-          <div className="grid grid-cols-12 gap-5">
-            <div className="col-span-12 lg:col-span-4">
+          <div className="flex flex-col gap-4">
+            <div>
               <p className="mb-2 text-caption-01 text-Gray-300">리워드 종류</p>
-              <div className="grid w-full max-w-[480px] grid-cols-2 gap-x-3 gap-y-3">
+              <div className="flex flex-col gap-2">
                 <Button
+                  className="w-full"
                   State={getButtonState(rewardType === 'cash')}
                   Size="xxl"
                   label="현금"
                   onClick={() => setRewardType('cash')}
                 />
                 <Button
+                  className="w-full"
                   State={getButtonState(rewardType === 'gift')}
                   Size="xxl"
                   label="기프티콘"
                   onClick={() => setRewardType('gift')}
                 />
                 <Button
+                  className="w-full"
                   State={getButtonState(rewardType === 'product')}
                   Size="xxl"
                   label="상품"
                   onClick={() => setRewardType('product')}
                 />
                 <Button
+                  className="w-full"
                   State={getButtonState(rewardType === 'etc')}
                   Size="xxl"
                   label="기타"
@@ -238,9 +242,10 @@ export default function ConditionCheck({ className }: Props) {
               </div>
             </div>
 
-            <div className="col-span-12 lg:col-span-4">
+            <div>
               <p className="mb-2 text-caption-01 text-Gray-300">리워드 세부 설명</p>
               <Input
+                className="w-full"
                 type="text"
                 state={rewardDesc ? 'has value' : 'no value'}
                 size="sm"
@@ -250,9 +255,10 @@ export default function ConditionCheck({ className }: Props) {
               />
             </div>
 
-            <div className="col-span-12 lg:col-span-4">
+            <div>
               <p className="mb-2 text-caption-01 text-Gray-300">지급 조건</p>
               <Input
+                className="w-full"
                 type="text"
                 state={rewardRule ? 'has value' : 'no value'}
                 size="sm"
@@ -269,10 +275,13 @@ export default function ConditionCheck({ className }: Props) {
 }
 
 const Row = React.forwardRef<HTMLDivElement, React.PropsWithChildren>(({ children }, ref) => {
+  const [left, right] = React.Children.toArray(children);
+
   return (
-    <div ref={ref as any} className="mb-4 grid grid-cols-12 items-start gap-4">
-      <div className="col-span-12 md:col-span-4">{(children as any[])[0]}</div>
-      <div className="col-span-12 md:col-span-8">{(children as any[])[1]}</div>
+    <div ref={ref as any} className="mb-4 flex items-start gap-4">
+      <div className="w-[258px] shrink-0">{left}</div>
+
+      <div className="w-[290px] shrink-0">{right}</div>
     </div>
   );
 });
@@ -299,7 +308,7 @@ function SummaryCard({
   return (
     <div
       className={clsx(
-        'flex items-center justify-between rounded-[8px] border px-5 py-4 transition-colors',
+        'w-[258px] flex items-center justify-between rounded-[1px] border px-5 py-4 transition-colors',
         active
           ? 'border-[var(--color-Primary-500)] bg-[var(--color-Primary-100)]'
           : 'border-[var(--color-Gray-100)] bg-[var(--color-White)]',
