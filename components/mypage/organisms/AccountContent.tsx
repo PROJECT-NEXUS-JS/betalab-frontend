@@ -91,12 +91,22 @@ export default function AccountContent() {
       maxSizeMB: 0.8,
       maxWidthOrHeight: 1920,
       useWebWorker: true,
-      fileType: 'image/png',
+      fileType: file.type || 'image/jpeg',
     };
 
     try {
       const compressedFile = await imageCompression(file, options);
-      return compressedFile;
+
+      if (compressedFile && compressedFile instanceof File) {
+        const finalFile = new File([compressedFile], file.name, {
+          type: file.type,
+          lastModified: Date.now(),
+        });
+        return finalFile;
+      } else {
+        console.warn('압축된 파일이 유효하지 않습니다. 원본 파일을 사용합니다.');
+        return file;
+      }
     } catch (error) {
       console.error('이미지 압축 실패:', error);
       return file;
