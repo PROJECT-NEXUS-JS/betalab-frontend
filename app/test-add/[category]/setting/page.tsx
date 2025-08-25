@@ -21,7 +21,7 @@ const FEEDBACK_OPTIONS = [
 
 const TIME_OPTIONS = [
   '하루 미만',
-  '3일 이상 사용',
+  '3일 미만 사용',
   '일주일 이상 사용',
   '하루 미만 사용 (간단 테스트)',
 ] as const;

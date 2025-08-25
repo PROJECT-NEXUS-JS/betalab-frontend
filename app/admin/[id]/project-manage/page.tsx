@@ -23,7 +23,7 @@ const TEST_TYPES: { label: string; value: TestType }[] = [
 
 const DURATIONS = [
   { label: '하루 사용', value: '1d' },
-  { label: '3일 이상 사용', value: '3d+' },
+  { label: '3일 미만 사용', value: '3d-' },
   { label: '1주 이상 사용', value: '1w+' },
 ];
 
