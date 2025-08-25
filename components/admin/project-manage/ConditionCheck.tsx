@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 
 import ConditionCard from '@/components/test-add/ConditionCard';
@@ -12,10 +12,27 @@ export type Gender = 'male' | 'female' | null;
 export type RewardUI = 'cash' | 'gift' | 'product' | 'etc' | null;
 type AgeRange = { min?: number; max?: number } | null;
 
-type Props = { className?: string };
+export type ConditionInitial = {
+  genderRequired: boolean;
+  gender?: Gender;
+  ageRequired: boolean;
+  ageMin?: number | null;
+  ageMax?: number | null;
+  extraRequired: boolean;
+  extraText?: string;
+  rewardRequired: boolean;
+  rewardType?: RewardUI;
+  rewardDesc?: string;
+  rewardRule?: string;
+};
 
-export default function ConditionCheck({ className }: Props) {
-  const [openGender, setOpenGender] = useState(true);
+type Props = {
+  className?: string;
+  initial?: ConditionInitial;
+};
+
+export default function ConditionCheck({ className, initial }: Props) {
+  const [openGender, setOpenGender] = useState(false);
   const [openAge, setOpenAge] = useState(false);
   const [openOther, setOpenOther] = useState(false);
   const [openReward, setOpenReward] = useState(false);
@@ -28,11 +45,36 @@ export default function ConditionCheck({ className }: Props) {
   const [rewardType, setRewardType] = useState<RewardUI>(null);
   const [rewardDesc, setRewardDesc] = useState('');
   const [rewardRule, setRewardRule] = useState('');
-
   const genderRowRef = useRef<HTMLDivElement | null>(null);
   const ageRowRef = useRef<HTMLDivElement | null>(null);
   const otherRowRef = useRef<HTMLDivElement | null>(null);
   const rewardRowRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!initial) return;
+
+    setOpenGender(initial.genderRequired);
+    setGender(initial.gender ?? null);
+
+    if (initial.ageRequired) {
+      setOpenAge(true);
+      if (initial.ageMin === 19 && !initial.ageMax) {
+        setAgeMode('adult');
+      } else {
+        setAgeMode('custom');
+        setAgeFrom(initial.ageMin?.toString() ?? '');
+        setAgeTo(initial.ageMax?.toString() ?? '');
+      }
+    }
+
+    setOpenOther(initial.extraRequired);
+    setOtherConditions(initial.extraText ?? '');
+
+    setOpenReward(initial.rewardRequired);
+    setRewardType(initial.rewardType ?? null);
+    setRewardDesc(initial.rewardDesc ?? '');
+    setRewardRule(initial.rewardRule ?? '');
+  }, [initial]);
 
   const openAndScroll = (which: 'gender' | 'age' | 'other' | 'reward') => {
     setOpenGender(which === 'gender');

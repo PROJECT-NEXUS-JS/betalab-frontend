@@ -23,8 +23,8 @@ const TEST_TYPES: { label: string; value: TestType }[] = [
 
 const DURATIONS = [
   { label: '하루 미만', value: '1d' },
-  { label: '3일 미만 사용', value: '3d-' },
-  { label: '1주 이상 사용', value: '1w+' },
+  { label: '3일 미만 사용', value: '3d+' },
+  { label: '1주 미만 사용', value: '1w+' },
 ];
 
 const PLATFORMS: CheckOption[] = [
@@ -160,8 +160,11 @@ const FEEDBACK_API_TO_UI: Record<string, string> = {
 
 const DUR_API_TO_UI: Record<string, string> = {
   '1D': '1d',
+  '1d': '1d',
   '3D_PLUS': '3d+',
+  '3d+': '3d+',
   '1W_PLUS': '1w+',
+  '1w+': '1w+',
 };
 
 function Row({ label, children }: React.PropsWithChildren<{ label: string }>) {
@@ -179,10 +182,22 @@ const firstArray = <T,>(...cands: unknown[]): T[] => {
   return (arr ?? []) as T[];
 };
 
+type ConditionInitial = {
+  genderRequired: boolean;
+  gender?: 'male' | 'female' | null;
+  ageRequired: boolean;
+  ageMin?: number | null;
+  ageMax?: number | null;
+  extraRequired: boolean;
+  extraText?: string;
+  rewardRequired: boolean;
+  rewardText?: string;
+};
+
 export default function Page() {
   const searchParams = useSearchParams();
   const routeParams = useParams<{ id?: string }>();
-  const productId = useMemo(() => {
+  const postId = useMemo(() => {
     const q = searchParams?.get('id');
     const p = routeParams?.id;
     const num = Number(q ?? p);
@@ -207,6 +222,18 @@ export default function Page() {
     to: addDays(new Date(), 64),
   });
 
+  const [conditionInitial, setConditionInitial] = useState<ConditionInitial>({
+    genderRequired: false,
+    gender: null,
+    ageRequired: false,
+    ageMin: null,
+    ageMax: null,
+    extraRequired: false,
+    extraText: '',
+    rewardRequired: false,
+    rewardText: '',
+  });
+
   const [showDetail, setShowDetail] = useState(false);
   const [detailInitial, setDetailInitial] = useState<DetailInitial>({
     title: '',
@@ -221,20 +248,18 @@ export default function Page() {
   }, [testType, genreOptions]);
 
   useEffect(() => {
-    if (!productId) return;
+    if (!postId) return;
     (async () => {
       try {
-        const { data } = await instance.get(`/v1/users/posts/${productId}`);
+        const { data } = await instance.get(`/v1/users/posts/${postId}`);
         const d = data?.data ?? data;
 
-        // ① 개인정보 항목
+        // ① 개인정보 항목 (feedback.privacyItems)
         type PIItem = string | { code?: string; value?: string; name?: string };
         const rawPI = firstArray<PIItem>(
+          d?.feedback?.privacyItems,
           d?.privacyItems,
           d?.requirements?.privacyItems,
-          d?.privacy?.items,
-          d?.requiredPrivacyItems,
-          d?.piItems,
         );
         const piCodes = rawPI.map(x =>
           typeof x === 'string' ? x : (x?.code ?? x?.value ?? x?.name ?? ''),
@@ -256,10 +281,11 @@ export default function Page() {
         setDetailInitial({
           title: d?.title ?? '',
           serviceSummary: d?.serviceSummary ?? '',
-          mediaUrl: d?.mediaUrl ?? '',
+          mediaUrl: d?.creatorProfileUrl ?? d?.mediaUrl ?? '',
           privacyItems: mappedPI,
           thumbnailUrl: d?.thumbnailUrl ?? d?.thumbnail ?? undefined,
           galleryUrls:
+            d?.content?.mediaUrls ??
             d?.mediaImages ??
             d?.images ??
             (Array.isArray(d?.galleryUrls) ? d.galleryUrls : undefined),
@@ -286,18 +312,19 @@ export default function Page() {
         const genreMap = pickGenreMap(tt);
         setGenres(genreCodes.map(c => genreMap[c] ?? c).filter(Boolean));
 
-        // ⑤ 피드백 방식
-        const fb = firstArray<string>(d?.feedbacks, d?.feedbackTypes);
+        // ⑤ 피드백 방식 (feedback.feedbackItems 우선)
+        const fb = firstArray<string>(d?.feedback?.feedbackItems, d?.feedbacks, d?.feedbackTypes);
         setFeedbacks(fb.map(k => FEEDBACK_API_TO_UI[k] ?? k).filter(Boolean));
 
-        // ⑥ 소요시간
-        const durServer = d?.durationTimeCode || d?.durationTime;
-        setDuration(
-          DUR_API_TO_UI[durServer] ?? (typeof durServer === 'string' ? durServer : '3d+'),
-        );
+        // ⑥ 소요시간 (schedule.durationTime 우선)
+        const durServer = d?.schedule?.durationTime ?? d?.durationTimeCode ?? d?.durationTime;
+        const durUi =
+          typeof durServer === 'string' ? (DUR_API_TO_UI[durServer] ?? durServer) : '3d+';
+        setDuration(durUi);
 
-        // ⑦ 인원
+        // ⑦ 인원 (requirement.maxParticipants 우선)
         const maxP =
+          d?.requirement?.maxParticipants ??
           d?.recruitment?.maxParticipants ??
           d?.participants ??
           d?.recruitCount ??
@@ -305,18 +332,56 @@ export default function Page() {
           50;
         setPeople(Number(maxP) || 50);
 
-        // ⑧ 일정
+        // ⑧ 일정 (schedule.* 우선)
         const start = d?.schedule?.startDate ?? d?.startDate;
         const end = d?.schedule?.endDate ?? d?.endDate;
         setRange({
           from: parseISOorNull(start) ?? new Date(),
           to: parseISOorNull(end) ?? addDays(new Date(), 7),
         });
+
+        // ⑨ 참여 조건/리워드 초기값 (requirement, reward)
+        const req = d?.requirement ?? {};
+        const rwd = d?.reward ?? {};
+
+        const genderRequired =
+          req?.genderRequirement != null && String(req.genderRequirement).toUpperCase() !== 'ALL';
+        // 서버가 'MALE'/'FEMALE'/'ALL' 또는 '남성'/'여성' 형태일 수 있으므로 매핑
+        const genderStr = String(req?.genderRequirement ?? '').toUpperCase();
+        const gender =
+          genderStr === 'MALE' || genderStr === '남성'.toUpperCase()
+            ? 'male'
+            : genderStr === 'FEMALE' || genderStr === '여성'.toUpperCase()
+              ? 'female'
+              : null;
+
+        const ageMin = Number(req?.ageMin);
+        const ageMax = Number(req?.ageMax);
+        const ageRequired = Number.isFinite(ageMin) || Number.isFinite(ageMax);
+
+        const extraText = req?.additionalRequirements ?? '';
+        const extraRequired = Boolean(extraText && extraText.trim());
+
+        const rewardText =
+          rwd?.rewardDescription ?? (rwd?.rewardType ? String(rwd.rewardType) : '');
+        const rewardRequired = Boolean(rewardText && rewardText.trim());
+
+        setConditionInitial({
+          genderRequired: Boolean(genderRequired),
+          gender,
+          ageRequired,
+          ageMin: Number.isFinite(ageMin) ? ageMin : null,
+          ageMax: Number.isFinite(ageMax) ? ageMax : null,
+          extraRequired,
+          extraText,
+          rewardRequired,
+          rewardText,
+        });
       } catch (e) {
         console.error('GET /v1/users/posts/:id error', e);
       }
     })();
-  }, [productId]);
+  }, [postId]);
 
   const save = () => {
     console.log({ title, testType, duration, platforms, genres, feedbacks, people, range });
@@ -424,13 +489,17 @@ export default function Page() {
         </Row>
 
         <Row label="참여 조건">
-          <ConditionCheck className="!mx-0" />
+          <ConditionCheck className="!mx-0" initial={conditionInitial} />
         </Row>
       </div>
 
       {showDetail && (
         <div className="mt-10">
-          <DetailCheck key={productId ?? 'new'} initial={detailInitial} />
+          {/* initial 변경 시 반영되도록, DetailCheck 내부에 useEffect로 동기화 로직이 있으면 key는 생략 가능 */}
+          <DetailCheck
+            key={`${postId ?? 'new'}:${(detailInitial.privacyItems ?? []).join('|')}`}
+            initial={detailInitial}
+          />
         </div>
       )}
 
