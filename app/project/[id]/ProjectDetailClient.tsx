@@ -133,7 +133,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
                   state="default"
                 />
               ))}
-              <div className="p-4 rounded-sm border border-Light-Gray">
+              <div className="p-4 rounded-xs border-[1px] border-Gray-100">
                 <p className="text-base font-normal text-Dark-Gray">
                   {projectData.content.storyGuide || '설명이 없습니다.'}
                 </p>
