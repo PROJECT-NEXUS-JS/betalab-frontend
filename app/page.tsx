@@ -128,8 +128,8 @@ export default function HomePage() {
                 <p className="text-body-300">인기 테스트가 없어요.</p>
               </div>
             )}
-            {popularPosts?.content.map(post => (
-              <PostCard key={post.id} post={post} />
+            {popularPosts?.content.map((post, index) => (
+              <PostCard key={post.id} post={post} ranking={index + 1} />
             ))}
           </CardScroll>
           <ViewAllButton href={isLoggedIn ? '/category/popular' : '/login'}>
