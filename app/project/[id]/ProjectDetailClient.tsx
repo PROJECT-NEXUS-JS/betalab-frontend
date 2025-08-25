@@ -19,6 +19,7 @@ import { useSimilarPosts } from '@/hooks/posts/queries/useSimilarPostQuery';
 
 import { transformToApplyCardProps } from '@/lib/mapper/apply-card';
 import { transformToReviewCardProps } from '@/lib/mapper/review-card';
+import Input from '@/components/common/atoms/Input';
 
 interface ProjectDetailClientProps {
   id: number;
@@ -120,16 +121,23 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
               프로젝트 소개
             </h3>
             <div
-              className={`relative overflow-hidden ${projectIntroduceFold ? 'max-h-[630px]' : ''}`}
+              className={`relative overflow-hidden flex flex-col gap-10 ${projectIntroduceFold ? 'max-h-[630px]' : ''}`}
             >
-              <CustomImage
-                src={projectData.thumbnailUrl}
-                alt={projectData.description || 'default description'}
-                width={854}
-                height={533}
-                state="default"
-                className="object-cover"
-              />
+              {projectData.content.mediaUrls?.map((media, index) => (
+                <CustomImage
+                  key={`media-${index}`}
+                  src={media}
+                  alt={projectData.description || 'default description'}
+                  width={854}
+                  height={533}
+                  state="default"
+                />
+              ))}
+              <div className="p-4 rounded-sm border border-Light-Gray">
+                <p className="text-base font-normal text-Dark-Gray">
+                  {projectData.content.storyGuide || '설명이 없습니다.'}
+                </p>
+              </div>
               {projectIntroduceFold && (
                 <div className="absolute bottom-0 w-full h-[150px] bg-gradient-to-t from-white to-transparent"></div>
               )}
