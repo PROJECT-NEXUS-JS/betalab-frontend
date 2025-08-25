@@ -37,7 +37,7 @@ export async function createUserPostFromForm(
   opts?: CreateFiles,
 ): Promise<UserPostModel> {
   const payload = buildCreatePostPayload(form);
-  return createUserPost(payload, opts?.thumbnail ?? null);
+  return createUserPost(payload, opts?.thumbnail ?? null, opts?.images ?? null);
 }
 
 export async function createUserPost(
@@ -64,7 +64,7 @@ export async function createUserPost(
   if (thumbnail instanceof File) fd.append('thumbnail', thumbnail, thumbnail.name);
   if (images && images.length) {
     for (const img of images) {
-      if (img instanceof File) fd.append('image', img, img.name);
+      if (img instanceof File) fd.append('images', img, img.name);
     }
   }
 
