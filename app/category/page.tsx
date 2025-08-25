@@ -65,8 +65,9 @@ function CategoryPageContent() {
     }
   }, [error, router]);
 
+  // 인기순위인 경우 PopularPage로 리다이렉트되므로 여기서는 렌더링하지 않음
   if (mainCategory === '인기순위') {
-    return <PopularPage />;
+    return null;
   }
 
   if (error) {
