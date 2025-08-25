@@ -45,7 +45,7 @@ type FeedbackModel = z.infer<typeof FeedbackSchema>;
 const ContentSchema = z.object({
   participationMethod: z.string().nullable(),
   storyGuide: z.string().nullable(),
-  mediaUrl: z.string().or(z.null()).optional(), // mediaUrl는 선택적이며, null일 수 있음
+  mediaUrls: z.array(z.string()).or(z.null()).optional(), // mediaUrlS는 선택적이며, null일 수 있음
 });
 type ContentModel = z.infer<typeof ContentSchema>;
 

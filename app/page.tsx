@@ -82,9 +82,7 @@ export default function HomePage() {
               <PostCard key={post.id} post={post} />
             ))}
           </CardScroll>
-          <ViewAllButton href={isLoggedIn ? '/category?mainCategory=인기순위' : '/login'}>
-            오늘의 추천 테스트 전체보기
-          </ViewAllButton>
+          <div className="h-5" />
         </HomeSection>
         <HomeSection>
           <SectionTitle className="w-full text-left">곧 마감되는 테스트에요</SectionTitle>

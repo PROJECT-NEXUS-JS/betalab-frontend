@@ -8,6 +8,9 @@ import EmptyCard from '../molecules/EmptyCard';
 import { TestCardType } from '@/types/models/testCard';
 import { useWrittenReviewsQuery } from '@/hooks/review/queries/useWrittenReviewsQuery';
 import MyReviewCard from '@/components/common/molecules/MyReviewCard';
+import Button from '@/components/common/atoms/Button';
+import ReviewModal from './ReviewModal';
+import { useCreateReviewMutation } from '@/hooks/review/mutations/useCreateReviewMutation';
 
 export default function MyReviewContent() {
   const [selectedTab, setSelectedTab] = useState<'writable' | 'written'>('writable');
@@ -21,6 +24,10 @@ export default function MyReviewContent() {
     size: 10,
   });
   const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<any>(null);
+
+  const createReviewMutation = useCreateReviewMutation();
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -28,6 +35,53 @@ export default function MyReviewContent() {
 
   const handlePostClick = (postId: number) => {
     router.push(`/project/${postId}`);
+  };
+
+  const handleEditReview = (review: any) => {
+    // 리뷰가 이미 있는 경우 수정 모달 열기
+    if (review) {
+      setSelectedPost({
+        id: review.postId,
+        title: review.postTitle || '제목 없음',
+        thumbnailUrl: review.postThumbnail,
+        startDate: review.approvedAt,
+        endDate: review.approvedAt,
+        existingReview: review,
+      });
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleCreateReview = (postData: any) => {
+    setSelectedPost({
+      id: postData.id,
+      title: postData.title,
+      thumbnailUrl: postData.thumbnailUrl,
+      startDate: postData.startDate,
+      endDate: postData.endDate,
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleSubmitReview = async (rating: number, content: string) => {
+    if (!selectedPost) return;
+
+    try {
+      await createReviewMutation.mutateAsync({
+        postId: selectedPost.id,
+        rating,
+        content,
+      });
+      setIsModalOpen(false);
+      setSelectedPost(null);
+    } catch (error) {
+      console.error('리뷰 작성 실패:', error);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedPost(null);
   };
 
   return (
@@ -91,8 +145,19 @@ export default function MyReviewContent() {
                 };
 
                 return (
-                  <div key={review.postId} onClick={() => handlePostClick(review.postId)}>
-                    <PostCard post={postCardData} />
+                  <div key={review.postId} className="group relative">
+                    <div className="group-hover:brightness-75 transition-opacity duration-300">
+                      <PostCard post={postCardData} />
+                    </div>
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <Button
+                        label="리뷰 수정"
+                        Size="lg"
+                        State="Primary"
+                        className="z-10"
+                        onClick={() => handleEditReview(review)}
+                      />
+                    </div>
                   </div>
                 );
               })
@@ -148,6 +213,17 @@ export default function MyReviewContent() {
             </>
           )}
         </div>
+      )}
+
+      {/* ReviewModal */}
+      {isModalOpen && selectedPost && (
+        <ReviewModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          postData={selectedPost}
+          onSubmit={handleSubmitReview}
+          isLoading={createReviewMutation.isPending}
+        />
       )}
     </div>
   );

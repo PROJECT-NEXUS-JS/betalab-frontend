@@ -332,7 +332,7 @@ export default function Page() {
           50;
         setPeople(Number(maxP) || 50);
 
-        // ⑧ 일정 (schedule.* 우선)
+        // ⑧ 일정
         const start = d?.schedule?.startDate ?? d?.startDate;
         const end = d?.schedule?.endDate ?? d?.endDate;
         setRange({

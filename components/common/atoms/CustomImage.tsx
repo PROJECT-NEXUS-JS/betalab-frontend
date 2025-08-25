@@ -19,17 +19,17 @@ export default function CustomImage({
   className,
 }: CustomImageProps) {
   return (
-    <div className={cn('rounded-lg bg-Gray-100', className)}>
+    <div className={cn('rounded-lg', className)}>
       {src ? (
         <Image
           src={src}
           alt={alt}
           width={width}
           height={height}
-          className={`object-fill transition-all duration-300 ${state === 'hover' ? 'scale-105' : ''}`}
+          className={`rounded-lg object-fill transition-all duration-300 ${state === 'hover' ? 'scale-105' : ''}`}
         />
       ) : (
-        <div className="bg-Gray-100" style={{ width, height }} />
+        <div className="bg-Gray-100 rounded-lg" style={{ width, height }} />
       )}
     </div>
   );

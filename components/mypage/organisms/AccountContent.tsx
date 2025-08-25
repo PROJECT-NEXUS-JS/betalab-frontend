@@ -12,6 +12,7 @@ import { useKakaoToken } from '@/hooks/common/useKakaoToken';
 import { useRouter } from 'next/navigation';
 import { useState, useRef } from 'react';
 import imageCompression from 'browser-image-compression';
+import { Loader } from 'lucide-react';
 
 const ProfileSkeleton = () => {
   return (
@@ -32,11 +33,12 @@ export default function AccountContent() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-  // const [isSignOutOpen, setIsSignOutOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [nickname, setNickname] = useState('');
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [isCompressing, setIsCompressing] = useState(false);
+  const [compressError, setCompressError] = useState(false);
 
   const { data: userData, isLoading } = useMyPageProfileQuery();
   const updateBasicInfoMutation = useUpdateBasicInfoMutation();
@@ -52,31 +54,12 @@ export default function AccountContent() {
     setIsLogoutModalOpen(true);
   };
 
-  // const handleSignOutClick = () => {
-  //   setIsSignOutOpen(true);
-  // };
-
-  // const handleSignOut = async () => {
-  //   try {
-  //     await withdrawMutation.mutateAsync({
-  //       confirmation: '계정 탈퇴',
-  //       kakaoAccessToken: kakaoAccessToken || undefined,
-  //     });
-
-  //     localStorage.removeItem('accessToken');
-  //     localStorage.removeItem('refreshToken');
-  //     setIsSignOutOpen(false);
-  //     router.push('/login');
-  //   } catch (error) {
-  //     console.error('계정 탈퇴 실패:', error);
-  //   }
-  // };
-
   const handleEditClick = () => {
     setIsEditMode(true);
     setNickname(userData?.name || '');
     setSelectedImage(null);
     setPreviewImage(null);
+    setCompressError(false);
   };
 
   const handleCancelEdit = () => {
@@ -84,40 +67,42 @@ export default function AccountContent() {
     setNickname('');
     setSelectedImage(null);
     setPreviewImage(null);
+    setCompressError(false);
   };
 
-  const compressImage = async (file: File): Promise<File> => {
-    const options = {
-      maxSizeMB: 0.8,
-      maxWidthOrHeight: 1920,
-      useWebWorker: true,
-      fileType: file.type || 'image/jpeg',
-    };
+  const compressImage = async (file: File): Promise<File | null> => {
+    setIsCompressing(true);
+    setCompressError(false);
 
     try {
-      const compressedFile = await imageCompression(file, options);
+      const compressedBlob = await imageCompression(file, {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1080,
+        useWebWorker: true,
+      });
 
-      if (compressedFile && compressedFile instanceof File) {
-        const finalFile = new File([compressedFile], file.name, {
-          type: file.type,
-          lastModified: Date.now(),
-        });
-        return finalFile;
-      } else {
-        console.warn('압축된 파일이 유효하지 않습니다. 원본 파일을 사용합니다.');
-        return file;
-      }
+      const finalFile = new File([compressedBlob], file.name, {
+        type: compressedBlob.type || file.type,
+        lastModified: Date.now(),
+      });
+      setIsCompressing(false);
+      return finalFile;
     } catch (error) {
-      console.error('이미지 압축 실패:', error);
-      return file;
+      console.error('❌ 이미지 압축 실패:', error);
+      setCompressError(true);
+      setIsCompressing(false);
+      return null;
     }
   };
 
   const handleImageSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      try {
-        const compressedFile = await compressImage(file);
+    if (!file) return;
+
+    try {
+      const compressedFile = await compressImage(file);
+
+      if (compressedFile) {
         setSelectedImage(compressedFile);
 
         const reader = new FileReader();
@@ -125,15 +110,12 @@ export default function AccountContent() {
           setPreviewImage(e.target?.result as string);
         };
         reader.readAsDataURL(compressedFile);
-      } catch (error) {
-        console.error('이미지 처리 실패:', error);
-        setSelectedImage(file);
-        const reader = new FileReader();
-        reader.onload = e => {
-          setPreviewImage(e.target?.result as string);
-        };
-        reader.readAsDataURL(file);
+      } else {
+        alert('이미지 압축에 실패했습니다. 다른 이미지를 선택해 주세요.');
       }
+    } catch (error) {
+      console.error('이미지 처리 실패:', error);
+      alert('이미지 처리 중 오류가 발생했습니다.');
     }
   };
 
@@ -150,12 +132,14 @@ export default function AccountContent() {
       setNickname('');
       setSelectedImage(null);
       setPreviewImage(null);
+      setCompressError(false);
     } catch (error) {
       console.error('프로필 업데이트 실패:', error);
     }
   };
 
   const openFileManager = () => {
+    if (isCompressing) return;
     fileInputRef.current?.click();
   };
 
@@ -230,12 +214,13 @@ export default function AccountContent() {
                       <UserProfile className="size-9" />
                     )}
                     <Button
-                      label="이미지 변경하기"
+                      label={isCompressing ? '압축 중...' : '이미지 변경하기'}
                       Size="lg"
                       State="Sub"
                       onClick={openFileManager}
-                      className="cursor-pointer font-bold"
+                      className={`font-bold ${isCompressing ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                     />
+                    {isCompressing && <Loader size={16} className="animate-spin ml-2" />}
                   </div>
                   <input
                     ref={fileInputRef}
@@ -243,8 +228,18 @@ export default function AccountContent() {
                     accept="image/*"
                     onChange={handleImageSelect}
                     className="hidden"
+                    disabled={isCompressing}
                   />
-                  {selectedImage && <p className="text-sm text-Gray-400">{selectedImage.name}</p>}
+                  {selectedImage && (
+                    <p className="text-sm text-Gray-400">
+                      {selectedImage.name} ({(selectedImage.size / 1024 / 1024).toFixed(2)}MB)
+                    </p>
+                  )}
+                  {compressError && (
+                    <p className="text-sm text-red-500">
+                      이미지 압축에 실패했습니다. 다른 이미지를 선택해 주세요.
+                    </p>
+                  )}
                 </div>
               ) : userData?.profileImageUrl ? (
                 <img
@@ -267,32 +262,11 @@ export default function AccountContent() {
         </button>
       </div>
       <div className="w-full h-[1.5px] bg-Gray-100" />
-      {/* <div className="flex flex-row justify-between w-full items-center">
-        <h2 className="text-subtitle-02 font-semibold text-Black">탈퇴하기</h2>
-        <button className="cursor-pointer" onClick={handleSignOutClick}>
-          <ArrowRight className="size-6" />
-        </button>
-      </div> */}
       <BetaLabModal
         isOpen={isLogoutModalOpen}
         onClose={() => setIsLogoutModalOpen(false)}
         onConfirm={handleLogout}
       />
-      {/* <BetaLabModal
-        isOpen={isSignOutOpen}
-        onClose={handleSignOut}
-        onConfirm={() => setIsSignOutOpen(false)}
-        title="정말 베타랩을 떠나실 생각이신가요?"
-        description={
-          <>
-            계정 삭제시 모든 개인 정보가 삭제되며
-            <br />
-            베타랩에서의 활동 기록이 모두 사라집니다.
-          </>
-        }
-        rightLabel="계정 탈퇴"
-        leftLabel="다시 생각 해볼게요!"
-      /> */}
     </section>
   );
 }

@@ -8,31 +8,20 @@ import PostCard, { PostCardSkeleton } from '@/components/category/molecules/Post
 import PostCardLong, { PostCardLongSkeleton } from '@/components/category/molecules/PostCardLong';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useUsersPostsListQuery } from '@/hooks/posts/queries/useUsersPostsListQuery';
-import { useCategoryStore } from '@/stores/categoryStore';
 import { getApiParams } from './utils';
 import EmptyCard from '@/components/mypage/molecules/EmptyCard';
 
 export default function PopularPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { initializeFromURL, setMainCategory } = useCategoryStore();
 
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || '전체');
 
-  // 검색어 가져오기
   const keyword = searchParams.get('q') || '';
 
   useEffect(() => {
-    initializeFromURL(searchParams);
-
-    // popular 페이지에서는 mainCategory를 "인기순위"로 설정
-    setMainCategory('인기순위');
-
-    const categoryFromURL = searchParams.get('category');
-    if (categoryFromURL) {
-      setSelectedCategory(categoryFromURL);
-    }
-  }, [searchParams, initializeFromURL, setMainCategory]);
+    return () => {};
+  }, []);
 
   const { data: topPostsData, isLoading: isLoadingTop } = useUsersPostsListQuery({
     sortBy: 'popular',

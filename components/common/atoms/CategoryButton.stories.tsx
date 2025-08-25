@@ -12,7 +12,7 @@ const meta: Meta<CategoryButtonProps> = {
   argTypes: {
     type: {
       control: { type: 'select' },
-      options: ['앱', '웹', '인기순위', '게임', '마감 임박'],
+      options: ['앱', '웹', '인기순위', '게임', '마감임박'],
     },
     onClick: { action: 'clicked' },
   },
@@ -61,6 +61,6 @@ export const Game: Story = {
 
 export const Urgent: Story = {
   args: {
-    type: '마감 임박',
+    type: '마감임박',
   },
 };
