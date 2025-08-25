@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import imageCompression from 'browser-image-compression';
 
 export type ImageButtonProps = {
   current: number;
@@ -13,8 +14,40 @@ export default function ImageButton({ current, total, onUpload }: ImageButtonPro
     inputRef.current?.click();
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onUpload?.(e.target.files);
+  const compressImage = async (file: File): Promise<File> => {
+    const options = {
+      maxSizeMB: 0.8,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+      fileType: 'image/png',
+    };
+
+    try {
+      const compressedFile = await imageCompression(file, options);
+      return compressedFile;
+    } catch (error) {
+      console.error('이미지 압축 실패:', error);
+      return file;
+    }
+  };
+
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) {
+      onUpload?.(null);
+      return;
+    }
+
+    try {
+      const compressedFiles = await Promise.all(Array.from(files).map(file => compressImage(file)));
+      const dataTransfer = new DataTransfer();
+      compressedFiles.forEach(file => dataTransfer.items.add(file));
+
+      onUpload?.(dataTransfer.files);
+    } catch (error) {
+      console.error('이미지 처리 실패:', error);
+      onUpload?.(files);
+    }
   };
 
   return (

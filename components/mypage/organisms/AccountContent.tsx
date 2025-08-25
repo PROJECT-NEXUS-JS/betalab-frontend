@@ -11,6 +11,7 @@ import { useWithdrawMutation } from '@/hooks/mypage/mutations/useWithdrawMutatio
 import { useKakaoToken } from '@/hooks/common/useKakaoToken';
 import { useRouter } from 'next/navigation';
 import { useState, useRef } from 'react';
+import imageCompression from 'browser-image-compression';
 
 const ProfileSkeleton = () => {
   return (
@@ -39,8 +40,6 @@ export default function AccountContent() {
 
   const { data: userData, isLoading } = useMyPageProfileQuery();
   const updateBasicInfoMutation = useUpdateBasicInfoMutation();
-  const withdrawMutation = useWithdrawMutation();
-  const { kakaoAccessToken } = useKakaoToken();
 
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
@@ -87,15 +86,44 @@ export default function AccountContent() {
     setPreviewImage(null);
   };
 
-  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const compressImage = async (file: File): Promise<File> => {
+    const options = {
+      maxSizeMB: 0.8,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+      fileType: 'image/png',
+    };
+
+    try {
+      const compressedFile = await imageCompression(file, options);
+      return compressedFile;
+    } catch (error) {
+      console.error('이미지 압축 실패:', error);
+      return file;
+    }
+  };
+
+  const handleImageSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setSelectedImage(file);
-      const reader = new FileReader();
-      reader.onload = e => {
-        setPreviewImage(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+      try {
+        const compressedFile = await compressImage(file);
+        setSelectedImage(compressedFile);
+
+        const reader = new FileReader();
+        reader.onload = e => {
+          setPreviewImage(e.target?.result as string);
+        };
+        reader.readAsDataURL(compressedFile);
+      } catch (error) {
+        console.error('이미지 처리 실패:', error);
+        setSelectedImage(file);
+        const reader = new FileReader();
+        reader.onload = e => {
+          setPreviewImage(e.target?.result as string);
+        };
+        reader.readAsDataURL(file);
+      }
     }
   };
 
