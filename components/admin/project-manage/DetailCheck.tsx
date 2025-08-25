@@ -24,14 +24,12 @@ type Files = { thumbnail?: File | null; gallery?: File[] };
 
 type Props = {
   initial?: DetailInitial;
-  onSave: (patch: Partial<DetailInitial>, files: Files) => void;
-  onNext: (patch: Partial<DetailInitial>, files: Files) => Promise<void>;
 };
 
 const PI_OPTIONS: PI[] = ['이름', '이메일', '연락처', '기타'];
 const valueState = (v: string) => (v.trim() ? 'has value' : 'no value');
 
-export default function DetailCheck({ initial, onSave, onNext }: Props) {
+export default function DetailCheck({ initial }: Props) {
   const [piSelected, setPiSelected] = useState<PI[]>([]);
   const [piPurpose, setPiPurpose] = useState('');
   const [title, setTitle] = useState('');
@@ -245,11 +243,6 @@ export default function DetailCheck({ initial, onSave, onNext }: Props) {
           </>
         )}
       </section>
-
-      <div className="mt-6 flex gap-2">
-        <Button State="Sub" Size="xl" label="임시 저장" onClick={() => onSave(patch, files)} />
-        <Button State="Primary" Size="xl" label="다음" onClick={() => onNext(patch, files)} />
-      </div>
     </div>
   );
 }
