@@ -7,6 +7,7 @@ import UserProfile from '@/components/common/svg/UserProfile';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMyPageProfileQuery } from '@/hooks/mypage/queries/useMyPageProfileQuery';
 import { useUpdateBasicInfoMutation } from '@/hooks/mypage/mutations/useUpdateBasicInfoMutation';
+import { useWithdrawMutation } from '@/hooks/mypage/mutations/useWithdrawMutation';
 import { useKakaoToken } from '@/hooks/common/useKakaoToken';
 import { useRouter } from 'next/navigation';
 import { useState, useRef } from 'react';
@@ -38,6 +39,7 @@ export default function AccountContent() {
 
   const { data: userData, isLoading } = useMyPageProfileQuery();
   const updateBasicInfoMutation = useUpdateBasicInfoMutation();
+  const withdrawMutation = useWithdrawMutation();
   const { kakaoAccessToken } = useKakaoToken();
 
   const handleLogout = () => {
@@ -57,6 +59,11 @@ export default function AccountContent() {
 
   const handleSignOut = async () => {
     try {
+      await withdrawMutation.mutateAsync({
+        confirmation: '계정 탈퇴',
+        kakaoAccessToken: kakaoAccessToken || undefined,
+      });
+
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
       setIsSignOutOpen(false);
@@ -225,13 +232,13 @@ export default function AccountContent() {
           <ArrowRight className="size-6" />
         </button>
       </div>
-      {/* <div className="w-full h-[1.5px] bg-Gray-100" />
+      <div className="w-full h-[1.5px] bg-Gray-100" />
       <div className="flex flex-row justify-between w-full items-center">
         <h2 className="text-subtitle-02 font-semibold text-Black">탈퇴하기</h2>
         <button className="cursor-pointer" onClick={handleSignOutClick}>
           <ArrowRight className="size-6" />
         </button>
-      </div> */}
+      </div>
       <BetaLabModal
         isOpen={isLogoutModalOpen}
         onClose={() => setIsLogoutModalOpen(false)}

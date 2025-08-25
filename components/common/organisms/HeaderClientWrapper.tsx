@@ -14,6 +14,7 @@ export default function HeaderClientWrapper() {
   const { data: profile, isLoading: isProfileLoading } = useMyPageProfileQuery({
     enabled: isLoggedIn,
   });
+  console.log(localStorage.getItem('accessToken'));
 
   const isLoading = isAuthLoading || (isLoggedIn && isProfileLoading);
 
