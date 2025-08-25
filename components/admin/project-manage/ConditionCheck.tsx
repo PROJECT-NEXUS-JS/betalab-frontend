@@ -28,6 +28,7 @@ export default function ConditionCheck({ className }: Props) {
   const [rewardType, setRewardType] = useState<RewardUI>(null);
   const [rewardDesc, setRewardDesc] = useState('');
   const [rewardRule, setRewardRule] = useState('');
+
   const genderRowRef = useRef<HTMLDivElement | null>(null);
   const ageRowRef = useRef<HTMLDivElement | null>(null);
   const otherRowRef = useRef<HTMLDivElement | null>(null);
@@ -44,11 +45,19 @@ export default function ConditionCheck({ className }: Props) {
       ].current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
   };
-  const ageSummary: AgeRange = openAge
-    ? ageMode === 'adult'
-      ? { min: 19 }
-      : { min: Number(ageFrom) || undefined, max: Number(ageTo) || undefined }
-    : null;
+  const toggleOrOpen = (which: 'gender' | 'age' | 'other' | 'reward') => {
+    if (which === 'gender' && openGender) return setOpenGender(false);
+    if (which === 'age' && openAge) return setOpenAge(false);
+    if (which === 'other' && openOther) return setOpenOther(false);
+    if (which === 'reward' && openReward) return setOpenReward(false);
+    openAndScroll(which);
+  };
+  const ageSummary: AgeRange =
+    openAge && ageMode
+      ? ageMode === 'adult'
+        ? { min: 19 }
+        : { min: Number(ageFrom) || undefined, max: Number(ageTo) || undefined }
+      : null;
 
   const genderText = openGender
     ? gender === 'male'
@@ -74,12 +83,12 @@ export default function ConditionCheck({ className }: Props) {
 
   return (
     <div className={clsx('mx-auto w-full max-w-[556px]', className)}>
-      {/*성별 */}
+      {/* 성별 */}
       <Row ref={genderRowRef}>
         <SummaryCard
           value={genderText}
           active={openGender}
-          onEdit={() => openAndScroll('gender')}
+          onEdit={() => toggleOrOpen('gender')}
           ariaLabel="성별 수정"
         />
         <ConditionCard
@@ -93,24 +102,24 @@ export default function ConditionCheck({ className }: Props) {
               State={getButtonState(gender === 'male')}
               Size="xxxl"
               label="남성"
-              onClick={() => setGender('male')}
+              onClick={() => setGender(prev => (prev === 'male' ? null : 'male'))} // 다시 누르면 해제
             />
             <Button
               State={getButtonState(gender === 'female')}
               Size="xxxl"
               label="여성"
-              onClick={() => setGender('female')}
+              onClick={() => setGender(prev => (prev === 'female' ? null : 'female'))} // 다시 누르면 해제
             />
           </div>
         </ConditionCard>
       </Row>
 
-      {/*연령 */}
+      {/* 연령 */}
       <Row ref={ageRowRef}>
         <SummaryCard
           value={ageText}
           active={openAge}
-          onEdit={() => openAndScroll('age')}
+          onEdit={() => toggleOrOpen('age')}
           ariaLabel="연령 수정"
         />
         <ConditionCard
@@ -124,7 +133,7 @@ export default function ConditionCheck({ className }: Props) {
               variant={ageMode === 'adult' ? 'active' : 'solid'}
               size="sm"
               onClick={() => {
-                setAgeMode('adult');
+                setAgeMode(prev => (prev === 'adult' ? null : 'adult')); // 다시 누르면 해제
                 setAgeFrom('');
                 setAgeTo('');
               }}
@@ -135,10 +144,22 @@ export default function ConditionCheck({ className }: Props) {
             <Chip
               variant={ageMode === 'custom' ? 'active' : 'solid'}
               size="sm"
-              onClick={() => setAgeMode('custom')}
+              onClick={() => setAgeMode(prev => (prev === 'custom' ? null : 'custom'))} // 다시 누르면 해제
               showArrowIcon={false}
             >
               직접 입력
+            </Chip>
+            <Chip
+              variant={!ageMode ? 'active' : 'solid'}
+              size="sm"
+              onClick={() => {
+                setAgeMode(null); // 선택 안함
+                setAgeFrom('');
+                setAgeTo('');
+              }}
+              showArrowIcon={false}
+            >
+              선택 안함
             </Chip>
           </div>
 
@@ -169,12 +190,12 @@ export default function ConditionCheck({ className }: Props) {
         </ConditionCard>
       </Row>
 
-      {/*추가 조건 */}
+      {/* 추가 조건 */}
       <Row ref={otherRowRef}>
         <SummaryCard
           value={otherText}
           active={openOther}
-          onEdit={() => openAndScroll('other')}
+          onEdit={() => toggleOrOpen('other')}
           ariaLabel="추가 조건 수정"
         />
         <ConditionCard
@@ -194,12 +215,12 @@ export default function ConditionCheck({ className }: Props) {
         </ConditionCard>
       </Row>
 
-      {/*리워드 */}
+      {/* 리워드 */}
       <Row ref={rewardRowRef}>
         <SummaryCard
           value={rewardText}
           active={openReward}
-          onEdit={() => openAndScroll('reward')}
+          onEdit={() => toggleOrOpen('reward')}
           ariaLabel="리워드 수정"
         />
         <ConditionCard
@@ -216,28 +237,36 @@ export default function ConditionCheck({ className }: Props) {
                   State={getButtonState(rewardType === 'cash')}
                   Size="xxl"
                   label="현금"
-                  onClick={() => setRewardType('cash')}
+                  onClick={
+                    () => setRewardType(prev => (prev === 'cash' ? null : 'cash')) // 다시 누르면 해제
+                  }
                 />
                 <Button
                   className="w-full"
                   State={getButtonState(rewardType === 'gift')}
                   Size="xxl"
                   label="기프티콘"
-                  onClick={() => setRewardType('gift')}
+                  onClick={
+                    () => setRewardType(prev => (prev === 'gift' ? null : 'gift')) // 다시 누르면 해제
+                  }
                 />
                 <Button
                   className="w-full"
                   State={getButtonState(rewardType === 'product')}
                   Size="xxl"
                   label="상품"
-                  onClick={() => setRewardType('product')}
+                  onClick={
+                    () => setRewardType(prev => (prev === 'product' ? null : 'product')) // 다시 누르면 해제
+                  }
                 />
                 <Button
                   className="w-full"
                   State={getButtonState(rewardType === 'etc')}
                   Size="xxl"
                   label="기타"
-                  onClick={() => setRewardType('etc')}
+                  onClick={
+                    () => setRewardType(prev => (prev === 'etc' ? null : 'etc')) // 다시 누르면 해제
+                  }
                 />
               </div>
             </div>
@@ -276,11 +305,9 @@ export default function ConditionCheck({ className }: Props) {
 
 const Row = React.forwardRef<HTMLDivElement, React.PropsWithChildren>(({ children }, ref) => {
   const [left, right] = React.Children.toArray(children);
-
   return (
     <div ref={ref as any} className="mb-4 flex items-start gap-4">
       <div className="w-[258px] shrink-0">{left}</div>
-
       <div className="w-[290px] shrink-0">{right}</div>
     </div>
   );
