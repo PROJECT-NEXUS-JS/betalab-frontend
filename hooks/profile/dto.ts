@@ -10,3 +10,9 @@ export const ProfileSchema = z.object({
 });
 
 export type Profile = z.infer<typeof ProfileSchema>;
+
+export interface ProfileUpdatePayload {
+  nickname: string;
+  introduction: string;
+  profileImage: File | null;
+}

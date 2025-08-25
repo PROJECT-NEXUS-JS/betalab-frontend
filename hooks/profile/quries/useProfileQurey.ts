@@ -4,6 +4,7 @@ import { ProfileSchema } from '../dto';
 
 import { instance } from '@/apis/instance';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { queryKeys } from '@/constants/query-keys';
 
 export const ProfileResponseSchema = BaseModelSchema(ProfileSchema);
 export type ProfileResponseModel = z.infer<typeof ProfileResponseSchema>;
@@ -28,7 +29,7 @@ export const getProfile = async () => {
 };
 export const useProfileQuery = (): UseQueryResult<ProfileResponseModel> => {
   return useQuery({
-    queryKey: ['profile'],
+    queryKey: [queryKeys.dashboard.profile],
     queryFn: getProfile,
     staleTime: 1000 * 60 * 5, // 5분 동안 stale 아님
     refetchOnMount: false,
