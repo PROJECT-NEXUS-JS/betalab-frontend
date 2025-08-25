@@ -275,7 +275,7 @@ export default function TestAddSettingPage() {
               <Card
                 title="소개 사진 등록 가이드"
                 items={[
-                  'JPG, JPEG, PNG : 용량 10MB 이하, 해상도 800×480 픽셀 이상',
+                  'JPG, JPEG : 용량 10MB 이하, 해상도 800×480 픽셀 이상',
                   'GIF : 용량 2MB 이상, 해상도 800×480 픽셀~1440×864',
                   '이미지는 최대 10장까지 등록 가능해요.',
                   '사진을 통해 설명글을 대신할 수 있어요.',
