@@ -25,9 +25,6 @@ export const Default: Story = {
       mediaUrl: '',
       privacyItems: [],
     },
-    totalGallery: 10,
-    stepIndex: 9,
-    totalSteps: 10,
   },
 };
 

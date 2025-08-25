@@ -2,95 +2,93 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-
 import Input from '@/components/common/atoms/Input';
 import Button from '@/components/common/atoms/Button';
-import Card from '@/components/common/atoms/Card';
 import Chip from '@/components/common/atoms/Chip';
 import CheckTag from '@/components/common/atoms/CheckTag';
-import StorySection from '@/components/test-add/StorySection';
+import Card from '@/components/common/atoms/Card';
 import ImageStrip from '@/components/test-add/ImageStrip';
 
-const PI_OPTIONS = ['이름', '이메일', '연락처', '기타'] as const;
-export type PI = (typeof PI_OPTIONS)[number];
+type PI = '이름' | '이메일' | '연락처' | '기타';
 
-export type DetailCheckPatch = {
+export type DetailInitial = {
   title?: string;
   serviceSummary?: string;
-  privacyItems?: Array<'NAME' | 'EMAIL' | 'CONTACT' | 'ETC'>;
   mediaUrl?: string;
-  participationMethod?: '온라인';
+  privacyItems?: string[];
+  thumbnailUrl?: string;
+  galleryUrls?: string[];
 };
 
-type DetailCheckProps = {
-  initial?: {
-    title?: string;
-    serviceSummary?: string;
-    mediaUrl?: string;
-    privacyItems?: string[];
-  };
-  totalGallery?: number;
-  stepIndex?: number;
-  totalSteps?: number;
+type Files = { thumbnail?: File | null; gallery?: File[] };
 
-  onSave?: (patch: DetailCheckPatch, files: { thumbnail: File | null; gallery: File[] }) => void;
-  onNext?: (
-    patch: DetailCheckPatch,
-    files: { thumbnail: File | null; gallery: File[] },
-  ) => Promise<void> | void;
-
-  className?: string;
+type Props = {
+  initial?: DetailInitial;
+  onSave: (patch: Partial<DetailInitial>, files: Files) => void;
+  onNext: (patch: Partial<DetailInitial>, files: Files) => Promise<void>;
 };
 
-const API_TO_UI: Record<string, PI> = {
-  NAME: '이름',
-  EMAIL: '이메일',
-  CONTACT: '연락처',
-  ETC: '기타',
-};
-
+const PI_OPTIONS: PI[] = ['이름', '이메일', '연락처', '기타'];
 const valueState = (v: string) => (v.trim() ? 'has value' : 'no value');
 
-export default function DetailCheck({ initial, totalGallery = 10, className }: DetailCheckProps) {
+export default function DetailCheck({ initial, onSave, onNext }: Props) {
   const [piSelected, setPiSelected] = useState<PI[]>([]);
   const [piPurpose, setPiPurpose] = useState('');
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
-  const [mediaTab, setMediaTab] = useState<'video' | 'photo'>('video');
   const [videoUrl, setVideoUrl] = useState('');
-  const [thumbnailImages, setThumbnailImages] = useState<File[]>([]);
-  const [galleryImages, setGalleryImages] = useState<File[]>([]);
+  const [mediaTab, setMediaTab] = useState<'video' | 'photo'>('video');
+  const [thumbFiles, setThumbFiles] = useState<File[]>([]);
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
+
   useEffect(() => {
-    if (!initial) return;
-    const pis = Array.isArray(initial.privacyItems) ? initial.privacyItems : [];
-    const restored = pis
-      .map(api => API_TO_UI[api])
-      .filter((v): v is PI => !!v && (PI_OPTIONS as readonly string[]).includes(v));
-    setPiSelected(restored);
-    setTitle(initial.title ?? '');
-    setSummary(initial.serviceSummary ?? '');
-    setVideoUrl(initial.mediaUrl ?? '');
-    setMediaTab(initial.mediaUrl ? 'video' : 'photo');
+    setTitle(initial?.title ?? '');
+    setSummary(initial?.serviceSummary ?? '');
+    setVideoUrl(initial?.mediaUrl ?? '');
+    setPiSelected(
+      Array.isArray(initial?.privacyItems)
+        ? (initial!.privacyItems!.filter((v): v is PI => PI_OPTIONS.includes(v as PI)) as PI[])
+        : [],
+    );
   }, [initial]);
+
+  useEffect(() => {
+    async function urlToFile(url: string, name = 'image.jpg') {
+      const r = await fetch(url);
+      const b = await r.blob();
+      return new File([b], name, { type: b.type });
+    }
+    (async () => {
+      if (initial?.thumbnailUrl) {
+        try {
+          const f = await urlToFile(initial.thumbnailUrl, 'thumb.jpg');
+          setThumbFiles([f]);
+        } catch {}
+      }
+      if (Array.isArray(initial?.galleryUrls) && initial.galleryUrls.length) {
+        try {
+          const list = await Promise.all(
+            initial.galleryUrls.map((u, i) => urlToFile(u, `gallery-${i + 1}.jpg`)),
+          );
+          setGalleryFiles(list);
+        } catch {}
+      }
+    })();
+  }, [initial?.thumbnailUrl, initial?.galleryUrls]);
 
   const togglePI = (opt: PI) =>
     setPiSelected(prev => (prev.includes(opt) ? prev.filter(v => v !== opt) : [...prev, opt]));
 
-  const handleThumbnailUpload = (files: FileList) => {
-    setThumbnailImages(prev => [...prev, ...Array.from(files)].slice(0, 1));
-  };
-  const handleThumbnailRemove = (index: number) => {
-    setThumbnailImages(prev => prev.filter((_, i) => i !== index));
-  };
-  const handleGalleryUpload = (files: FileList) => {
-    setGalleryImages(prev => [...prev, ...Array.from(files)].slice(0, totalGallery));
-  };
-  const handleGalleryRemove = (index: number) => {
-    setGalleryImages(prev => prev.filter((_, i) => i !== index));
+  const files: Files = { thumbnail: thumbFiles[0] ?? null, gallery: galleryFiles };
+  const patch: Partial<DetailInitial> = {
+    title: title.trim() || undefined,
+    serviceSummary: summary.trim() || undefined,
+    mediaUrl: mediaTab === 'video' ? videoUrl.trim() || undefined : undefined,
+    privacyItems: piSelected.length ? piSelected : undefined,
   };
 
   return (
-    <div className={clsx('mx-auto w-[850px] px-6 py-8', className)}>
+    <div className="mx-auto w-full max-w-[920px]">
       <section className="mb-10">
         <div className="flex items-center gap-2">
           <p className="mb-2 text-subtitle-01 font-semibold">개인 정보 수집</p>
@@ -99,7 +97,6 @@ export default function DetailCheck({ initial, totalGallery = 10, className }: D
         <p className="mb-4 text-body-01 font-medium text-Dark-Gray">
           필요한 개인 정보 항목을 선택해주세요.
         </p>
-
         <div className="flex flex-wrap gap-2">
           {PI_OPTIONS.map(option => (
             <Chip
@@ -113,19 +110,17 @@ export default function DetailCheck({ initial, totalGallery = 10, className }: D
             </Chip>
           ))}
         </div>
-
         <div className="mt-4 pb-5">
           <p className="mb-2 text-body-01 font-semibold">목적</p>
           <Input
             type="text"
             size="xl"
-            placeholder="테스트 선정 및 안내에 필요한 개인정보 수집 목적을 간단히 작성해주세요."
+            placeholder="수집 목적을 간단히 작성해주세요."
             value={piPurpose}
             onChange={e => setPiPurpose(e.currentTarget.value)}
             state={valueState(piPurpose)}
           />
         </div>
-
         <Card
           title="개인정보 수집 시 유의해주세요"
           items={[
@@ -137,7 +132,6 @@ export default function DetailCheck({ initial, totalGallery = 10, className }: D
         />
       </section>
 
-      {/* 제목 */}
       <section className="mb-8">
         <h2 className="mb-2 text-subtitle-01 font-semibold">프로젝트 제목</h2>
         <p className="mb-2 text-caption-01 text-Gray-300">
@@ -153,12 +147,9 @@ export default function DetailCheck({ initial, totalGallery = 10, className }: D
         />
       </section>
 
-      {/* 한 줄 소개 */}
       <section className="mb-10">
         <h2 className="mb-2 text-subtitle-01 font-semibold">프로젝트 간단 설명</h2>
-        <p className="mb-2 text-caption-01 text-Gray-300">
-          입력한 문장은 상세 페이지의 테스트 개요로 노출돼요.
-        </p>
+        <p className="mb-2 text-caption-01 text-Gray-300">입력한 문장은 테스트 개요로 노출돼요.</p>
         <Input
           type="text"
           size="xl"
@@ -169,42 +160,32 @@ export default function DetailCheck({ initial, totalGallery = 10, className }: D
         />
       </section>
 
-      {/* 대표 이미지 */}
       <section className="mb-10">
         <h2 className="mb-2 text-subtitle-01 font-semibold">대표 이미지</h2>
-        <p className="mb-2 text-caption-01 text-Gray-300">
-          프로젝트 성격을 잘 보여주는 이미지를 업로드해주세요.
-          <br />이 이미지는 프로젝트 대표로 홈 화면에 노출돼요.
-        </p>
         <Card
           title="대표 이미지 등록 가이드"
           items={[
-            'JPG, JPEG, PNG 형식 / 10MB 이하 파일만 등록할 수 있어요.',
-            '권장 사이즈는 1200x675px (16:9 비율)이에요.',
-            '이미지를 업로드한 후, 편집 기능으로 자르거나 조정할 수 있어요.',
-            '프로젝트 성격이 잘 드러나는 매력적인 이미지를 선택해주세요.',
+            'JPG, JPEG, PNG / 10MB 이하.',
+            '권장 1200x675px (16:9).',
+            '편집 기능으로 자르기 가능.',
           ]}
           icon={<Image src="/icons/road.svg" alt="guide" width={24} height={24} />}
         />
         <div className="mt-3">
           <ImageStrip
-            files={thumbnailImages}
+            files={thumbFiles}
             total={1}
-            onUpload={e => handleThumbnailUpload(e)}
-            onRemove={handleThumbnailRemove}
+            onUpload={fl => setThumbFiles([...thumbFiles, ...Array.from(fl)].slice(0, 1))}
+            onRemove={idx => setThumbFiles(thumbFiles.filter((_, i) => i !== idx))}
           />
         </div>
       </section>
 
-      {/* 소개 영상/사진 */}
-      <section className="mb-10">
+      <section className="mb-6">
         <h2 className="mb-2 text-subtitle-01 font-semibold">소개 영상 · 사진</h2>
         <p className="mb-3 text-caption-01 text-Gray-300">
-          소개 영상 · 사진은 프로젝트 상세페이지 최상단에 노출되는 중요한 영역이에요.
-          <br />
           사진과 영상 중 한 가지만 선택할 수 있어요.
         </p>
-
         <div className="mb-4 flex items-center gap-4">
           <Button
             State={mediaTab === 'video' ? 'Focused' : 'Solid'}
@@ -219,15 +200,14 @@ export default function DetailCheck({ initial, totalGallery = 10, className }: D
             onClick={() => setMediaTab('photo')}
           />
         </div>
-
         {mediaTab === 'video' ? (
           <>
             <Card
-              title="소개 영상 등록 가이드"
+              title="영상 등록 가이드"
               items={[
-                'YouTube, Vimeo 등 영상 스트리밍 서비스에 영상을 업로드한 뒤, 해당 URL을 입력해 주세요.',
-                '영상 썸네일은 사용 중인 스트리밍 서비스에서 직접 설정해 주세요.',
-                '세로형 영상은 지원되지 않아요. 가로형 영상으로 등록해 주세요.',
+                'YouTube/Vimeo URL 입력',
+                '썸네일은 스트리밍 서비스에서 설정',
+                '세로형 영상 미지원',
               ]}
               icon={<Image src="/icons/road.svg" alt="guide" width={24} height={24} />}
             />
@@ -246,35 +226,30 @@ export default function DetailCheck({ initial, totalGallery = 10, className }: D
         ) : (
           <>
             <Card
-              title="소개 사진 등록 가이드"
+              title="사진 등록 가이드"
               items={[
-                'JPG, JPEG, PNG : 용량 10MB 이하, 해상도 800×480 픽셀 이상',
-                'GIF : 용량 2MB 이상, 해상도 800×480 픽셀~1440×864',
-                '이미지는 최대 10장까지 등록 가능해요.',
-                '사진을 통해 설명글을 대신할 수 있어요.',
+                'JPG/JPEG/PNG 10MB 이하, 800×480 이상',
+                'GIF 2MB 이상, 800×480~1440×864',
+                '최대 10장',
               ]}
               icon={<Image src="/icons/road.svg" alt="guide" width={24} height={24} />}
             />
             <div className="mt-6">
               <ImageStrip
-                files={galleryImages}
-                total={totalGallery}
-                onUpload={e => handleGalleryUpload(e)}
-                onRemove={handleGalleryRemove}
+                files={galleryFiles}
+                total={10}
+                onUpload={fl => setGalleryFiles([...galleryFiles, ...Array.from(fl)].slice(0, 10))}
+                onRemove={idx => setGalleryFiles(galleryFiles.filter((_, i) => i !== idx))}
               />
             </div>
           </>
         )}
       </section>
 
-      {/* 스토리 섹션 */}
-      <section className="mt-8">
-        <StorySection />
-      </section>
+      <div className="mt-6 flex gap-2">
+        <Button State="Sub" Size="xl" label="임시 저장" onClick={() => onSave(patch, files)} />
+        <Button State="Primary" Size="xl" label="다음" onClick={() => onNext(patch, files)} />
+      </div>
     </div>
   );
-}
-
-function clsx(...cn: Array<string | false | null | undefined>) {
-  return cn.filter(Boolean).join(' ');
 }
