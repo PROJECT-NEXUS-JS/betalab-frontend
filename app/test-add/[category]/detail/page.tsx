@@ -296,7 +296,10 @@ export default function TestAddSettingPage() {
         </section>
 
         <section className="mt-8">
-          <StorySection />
+          <StorySection
+            initial={{ storyGuide: form.storyGuide ?? '' }}
+            onChange={patch => update({ storyGuide: patch.storyGuide })}
+          />
         </section>
 
         <div className="mt-6 flex items-center justify-between">

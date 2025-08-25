@@ -1,20 +1,46 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BETALAB_GUIDE } from '@/constants/betalabGuide';
 import Input from '@/components/common/atoms/Input';
 import Toggle from '@/components/common/atoms/Toggle';
 
 const isEmpty = (v: string) => v.replace(/\s+/g, '') === '';
 
-export default function StorySection() {
-  const [value, setValue] = useState('');
+export type StoryPatch = {
+  storyGuide?: string;
+};
+
+type Props = {
+  initial?: StoryPatch;
+  onChange?: (patch: StoryPatch) => void;
+};
+
+export default function StorySection({ initial, onChange }: Props) {
+  const [value, setValue] = useState(initial?.storyGuide ?? '');
   const [guideOn, setGuideOn] = useState(false);
+  useEffect(() => {
+    setValue(initial?.storyGuide ?? '');
+  }, [initial?.storyGuide]);
+  const emit = (next: string) => {
+    onChange?.({ storyGuide: isEmpty(next) ? undefined : next });
+  };
 
   const handleToggle = (on: boolean) => {
     setGuideOn(on);
-    if (on) setValue(BETALAB_GUIDE);
-    else if (value.trim() === BETALAB_GUIDE.trim()) setValue('');
+    if (on) {
+      setValue(BETALAB_GUIDE);
+      emit(BETALAB_GUIDE);
+    } else if (value.trim() === BETALAB_GUIDE.trim()) {
+      setValue('');
+      emit('');
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const next = e.currentTarget.value;
+    setValue(next);
+    emit(next);
   };
 
   return (
@@ -40,7 +66,7 @@ export default function StorySection() {
             size="xl"
             placeholder="소개글을 입력해주세요."
             value={value}
-            onChange={e => setValue(e.currentTarget.value)}
+            onChange={handleChange}
             state={isEmpty(value) ? 'no value' : 'has value'}
           />
         </div>
