@@ -67,7 +67,7 @@ instance.interceptors.response.use(
           withCredentials: true,
         });
 
-        const newAccessToken = res.data.accessToken;
+        const newAccessToken = res.data.message;
         localStorage.setItem('accessToken', newAccessToken);
 
         processQueue(null, newAccessToken);
