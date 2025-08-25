@@ -207,7 +207,7 @@ export default function TestAddSettingPage() {
           <Card
             title="대표 이미지 등록 가이드"
             items={[
-              'JPG, JPEG, PNG 형식 / 10MB 이하 파일만 등록할 수 있어요.',
+              'JPG, JPEG 형식 / 10MB 이하 파일만 등록할 수 있어요.',
               '권장 사이즈는 1200x675px (16:9 비율)이에요.',
               '이미지를 업로드한 후, 편집 기능으로 자르거나 조정할 수 있어요.',
               '프로젝트 성격이 잘 드러나는 매력적인 이미지를 선택해주세요.',

@@ -162,11 +162,7 @@ export default function DetailCheck({ initial }: Props) {
         <h2 className="mb-2 text-subtitle-01 font-semibold">대표 이미지</h2>
         <Card
           title="대표 이미지 등록 가이드"
-          items={[
-            'JPG, JPEG, PNG / 10MB 이하.',
-            '권장 1200x675px (16:9).',
-            '편집 기능으로 자르기 가능.',
-          ]}
+          items={['JPG, JPEG/ 10MB 이하.', '권장 1200x675px (16:9).', '편집 기능으로 자르기 가능.']}
           icon={<Image src="/icons/road.svg" alt="guide" width={24} height={24} />}
         />
         <div className="mt-3">
