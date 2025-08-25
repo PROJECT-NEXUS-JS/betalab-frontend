@@ -10,9 +10,11 @@ import PostCard, { PostCardSkeleton } from '@/components/category/molecules/Post
 import PostCardMini from '@/components/category/molecules/PostCardMini';
 import { useUsersPostsListQuery } from '@/hooks/posts/queries/useUsersPostsListQuery';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function HomePage() {
   const { isLoggedIn } = useAuth();
+  const router = useRouter();
 
   const [recommendPage, setRecommendPage] = useState(0);
   const [deadlinePage, setDeadlinePage] = useState(0);
@@ -48,7 +50,7 @@ export default function HomePage() {
   const isError = recommendPostsError || deadlinePostsError || popularPostsError;
 
   if (isError) {
-    return <div>홈페이지에 문의하세요.</div>;
+    router.push('/login');
   }
 
   return (

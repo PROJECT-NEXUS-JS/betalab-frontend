@@ -10,11 +10,10 @@ export default function HeaderClientWrapper() {
   const { isLoggedIn, isLoading: isAuthLoading } = useAuth();
   const pathname = usePathname();
 
-  // 아 여기는 suspense 처리 해야될듯요 추후에
+  // 로그인 상태일 때만 프로필 데이터 가져오기
   const { data: profile, isLoading: isProfileLoading } = useMyPageProfileQuery({
-    enabled: isLoggedIn,
+    enabled: isLoggedIn && !isAuthLoading,
   });
-  console.log(localStorage.getItem('accessToken'));
 
   const isLoading = isAuthLoading || (isLoggedIn && isProfileLoading);
 
