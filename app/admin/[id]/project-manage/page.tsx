@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams, useParams } from 'next/navigation';
 import type { DateRange } from 'react-day-picker';
 import { addDays } from 'date-fns';
 import Dropdown from '@/components/admin/project-manage/DropDown';
@@ -9,7 +10,8 @@ import ParticipationCheck from '@/components/admin/project-manage/ParticipationC
 import DateCheck from '@/components/admin/project-manage/DateCheck';
 import Button from '@/components/common/atoms/Button';
 import ConditionCheck from '@/components/admin/project-manage/ConditionCheck';
-import DetailCheck from '@/components/admin/project-manage/DetailCheck';
+import DetailCheck, { DetailInitial } from '@/components/admin/project-manage/DetailCheck';
+import { instance } from '@/apis/instance';
 
 type TestType = 'game' | 'app' | 'web';
 
@@ -89,6 +91,78 @@ const GENRES_BY_TYPE: Record<TestType, CheckOption[]> = {
   game: GENRES_GAME,
 };
 
+const MAIN_API_TO_UI: Record<string, TestType> = {
+  WEB: 'web',
+  APP: 'app',
+  GAME: 'game',
+};
+
+const PLATFORM_API_TO_UI: Record<string, string> = {
+  ANDROID: 'android',
+  IOS: 'ios',
+  PC_CLIENT: 'pc',
+  STEAM_VR: 'steamvr',
+  PLAY_STATION: 'ps',
+  XBOX: 'xbox',
+  META_QUEST: 'quest',
+  ETC: 'etc',
+};
+
+const GENRE_API_TO_UI_WEB: Record<string, string> = {
+  PRODUCTIVITY_COLLAB: 'productivity-collab',
+  COMMERCE_SHOPPING_WEB: 'commerce',
+  MARKETING: 'marketing',
+  COMMUNITY_SOCIAL_WEB: 'community-social',
+  EDUCATION_CONTENT: 'education-content',
+  FINANCE: 'finance',
+  AI_AUTOMATION: 'ai-automation',
+  EXPERIMENTAL_WEB: 'experimental-web',
+  LIFESTYLE_HOBBY: 'lifestyle-hobby',
+  RECRUITING_HR: 'recruiting-hr',
+  CRM_SALES: 'crm-sales',
+  ETC: 'etc',
+};
+
+const GENRE_API_TO_UI_APP: Record<string, string> = {
+  LIFESTYLE: 'lifestyle',
+  EDUCATION: 'edu',
+  SOCIAL: 'social',
+  AI_EXPERIMENTAL: 'ai-experimental',
+  PRODUCTIVITY_TOOLS: 'productivity-tools',
+  COMMERCE: 'commerce',
+  HEALTH_FITNESS: 'health-fitness',
+  ENTERTAINMENT: 'entertainment',
+  FINANCE: 'finance',
+  BUSINESS: 'business',
+  PHOTO_VIDEO: 'photo-video',
+  ETC: 'etc',
+};
+
+const GENRE_API_TO_UI_GAME: Record<string, string> = {
+  CASUAL: 'casual',
+  PUZZLE_BOARD: 'puzzle-board',
+  RPG_ADVENTURE: 'rpg-adventure',
+  SIMULATION: 'simulation',
+  STRATEGY_CARD: 'strategy-card',
+  SPORTS_RACING: 'sports-racing',
+  MULTIPLAYER_SOCIAL: 'multiplayer-social',
+  ETC: 'etc',
+};
+
+const pickGenreMap = (tt: TestType) =>
+  tt === 'web' ? GENRE_API_TO_UI_WEB : tt === 'app' ? GENRE_API_TO_UI_APP : GENRE_API_TO_UI_GAME;
+
+const FEEDBACK_API_TO_UI: Record<string, string> = {
+  GOOGLE_FORM: 'googleform',
+  EMAIL: 'email',
+  TOOL: 'tool',
+};
+
+const DUR_API_TO_UI: Record<string, string> = {
+  '1D': '1d',
+  '3D_PLUS': '3d+',
+  '1W_PLUS': '1w+',
+};
 function Row({ label, children }: React.PropsWithChildren<{ label: string }>) {
   return (
     <div className="grid grid-cols-[120px_1fr] items-center gap-4">
@@ -98,11 +172,21 @@ function Row({ label, children }: React.PropsWithChildren<{ label: string }>) {
   );
 }
 
+const parseISOorNull = (s?: string | null) => (s ? new Date(s) : undefined);
 export default function Page() {
+  const searchParams = useSearchParams();
+  const routeParams = useParams<{ id?: string }>();
+  const productId = React.useMemo(() => {
+    const q = searchParams?.get('id');
+    const p = routeParams?.id;
+    const num = Number(q ?? p);
+    return Number.isFinite(num) ? num : undefined;
+  }, [searchParams, routeParams]);
+
   const [title, setTitle] = useState('제목을 적어주세요');
   const [editingTitle, setEditingTitle] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  React.useEffect(() => {
+  useEffect(() => {
     if (editingTitle) inputRef.current?.focus();
   }, [editingTitle]);
 
@@ -118,11 +202,87 @@ export default function Page() {
   });
 
   const [showDetail, setShowDetail] = useState(false);
+  const [detailInitial, setDetailInitial] = useState<DetailInitial>({
+    title: '',
+    serviceSummary: '',
+    mediaUrl: '',
+    privacyItems: [],
+  });
 
   const genreOptions = useMemo<CheckOption[]>(() => GENRES_BY_TYPE[testType], [testType]);
   useEffect(() => {
     setGenres(prev => prev.filter(v => genreOptions.some(o => o.value === v)));
   }, [testType, genreOptions]);
+  useEffect(() => {
+    if (!productId) return;
+
+    (async () => {
+      try {
+        const { data } = await instance.get(`/v1/users/posts/${productId}`);
+        const d = data?.data ?? data;
+        const PI_API_TO_UI: Record<string, string> = {
+          NAME: '이름',
+          EMAIL: '이메일',
+          CONTACT: '연락처',
+          ETC: '기타',
+        };
+        setDetailInitial({
+          title: d?.title ?? '',
+          serviceSummary: d?.serviceSummary ?? '',
+          mediaUrl: d?.mediaUrl ?? '',
+          privacyItems: Array.isArray(d?.privacyItems)
+            ? d.privacyItems.map((k: string) => PI_API_TO_UI[k] ?? k)
+            : [],
+          thumbnailUrl: d?.thumbnailUrl ?? undefined,
+          galleryUrls:
+            d?.mediaImages ??
+            d?.images ??
+            (Array.isArray(d?.galleryUrls) ? d.galleryUrls : undefined),
+        });
+        if (d?.title) setTitle(d.title);
+        const mainCode: string | undefined = d?.mainCategories?.[0]?.code;
+        const tt: TestType = MAIN_API_TO_UI[mainCode ?? ''] ?? 'web';
+        setTestType(tt);
+
+        const platformCodes: string[] = Array.isArray(d?.platformCategories)
+          ? d.platformCategories.map((x: any) => x?.code ?? x)
+          : [];
+        setPlatforms(platformCodes.map(c => PLATFORM_API_TO_UI[c]).filter(Boolean));
+
+        const genreCodes: string[] = Array.isArray(d?.genreCategories)
+          ? d.genreCategories.map((x: any) => x?.code ?? x)
+          : [];
+        const genreMap = pickGenreMap(tt);
+        setGenres(genreCodes.map(c => genreMap[c]).filter(Boolean));
+
+        const fb = Array.isArray(d?.feedbacks) ? d.feedbacks : [];
+        setFeedbacks(fb.map((k: string) => FEEDBACK_API_TO_UI[k]).filter(Boolean));
+
+        const durServer = d?.durationTimeCode || d?.durationTime;
+        setDuration(DUR_API_TO_UI[durServer] ?? '3d+');
+
+        const maxP = d?.recruitment?.maxParticipants ?? d?.participants ?? d?.recruitCount ?? 50;
+        setPeople(Number(maxP) || 50);
+
+        const start = d?.schedule?.startDate ?? d?.startDate;
+        const end = d?.schedule?.endDate ?? d?.endDate;
+        setRange({
+          from: parseISOorNull(start) ?? new Date(),
+          to: parseISOorNull(end) ?? addDays(new Date(), 7),
+        });
+      } catch (e) {
+        console.error('GET /v1/users/posts/:id error', e);
+      }
+    })();
+  }, [productId]);
+
+  useEffect(() => console.log('testType:', testType), [testType]);
+  useEffect(() => console.log('duration:', duration), [duration]);
+  useEffect(() => console.log('platforms:', platforms), [platforms]);
+  useEffect(() => console.log('genres:', genres), [genres]);
+  useEffect(() => console.log('feedbacks:', feedbacks), [feedbacks]);
+  useEffect(() => console.log('people:', people), [people]);
+  useEffect(() => console.log('range:', range), [range]);
 
   const save = () => {
     console.log({ title, testType, duration, platforms, genres, feedbacks, people, range });
@@ -134,26 +294,24 @@ export default function Page() {
       {/* 제목 */}
       <div className="mb-8">
         {!editingTitle ? (
-          <h1
-            className="text-head font-[700] text-[var(--color-Black)] cursor-text"
+          <p
+            className="text-subtitle-01 font-semibold text-Black cursor-text"
             onClick={() => setEditingTitle(true)}
             title="클릭하여 제목 수정"
           >
             {title}
-          </h1>
+          </p>
         ) : (
           <input
             ref={inputRef}
-            defaultValue={title}
-            onBlur={e => {
-              setTitle(e.target.value.trim() || '제목을 적어주세요');
-              setEditingTitle(false);
-            }}
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            onBlur={() => setEditingTitle(false)}
             onKeyDown={e => {
               if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
               if (e.key === 'Escape') setEditingTitle(false);
             }}
-            className="w-full rounded-[1px] border border-gray-50 bg-white px-4 py-3 text-subtitle-01 text-black"
+            className="w-full rounded-[1px] border border-Gray-100 bg-White px-4 py-3 text-subtitle-01 text-Black"
           />
         )}
       </div>
@@ -218,22 +376,7 @@ export default function Page() {
       </div>
       {showDetail && (
         <div className="mt-10">
-          <DetailCheck
-            initial={{
-              title: '',
-              serviceSummary: '',
-              mediaUrl: '',
-              privacyItems: [],
-            }}
-            onSave={(patch, files) => {
-              console.log('DetailCheck onSave', patch, files);
-              alert('상세: 임시 저장');
-            }}
-            onNext={async (patch, files) => {
-              console.log('DetailCheck onNext', patch, files);
-              alert('상세: 다음 단계 진행(데모)');
-            }}
-          />
+          <DetailCheck key={productId ?? 'new'} initial={detailInitial} />
         </div>
       )}
       <div className="mt-10 space-y-3">
