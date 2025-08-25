@@ -19,7 +19,7 @@ export default function StorySection() {
 
   return (
     <section className="flex flex-col gap-4 md:gap-6">
-      <div className="w-[1152px] grid gap-2 md:grid-cols-[1fr_auto] md:items-start">
+      <div className="max-w-[1152px] grid gap-2 md:grid-cols-[1fr_auto] md:items-start">
         <div className="min-w-0">
           <p className="text-subtitle-01 font-semibold">이미지가 없으신가요?</p>
           <p className="mt-1 text-body-02 text-Gray-300">
