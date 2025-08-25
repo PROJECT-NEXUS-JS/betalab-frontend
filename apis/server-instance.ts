@@ -40,7 +40,7 @@ export const serverInstance = (accessToken?: string) => {
             withCredentials: true,
           });
 
-          const newAccessToken = res.data.accessToken;
+          const newAccessToken = res.data.message;
           originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
           return instance(originalRequest);
         } catch (refreshError) {

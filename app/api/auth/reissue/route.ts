@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     const json = await backendResponse.json();
     const { accessToken: newAccessToken, refreshToken: newRefreshToken } = json.data;
 
-    const res = NextResponse.json({ newAccessToken }, { status: 200 });
+    const res = NextResponse.json({ message: newAccessToken }, { status: 200 });
 
     res.cookies.set('accessToken', newAccessToken, {
       httpOnly: true,
