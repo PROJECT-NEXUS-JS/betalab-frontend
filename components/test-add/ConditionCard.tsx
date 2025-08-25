@@ -20,8 +20,8 @@ export default function ConditionCard({
   return (
     <div
       className={cn(
-        'relative rounded-2xl bg-White shadow-sm',
-        checked && 'relative rounded-2xl bg-White shadow-sm',
+        'relative rounded-2xl bg-White shadow-[0_0_10px_0_rgba(26,30,39,0.08)]',
+        checked && 'relative rounded-2xl bg-White shadow-[0_0_10px_0_rgba(26,30,39,0.08)]',
         className,
       )}
     >

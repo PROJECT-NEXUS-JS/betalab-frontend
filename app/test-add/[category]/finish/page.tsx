@@ -17,8 +17,20 @@ export default function TestAddFinishPage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen gap-8">
       <div className="relative w-[234px] h-[234px]">
-        <Image src="/testAddFinish1.gif" alt="gif 1" fill priority className="object-contain" />
-        <Image src="/testAddFinish2.gif" alt="gif 2" fill priority className="object-contain" />
+        <Image
+          src="/testAddFinish1.gif"
+          alt="gif 1"
+          fill
+          priority
+          className="object-contain w-[82px] "
+        />
+        <Image
+          src="/testAddFinish2.gif"
+          alt="gif 2"
+          fill
+          priority
+          className="object-contain w-[234px]"
+        />
       </div>
       <div className="text-center">
         <p className="text-head font-bold">프로젝트가 성공적으로 등록되었어요!</p>
