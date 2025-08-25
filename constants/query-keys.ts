@@ -1,5 +1,4 @@
 import { StatusEnum } from '@/hooks/dashboard/dto/application';
-import { all } from 'axios';
 
 export const queryKeys = {
   // 프로젝트/포스트 관련 쿼리
@@ -25,5 +24,6 @@ export const queryKeys = {
     barChart: (postId: number) => [...queryKeys.dashboard.all, 'barChart', postId] as const,
     application: (postId: number, status: StatusEnum) =>
       [...queryKeys.dashboard.all, 'application', postId, status] as const,
+    profile: () => [...queryKeys.dashboard.all, 'profile'] as const,
   },
 };

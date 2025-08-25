@@ -9,7 +9,7 @@ export async function updateUserProfile(formData: UserProfileModel) {
   if (!parsed.success) {
     throw new Error('Invalid form data');
   }
-  const { data } = await instance.put('/api/v1/users/profile', formData);
+  const { data } = await instance.post('/auth/me/change-role', formData);
   return data;
 }
 

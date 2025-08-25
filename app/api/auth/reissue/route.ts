@@ -5,23 +5,27 @@ const BACKEND_URL = process.env.BACKEND_URL!;
 
 export async function POST(req: NextRequest) {
   const cookieStore = await cookies();
+  const accessToken = cookieStore.get('accessToken');
   const refreshToken = cookieStore.get('refreshToken');
 
-  if (!refreshToken) {
+  if (!accessToken || !refreshToken) {
     return NextResponse.json({ message: 'No refresh token' }, { status: 401 });
   }
 
   try {
-    const backendResponse = await fetch(`${BACKEND_URL}/api/v1/reissue`, {
+    const backendResponse = await fetch(`${BACKEND_URL}/auth/reissue`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken.value}`,
+        RefreshToken: refreshToken.value,
       },
-      body: JSON.stringify({ RefreshToken: refreshToken.value }),
       credentials: 'include',
     });
 
+    console.log(backendResponse);
+
     if (!backendResponse.ok) {
+      console.log('Failed to refresh token');
       return NextResponse.json({ message: 'Refresh failed' }, { status: 401 });
     }
 
