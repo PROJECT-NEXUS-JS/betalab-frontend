@@ -221,7 +221,8 @@ export default function Page() {
     from: new Date(),
     to: addDays(new Date(), 64),
   });
-
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [conditionInitial, setConditionInitial] = useState<ConditionInitial>({
     genderRequired: false,
     gender: null,
@@ -383,9 +384,73 @@ export default function Page() {
     })();
   }, [postId]);
 
-  const save = () => {
-    console.log({ title, testType, duration, platforms, genres, feedbacks, people, range });
-    alert('임시로 상태를 콘솔에 출력했어요!');
+  const save = async () => {
+    if (!postId) {
+      alert('postId가 없습니다.');
+      return;
+    }
+
+    try {
+      const payload = {
+        title,
+        serviceSummary: detailInitial.serviceSummary,
+        mediaUrl: detailInitial.mediaUrl,
+        privacyItems: detailInitial.privacyItems?.map(pi => {
+          if (pi === '이름') return 'NAME';
+          if (pi === '이메일') return 'EMAIL';
+          if (pi === '연락처') return 'CONTACT';
+          if (pi === '기타') return 'ETC';
+          return pi;
+        }),
+        mainCategory: [
+          Object.keys(MAIN_API_TO_UI).find(k => MAIN_API_TO_UI[k] === testType) ?? 'GAME',
+        ],
+        genreCategories: genres.map(g => {
+          const map = pickGenreMap(testType);
+          return Object.keys(map).find(k => map[k] === g) ?? g;
+        }),
+        platformCategory: platforms.map(p => {
+          return Object.keys(PLATFORM_API_TO_UI).find(k => PLATFORM_API_TO_UI[k] === p) ?? p;
+        }),
+        feedbackMethod: feedbacks[0]?.toUpperCase(),
+        durationTime: duration,
+        maxParticipants: people,
+        startDate: range?.from?.toISOString(),
+        endDate: range?.to?.toISOString(),
+        requirement: {
+          genderRequirement: conditionInitial.gender
+            ? conditionInitial.gender.toUpperCase()
+            : 'ALL',
+          ageMin: conditionInitial.ageMin ?? undefined,
+          ageMax: conditionInitial.ageMax ?? undefined,
+          additionalRequirements: conditionInitial.extraText,
+        },
+        reward: {
+          rewardDescription: conditionInitial.rewardText,
+        },
+      };
+
+      const fd = new FormData();
+      fd.append('data', new Blob([JSON.stringify(payload)], { type: 'application/json' }));
+      if (thumbnailFile) {
+        fd.append('thumbnail', thumbnailFile, thumbnailFile.name);
+      }
+      if (galleryFiles.length) {
+        for (const img of galleryFiles) {
+          fd.append('images', img, img.name);
+        }
+      }
+
+      const { data } = await instance.patch(`/v1/users/posts/${postId}`, fd, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      alert('저장 성공!');
+      console.log('PATCH 결과:', data);
+    } catch (e: any) {
+      console.error('PATCH 실패:', e);
+      alert(e?.response?.data?.message ?? '저장 실패');
+    }
   };
 
   return (
@@ -495,7 +560,6 @@ export default function Page() {
 
       {showDetail && (
         <div className="mt-10">
-          {/* initial 변경 시 반영되도록, DetailCheck 내부에 useEffect로 동기화 로직이 있으면 key는 생략 가능 */}
           <DetailCheck
             key={`${postId ?? 'new'}:${(detailInitial.privacyItems ?? []).join('|')}`}
             initial={detailInitial}
