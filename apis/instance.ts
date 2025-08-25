@@ -76,6 +76,7 @@ instance.interceptors.response.use(
         return instance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
+        localStorage.setItem('redirectedFrom', window.location.href);
         localStorage.removeItem('accessToken');
         window.location.href = '/login';
         return Promise.reject(refreshError);
