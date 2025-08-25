@@ -10,9 +10,10 @@ export default function HeaderClientWrapper() {
   const { isLoggedIn, isLoading: isAuthLoading } = useAuth();
   const pathname = usePathname();
 
-  // 로그인 상태일 때만 프로필 데이터 가져오기
+  // 로그인 상태이고 인증 로딩이 완료된 경우에만 프로필 데이터 가져오기
+  const shouldFetchProfile = isLoggedIn && !isAuthLoading;
   const { data: profile, isLoading: isProfileLoading } = useMyPageProfileQuery({
-    enabled: isLoggedIn && !isAuthLoading,
+    enabled: shouldFetchProfile,
   });
 
   const isLoading = isAuthLoading || (isLoggedIn && isProfileLoading);

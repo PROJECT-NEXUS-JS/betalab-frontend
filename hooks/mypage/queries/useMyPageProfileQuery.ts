@@ -23,8 +23,9 @@ export function useMyPageProfileQuery(options?: { enabled?: boolean }) {
     getMyPageProfileResponseSchema,
     {
       select: data => data.data,
-      enabled: options?.enabled ?? false, // 기본값을 false로 설정
-      retry: false, // 401 에러 시 재시도하지 않음
+      enabled: options?.enabled ?? false,
+      retry: false,
+      staleTime: 5 * 60 * 1000,
     },
   );
 }

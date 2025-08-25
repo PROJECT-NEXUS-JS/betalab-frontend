@@ -31,7 +31,7 @@ export default function AccountContent() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-  const [isSignOutOpen, setIsSignOutOpen] = useState(false);
+  // const [isSignOutOpen, setIsSignOutOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [nickname, setNickname] = useState('');
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -53,27 +53,25 @@ export default function AccountContent() {
     setIsLogoutModalOpen(true);
   };
 
-  const handleSignOutClick = () => {
-    setIsSignOutOpen(true);
-  };
+  // const handleSignOutClick = () => {
+  //   setIsSignOutOpen(true);
+  // };
 
-  const handleSignOut = async () => {
-    try {
-      await withdrawMutation.mutateAsync({
-        confirmation: '계정 탈퇴',
-        kakaoAccessToken: kakaoAccessToken || undefined,
-      });
+  // const handleSignOut = async () => {
+  //   try {
+  //     await withdrawMutation.mutateAsync({
+  //       confirmation: '계정 탈퇴',
+  //       kakaoAccessToken: kakaoAccessToken || undefined,
+  //     });
 
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      setIsSignOutOpen(false);
-      alert('계정이 성공적으로 탈퇴 처리되었습니다.');
-      router.push('/login');
-    } catch (error) {
-      console.error('계정 탈퇴 실패:', error);
-      alert('계정 탈퇴에 실패했습니다. 다시 시도해주세요.');
-    }
-  };
+  //     localStorage.removeItem('accessToken');
+  //     localStorage.removeItem('refreshToken');
+  //     setIsSignOutOpen(false);
+  //     router.push('/login');
+  //   } catch (error) {
+  //     console.error('계정 탈퇴 실패:', error);
+  //   }
+  // };
 
   const handleEditClick = () => {
     setIsEditMode(true);
@@ -114,10 +112,8 @@ export default function AccountContent() {
       setNickname('');
       setSelectedImage(null);
       setPreviewImage(null);
-      alert('프로필이 성공적으로 업데이트되었습니다.');
     } catch (error) {
       console.error('프로필 업데이트 실패:', error);
-      alert('프로필 업데이트에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
@@ -233,18 +229,18 @@ export default function AccountContent() {
         </button>
       </div>
       <div className="w-full h-[1.5px] bg-Gray-100" />
-      <div className="flex flex-row justify-between w-full items-center">
+      {/* <div className="flex flex-row justify-between w-full items-center">
         <h2 className="text-subtitle-02 font-semibold text-Black">탈퇴하기</h2>
         <button className="cursor-pointer" onClick={handleSignOutClick}>
           <ArrowRight className="size-6" />
         </button>
-      </div>
+      </div> */}
       <BetaLabModal
         isOpen={isLogoutModalOpen}
         onClose={() => setIsLogoutModalOpen(false)}
         onConfirm={handleLogout}
       />
-      <BetaLabModal
+      {/* <BetaLabModal
         isOpen={isSignOutOpen}
         onClose={handleSignOut}
         onConfirm={() => setIsSignOutOpen(false)}
@@ -258,7 +254,7 @@ export default function AccountContent() {
         }
         rightLabel="계정 탈퇴"
         leftLabel="다시 생각 해볼게요!"
-      />
+      /> */}
     </section>
   );
 }
