@@ -9,6 +9,7 @@ import ParticipationCheck from '@/components/admin/project-manage/ParticipationC
 import DateCheck from '@/components/admin/project-manage/DateCheck';
 import Button from '@/components/common/atoms/Button';
 import ConditionCheck from '@/components/admin/project-manage/ConditionCheck';
+import DetailCheck from '@/components/admin/project-manage/DetailCheck';
 
 type TestType = 'game' | 'app' | 'web';
 
@@ -106,18 +107,17 @@ export default function Page() {
   }, [editingTitle]);
 
   const [testType, setTestType] = useState<TestType>('game');
-
   const [duration, setDuration] = useState<string>('3d+');
-  const [platforms, setPlatforms] = useState<string[]>(['android', 'ios']);
-
-  const [genres, setGenres] = useState<string[]>(['casual', 'puzzle-board']); // 초기값(게임 기준)
-
-  const [feedbacks, setFeedbacks] = useState<string[]>(['googleform', 'email']);
+  const [platforms, setPlatforms] = useState<string[]>([]);
+  const [genres, setGenres] = useState<string[]>([]);
+  const [feedbacks, setFeedbacks] = useState<string[]>([]);
   const [people, setPeople] = useState<number>(50);
   const [range, setRange] = useState<DateRange | undefined>({
     from: new Date(),
     to: addDays(new Date(), 64),
   });
+
+  const [showDetail, setShowDetail] = useState(false);
 
   const genreOptions = useMemo<CheckOption[]>(() => GENRES_BY_TYPE[testType], [testType]);
   useEffect(() => {
@@ -130,7 +130,7 @@ export default function Page() {
   };
 
   return (
-    <div className="mx-auto w/full max-w-[920px] px-6 py-8">
+    <div className="mx-auto w-full max-w-[920px] px-6 py-8">
       {/* 제목 */}
       <div className="mb-8">
         {!editingTitle ? (
@@ -153,8 +153,7 @@ export default function Page() {
               if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
               if (e.key === 'Escape') setEditingTitle(false);
             }}
-            className="w-full rounded-[1px] border border-gray-50
-                       bg-white px-4 py-3 text-subtitle-01 text-black"
+            className="w-full rounded-[1px] border border-gray-50 bg-white px-4 py-3 text-subtitle-01 text-black"
           />
         )}
       </div>
@@ -217,13 +216,33 @@ export default function Page() {
           <ConditionCheck className="!mx-0" />
         </Row>
       </div>
-
+      {showDetail && (
+        <div className="mt-10">
+          <DetailCheck
+            initial={{
+              title: '',
+              serviceSummary: '',
+              mediaUrl: '',
+              privacyItems: [],
+            }}
+            onSave={(patch, files) => {
+              console.log('DetailCheck onSave', patch, files);
+              alert('상세: 임시 저장');
+            }}
+            onNext={async (patch, files) => {
+              console.log('DetailCheck onNext', patch, files);
+              alert('상세: 다음 단계 진행(데모)');
+            }}
+          />
+        </div>
+      )}
       <div className="mt-10 space-y-3">
         <Button
           State="Default"
           Size="xl"
-          label="프로젝트 설명 더보기"
+          label={showDetail ? '프로젝트 설명 닫기' : '프로젝트 설명 더보기'}
           className="w-full rounded-[8px]"
+          onClick={() => setShowDetail(v => !v)}
         />
         <Button
           State="Primary"
