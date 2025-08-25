@@ -91,6 +91,7 @@ export default function TestAddSettingPage() {
     try {
       const created = await createUserPostFromForm(merged, {
         thumbnail: thumbnailImages[0] ?? null,
+        images: galleryImages,
       });
       update(patch);
       router.replace(`/test-add/${category}/finish${created?.id ? `?id=${created.id}` : ''}`);

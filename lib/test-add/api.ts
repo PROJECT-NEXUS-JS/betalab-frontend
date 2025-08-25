@@ -30,10 +30,11 @@ const log = {
     console.groupEnd();
   },
 };
+type CreateFiles = { thumbnail?: File | null; images?: File[] | null };
 
 export async function createUserPostFromForm(
   form: any,
-  opts?: { thumbnail?: File | null },
+  opts?: CreateFiles,
 ): Promise<UserPostModel> {
   const payload = buildCreatePostPayload(form);
   return createUserPost(payload, opts?.thumbnail ?? null);
@@ -42,6 +43,7 @@ export async function createUserPostFromForm(
 export async function createUserPost(
   payload: CreatePostPayload,
   thumbnail?: File | null,
+  images?: File[] | null,
 ): Promise<UserPostModel> {
   try {
     CreatePostPayloadSchema.parse(payload);
@@ -60,6 +62,11 @@ export async function createUserPost(
   const fd = new FormData();
   fd.append('data', new Blob([JSON.stringify(payload)], { type: 'application/json' }));
   if (thumbnail instanceof File) fd.append('thumbnail', thumbnail, thumbnail.name);
+  if (images && images.length) {
+    for (const img of images) {
+      if (img instanceof File) fd.append('image', img, img.name);
+    }
+  }
 
   log.req('POST /v1/users/posts', url, 'POST', { hasThumbnail: !!thumbnail, payload });
   const payloadClone = JSON.parse(JSON.stringify(payload));
