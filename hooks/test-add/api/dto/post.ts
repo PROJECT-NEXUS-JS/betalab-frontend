@@ -8,8 +8,8 @@ export const CreatePostPayloadSchema = z
 
     genreCategories: z.array(z.string()).nonempty(),
     mainCategory: z.array(z.string()).nonempty(),
-    platformCategory: z.array(z.string()).nonempty(),
 
+    platformCategory: z.array(z.string()).optional(),
     startDate: z.string().datetime().optional(),
     endDate: z.string().datetime().optional(),
     recruitmentDeadline: z.string().datetime().optional(),

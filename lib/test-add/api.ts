@@ -61,10 +61,11 @@ export async function createUserPost(
   fd.append('data', new Blob([JSON.stringify(payload)], { type: 'application/json' }));
   if (thumbnail instanceof File) fd.append('thumbnail', thumbnail, thumbnail.name);
 
-  log.req('POST /v1/users/posts', url, 'POST', { hasThumbnail: !!thumbnail });
-
+  log.req('POST /v1/users/posts', url, 'POST', { hasThumbnail: !!thumbnail, payload });
+  const payloadClone = JSON.parse(JSON.stringify(payload));
+  console.log('[PAYLOAD]', payloadClone);
   const res = await instance.post(path, fd, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+    headers: { 'Content-Type': 'multipart/form-data' },
   });
 
   log.res('POST /v1/users/posts', res.status, res.data);

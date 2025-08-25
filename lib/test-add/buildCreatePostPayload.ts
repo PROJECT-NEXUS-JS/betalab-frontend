@@ -21,7 +21,7 @@ export type CreatePostPayload = {
   creatorIntroduction: string;
   description: string;
   mainCategory: string[];
-  platformCategory: string[];
+  platformCategory?: string[];
   startDate: string;
   endDate: string;
   recruitmentDeadline: string;
@@ -49,7 +49,6 @@ export function buildCreatePostPayload(form: TestAddState): CreatePostPayload {
   if (!form.creatorIntroduction) throw new Error('creatorIntroduction이 없습니다.');
   if (!form.description) throw new Error('description이 없습니다.');
   if (!form.mainCategory?.length) throw new Error('mainCategory가 비어있습니다.');
-  if (!form.platformCategory?.length) throw new Error('platformCategory가 비어있습니다.');
   if (!form.durationTime) throw new Error('durationTime이 없습니다.');
   if (!form.feedbackMethod) throw new Error('feedbackMethod가 없습니다.');
   if (!form.participationMethod) throw new Error('participationMethod가 없습니다.');
@@ -61,7 +60,6 @@ export function buildCreatePostPayload(form: TestAddState): CreatePostPayload {
     creatorIntroduction: form.creatorIntroduction,
     description: form.description,
     mainCategory: form.mainCategory,
-    platformCategory: form.platformCategory,
     startDate: mustISO('startDate', form.startDate),
     endDate: mustISO('endDate', form.endDate),
     recruitmentDeadline: mustISO('recruitmentDeadline', form.recruitmentDeadline),
@@ -70,6 +68,7 @@ export function buildCreatePostPayload(form: TestAddState): CreatePostPayload {
     participationMethod: form.participationMethod,
 
     // 선택
+    platformCategory: form.platformCategory,
     genreCategories: form.genreCategories,
     maxParticipants: form.maxParticipants,
     ageMin: form.ageMin,
