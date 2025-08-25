@@ -35,10 +35,9 @@ export default function PostCard({ post, className, ranking }: PostCardProps) {
       case 'CASH':
       case 'GIFT_CARD':
       case 'PRODUCT':
-        return 'orange';
       case 'NONE':
       default:
-        return 'black';
+        return 'orange';
     }
   };
   return (
