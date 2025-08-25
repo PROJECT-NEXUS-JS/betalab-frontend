@@ -42,6 +42,8 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
       rightSidebarData?.data ?? {
         testName: '',
         recruiterName: '',
+        recruiterAffiliation: '',
+        profileUrl: '',
         testSummary: '',
         daysRemaining: 0,
         scrapCount: 0,

@@ -2,6 +2,24 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const BACKEND_URL = process.env.BACKEND_URL!;
 
+async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs = 10000, retries = 2) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const res = await fetch(url, { ...options, signal: controller.signal });
+      clearTimeout(id);
+      return res; // 성공하면 바로 반환
+    } catch (err) {
+      clearTimeout(id);
+      if (attempt === retries) throw err; // 마지막 시도 실패하면 throw
+      console.warn(`Fetch 재시도 ${attempt + 1} 실패, 재시도 중...`, err);
+    }
+  }
+  throw new Error('Fetch 실패'); // 안전장치
+}
+
 export async function POST(req: NextRequest) {
   try {
     const idToken = req.headers.get('id_token');
@@ -13,10 +31,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const backendRes = await fetch(`${BACKEND_URL}/auth/login`, {
-      method: 'POST',
-      headers: { id_token: idToken },
-    });
+    const backendRes = await fetchWithTimeout(
+      `${BACKEND_URL}/auth/login`,
+      {
+        method: 'POST',
+        headers: { id_token: idToken },
+      },
+      15000,
+      2,
+    ); // 타임아웃 15초, 재시도 2회
 
     const contentType = backendRes.headers.get('content-type');
     let responseData: any;

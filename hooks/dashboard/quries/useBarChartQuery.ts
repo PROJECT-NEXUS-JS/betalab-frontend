@@ -4,6 +4,7 @@ import { BarChartSchema } from '../dto/barChart';
 
 import { instance } from '@/apis/instance';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { queryKeys } from '@/constants/query-keys';
 
 export const BarChartResponseSchema = BaseModelSchema(BarChartSchema);
 export type BarChartResponseModel = z.infer<typeof BarChartResponseSchema>;
@@ -29,7 +30,7 @@ export const getBarChart = async (postId: number) => {
 
 export const useBarChartQuery = (postId: number): UseQueryResult<BarChartResponseModel> => {
   return useQuery({
-    queryKey: ['barChart', postId],
+    queryKey: queryKeys.dashboard.barChart(postId),
     queryFn: () => getBarChart(postId),
     staleTime: 1000 * 60 * 5, // 5분 동안 stale 아님
     refetchOnMount: false,
