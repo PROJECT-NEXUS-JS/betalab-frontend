@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 import { addDays } from 'date-fns';
 import Dropdown from '@/components/admin/project-manage/DropDown';
@@ -8,8 +8,11 @@ import CheckDropDown, { CheckOption } from '@/components/admin/project-manage/Ch
 import ParticipationCheck from '@/components/admin/project-manage/ParticipationCheck';
 import DateCheck from '@/components/admin/project-manage/DateCheck';
 import Button from '@/components/common/atoms/Button';
+import ConditionCheck from '@/components/admin/project-manage/ConditionCheck';
 
-const TEST_TYPES = [
+type TestType = 'game' | 'app' | 'web';
+
+const TEST_TYPES: { label: string; value: TestType }[] = [
   { label: '게임', value: 'game' },
   { label: '앱', value: 'app' },
   { label: '웹', value: 'web' },
@@ -32,19 +35,58 @@ const PLATFORMS: CheckOption[] = [
   { label: '기타', value: 'etc' },
 ];
 
-const GENRES: CheckOption[] = [
-  { label: '캐주얼', value: 'casual' },
-  { label: '퍼즐/보드', value: 'puzzle' },
-  { label: '액션', value: 'action' },
-  { label: 'RPG', value: 'rpg' },
-  { label: '전략', value: 'strategy' },
-];
-
 const FEEDBACKS: CheckOption[] = [
   { label: '구글폼 제출', value: 'googleform' },
   { label: '이메일 회신', value: 'email' },
   { label: '설문 도구', value: 'tool' },
 ];
+
+const GENRES_APP: CheckOption[] = [
+  { label: '라이프 스타일', value: 'lifestyle' },
+  { label: '교육/학습', value: 'edu' },
+  { label: '소셜/커뮤니티', value: 'social' },
+  { label: 'AI/실험적 기능', value: 'ai-experimental' },
+  { label: '생산성/도구', value: 'productivity-tools' },
+  { label: '커머스/쇼핑', value: 'commerce' },
+  { label: '건강/운동', value: 'health-fitness' },
+  { label: '엔터테인먼트', value: 'entertainment' },
+  { label: '금융/자산관리', value: 'finance' },
+  { label: '비즈니스/직장인', value: 'business' },
+  { label: '사진/영상', value: 'photo-video' },
+  { label: '기타', value: 'etc' },
+];
+
+const GENRES_WEB: CheckOption[] = [
+  { label: '생산성/협업툴', value: 'productivity-collab' },
+  { label: '커머스/쇼핑', value: 'commerce' },
+  { label: '마케팅/홍보툴', value: 'marketing' },
+  { label: '커뮤니티/소셜', value: 'community-social' },
+  { label: '교육/콘텐츠', value: 'education-content' },
+  { label: '금융/자산관리', value: 'finance' },
+  { label: 'AI/자동화 도구', value: 'ai-automation' },
+  { label: '실험적 웹툴', value: 'experimental-web' },
+  { label: '라이프 스타일/취미', value: 'lifestyle-hobby' },
+  { label: '채용/HR', value: 'recruiting-hr' },
+  { label: '고객관리/세일즈', value: 'crm-sales' },
+  { label: '기타', value: 'etc' },
+];
+
+const GENRES_GAME: CheckOption[] = [
+  { label: '캐주얼', value: 'casual' },
+  { label: '퍼즐/보드', value: 'puzzle-board' },
+  { label: 'RPG/어드벤처', value: 'rpg-adventure' },
+  { label: '시뮬레이션', value: 'simulation' },
+  { label: '전략/카드', value: 'strategy-card' },
+  { label: '스포츠/레이싱', value: 'sports-racing' },
+  { label: '멀티플레이/소셜', value: 'multiplayer-social' },
+  { label: '기타', value: 'etc' },
+];
+
+const GENRES_BY_TYPE: Record<TestType, CheckOption[]> = {
+  app: GENRES_APP,
+  web: GENRES_WEB,
+  game: GENRES_GAME,
+};
 
 function Row({ label, children }: React.PropsWithChildren<{ label: string }>) {
   return (
@@ -59,13 +101,17 @@ export default function Page() {
   const [title, setTitle] = useState('제목을 적어주세요');
   const [editingTitle, setEditingTitle] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  useEffect(() => {
+  React.useEffect(() => {
     if (editingTitle) inputRef.current?.focus();
   }, [editingTitle]);
-  const [testType, setTestType] = useState<string>('game');
+
+  const [testType, setTestType] = useState<TestType>('game');
+
   const [duration, setDuration] = useState<string>('3d+');
   const [platforms, setPlatforms] = useState<string[]>(['android', 'ios']);
-  const [genres, setGenres] = useState<string[]>(['casual', 'puzzle']);
+
+  const [genres, setGenres] = useState<string[]>(['casual', 'puzzle-board']); // 초기값(게임 기준)
+
   const [feedbacks, setFeedbacks] = useState<string[]>(['googleform', 'email']);
   const [people, setPeople] = useState<number>(50);
   const [range, setRange] = useState<DateRange | undefined>({
@@ -73,13 +119,19 @@ export default function Page() {
     to: addDays(new Date(), 64),
   });
 
+  const genreOptions = useMemo<CheckOption[]>(() => GENRES_BY_TYPE[testType], [testType]);
+  useEffect(() => {
+    setGenres(prev => prev.filter(v => genreOptions.some(o => o.value === v)));
+  }, [testType, genreOptions]);
+
   const save = () => {
     console.log({ title, testType, duration, platforms, genres, feedbacks, people, range });
     alert('임시로 상태를 콘솔에 출력했어요!');
   };
 
   return (
-    <div className="mx-auto w-full max-w-[920px] px-6 py-8">
+    <div className="mx-auto w/full max-w-[920px] px-6 py-8">
+      {/* 제목 */}
       <div className="mb-8">
         {!editingTitle ? (
           <h1
@@ -101,19 +153,19 @@ export default function Page() {
               if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
               if (e.key === 'Escape') setEditingTitle(false);
             }}
-            className="w-full rounded-[12px] border border-[var(--color-Gray-100)]
-                       bg-[var(--color-White)] px-4 py-3 text-subtitle-01 text-[var(--color-Black)]
-                       focus:outline-none focus:ring-4 focus:ring-[color:oklch(0.85_0.05_240/0.3)]"
+            className="w-full rounded-[1px] border border-gray-50
+                       bg-white px-4 py-3 text-subtitle-01 text-black"
           />
         )}
       </div>
 
+      {/* 폼 */}
       <div className="space-y-5">
         <Row label="테스트 종류">
           <div className="w-[340px]">
             <Dropdown
               value={testType}
-              onChange={setTestType}
+              onChange={v => setTestType(v as TestType)}
               options={TEST_TYPES}
               placeholder="선택하세요"
             />
@@ -128,7 +180,7 @@ export default function Page() {
 
         <Row label="장르 종류">
           <div className="w-[540px]">
-            <CheckDropDown options={GENRES} value={genres} onChange={setGenres} />
+            <CheckDropDown options={genreOptions} value={genres} onChange={setGenres} />
           </div>
         </Row>
 
@@ -160,7 +212,12 @@ export default function Page() {
             <DateCheck value={range} onChange={setRange} />
           </div>
         </Row>
+
+        <Row label="참여 조건">
+          <ConditionCheck className="!mx-0" />
+        </Row>
       </div>
+
       <div className="mt-10 space-y-3">
         <Button
           State="Default"
