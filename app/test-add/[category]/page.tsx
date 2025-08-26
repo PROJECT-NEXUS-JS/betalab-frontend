@@ -10,7 +10,7 @@ import { makeHandleNext } from '@/lib/test-add/make-handle-next';
 const UI_TO_API: Record<string, string> = {
   Android: 'ANDROID',
   iOS: 'IOS',
-  무관: 'ANY',
+  무관: 'ETC_ALL',
   'PC 클라이언트': 'PC',
   'Stream VR': 'STEAM_VR',
   'Play Station': 'PLAYSTATION',
