@@ -33,6 +33,7 @@ export default function AccountContent() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [nickname, setNickname] = useState('');
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -42,6 +43,7 @@ export default function AccountContent() {
 
   const { data: userData, isLoading } = useMyPageProfileQuery();
   const updateBasicInfoMutation = useUpdateBasicInfoMutation();
+  const { mutate: withdrawMutation } = useWithdrawMutation(setIsWithdrawModalOpen);
 
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
@@ -50,8 +52,19 @@ export default function AccountContent() {
     router.push('/login');
   };
 
+  const handleWithdraw = () => {
+    withdrawMutation({
+      kakaoAccessToken: useKakaoToken().kakaoAccessToken,
+      confirmation: '계정 탈퇴',
+    });
+  };
+
   const handleLogoutClick = () => {
     setIsLogoutModalOpen(true);
+  };
+
+  const handleWithdrawClick = () => {
+    setIsWithdrawModalOpen(true);
   };
 
   const handleEditClick = () => {
@@ -254,7 +267,23 @@ export default function AccountContent() {
           </>
         )}
       </div>
+      {/* 개인 정보 관리 */}
+      <div className="flex flex-row justify-between w-full items-center">
+        <h2 className="text-subtitle-02 font-semibold text-Black">개인정보 관리</h2>
+        <button className="cursor-pointer" onClick={handleLogoutClick}>
+          <ArrowRight className="size-6" />
+        </button>
+      </div>
       <div className="w-full h-[1.5px] bg-Gray-100" />
+      {/* 내 맞춤 정보 */}
+      <div className="flex flex-row justify-between w-full items-center">
+        <h2 className="text-subtitle-02 font-semibold text-Black">내 맞춤 정보</h2>
+        <button className="cursor-pointer" onClick={handleLogoutClick}>
+          <ArrowRight className="size-6" />
+        </button>
+      </div>
+      <div className="w-full h-[1.5px] bg-Gray-100" />
+      {/* 로그아웃 */}
       <div className="flex flex-row justify-between w-full items-center">
         <h2 className="text-subtitle-02 font-semibold text-Black">로그아웃</h2>
         <button className="cursor-pointer" onClick={handleLogoutClick}>
@@ -262,10 +291,26 @@ export default function AccountContent() {
         </button>
       </div>
       <div className="w-full h-[1.5px] bg-Gray-100" />
+      {/* 계정 탈퇴 */}
+      <div className="flex flex-row justify-between w-full items-center">
+        <h2 className="text-subtitle-02 font-semibold text-Black">계정 탈퇴</h2>
+        <button className="cursor-pointer" onClick={handleWithdrawClick}>
+          <ArrowRight className="size-6" />
+        </button>
+      </div>
       <BetaLabModal
         isOpen={isLogoutModalOpen}
         onClose={() => setIsLogoutModalOpen(false)}
         onConfirm={handleLogout}
+      />
+      <BetaLabModal
+        isOpen={isWithdrawModalOpen}
+        onClose={() => setIsWithdrawModalOpen(false)}
+        onConfirm={handleWithdraw}
+        title="정말 베타랩을 떠나실 생각이신가요?"
+        description={`계정 삭제시 모든 개인 정보가 삭제되며\n베타랩에서의 활동 기록이 모두 사라집니다.`}
+        leftLabel="계정 탈퇴"
+        rightLabel="다시 생각 해볼게요 !"
       />
     </section>
   );
