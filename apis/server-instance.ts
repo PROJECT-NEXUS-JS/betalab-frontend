@@ -15,7 +15,7 @@ export const serverInstance = (accessToken?: string) => {
   instance.interceptors.request.use(async config => {
     if (!accessToken) {
       try {
-        const res = await axios.post(`/api/auth/reissue`, null, { withCredentials: true });
+        const res = await axios.post(`/auth/reissue`, null, { withCredentials: true });
         accessToken = res.data.accessToken;
       } catch (err) {
         console.error('액세스 토큰 재발급 실패:', err);
@@ -36,7 +36,7 @@ export const serverInstance = (accessToken?: string) => {
       if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
         try {
-          const res = await axios.post('/api/auth/reissue', null, {
+          const res = await axios.post('/auth/reissue', null, {
             withCredentials: true,
           });
 

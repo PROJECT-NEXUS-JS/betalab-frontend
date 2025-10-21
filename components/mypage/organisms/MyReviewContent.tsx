@@ -151,7 +151,7 @@ export default function MyReviewContent() {
                     </div>
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <Button
-                        label="리뷰 수정"
+                        label="리뷰 작성"
                         Size="lg"
                         State="Primary"
                         className="z-10"

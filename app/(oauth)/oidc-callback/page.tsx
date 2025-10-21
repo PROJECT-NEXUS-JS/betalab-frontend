@@ -21,18 +21,18 @@ export default function OidcCallbackPage() {
           throw new Error('OIDC 유저 정보 또는 id_token을 받지 못했습니다.');
         }
 
-        const res = await fetch(`/api/auth/login`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`, {
           method: 'POST',
           headers: { id_token: user.id_token },
           credentials: 'include',
         });
         const responseData = await res.json();
 
-        if (!responseData.success || !responseData.accessToken) {
+        if (!responseData.success || !responseData.data.accessToken) {
           throw new Error(responseData.message || '로그인 처리 실패');
         }
 
-        localStorage.setItem('accessToken', responseData.accessToken);
+        localStorage.setItem('accessToken', responseData.data.accessToken);
         setIsTokenReady(true);
       } catch (error) {
         console.error('OIDC 콜백 처리 중 오류 발생:', error);

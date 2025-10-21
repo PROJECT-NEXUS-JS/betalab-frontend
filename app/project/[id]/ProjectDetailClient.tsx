@@ -90,7 +90,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
   return (
     <div className="min-h-screen w-full flex justify-center mb-30 mt-6">
       <div className="flex gap-10">
-        <div className="flex-1 w-full flex-col space-y-10">
+        <div className="flex-1 w-full flex-col space-y-10 max-w-[854px]">
           {/* 프로젝트 간단 정보 */}
           <section className="flex flex-col gap-4">
             <p className="text-base font-bold text-Gray-200">
@@ -137,7 +137,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
                 />
               ))}
               <div className="p-4 rounded-xs border-[1px] border-Gray-100">
-                <p className="text-base font-normal text-Dark-Gray">
+                <p className="text-base font-normal text-Dark-Gray whitespace-pre-line">
                   {projectData.content.storyGuide || '설명이 없습니다.'}
                 </p>
               </div>
