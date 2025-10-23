@@ -28,6 +28,11 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
       {
+        protocol: 'https',
+        hostname: 'betalab-storage.s3.ap-northeast-2.amazonaws.com',
+        pathname: '/**',
+      },
+      {
         protocol: 'http',
         hostname: 'k.kakaocdn.net',
         port: '',
