@@ -28,22 +28,22 @@ export default function BetaLabModal({
           <h2 className="text-subtitle-02 font-semibold text-Black">{title}</h2>
           <X className="size-5 text-Gray-300 cursor-pointer" onClick={onClose} />
         </div>
-        {description && <p className="text-body-02 text-Dark-Gray font-medium">{description}</p>}
+        {description && <p className="text-body-02 text-Dark-Gray font-medium whitespace-pre-wrap">{description}</p>}
 
         <div className="flex gap-4 justify-end">
           <Button
             State="Solid"
             Size="md"
-            label={rightLabel}
+            label={leftLabel}
             className="w-fit cursor-pointer"
-            onClick={onClose}
+            onClick={onConfirm}
           />
           <Button
             State="Primary"
             Size="md"
-            label={leftLabel}
+            label={rightLabel}
             className="w-fit cursor-pointer"
-            onClick={onConfirm}
+            onClick={onClose}
           />
         </div>
       </div>
