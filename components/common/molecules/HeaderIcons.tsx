@@ -8,6 +8,7 @@ import { DropdownElementProps } from '../atoms/DropdownElement';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import BetaLabModal from './BetalabModal';
+import { QueryCache } from '@tanstack/react-query';
 
 interface HeaderIconsProps {
   userData?: {
@@ -20,10 +21,11 @@ interface HeaderIconsProps {
 const HeaderIcons = ({ userData }: HeaderIconsProps) => {
   const router = useRouter();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const queryCache = new QueryCache();
 
   const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    localStorage.clear();
+    queryCache.clear();
     setIsLogoutModalOpen(false);
     router.push('/login');
   };
