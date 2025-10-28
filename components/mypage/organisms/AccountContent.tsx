@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useRef } from 'react';
 import imageCompression from 'browser-image-compression';
 import { Loader } from 'lucide-react';
+import { QueryCache } from '@tanstack/react-query';
 
 const ProfileSkeleton = () => {
   return (
@@ -40,23 +41,32 @@ export default function AccountContent() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isCompressing, setIsCompressing] = useState(false);
   const [compressError, setCompressError] = useState(false);
+  const queryCache = new QueryCache();
 
   const { data: userData, isLoading } = useMyPageProfileQuery();
   const updateBasicInfoMutation = useUpdateBasicInfoMutation();
   const { mutate: withdrawMutation } = useWithdrawMutation(setIsWithdrawModalOpen);
 
   const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    localStorage.clear();
+    queryCache.clear();
     setIsLogoutModalOpen(false);
     router.push('/login');
   };
 
   const handleWithdraw = () => {
-    withdrawMutation({
-      kakaoAccessToken: useKakaoToken().kakaoAccessToken,
-      confirmation: '계정 탈퇴',
-    });
+    withdrawMutation(
+      {
+        kakaoAccessToken: useKakaoToken().kakaoAccessToken,
+        confirmation: '계정 탈퇴',
+      },
+      {
+        onSuccess: () => {
+          localStorage.clear();
+          queryCache.clear();
+        },
+      },
+    );
   };
 
   const handleLogoutClick = () => {
