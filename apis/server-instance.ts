@@ -1,8 +1,28 @@
 import axios from 'axios';
 
-const BACKEND_URL = process.env.BACKEND_URL;
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-export const serverInstance = (accessToken?: string) => {
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (token: string) => void;
+  reject: (err: any) => void;
+}> = [];
+
+const processQueue = (token: string | null, error: any = null) => {
+  failedQueue.forEach(prom => {
+    if (token) {
+      prom.resolve(token);
+    } else {
+      prom.reject(error);
+    }
+  });
+  failedQueue = [];
+};
+
+export const serverInstance = (accessToken?: string, refreshToken?: string) => {
+  let currentAccessToken = accessToken;
+  let currentRefreshToken = refreshToken;
+
   const instance = axios.create({
     baseURL: BACKEND_URL,
     responseType: 'json',
@@ -10,19 +30,15 @@ export const serverInstance = (accessToken?: string) => {
     timeout: 10000,
     withCredentials: true,
   });
-
+  console.log('accessToken:', accessToken);
+  console.log('refreshToken:', refreshToken);
   // 요청 인터셉터
   instance.interceptors.request.use(async config => {
-    if (!accessToken) {
-      try {
-        const res = await axios.post(`/auth/reissue`, null, { withCredentials: true });
-        accessToken = res.data.accessToken;
-      } catch (err) {
-        console.error('액세스 토큰 재발급 실패:', err);
-      }
+    if (currentAccessToken) {
+      config.headers['Authorization'] = `Bearer ${currentAccessToken}`;
     }
-    if (accessToken) {
-      config.headers['Authorization'] = `Bearer ${accessToken}`;
+    if (currentRefreshToken) {
+      config.headers['RefreshToken'] = currentRefreshToken;
     }
     return config;
   });
@@ -34,16 +50,49 @@ export const serverInstance = (accessToken?: string) => {
       const originalRequest = error.config;
 
       if (error.response?.status === 401 && !originalRequest._retry) {
+        if (!currentRefreshToken) {
+          return Promise.reject(error);
+        }
+
+        if (isRefreshing) {
+          return new Promise((resolve, reject) => {
+            failedQueue.push({
+              resolve: (token: string) => {
+                originalRequest.headers['Authorization'] = token;
+                resolve(instance(originalRequest));
+              },
+              reject: (err: any) => reject(err),
+            });
+          });
+        }
+
         originalRequest._retry = true;
+        isRefreshing = true;
+
         try {
-          const res = await axios.post('/auth/reissue', null, {
+          const res = await axios.post(`${BACKEND_URL}/auth/reissue`, null, {
+            headers: {
+              Authorization: currentAccessToken ? `Bearer ${currentAccessToken}` : '',
+              RefreshToken: currentRefreshToken,
+            },
             withCredentials: true,
           });
+          const newAccessToken = res.data.data.accessToken;
+          const newRefreshToken = res.data.data.refreshToken ?? currentRefreshToken;
 
-          const newAccessToken = res.data.message;
-          originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+          currentAccessToken = newAccessToken ?? currentAccessToken;
+          currentRefreshToken = newRefreshToken;
+
+          processQueue(currentAccessToken ?? '');
+          isRefreshing = false;
+
+          if (currentAccessToken) {
+            originalRequest.headers['Authorization'] = `Bearer ${currentAccessToken}`;
+          }
           return instance(originalRequest);
         } catch (refreshError) {
+          processQueue(null, refreshError);
+          isRefreshing = false;
           return Promise.reject(refreshError);
         }
       }

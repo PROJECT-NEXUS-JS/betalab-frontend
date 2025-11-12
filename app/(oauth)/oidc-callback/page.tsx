@@ -21,7 +21,7 @@ export default function OidcCallbackPage() {
           throw new Error('OIDC 유저 정보 또는 id_token을 받지 못했습니다.');
         }
 
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`, {
+        const res = await fetch('/api/auth/login', {
           method: 'POST',
           headers: { id_token: user.id_token },
           credentials: 'include',
