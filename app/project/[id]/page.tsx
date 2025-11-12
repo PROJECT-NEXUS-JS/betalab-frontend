@@ -11,6 +11,8 @@ import { RightSidebarResponseSchema } from '@/hooks/posts/queries/usePostRightSi
 import { PostReviewResponseSchema } from '@/hooks/review/queries/usePostReviewQuery';
 import { SimilarPostResponseSchema } from '@/hooks/posts/queries/useSimilarPostQuery';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 export default async function ProjectDetailPage({
   params,
 }: {
@@ -19,27 +21,30 @@ export default async function ProjectDetailPage({
   }>;
 }) {
   const { id } = await params;
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get('accessToken')?.value;
+  const refreshToken = cookieStore.get('refreshToken')?.value;
 
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
     queryKey: queryKeys.posts.detail(Number(id)),
-    queryFn: () => fetchProjectData(Number(id)),
+    queryFn: () => fetchProjectData(Number(id), accessToken, refreshToken),
   });
 
   await queryClient.prefetchQuery({
     queryKey: queryKeys.posts.rightSidebar(Number(id)),
-    queryFn: () => fetchRightSidebarData(Number(id)),
+    queryFn: () => fetchRightSidebarData(Number(id), accessToken, refreshToken),
   });
 
   await queryClient.prefetchQuery({
     queryKey: queryKeys.reviews.post(Number(id)),
-    queryFn: () => fetchPostReviewData(Number(id)),
+    queryFn: () => fetchPostReviewData(Number(id), accessToken, refreshToken),
   });
 
   await queryClient.prefetchQuery({
     queryKey: queryKeys.posts.similarPosts(Number(id)),
-    queryFn: () => fetchSimilarPostsData(Number(id)),
+    queryFn: () => fetchSimilarPostsData(Number(id), accessToken, refreshToken),
   });
 
   const dehydratedState = dehydrate(queryClient);
@@ -51,12 +56,9 @@ export default async function ProjectDetailPage({
   );
 }
 
-async function fetchProjectData(id: number) {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get('accessToken')?.value;
-
+async function fetchProjectData(id: number, accessToken?: string, refreshToken?: string) {
   try {
-    const response = await serverInstance(accessToken).get(`/v1/users/posts/${id}`);
+    const response = await serverInstance(accessToken, refreshToken).get(`/v1/users/posts/${id}`);
     Logger.log('ProjectData 원본:', response.data);
 
     const parsedData = ProjectDetailResponseSchema.parse(response.data);
@@ -69,12 +71,11 @@ async function fetchProjectData(id: number) {
   }
 }
 
-async function fetchRightSidebarData(postId: number) {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get('accessToken')?.value;
-
+async function fetchRightSidebarData(postId: number, accessToken?: string, refreshToken?: string) {
   try {
-    const response = await serverInstance(accessToken).get(`/v1/users/posts/${postId}/sidebar`);
+    const response = await serverInstance(accessToken, refreshToken).get(
+      `/v1/users/posts/${postId}/sidebar`,
+    );
     Logger.log('RightSidebarData 원본:', response.data);
 
     const parsedData = RightSidebarResponseSchema.parse(response.data);
@@ -87,12 +88,11 @@ async function fetchRightSidebarData(postId: number) {
   }
 }
 
-async function fetchPostReviewData(postId: number) {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get('accessToken')?.value;
-
+async function fetchPostReviewData(postId: number, accessToken?: string, refreshToken?: string) {
   try {
-    const response = await serverInstance(accessToken).get(`/v1/users/reviews/post/${postId}`);
+    const response = await serverInstance(accessToken, refreshToken).get(
+      `/v1/users/reviews/post/${postId}`,
+    );
     Logger.log('PostReviewData 원본:', response.data);
 
     const parsedData = PostReviewResponseSchema.parse(response.data);
@@ -105,12 +105,11 @@ async function fetchPostReviewData(postId: number) {
   }
 }
 
-async function fetchSimilarPostsData(postId: number) {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get('accessToken')?.value;
-
+async function fetchSimilarPostsData(postId: number, accessToken?: string, refreshToken?: string) {
   try {
-    const response = await serverInstance(accessToken).get(`/v1/users/posts/${postId}/similar`);
+    const response = await serverInstance(accessToken, refreshToken).get(
+      `/v1/users/posts/${postId}/similar`,
+    );
     Logger.log('PostReviewData 원본:', response.data);
 
     const parsedData = SimilarPostResponseSchema.parse(response.data);

@@ -66,7 +66,10 @@ export async function POST(req: NextRequest) {
 
     const response = NextResponse.json({
       success: true,
-      accessToken,
+      data: {
+        accessToken,
+        refreshToken,
+      },
     });
 
     response.cookies.set('accessToken', accessToken, {
