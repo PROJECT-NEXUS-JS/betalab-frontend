@@ -20,6 +20,9 @@ const processQueue = (token: string | null, error: any = null) => {
 };
 
 export const serverInstance = (accessToken?: string, refreshToken?: string) => {
+  let currentAccessToken = accessToken;
+  let currentRefreshToken = refreshToken;
+
   const instance = axios.create({
     baseURL: BACKEND_URL,
     responseType: 'json',
@@ -31,11 +34,11 @@ export const serverInstance = (accessToken?: string, refreshToken?: string) => {
   console.log('refreshToken:', refreshToken);
   // 요청 인터셉터
   instance.interceptors.request.use(async config => {
-    if (accessToken) {
-      config.headers['Authorization'] = accessToken;
-      if (refreshToken) {
-        config.headers['RefreshToken'] = refreshToken;
-      }
+    if (currentAccessToken) {
+      config.headers['Authorization'] = `Bearer ${currentAccessToken}`;
+    }
+    if (currentRefreshToken) {
+      config.headers['RefreshToken'] = currentRefreshToken;
     }
     return config;
   });
@@ -47,6 +50,10 @@ export const serverInstance = (accessToken?: string, refreshToken?: string) => {
       const originalRequest = error.config;
 
       if (error.response?.status === 401 && !originalRequest._retry) {
+        if (!currentRefreshToken) {
+          return Promise.reject(error);
+        }
+
         if (isRefreshing) {
           return new Promise((resolve, reject) => {
             failedQueue.push({
@@ -65,17 +72,23 @@ export const serverInstance = (accessToken?: string, refreshToken?: string) => {
         try {
           const res = await axios.post(`${BACKEND_URL}/auth/reissue`, null, {
             headers: {
-              Authorization: accessToken ?? '',
-              RefreshToken: refreshToken ?? '',
+              Authorization: currentAccessToken ? `Bearer ${currentAccessToken}` : '',
+              RefreshToken: currentRefreshToken,
             },
             withCredentials: true,
           });
           const newAccessToken = res.data.data.accessToken;
-          accessToken = newAccessToken;
-          processQueue(newAccessToken);
+          const newRefreshToken = res.data.data.refreshToken ?? currentRefreshToken;
+
+          currentAccessToken = newAccessToken ?? currentAccessToken;
+          currentRefreshToken = newRefreshToken;
+
+          processQueue(currentAccessToken ?? '');
           isRefreshing = false;
 
-          originalRequest.headers['Authorization'] = newAccessToken;
+          if (currentAccessToken) {
+            originalRequest.headers['Authorization'] = `Bearer ${currentAccessToken}`;
+          }
           return instance(originalRequest);
         } catch (refreshError) {
           processQueue(null, refreshError);
