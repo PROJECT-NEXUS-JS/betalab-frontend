@@ -5,6 +5,7 @@ import '@/styles/tailwind.css';
 import ReactQueryProvider from './ReactQueryProvider';
 import HeaderClientWrapper from '@/components/common/organisms/HeaderClientWrapper';
 import ProgressProviderWrapper from './ProgressProviderWrapper';
+import { ToastHost } from '@/components/common/toast/ToastHost';
 
 export const metadata: Metadata = {
   title: 'Betalab',
@@ -31,6 +32,7 @@ export default function RootLayout({
             </div>
           </Suspense>
         </ProgressProviderWrapper>
+        <ToastHost position="bottom-center" />
       </body>
     </html>
   );
