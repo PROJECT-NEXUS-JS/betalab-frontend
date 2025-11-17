@@ -29,8 +29,8 @@ export const useMyBookmarksQuery = (
   return useQuery({
     queryKey: ['myBookmarks', params],
     queryFn: () => getMyBookmarks(params),
-    staleTime: 1000 * 60 * 5, // 5분
-    refetchOnMount: false,
+    staleTime: 1000 * 60 * 5,
+    refetchOnMount: true,
     refetchOnWindowFocus: false,
   });
 };
