@@ -48,11 +48,11 @@ export function ToastHost({
   const [items, setItems] = useState<ToastItem[]>([]);
   const pathname = usePathname();
 
-  if (pathname === '/prepare') {
-    return null;
-  }
-
   useEffect(() => {
+    if (pathname === '/prepare') {
+      return;
+    }
+
     function onToast(e: Event) {
       const { detail } = e as CustomEvent<Omit<ToastItem, 'id'>>;
 
@@ -77,7 +77,7 @@ export function ToastHost({
     }
     window.addEventListener('app:toast', onToast as EventListener);
     return () => window.removeEventListener('app:toast', onToast as EventListener);
-  }, [max]);
+  }, [max, pathname]);
 
   const pos = useMemo(
     () =>
@@ -90,6 +90,10 @@ export function ToastHost({
       })[position],
     [position],
   );
+
+  if (pathname === '/prepare') {
+    return null;
+  }
 
   return (
     <div
