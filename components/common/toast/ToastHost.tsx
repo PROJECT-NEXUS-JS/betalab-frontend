@@ -49,12 +49,25 @@ export function ToastHost({
   useEffect(() => {
     function onToast(e: Event) {
       const { detail } = e as CustomEvent<Omit<ToastItem, 'id'>>;
-      const id = crypto.randomUUID();
-      setItems(prev => [{ id, ...detail }, ...prev].slice(0, max));
-      const d = detail.duration ?? 3500;
-      window.setTimeout(() => {
-        setItems(prev => prev.filter(t => t.id !== id));
-      }, d);
+
+      // 같은 메시지는 한번만 뜨게 함
+      setItems(prev => {
+        const isDuplicate = prev.some(
+          item => item.message === detail.message && item.type === detail.type,
+        );
+        if (isDuplicate) {
+          return prev;
+        }
+
+        const id = crypto.randomUUID();
+        const newItem = { id, ...detail };
+        const d = detail.duration ?? 3500;
+        window.setTimeout(() => {
+          setItems(current => current.filter(t => t.id !== id));
+        }, d);
+
+        return [newItem, ...prev].slice(0, max);
+      });
     }
     window.addEventListener('app:toast', onToast as EventListener);
     return () => window.removeEventListener('app:toast', onToast as EventListener);
