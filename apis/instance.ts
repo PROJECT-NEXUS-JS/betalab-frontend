@@ -45,13 +45,13 @@ instance.interceptors.response.use(
   response => {
     const data = response.data;
     if (data && typeof data === 'object' && 'code' in data) {
-      const { code, message, success } = data;
+      const { code, message } = data;
 
       const method = response.config.method?.toUpperCase();
       const isMutation = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method || '');
       const skipToast = (response.config as any).skipToast;
 
-      if (isMutation && !skipToast) {
+      if (!skipToast && (isMutation || code)) {
         const toastConfig = getToastConfig(code, response.status, message);
         if (toastConfig) {
           showToast(toastConfig);
@@ -102,7 +102,6 @@ instance.interceptors.response.use(
         isRefreshing = false;
       }
     }
-    // 에러 응답에서 code 필드 확인하여 토스트 표시
     const errorData = error.response?.data;
     if (errorData && typeof errorData === 'object' && 'code' in errorData) {
       const { code, message } = errorData;
