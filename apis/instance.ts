@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { showToast } from '@/components/common/toast/ToastHost';
+import { getToastConfig } from '@/lib/toast-messages';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -41,6 +43,22 @@ function processQueue(error: any, token: string | null = null) {
 
 instance.interceptors.response.use(
   response => {
+    const data = response.data;
+    if (data && typeof data === 'object' && 'code' in data) {
+      const { code, message } = data;
+
+      const method = response.config.method?.toUpperCase();
+      const isMutation = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method || '');
+      const skipToast = (response.config as any).skipToast;
+
+      if (!skipToast && (isMutation || code)) {
+        const toastConfig = getToastConfig(code, response.status, message);
+        if (toastConfig) {
+          showToast(toastConfig);
+        }
+      }
+    }
+
     return response;
   },
   async error => {
@@ -82,6 +100,18 @@ instance.interceptors.response.use(
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
+      }
+    }
+    const errorData = error.response?.data;
+    if (errorData && typeof errorData === 'object' && 'code' in errorData) {
+      const { code, message } = errorData;
+      const skipToast = (error.config as any)?.skipToast;
+
+      if (!skipToast) {
+        const toastConfig = getToastConfig(code, error.response?.status, message);
+        if (toastConfig) {
+          showToast(toastConfig);
+        }
       }
     }
 
