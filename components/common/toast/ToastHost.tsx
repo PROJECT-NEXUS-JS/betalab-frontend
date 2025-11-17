@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import { Toast } from './Toast';
 
@@ -45,6 +46,11 @@ export function ToastHost({
   max?: number;
 }) {
   const [items, setItems] = useState<ToastItem[]>([]);
+  const pathname = usePathname();
+
+  if (pathname === '/prepare') {
+    return null;
+  }
 
   useEffect(() => {
     function onToast(e: Event) {
