@@ -29,7 +29,6 @@ export function useAuth() {
     isInitialized.current = true;
   }, []);
 
-  // storage 이벤트는 한 번만 등록
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'accessToken') {
@@ -44,6 +43,23 @@ export function useAuth() {
 
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
+  }, [invalidateUserQueries]);
+
+  // 같은 탭에서의 localStorage 변경 감지 (커스텀 이벤트)
+  useEffect(() => {
+    const handleLocalStorageChange = () => {
+      const token = localStorage.getItem('accessToken');
+      const newIsLoggedIn = !!token;
+      setIsLoggedIn(newIsLoggedIn);
+
+      if (newIsLoggedIn) {
+        invalidateUserQueries();
+      }
+    };
+
+    // 커스텀 이벤트 리스너 등록
+    window.addEventListener('localStorageChange', handleLocalStorageChange);
+    return () => window.removeEventListener('localStorageChange', handleLocalStorageChange);
   }, [invalidateUserQueries]);
 
   return {

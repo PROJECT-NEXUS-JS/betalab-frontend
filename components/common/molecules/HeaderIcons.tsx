@@ -25,6 +25,8 @@ const HeaderIcons = ({ userData }: HeaderIconsProps) => {
 
   const handleLogout = () => {
     localStorage.clear();
+    // 같은 탭에서 localStorage 변경을 감지하기 위한 커스텀 이벤트 발생
+    window.dispatchEvent(new Event('localStorageChange'));
     queryCache.clear();
     setIsLogoutModalOpen(false);
     router.push('/login');
