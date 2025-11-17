@@ -33,6 +33,8 @@ export default function OidcCallbackPage() {
         }
 
         localStorage.setItem('accessToken', responseData.data.accessToken);
+        // 같은 탭에서 localStorage 변경을 감지하기 위한 커스텀 이벤트 발생
+        window.dispatchEvent(new Event('localStorageChange'));
         setIsTokenReady(true);
       } catch (error) {
         console.error('OIDC 콜백 처리 중 오류 발생:', error);
