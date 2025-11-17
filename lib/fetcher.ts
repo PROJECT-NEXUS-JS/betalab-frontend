@@ -29,7 +29,7 @@ export async function http(path: string, opts: FetchOpts = {}) {
   }
 
   if (res.ok) {
-    if (!opts.skipToast && (isMutation || responseData?.code)) {
+    if (!opts.skipToast && isMutation) {
       const code = responseData?.code;
       const message = responseData?.message;
 

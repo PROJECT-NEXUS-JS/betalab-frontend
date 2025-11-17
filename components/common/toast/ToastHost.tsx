@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import { Toast } from './Toast';
 
@@ -46,38 +45,20 @@ export function ToastHost({
   max?: number;
 }) {
   const [items, setItems] = useState<ToastItem[]>([]);
-  const pathname = usePathname();
 
   useEffect(() => {
-    if (pathname === '/prepare') {
-      return;
-    }
-
     function onToast(e: Event) {
       const { detail } = e as CustomEvent<Omit<ToastItem, 'id'>>;
-
-      // 같은 메시지는 한번만 뜨게 함
-      setItems(prev => {
-        const isDuplicate = prev.some(
-          item => item.message === detail.message && item.type === detail.type,
-        );
-        if (isDuplicate) {
-          return prev;
-        }
-
-        const id = crypto.randomUUID();
-        const newItem = { id, ...detail };
-        const d = detail.duration ?? 3500;
-        window.setTimeout(() => {
-          setItems(current => current.filter(t => t.id !== id));
-        }, d);
-
-        return [newItem, ...prev].slice(0, max);
-      });
+      const id = crypto.randomUUID();
+      setItems(prev => [{ id, ...detail }, ...prev].slice(0, max));
+      const d = detail.duration ?? 3500;
+      window.setTimeout(() => {
+        setItems(prev => prev.filter(t => t.id !== id));
+      }, d);
     }
     window.addEventListener('app:toast', onToast as EventListener);
     return () => window.removeEventListener('app:toast', onToast as EventListener);
-  }, [max, pathname]);
+  }, [max]);
 
   const pos = useMemo(
     () =>
@@ -90,10 +71,6 @@ export function ToastHost({
       })[position],
     [position],
   );
-
-  if (pathname === '/prepare') {
-    return null;
-  }
 
   return (
     <div
