@@ -24,7 +24,11 @@ export default function ProjectDetailCardClient({ projectId, ApplyCardProps }: P
       onSuccess: data => {
         queryClient.invalidateQueries({ queryKey: ['postLikeStatus', projectId] });
         queryClient.invalidateQueries({ queryKey: ['postLikeCount', projectId] });
-        queryClient.invalidateQueries({ queryKey: ['myBookmarks'] });
+        // 쿼리 없이 바로 refetch
+        queryClient.invalidateQueries({
+          queryKey: ['myBookmarks'],
+          refetchType: 'active',
+        });
       },
     });
   };

@@ -7,6 +7,11 @@ export async function POST(req: NextRequest) {
   const refreshToken = req.cookies.get('refreshToken')?.value;
 
   if (!accessToken || !refreshToken) {
+    console.error('리프레시 토큰 없음:', {
+      hasAccessToken: !!accessToken,
+      hasRefreshToken: !!refreshToken,
+      cookies: req.cookies.getAll().map(c => c.name),
+    });
     return NextResponse.json({ message: 'No refresh token' }, { status: 401 });
   }
 
@@ -21,7 +26,12 @@ export async function POST(req: NextRequest) {
     });
 
     if (!backendResponse.ok) {
-      console.error('Failed to refresh token', backendResponse.status, backendResponse.statusText);
+      const errorText = await backendResponse.text().catch(() => '');
+      console.error('백엔드 리프레시 실패:', {
+        status: backendResponse.status,
+        statusText: backendResponse.statusText,
+        body: errorText,
+      });
       return NextResponse.json({ message: 'Refresh failed' }, { status: 401 });
     }
 

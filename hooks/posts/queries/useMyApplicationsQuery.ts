@@ -2,13 +2,16 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { GetMyApplicationsRequestType, GetMyApplicationsResponseType } from '../dto/myApplications';
 import { instance } from '@/apis/instance';
 
-const BASE_PATH = '/v1/users/posts/applications';
+const BASE_PATH = '/v1/users/participations';
 
 const getMyApplications = async (
   params: GetMyApplicationsRequestType,
 ): Promise<GetMyApplicationsResponseType> => {
   const searchParams = new URLSearchParams();
 
+  if (params.status) {
+    searchParams.append('status', params.status);
+  }
   if (params.page !== undefined) {
     searchParams.append('page', params.page.toString());
   }

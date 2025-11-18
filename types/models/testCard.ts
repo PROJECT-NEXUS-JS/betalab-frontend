@@ -25,8 +25,8 @@ export type ScheduleType = z.infer<typeof scheduleSchema>;
 // 보상 스키마
 export const rewardSchema = z
   .object({
-    rewardType: z.string(),
-    rewardDescription: z.enum(['CASH', 'GIFT_CARD', 'PRODUCT', 'NONE']),
+    rewardType: z.enum(['CASH', 'GIFT_CARD', 'PRODUCT', 'NONE']),
+    rewardDescription: z.string().nullable(),
   })
   .strict();
 
