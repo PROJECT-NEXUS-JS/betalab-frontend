@@ -9,6 +9,10 @@ export const queryKeys = {
     rightSidebar: (postId: number) => [...queryKeys.posts.all, 'rightSidebar', postId] as const,
     similarPosts: (postId: number) => [...queryKeys.posts.all, 'similarPost', postId] as const,
   },
+  feedback: {
+    all: ['feedback'] as const,
+    detail: (feedbackId: number) => [...queryKeys.feedback.all, 'detail', feedbackId] as const,
+  },
   // 다른 엔티티 (예: 사용자)
   users: {
     all: ['users'] as const,

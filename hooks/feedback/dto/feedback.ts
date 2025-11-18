@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { BaseModelSchema } from '@/types/models/base-model';
 
 // TODO: 서버와 통일 필요
 const BugTypeEnum = z.enum([
@@ -54,15 +55,15 @@ export const FeedbackRequestSchema = z.object({
 export type FeedbackRequestType = z.infer<typeof FeedbackRequestSchema>;
 
 // ========== 응답 ===========
-// 피드백의 핵심 데이터 필드 (최종 제출/임시 저장 공통)
-export const FeedbackCoreSchema = z.object({
+
+export const FeedbackSchema = z.object({
   participationId: z.number().int().positive(),
   overallSatisfaction: z.number().int().min(0).max(5), // 0~5점
   recommendationIntent: z.number().int().min(0).max(5),
   reuseIntent: z.number().int().min(0).max(5),
   mostInconvenient: MostInconvenientEnum,
   hasBug: z.boolean(),
-  bugTypes: BugTypeEnum,
+  bugTypes: z.array(BugTypeEnum),
   bugLocation: z.string(),
   bugDescription: z.string(),
   screenshotUrls: z.array(z.string()),
@@ -73,10 +74,6 @@ export const FeedbackCoreSchema = z.object({
   goodPoints: z.string(),
   improvementSuggestions: z.string(),
   additionalComments: z.string(),
-});
-
-// 최종 제출된 피드백 스키마
-export const FeedbackSchema = FeedbackCoreSchema.extend({
   feedbackId: z.number().int().positive(),
   averageSatisfaction: z.number().min(0).max(5),
   averageUsabilityScore: z.number().min(0).max(5),
@@ -84,13 +81,5 @@ export const FeedbackSchema = FeedbackCoreSchema.extend({
   updatedAt: z.iso.datetime(),
 });
 
-export type SubmitFeedbackResponseType = z.infer<typeof FeedbackSchema>;
+export const FeedbackDetailResponseSchema = BaseModelSchema(FeedbackSchema);
 
-// 임시 저장된 드래프트 스키마
-export const DraftSchema = FeedbackCoreSchema.extend({
-  draftId: z.number().int().positive(),
-  createdAt: z.iso.datetime(),
-  updatedAt: z.iso.datetime(),
-});
-
-export type SaveFeedbackDraftResponseType = z.infer<typeof DraftSchema>;

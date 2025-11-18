@@ -2,19 +2,17 @@ import { cookies } from 'next/headers';
 import { dehydrate, QueryClient, HydrationBoundary } from '@tanstack/react-query';
 import { queryKeys } from '@/constants/query-keys';
 import { serverInstance } from '@/apis/server-instance';
-
+import { FeedbackDetailResponseSchema } from '@/hooks/feedback/dto/feedback';
 import Logger from '@/lib/logger';
-
-import { ProjectDetailResponseSchema } from '@/hooks/posts/queries/usePostDetailQuery';
 
 export default async function FeebackPage({
   params,
 }: {
   params: Promise<{
-    id: string;
+    feedbackId: string;
   }>;
 }) {
-  const { id } = await params;
+  const { feedbackId } = await params;
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
   const refreshToken = cookieStore.get('refreshToken')?.value;
@@ -22,29 +20,29 @@ export default async function FeebackPage({
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: queryKeys.posts.detail(Number(id)),
-    queryFn: () => fetchProjectData(Number(id), accessToken, refreshToken),
+    queryKey: queryKeys.feedback.detail(Number(feedbackId)),
+    queryFn: () => fetchFeedbackData(Number(feedbackId), accessToken, refreshToken),
   });
 
   const dehydratedState = dehydrate(queryClient);
 
   return (
     <HydrationBoundary state={dehydratedState}>
+      <div>피드백 페이지</div>
     </HydrationBoundary>
   );
 }
 
-async function fetchProjectData(id: number, accessToken?: string, refreshToken?: string) {
+async function fetchFeedbackData(feedbackId: number, accessToken?: string, refreshToken?: string) {
   try {
-    const response = await serverInstance(accessToken, refreshToken).get(`/v1/users/posts/${id}`);
-    Logger.log('ProjectData 원본:', response.data);
-
-    const parsedData = ProjectDetailResponseSchema.parse(response.data);
-    Logger.log('ProjectData 파싱 성공:', parsedData);
+    const response = await serverInstance(accessToken, refreshToken).get(
+      `/v1/feedbacks/${feedbackId}`,
+    );
+    const parsedData = FeedbackDetailResponseSchema.parse(response.data);
 
     return parsedData;
   } catch (err) {
     Logger.error('ProjectData 파싱 실패:', err);
-    throw err; // 필요하면 에러를 상위로 던짐
+    throw err;
   }
 }
