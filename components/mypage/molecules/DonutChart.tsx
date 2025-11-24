@@ -7,6 +7,11 @@ const COLOR_MAP: Record<string, string> = {
   게임: '#64768C',
   웹: '#DAE7FF',
   앱: '#0E62FF',
+
+  WEB: '#DAE7FF',
+  APP: '#0E62FF',
+  UX: '#64768C',
+  AI: '#9B59B6',
 };
 
 export interface DonutChartData {
