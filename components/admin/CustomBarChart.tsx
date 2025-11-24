@@ -84,11 +84,7 @@ export function CustomBarChart({
 
   return (
     <>
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="text-base font-bold text-Dark-Gray">데이터 분석 그래프</h3>
-        <p className="text-sm text-Gray-300">최근 일주일</p>
-      </div>
-      <div className="w-full p-12 rounded-sm bg-White shadow-[0_0_10px_0_rgba(26,30,39,0.08)]">
+      <div className="relative w-full p-12 rounded-sm bg-White shadow-[0_0_10px_0_rgba(26,30,39,0.08)]">
         <ResponsiveContainer width="100%" height={400}>
           <BarChart
             data={mappedData}
