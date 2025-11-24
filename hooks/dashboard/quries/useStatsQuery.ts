@@ -9,7 +9,7 @@ import { queryKeys } from '@/constants/query-keys';
 export const StatsResponseSchema = BaseModelSchema(StatsSchema);
 export type StatsResponseModel = z.infer<typeof StatsResponseSchema>;
 
-const BASE_PATH = (postId: number) => `v1/users/dashboard/${postId}/stats`;
+const BASE_PATH = (postId: number) => `/v1/users/dashboard/${postId}/stats`;
 
 export const getStats = async (postId: number) => {
   try {
