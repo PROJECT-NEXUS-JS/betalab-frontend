@@ -50,7 +50,7 @@ export default function OidcCallbackPage() {
       const originalUrl = localStorage.getItem('redirectedFrom') || '/';
       if (user.roleType === 'ROLE_GUEST') {
         console.log('게스트 유저로 로그인되었습니다.');
-        router.replace('/login/survey');
+        router.replace('/login/gender-birth');
       } else {
         console.log('일반 유저로 로그인되었습니다.');
         console.log('원래 URL로 리다이렉트:', originalUrl);

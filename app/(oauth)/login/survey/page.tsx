@@ -67,15 +67,26 @@ export default function SurveyPage() {
   const isButtonVisible =
     inputValue.trim() !== '' &&
     isDirectlyInputValid &&
-    (selectedTags.length > 0 || // 칩 하나라도 선택 OR
-      (enterDirectly && enterDirectlyValue.trim() !== '')); // 직접입력 켜져있고 값 있음
+    (selectedTags.length > 0 || (enterDirectly && enterDirectlyValue.trim() !== ''));
 
   const handleSubmitButtonClick = () => {
+    const filteredInterests = [...selectedTags, enterDirectly ? enterDirectlyValue : ''].filter(
+      item => item.trim() !== '',
+    );
+    const gender = localStorage.getItem('gender') as 'MALE' | 'FEMALE' | null;
+    const birthDate = localStorage.getItem('birthDate');
+
     const formData = {
       job: inputValue,
-      interests: [...selectedTags, enterDirectly ? enterDirectlyValue : ''],
+      interests: filteredInterests,
+      ...(gender && { gender }),
+      ...(birthDate && { birthDate }),
     };
+
     mutate(formData);
+
+    localStorage.removeItem('gender');
+    localStorage.removeItem('birthDate');
   };
 
   return (
@@ -152,7 +163,7 @@ export default function SurveyPage() {
           {isButtonVisible && (
             <Button
               State="Primary"
-              Size="md"
+              Size="xl"
               onClick={handleSubmitButtonClick}
               label="회원가입 하기"
             />
