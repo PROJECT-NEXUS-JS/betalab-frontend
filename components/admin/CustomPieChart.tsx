@@ -216,23 +216,10 @@ const RewardDonutChart = ({
 };
 
 export function CustomPieChart({ statusChart, rewardChart }: CustomPieChartProps) {
-  // 리워드 지급률 목데이터 (UI 확인용)
-  const mockRewardChart: ChartData = {
-    title: '리워드 지급률',
-    items: [
-      { label: '미지급', value: 5 },
-      { label: '지급 완료', value: 15 },
-    ],
-  };
-
   return (
     <div className="w-full grid grid-cols-2 gap-4">
       <StatusPieChart data={statusChart} colors={STATUS_COLORS} title={statusChart.title} />
-      <RewardDonutChart
-        data={mockRewardChart}
-        colors={REWARD_COLORS}
-        title={mockRewardChart.title}
-      />
+      <RewardDonutChart data={rewardChart} colors={REWARD_COLORS} title={rewardChart.title} />
     </div>
   );
 }
