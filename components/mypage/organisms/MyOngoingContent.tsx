@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { useMyApplicationsQuery } from '@/hooks/posts/queries/useMyApplicationsQuery';
 import PostCard, { PostCardSkeleton } from '@/components/category/molecules/PostCard';
@@ -16,8 +18,14 @@ export default function MyOngoingContent() {
     status: 'APPROVED',
     page: currentPage,
     size: 9,
+    sort: ['']
   });
   const router = useRouter();
+
+  // 정렬 기준
+  const SORT = {
+
+  }
 
   const applicationsNeedingPostData =
     myApplicationsData?.data?.content.filter(app => !app.post && app.postId) ?? [];
@@ -49,9 +57,15 @@ export default function MyOngoingContent() {
 
   return (
     <>
-      <Chip variant="default" size="sm">
-        최신순
-      </Chip>
+      {/* 필터 */}
+      <div className="fixed right-16 mt-6">
+        <Chip variant="default" size="sm">
+          최신순
+        </Chip>
+        <div>
+          
+        </div>
+      </div>
       <div className="flex flex-col mt-10">
         <div className="flex flex-wrap gap-10">
           {isLoading || isPostDataLoading ? (

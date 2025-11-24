@@ -8,7 +8,7 @@ import MyPostContent from '@/components/mypage/organisms/MyPostContent';
 import MyParticipateContent from '@/components/mypage/organisms/MyParticipateContent';
 import Breadcrumb from '@/components/common/atoms/Breadcrumb';
 import { useMyPageProfileQuery } from '@/hooks/mypage/queries/useMyPageProfileQuery';
-import { MyPageMenuKey, getBreadcrumbItems } from '@/components/mypage/const';
+import { MyPageMenuKey, getBreadcrumbItems, getHeadingTitle } from '@/components/mypage/const';
 import { cn } from '@/lib/utils';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -53,6 +53,9 @@ export default function MyPage() {
     return tabComponents[activeTab as keyof typeof tabComponents] || activeTab;
   };
 
+  const breadcrumbItems = activeTab ? getBreadcrumbItems(activeTab) : null;
+  const headingTitle = getHeadingTitle(activeTab);
+
   return (
     <div className={cn('flex gap-10 py-10 px-16 min-h-screen')}>
       <div className="flex flex-col gap-10">
@@ -70,8 +73,7 @@ export default function MyPage() {
                 avatar: profile.profileImageUrl || undefined,
                 affiliation: profile.affiliation || '소속 없음',
                 // 임시
-                ongoingCount: 1,
-                // ongoingCount: profile.testsParticipating,
+                ongoingCount: profile.testsOngoing,
                 postedCount: profile.testsUploaded,
                 participatingCount: profile.testsParticipating,
               };
@@ -104,8 +106,8 @@ export default function MyPage() {
       <div className="flex flex-col w-full">
         <div className="flex w-full flex-row justify-between">
           <div className="flex flex-col">
-            {activeTab && <Breadcrumb className="mb-2" items={getBreadcrumbItems(activeTab)} />}
-            <h1 className="text-subtitle-01 font-semibold text-Black">대시보드</h1>
+            {breadcrumbItems && <Breadcrumb className="mb-2" items={breadcrumbItems} />}
+            <h1 className="text-subtitle-01 font-semibold text-Black">{headingTitle}</h1>
           </div>
           {activeTab !== 'ongoing-tests' && (
             <Button

@@ -71,3 +71,17 @@ export const getBreadcrumbItems = (activeTab: string) => {
 
   return baseItems;
 };
+
+export const getHeadingTitle = (activeTab: string) => {
+  if (!activeTab) return '대시보드';
+  let title = '';
+  for (const [_, section] of Object.entries(MY_PAGE_MENUS)) {
+    const foundItem = section.items.find(item => item.key === activeTab);
+    if (foundItem) {
+      title = foundItem.title;
+      break;
+    }
+  }
+
+  return title ?? '대시보드';
+};
