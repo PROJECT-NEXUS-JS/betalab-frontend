@@ -5,7 +5,8 @@ export type DashboardConfigEnum =
   | 'pendingApplications'
   | 'approvedParticipants'
   | 'reviews'
-  | 'views';
+  | 'views'
+  | 'pendingPayments';
 export interface DashBoardCardProps {
   current: number;
   previousDay: number;
@@ -49,6 +50,7 @@ const TEXT_MAP = {
   approvedParticipants: '승인된 참가자 수',
   reviews: '리뷰 수',
   views: '조회 수',
+  pendingPayments: '지급 대기',
 };
 
 const ICON_MAP = {
@@ -57,4 +59,5 @@ const ICON_MAP = {
   approvedParticipants: '/icons/admin-icon/check.svg',
   reviews: '/icons/admin-icon/star.svg',
   views: '/icons/admin-icon/clicked.svg',
+  pendingPayments: '/icons/admin-icon/dollar.svg',
 };

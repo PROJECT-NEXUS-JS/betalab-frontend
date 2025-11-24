@@ -21,4 +21,8 @@ export const STATS_CONFIG: Array<{ key: DashboardConfigEnum; label: string }> = 
     key: 'reviews',
     label: '리뷰 수',
   },
+  {
+    key: 'pendingPayments',
+    label: '지급 대기',
+  },
 ];

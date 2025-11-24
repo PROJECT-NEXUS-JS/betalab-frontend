@@ -12,6 +12,7 @@ export const StatsSchema = z.object({
   approvedParticipants: StatsValueSchema,
   reviews: StatsValueSchema,
   views: StatsValueSchema,
+  pendingPayments: StatsValueSchema.optional(),
   unreadMessages: z.number().min(0),
 });
 
