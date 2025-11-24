@@ -5,6 +5,8 @@ import type { DateRange } from 'react-day-picker';
 import {
   addMonths,
   subMonths,
+  addYears,
+  subYears,
   startOfMonth,
   endOfMonth,
   startOfWeek,
@@ -15,6 +17,8 @@ import {
   isBefore,
   isAfter,
   format,
+  setYear,
+  setMonth,
 } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import clsx from 'clsx';
@@ -40,9 +44,12 @@ export default function DatePicker({
   const [cursor, setCursor] = useState<Date>(value?.from ?? new Date());
   const [draft, setDraft] = useState<DateRange | undefined>(value);
 
+  // 단일 날짜 선택와 기간 분기
   const text =
     value?.from && value?.to
-      ? `${format(value.from, 'yyyy.MM.dd')} ~ ${format(value.to, 'yyyy.MM.dd')}`
+      ? isSameDay(value.from, value.to)
+        ? format(value.from, 'yyyy.MM.dd')
+        : `${format(value.from, 'yyyy.MM.dd')} ~ ${format(value.to, 'yyyy.MM.dd')}`
       : '';
 
   useEffect(() => {
@@ -56,7 +63,11 @@ export default function DatePicker({
   }, [open]);
 
   useEffect(() => {
-    if (!open) setDraft(value);
+    if (!open) {
+      setDraft(value);
+    } else {
+      setCursor(value?.from ?? new Date());
+    }
   }, [open, value]);
 
   const handleBackdrop = (e: React.MouseEvent) => {
@@ -69,7 +80,7 @@ export default function DatePicker({
         type="button"
         onClick={() => setOpen(true)}
         className={clsx(
-          'group flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left',
+          'group flex w-full items-center justify-between rounded-sm border px-4 py-3 text-left',
           'border-Gray-100 bg-White hover:bg-Gray-50 focus:outline-none focus:ring-2 focus:ring-Primary-300',
         )}
       >
@@ -108,6 +119,8 @@ export default function DatePicker({
               cursor={cursor}
               onPrev={() => setCursor(d => subMonths(d, 1))}
               onNext={() => setCursor(d => addMonths(d, 1))}
+              onYearChange={year => setCursor(d => setYear(d, year))}
+              onMonthChange={month => setCursor(d => setMonth(d, month))}
               range={draft}
               onPick={r => setDraft(r)}
               disabledBeforeToday={disabledBeforeToday}
@@ -116,8 +129,12 @@ export default function DatePicker({
             <div className="mt-4 flex items-center justify-between">
               <div className="text-caption-01 text-Dark-Gray">
                 {draft?.from && draft?.to
-                  ? `${format(draft.from, 'yyyy.MM.dd')} ~ ${format(draft.to, 'yyyy.MM.dd')}`
-                  : '시작일과 종료일을 선택하세요'}
+                  ? isSameDay(draft.from, draft.to)
+                    ? format(draft.from, 'yyyy.MM.dd')
+                    : `${format(draft.from, 'yyyy.MM.dd')} ~ ${format(draft.to, 'yyyy.MM.dd')}`
+                  : draft?.from
+                    ? `${format(draft.from, 'yyyy.MM.dd')} - 종료일을 선택하세요`
+                    : '시작일과 종료일을 선택하세요'}
               </div>
               <div className="flex gap-2">
                 <button
@@ -128,11 +145,16 @@ export default function DatePicker({
                 </button>
                 <button
                   onClick={() => {
-                    onChange(draft);
+                    // 단일 날짜 선택인 경우 from과 to를 같게 설정
+                    if (draft?.from && !draft?.to) {
+                      onChange({ from: draft.from, to: draft.from });
+                    } else {
+                      onChange(draft);
+                    }
                     setOpen(false);
                   }}
                   className="rounded-lg bg-Primary-500 px-4 py-2 text-caption-01 text-White hover:opacity-90 disabled:opacity-40"
-                  disabled={!(draft?.from && draft?.to)}
+                  disabled={!draft?.from}
                 >
                   확인
                 </button>
@@ -149,6 +171,8 @@ type CalProps = {
   cursor: Date;
   onPrev: () => void;
   onNext: () => void;
+  onYearChange: (year: number) => void;
+  onMonthChange: (month: number) => void;
   range?: DateRange;
   onPick: (range: DateRange | undefined) => void;
   disabledBeforeToday?: boolean;
@@ -159,12 +183,28 @@ function Calendar({
   cursor,
   onPrev,
   onNext,
+  onYearChange,
+  onMonthChange,
   range,
   onPick,
   disabledBeforeToday = true,
   weekStartsOn = 0,
 }: CalProps) {
   const today = new Date();
+  const [viewMode, setViewMode] = useState<'month' | 'year' | 'month-select'>('month');
+
+  // 연도 목록
+  const currentYear = today.getFullYear();
+  const years = useMemo(() => {
+    const yearList: number[] = [];
+    for (let i = currentYear - 100; i <= currentYear + 10; i++) {
+      yearList.push(i);
+    }
+    return yearList;
+  }, [currentYear]);
+  const months = useMemo(() => {
+    return Array.from({ length: 12 }, (_, i) => i);
+  }, []);
 
   const grid = useMemo(() => {
     const start = startOfWeek(startOfMonth(cursor), { weekStartsOn });
@@ -204,12 +244,105 @@ function Calendar({
       ? ['월', '화', '수', '목', '금', '토', '일']
       : ['일', '월', '화', '수', '목', '금', '토'];
 
+  const handleYearClick = () => {
+    setViewMode('year');
+  };
+
+  const handleMonthClick = () => {
+    setViewMode('month-select');
+  };
+
+  const handleYearSelect = (year: number) => {
+    onYearChange(year);
+    setViewMode('month-select');
+  };
+
+  const handleMonthSelect = (month: number) => {
+    onMonthChange(month);
+    setViewMode('month');
+  };
+  if (viewMode === 'year') {
+    return (
+      <div className="rounded-xl bg-Gray-25 p-3">
+        <div className="mb-4 flex items-center justify-between">
+          <div className="text-title-03 font-semibold">연도 선택</div>
+          <button
+            onClick={() => setViewMode('month')}
+            className="rounded-lg px-3 py-1 text-caption-01 text-Gray-300 hover:bg-Gray-50"
+          >
+            ← 돌아가기
+          </button>
+        </div>
+        <div className="grid grid-cols-4 gap-2 max-h-[300px] overflow-y-auto">
+          {years.map(year => (
+            <button
+              key={year}
+              type="button"
+              onClick={() => handleYearSelect(year)}
+              className={clsx(
+                'rounded-lg px-4 py-2 text-body-02 transition hover:bg-Primary-100',
+                cursor.getFullYear() === year
+                  ? 'bg-Primary-500 text-White hover:bg-Primary-600'
+                  : 'bg-White text-Black hover:bg-Primary-50',
+              )}
+            >
+              {year}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+  if (viewMode === 'month-select') {
+    return (
+      <div className="rounded-xl bg-Gray-25 p-3">
+        <div className="mb-4 flex items-center justify-between">
+          <div className="text-title-03 font-semibold">월 선택</div>
+          <button
+            onClick={() => setViewMode('month')}
+            className="rounded-lg px-3 py-1 text-caption-01 text-Gray-300 hover:bg-Gray-50"
+          >
+            ← 돌아가기
+          </button>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {months.map(month => (
+            <button
+              key={month}
+              type="button"
+              onClick={() => handleMonthSelect(month)}
+              className={clsx(
+                'rounded-lg px-4 py-2 text-body-02 transition hover:bg-Primary-100',
+                cursor.getMonth() === month
+                  ? 'bg-Primary-500 text-White hover:bg-Primary-600'
+                  : 'bg-White text-Black hover:bg-Primary-50',
+              )}
+            >
+              {format(new Date(cursor.getFullYear(), month, 1), 'M월', { locale: ko })}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="rounded-xl bg-Gray-25 p-3">
       <div className="mb-2 flex items-center justify-between">
-        <div className="text-title-03 font-semibold">
-          {format(cursor, 'yyyy년', { locale: ko })}{' '}
-          <span className="ml-2">{format(cursor, 'M월', { locale: ko })}</span>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleYearClick}
+            className="text-title-03 font-semibold hover:text-Primary-500 transition-colors"
+          >
+            {format(cursor, 'yyyy년', { locale: ko })}
+          </button>
+          <button
+            type="button"
+            onClick={handleMonthClick}
+            className="text-title-03 font-semibold hover:text-Primary-500 transition-colors"
+          >
+            {format(cursor, 'M월', { locale: ko })}
+          </button>
         </div>
         <div className="flex items-center gap-1">
           <IconBtn onClick={onPrev} ariaLabel="이전 달">
