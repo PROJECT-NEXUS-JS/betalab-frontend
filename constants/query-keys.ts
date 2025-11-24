@@ -22,6 +22,7 @@ export const queryKeys = {
     all: ['dashboard'] as const,
     stats: (postId: number) => [...queryKeys.dashboard.all, 'stats', postId] as const,
     barChart: (postId: number) => [...queryKeys.dashboard.all, 'barChart', postId] as const,
+    pieChart: (postId: number) => [...queryKeys.dashboard.all, 'pieChart', postId] as const,
     application: (postId: number, status: StatusEnum) =>
       [...queryKeys.dashboard.all, 'application', postId, status] as const,
     profile: () => [...queryKeys.dashboard.all, 'profile'] as const,
