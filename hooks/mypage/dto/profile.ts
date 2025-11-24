@@ -9,6 +9,7 @@ const profileDataSchema = z
     affiliation: z.string().nullable(),
     testsUploaded: z.number().int().nonnegative(),
     testsParticipating: z.number().int().nonnegative(),
+    testsOngoing: z.number().int().nonnegative().optional(),
   })
   .strict();
 
