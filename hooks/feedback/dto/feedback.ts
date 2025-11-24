@@ -25,35 +25,56 @@ export const MostInconvenientEnum = z.enum([
 export type MostInconvenientType = z.infer<typeof MostInconvenientEnum>;
 
 // ========== 요청 ===========
-export const FeedbackRequestSchema = z.object({
-  participationId: z.number().int().positive(),
+export const FeedbackRequestSchema = z
+  .object({
+    participationId: z.number().int().positive(),
 
-  // 만족도 (1~5점)
-  overallSatisfaction: z.number().int().min(1).max(5), // 전반적 만족도
-  recommendationIntent: z.number().int().min(1).max(5), // 추천 의향
-  reuseIntent: z.number().int().min(1).max(5), // 재사용 의향
+    // 만족도 (1~5점)
+    overallSatisfaction: z.number().int().min(1).max(5), // 전반적 만족도
+    recommendationIntent: z.number().int().min(1).max(5), // 추천 의향
+    reuseIntent: z.number().int().min(1).max(5), // 재사용 의향
 
-  // 기능별 사용성 평가 (1~5점)
-  functionalityScore: z.number().int().min(1).max(5), // 기능 점수
-  comprehensibilityScore: z.number().int().min(1).max(5), // 기능 설명 이해도 점수
-  speedScore: z.number().int().min(1).max(5), // 로딩 속도 점수
-  responseTimingScore: z.number().int().min(1).max(5), // 반응 타이밍 점수
+    // 기능별 사용성 평가 (1~5점)
+    functionalityScore: z.number().int().min(1).max(5), // 기능 점수
+    comprehensibilityScore: z.number().int().min(1).max(5), // 기능 설명 이해도 점수
+    speedScore: z.number().int().min(1).max(5), // 로딩 속도 점수
+    responseTimingScore: z.number().int().min(1).max(5), // 반응 타이밍 점수
 
-  // 가장 불편했던 점
-  mostInconvenient: MostInconvenientEnum,
+    // 가장 불편했던 점
+    mostInconvenient: MostInconvenientEnum,
 
-  // 버그 유무 및 상세
-  hasBug: z.boolean(),
-  bugTypes: z.array(BugTypeEnum),
-  bugLocation: z.string(), // TODO: 발생 위치, 설명 한 번에 받음
-  bugDescription: z.string(), // TODO: 발생 위치, 설명 한 번에 받음
-  screenshotUrls: z.array(z.string()), // TODO: 입력 부분 없음
+    // 버그 유무 및 상세
+    hasBug: z.boolean(),
+    bugTypes: z.array(BugTypeEnum).optional(),
+    bugLocation: z.string().optional(), // TODO: 발생 위치, 설명 한 번에 받음
+    bugDescription: z.string().optional(), // TODO: 입력 부분 없음
+    screenshotUrls: z.array(z.string()).optional(), // TODO: 입력 부분 없음
 
-  // 서술형 항목
-  goodPoints: z.string(), // 좋았던 점
-  improvementSuggestions: z.string(), // 개선 제안
-  additionalComments: z.string(), // 추가 의견
-});
+    // 서술형 항목
+    goodPoints: z.string().optional(), // 좋았던 점
+    improvementSuggestions: z.string().optional(), // 개선 제안
+    additionalComments: z.string().optional(), // 추가 의견
+  })
+  .refine(
+    data => {
+      if (!data.hasBug) return true;
+      return !!data.bugTypes && data.bugTypes.length > 0;
+    },
+    {
+      message: '버그 유형을 하나 이상 선택해주세요.',
+      path: ['bugTypes'],
+    },
+  )
+  .refine(
+    data => {
+      if (!data.hasBug) return true;
+      return !!data.bugLocation && data.bugLocation.trim().length > 0;
+    },
+    {
+      message: '문제 발생 위치를 입력해주세요.',
+      path: ['bugLocation'],
+    },
+  );
 
 export type FeedbackRequestType = z.infer<typeof FeedbackRequestSchema>;
 
