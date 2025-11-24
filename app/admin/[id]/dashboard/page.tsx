@@ -3,10 +3,10 @@ import { serverInstance } from '@/apis/server-instance';
 import { dehydrate, QueryClient, HydrationBoundary } from '@tanstack/react-query';
 import { queryKeys } from '@/constants/query-keys';
 
-import Toggle from '@/components/common/atoms/Toggle';
 import StatsCardClientWrapper from './StatsCardClientWrapper';
 import BarChartClientWrapper from './BarChartClientWrapper';
 import TestTitleClient from './TestTitleClient';
+import RecruitmentStatusToggle from './RecruitmentStatusToggle';
 
 import Logger from '@/lib/logger';
 import { StatsResponseSchema } from '@/hooks/dashboard/quries/useStatsQuery';
@@ -41,10 +41,7 @@ export default async function AdminDashboardPage({ params }: { params: Promise<{
     <div className="flex flex-col w-full max-w-[854px] mb-40">
       <section className="flex justify-between items-center w-full">
         <TestTitleClient id={id} />
-        <div className="flex gap-2 items-center">
-          <p className="text-base font-bold text-Dark-Gray">모집중</p>
-          <Toggle checked={true} />
-        </div>
+        <RecruitmentStatusToggle postId={id} />
       </section>
       <section className="flex flex-col items-start gap-3 mt-5">
         <h3 className="text-base font-bold text-Dark-Gray">베타서비스 분석</h3>
