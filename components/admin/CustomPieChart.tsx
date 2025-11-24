@@ -28,6 +28,8 @@ const STATUS_COLORS: Record<string, string> = {
 const REWARD_COLORS: Record<string, string> = {
   미지급: '#DBEAFE', // bg-blue-100
   '지급 완료': '#2563EB', // bg-blue-600
+  지급대기: '#DBEAFE', // bg-blue-100
+  지급완료: '#2563EB', // bg-blue-600
   PENDING: '#DBEAFE',
   PAID: '#2563EB',
 };
@@ -37,6 +39,8 @@ const LABEL_MAP: Record<string, string> = {
   APPROVED: '진행중',
   COMPLETED: '완료',
   PAID: '지급완료',
+  미지급: '지급대기',
+  '지급 완료': '지급완료',
 };
 
 const CustomTooltip = ({ active, payload }: any) => {
