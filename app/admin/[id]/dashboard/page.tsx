@@ -5,7 +5,7 @@ import StatsCardClientWrapper from './StatsCardClientWrapper';
 import ChartToggleWrapper from './ChartToggleWrapper';
 import TestTitleClient from './TestTitleClient';
 import RecruitmentStatusToggle from './RecruitmentStatusToggle';
-import { getStats, getBarChart, getPieChart } from './dashboard-api';
+import { getStats, getBarChart, getPieChart, getLineChart } from './dashboard-api';
 import QuickActionSheet from '@/components/admin/QuickActionSheet';
 import Logger from '@/lib/logger';
 
@@ -38,6 +38,15 @@ export default async function AdminDashboardPage({ params }: { params: Promise<{
     });
   } catch (err) {
     Logger.error('PieChart prefetch 실패:', err);
+  }
+
+  try {
+    await queryClient.prefetchQuery({
+      queryKey: queryKeys.dashboard.lineChart(id),
+      queryFn: () => getLineChart(id),
+    });
+  } catch (err) {
+    Logger.error('LineChart prefetch 실패:', err);
   }
 
   const dehydratedState = dehydrate(queryClient);
