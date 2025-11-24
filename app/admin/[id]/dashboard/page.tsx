@@ -50,7 +50,6 @@ export default async function AdminDashboardPage({ params }: { params: Promise<{
         </HydrationBoundary>
       </section>
       <section className="flex flex-col items-start gap-3 mt-10">
-        <h3 className="text-base font-bold text-Dark-Gray">데이터 분석 그래프</h3>
         <div className="w-full">
           <HydrationBoundary state={dehydratedState}>
             <BarChartClientWrapper postId={id} />
