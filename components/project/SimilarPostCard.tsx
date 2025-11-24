@@ -72,7 +72,7 @@ export function PostCardSkeleton({ className }: PostCardSkeletonProps) {
   return (
     <div
       className={cn(
-        'relative bg-white min-w-[234px] rounded-sm px-3 py-[14.5px] flex flex-col gap-2 shadow-[0_0_10px_rgba(0,0,0,0.1)]',
+        'relative bg-white min-w-[234px] rounded-sm px-3 py-[14.5px] flex flex-col gap-2 [0_0_10px_rgba(0,0,0,0.1)]',
         className,
       )}
     >

@@ -88,6 +88,10 @@
     line-height: var(--line-height-normal);
     letter-spacing: var(--letter-spacing-tight);
   }
+
+  .shadow-card {
+    box-shadow: 0 0 10px 0 rgba(26, 30, 39, 0.08);
+  }
 }
 
 @theme inline {

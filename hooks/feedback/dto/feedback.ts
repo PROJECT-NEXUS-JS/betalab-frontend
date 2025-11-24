@@ -1,11 +1,9 @@
 import { z } from 'zod';
 import { BaseModelSchema } from '@/types/models/base-model';
 
-// TODO: 서버와 통일 필요
-const BugTypeEnum = z.enum([
+export const BugTypeEnum = z.enum([
   'UI_UX_ERROR',
   'FUNCTIONAL_ERROR',
-  'RESPONSE_SPEED',
   'DATA_INPUT_ERROR',
   'CRASH',
   'TYPO',
@@ -13,14 +11,18 @@ const BugTypeEnum = z.enum([
   'OTHER',
 ]);
 
-const MostInconvenientEnum = z.enum([
+export type BugType = z.infer<typeof BugTypeEnum>;
+
+export const MostInconvenientEnum = z.enum([
   'UI_UX',
   'SPEED',
   'FUNCTION',
-  'TEXT_GUIDE',
-  'LOADING',
+  'TEXT',
+  'GUIDE',
   'OTHER',
 ]);
+
+export type MostInconvenientType = z.infer<typeof MostInconvenientEnum>;
 
 // ========== 요청 ===========
 export const FeedbackRequestSchema = z.object({
@@ -83,4 +85,3 @@ export const FeedbackSchema = z.object({
 });
 
 export const FeedbackDetailResponseSchema = BaseModelSchema(FeedbackSchema);
-
