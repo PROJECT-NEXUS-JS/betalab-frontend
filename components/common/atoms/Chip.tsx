@@ -75,7 +75,12 @@ export default function Chip({
     >
       {children}
       {showArrowIcon && (
-        <ArrowDown className="size-6 text-White group-hover:rotate-180 duration-200" />
+        <ArrowDown
+          className={cn(
+            'size-6 group-hover:rotate-180 duration-200',
+            variant === 'solid' ? 'text-Dark-Gray' : 'text-White',
+          )}
+        />
       )}
     </button>
   );

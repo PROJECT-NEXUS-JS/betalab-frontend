@@ -13,19 +13,24 @@ import { queryKeys } from '@/constants/query-keys';
 import Chip from '@/components/common/atoms/Chip';
 
 export default function MyOngoingContent() {
+  const router = useRouter();
+
+  // 정렬 기준
+  const SORT_OPTIONS: { label: string; value: string }[] = [
+    { label: '최신순', value: 'DESC' },
+    { label: '오래된순', value: 'ASC' },
+  ];
+
   const [currentPage, setCurrentPage] = useState(0);
+  const [sortOption, setSortOption] = useState('DESC'); // 기본값: 최신순
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   const { data: myApplicationsData, isLoading } = useMyApplicationsQuery({
     status: 'APPROVED',
     page: currentPage,
     size: 9,
-    sort: ['']
+    sort: [sortOption],
   });
-  const router = useRouter();
-
-  // 정렬 기준
-  const SORT = {
-
-  }
 
   const applicationsNeedingPostData =
     myApplicationsData?.data?.content.filter(app => !app.post && app.postId) ?? [];
@@ -55,15 +60,47 @@ export default function MyOngoingContent() {
     router.push(`/project/${postId}`);
   };
 
+  // 정렬 변경 핸들러
+  const handleSortChange = (value: string) => {
+    if (sortOption !== value) {
+      setSortOption(value);
+      setCurrentPage(0); // 정렬 변경 시 1페이지로 초기화
+    }
+    setIsDropdownOpen(false);
+  };
+  // 현재 선택된 정렬 라벨
+  const currentSortLabel = SORT_OPTIONS.find(opt => opt.value === sortOption)?.label;
+
   return (
-    <>
+    <div className="relative">
       {/* 필터 */}
-      <div className="fixed right-16 mt-6">
-        <Chip variant="default" size="sm">
-          최신순
-        </Chip>
-        <div>
-          
+      <div className="absolute right-0 -top-6">
+        <div className="relative">
+          {/* 드롭다운 트리거 버튼 */}
+          <Chip
+            variant="solid"
+            size="lg"
+            onClick={() => setIsDropdownOpen(prev => !prev)}
+            active={isDropdownOpen}
+          >
+            {currentSortLabel}
+          </Chip>
+          {/* 드롭다운 메뉴 */}
+          {isDropdownOpen && (
+            <div className="absolute shadow-card right-0 mt-[9px] w-[108px] bg-white rounded-sm flex flex-col">
+              {SORT_OPTIONS.map(option => (
+                <button
+                  key={option.value}
+                  onClick={() => handleSortChange(option.value)}
+                  className={`p-2 text-[10px] hover:bg-Gray-50 cursor-pointer text-left text-Dark-Gray ${
+                    sortOption === option.value && 'font-bold'
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
       <div className="flex flex-col mt-10">
@@ -116,6 +153,10 @@ export default function MyOngoingContent() {
                 );
               })
               .filter(Boolean)
+            //               <div className="        'relative cursor-pointer bg-white min-w-[234px] group rounded-sm px-3 py-[14.5px] flex flex-col gap-2 shadow-[0_0_10px_rgba(0,0,0,0.1)]',
+            // ">
+            //                 <
+            //               </div>
           )}
         </div>
 
@@ -129,6 +170,6 @@ export default function MyOngoingContent() {
             />
           )}
       </div>
-    </>
+    </div>
   );
 }
