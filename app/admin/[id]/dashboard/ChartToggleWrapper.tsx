@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { HydrationBoundary } from '@tanstack/react-query';
 import BarChartClientWrapper from './BarChartClientWrapper';
+import PieChartClientWrapper from './PieChartClientWrapper';
 
 type ChartType = 'bar' | 'donut' | 'line';
 
@@ -33,9 +34,7 @@ export default function ChartToggleWrapper({ postId, dehydratedState }: ChartTog
           {chartType === 'bar' ? (
             <BarChartClientWrapper postId={postId} />
           ) : chartType === 'donut' ? (
-            <div className="w-full p-12 rounded-sm bg-White shadow-[0_0_10px_0_rgba(26,30,39,0.08)] flex items-center justify-center min-h-[400px]">
-              <div className="text-center text-Gray-300">원형그래프</div>
-            </div>
+            <PieChartClientWrapper postId={postId} />
           ) : (
             <div className="w-full p-12 rounded-sm bg-White shadow-[0_0_10px_0_rgba(26,30,39,0.08)] flex items-center justify-center min-h-[400px]">
               <div className="text-center text-Gray-300">선형그래프</div>
