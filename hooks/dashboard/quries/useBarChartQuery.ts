@@ -9,7 +9,7 @@ import { queryKeys } from '@/constants/query-keys';
 export const BarChartResponseSchema = BaseModelSchema(BarChartSchema);
 export type BarChartResponseModel = z.infer<typeof BarChartResponseSchema>;
 
-const BASE_PATH = (postId: number) => `v1/users/dashboard/${postId}/stats`;
+const BASE_PATH = (postId: number) => `/v1/users/dashboard/${postId}/analytics/bar-chart`;
 
 export const getBarChart = async (postId: number) => {
   try {

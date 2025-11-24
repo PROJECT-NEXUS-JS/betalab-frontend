@@ -4,7 +4,7 @@ import { dehydrate, QueryClient, HydrationBoundary } from '@tanstack/react-query
 import { queryKeys } from '@/constants/query-keys';
 
 import StatsCardClientWrapper from './StatsCardClientWrapper';
-import BarChartClientWrapper from './BarChartClientWrapper';
+import ChartToggleWrapper from './ChartToggleWrapper';
 import TestTitleClient from './TestTitleClient';
 import RecruitmentStatusToggle from './RecruitmentStatusToggle';
 
@@ -50,12 +50,7 @@ export default async function AdminDashboardPage({ params }: { params: Promise<{
         </HydrationBoundary>
       </section>
       <section className="flex flex-col items-start gap-3 mt-10">
-        <h3 className="text-base font-bold text-Dark-Gray">데이터 분석 그래프</h3>
-        <div className="w-full">
-          <HydrationBoundary state={dehydratedState}>
-            <BarChartClientWrapper postId={id} />
-          </HydrationBoundary>
-        </div>
+        <ChartToggleWrapper postId={id} dehydratedState={dehydratedState} />
       </section>
       <HydrationBoundary state={dehydratedState}>
         <QuickActionSheet postId={id} />
