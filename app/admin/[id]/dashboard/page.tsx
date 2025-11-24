@@ -11,28 +11,29 @@ import TestTitleClient from './TestTitleClient';
 import Logger from '@/lib/logger';
 import { StatsResponseSchema } from '@/hooks/dashboard/quries/useStatsQuery';
 import { BarChartResponseSchema } from '@/hooks/dashboard/quries/useBarChartQuery';
-import { ApplicationResponseSchema } from '@/hooks/dashboard/quries/useApplicationQuery';
-
 import QuickActionSheet from '@/components/admin/QuickActionSheet';
 
 export default async function AdminDashboardPage({ params }: { params: Promise<{ id: number }> }) {
   const { id } = await params;
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: queryKeys.dashboard.stats(id),
-    queryFn: () => getStats(id),
-  });
+  try {
+    await queryClient.prefetchQuery({
+      queryKey: queryKeys.dashboard.stats(id),
+      queryFn: () => getStats(id),
+    });
+  } catch (err) {
+    Logger.error('Stats prefetch 실패:', err);
+  }
 
-  await queryClient.prefetchQuery({
-    queryKey: queryKeys.dashboard.barChart(id),
-    queryFn: () => getBarChart(id),
-  });
-
-  await queryClient.prefetchQuery({
-    queryKey: queryKeys.dashboard.application(id, 'PENDING'),
-    queryFn: () => getApplication(id, 'PENDING'),
-  });
+  try {
+    await queryClient.prefetchQuery({
+      queryKey: queryKeys.dashboard.barChart(id),
+      queryFn: () => getBarChart(id),
+    });
+  } catch (err) {
+    Logger.error('BarChart prefetch 실패:', err);
+  }
 
   const dehydratedState = dehydrate(queryClient);
 
@@ -69,13 +70,28 @@ export default async function AdminDashboardPage({ params }: { params: Promise<{
 async function getStats(postId: number) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
+  const refreshToken = cookieStore.get('refreshToken')?.value;
+
+  if (!accessToken || !refreshToken) {
+    Logger.error('토큰이 없습니다:', {
+      hasAccessToken: !!accessToken,
+      hasRefreshToken: !!refreshToken,
+    });
+    throw new Error('Authentication required');
+  }
+
   try {
-    const response = await serverInstance(accessToken).get(`/v1/users/dashboard/${postId}/stats`);
+    const response = await serverInstance(accessToken, refreshToken).get(
+      `/v1/users/dashboard/${postId}/stats`,
+    );
     const parsedData = StatsResponseSchema.parse(response.data);
     Logger.log('ProjectData 파싱 성공:', parsedData);
     return response.data;
-  } catch (err) {
+  } catch (err: any) {
     Logger.error('ProjectData 파싱 실패:', err);
+    if (err.response?.status === 401) {
+      throw new Error('Unauthorized');
+    }
     throw err;
   }
 }
@@ -83,33 +99,28 @@ async function getStats(postId: number) {
 async function getBarChart(postId: number) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
+  const refreshToken = cookieStore.get('refreshToken')?.value;
+
+  if (!accessToken || !refreshToken) {
+    Logger.error('토큰이 없습니다:', {
+      hasAccessToken: !!accessToken,
+      hasRefreshToken: !!refreshToken,
+    });
+    throw new Error('Authentication required');
+  }
 
   try {
-    const response = await serverInstance(accessToken).get(
+    const response = await serverInstance(accessToken, refreshToken).get(
       `/v1/users/dashboard/${postId}/analytics/bar-chart`,
     );
     const parsedData = BarChartResponseSchema.parse(response.data);
     Logger.log('BarChartData 파싱 성공:', parsedData);
     return response.data;
-  } catch (err) {
+  } catch (err: any) {
     Logger.error('BarChartData 파싱 실패:', err);
-    throw err;
-  }
-}
-
-async function getApplication(postId: number, status: string) {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get('accessToken')?.value;
-
-  try {
-    const response = await serverInstance(accessToken).get(
-      `/v1/users/posts/${postId}/applications/${status}`,
-    );
-    const parsedData = ApplicationResponseSchema.parse(response.data);
-    Logger.log('ApplicationData 파싱 성공:', parsedData);
-    return response.data;
-  } catch (err) {
-    Logger.error('ApplicationData 파싱 실패:', err);
+    if (err.response?.status === 401) {
+      throw new Error('Unauthorized');
+    }
     throw err;
   }
 }
