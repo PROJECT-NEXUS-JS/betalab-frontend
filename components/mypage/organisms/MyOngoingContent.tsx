@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { useMyApplicationsQuery } from '@/hooks/posts/queries/useMyApplicationsQuery';
 import PostCard, { PostCardSkeleton } from '@/components/category/molecules/PostCard';
@@ -11,6 +12,7 @@ import { TestCardType } from '@/types/models/testCard';
 import { getPostDetail } from '@/hooks/posts/queries/usePostDetailQuery';
 import { queryKeys } from '@/constants/query-keys';
 import Chip from '@/components/common/atoms/Chip';
+import Button from '@/components/common/atoms/Button';
 
 export default function MyOngoingContent() {
   const router = useRouter();
@@ -121,42 +123,83 @@ export default function MyOngoingContent() {
               }}
             />
           ) : (
-            myApplicationsData.data.content
-              .map(application => {
-                const post =
-                  application.post ??
-                  (application.postId ? postDataMap.get(application.postId) : null);
+            <>
+              {myApplicationsData.data.content
+                .map(application => {
+                  const post =
+                    application.post ??
+                    (application.postId ? postDataMap.get(application.postId) : null);
 
-                if (!post) return null;
+                  if (!post) return null;
 
-                const postCardData: TestCardType = {
-                  id: post.id,
-                  title: post.title,
-                  serviceSummary: post.serviceSummary,
-                  thumbnailUrl: post.thumbnailUrl ?? null,
-                  mainCategories: post.mainCategories,
-                  platformCategories: post.platformCategories,
-                  genreCategories: post.genreCategories,
-                  schedule: post.schedule,
-                  reward: post.reward
-                    ? {
-                        rewardType: post.reward.rewardType,
-                        rewardDescription: post.reward.rewardDescription,
-                      }
-                    : undefined,
-                };
+                  const postCardData: TestCardType = {
+                    id: post.id,
+                    title: post.title,
+                    serviceSummary: post.serviceSummary,
+                    thumbnailUrl: post.thumbnailUrl ?? null,
+                    mainCategories: post.mainCategories,
+                    platformCategories: post.platformCategories,
+                    genreCategories: post.genreCategories,
+                    schedule: post.schedule,
+                    reward: post.reward
+                      ? {
+                          rewardType: post.reward.rewardType,
+                          rewardDescription: post.reward.rewardDescription,
+                        }
+                      : undefined,
+                  };
 
-                return (
-                  <div key={post.id} onClick={() => handlePostClick(post.id)}>
-                    <PostCard post={postCardData} />
-                  </div>
-                );
-              })
-              .filter(Boolean)
-            //               <div className="        'relative cursor-pointer bg-white min-w-[234px] group rounded-sm px-3 py-[14.5px] flex flex-col gap-2 shadow-[0_0_10px_rgba(0,0,0,0.1)]',
-            // ">
-            //                 <
-            //               </div>
+                  return (
+                    <div
+                      key={post.id}
+                      className={cn(
+                        'relative group w-[258px] h-[297px] rounded-sm overflow-hidden',
+                        'transition-shadow duration-300 hover:shadow-card-hover',
+                      )}
+                    >
+                      <PostCard post={postCardData} />
+
+                      <div
+                        className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-y-3 
+                                bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                        onClick={event => event.stopPropagation()}
+                      >
+                        <Button
+                          State="Primary"
+                          Size="xxl"
+                          label="완료하기"
+                          className="w-40"
+                          onClick={() => {
+                            router.push(`/project/${post.id}/feedback`);
+                          }}
+                        />
+                        <Button
+                          State="Focused"
+                          Size="xxl"
+                          label="상세 페이지로 이동"
+                          className="w-40 text-nowrap"
+                          onClick={() => {
+                            router.push(`/project/${post.id}`);
+                          }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })
+                .filter(Boolean)}
+
+              {/* 리스트의 마지막 요소 카드 */}
+              <div className="bg-Gray-50 w-[258px] h-[297px] rounded-sm flex flex-col justify-center items-center gap-5 shadow-card">
+                <p className="text-Light-Gray font-bold text-sm">당신을 기다리는 새로운 테스트!</p>
+                <Button
+                  State={'Default'}
+                  Size={'md'}
+                  label={'테스트 보러가기'}
+                  className="text-Dark-Gray font-bold text-[10px]"
+                  onClick={() => router.push('/')}
+                ></Button>
+              </div>
+            </>
           )}
         </div>
 
