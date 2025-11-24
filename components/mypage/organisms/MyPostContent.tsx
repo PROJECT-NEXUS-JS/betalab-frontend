@@ -59,7 +59,7 @@ export default function MyPostContent() {
                 durationTime: '',
               },
               reward: {
-                rewardType: '',
+                rewardType: 'NONE',
                 rewardDescription: 'NONE',
               },
             };

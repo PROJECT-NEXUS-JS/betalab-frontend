@@ -77,6 +77,9 @@ export default function SurveyPage() {
     const birthDate = localStorage.getItem('birthDate');
 
     const formData = {
+      // 임시 하드 코딩
+      gender: 'FEMALE',
+      birthDate: '2002-08-14',
       job: inputValue,
       interests: filteredInterests,
       ...(gender && { gender }),

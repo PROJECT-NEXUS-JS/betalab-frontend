@@ -3,6 +3,7 @@ import ProfileCard from '@/components/mypage/atoms/ProfileCard';
 import TestCard from '@/components/mypage/atoms/TestCard';
 import Sidebar from '@/components/mypage/organisms/Sidebar';
 import MainContent from '@/components/mypage/organisms/MainContent';
+import MyOngoingContent from '@/components/mypage/organisms/MyOngoingContent';
 import MyPostContent from '@/components/mypage/organisms/MyPostContent';
 import MyParticipateContent from '@/components/mypage/organisms/MyParticipateContent';
 import Breadcrumb from '@/components/common/atoms/Breadcrumb';
@@ -36,6 +37,7 @@ export default function MyPage() {
   };
 
   const tabComponents = {
+    'ongoing-tests': <MyOngoingContent />,
     'posted-tests': <MyPostContent />,
     'participated-tests': <MyParticipateContent />,
     'bookmarked-tests': <MyBookmarkContent />,
@@ -67,6 +69,9 @@ export default function MyPage() {
                 nickname: profile.name,
                 avatar: profile.profileImageUrl || undefined,
                 affiliation: profile.affiliation || '소속 없음',
+                // 임시
+                ongoingCount: 1,
+                // ongoingCount: profile.testsParticipating,
                 postedCount: profile.testsUploaded,
                 participatingCount: profile.testsParticipating,
               };
@@ -84,6 +89,7 @@ export default function MyPage() {
                   />
 
                   <Sidebar
+                    ongoingCount={userData.ongoingCount}
                     postedCount={userData.postedCount}
                     participatingCount={userData.participatingCount}
                     onMenuClick={handleMenuClick}
@@ -101,15 +107,17 @@ export default function MyPage() {
             {activeTab && <Breadcrumb className="mb-2" items={getBreadcrumbItems(activeTab)} />}
             <h1 className="text-subtitle-01 font-semibold text-Black">대시보드</h1>
           </div>
-          <Button
-            label="테스트 등록하기"
-            Size="xl"
-            State="Primary"
-            className="cursor-pointer"
-            onClick={() => {
-              router.push('/test-add');
-            }}
-          />
+          {activeTab !== 'ongoing-tests' && (
+            <Button
+              label="테스트 등록하기"
+              Size="xl"
+              State="Primary"
+              className="cursor-pointer"
+              onClick={() => {
+                router.push('/test-add');
+              }}
+            />
+          )}
         </div>
         {renderMainContent()}
       </div>

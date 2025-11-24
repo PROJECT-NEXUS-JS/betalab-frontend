@@ -3,6 +3,7 @@ export const MY_PAGE_MENUS = {
   ACTIVITY: {
     title: '내 활동',
     items: [
+      { key: 'ongoing-tests', title: '진행 중인 테스트', countKey: 'ongoingCount' },
       { key: 'posted-tests', title: '내가 올린 테스트', countKey: 'postedCount' },
       { key: 'participated-tests', title: '내가 참여한 테스트', countKey: 'participatingCount' },
     ],
@@ -27,6 +28,7 @@ export const MY_PAGE_MENUS = {
 
 // 메뉴 키 타입
 export type MyPageMenuKey =
+  | 'ongoing-tests'
   | 'posted-tests'
   | 'participated-tests'
   | 'bookmarked-tests'

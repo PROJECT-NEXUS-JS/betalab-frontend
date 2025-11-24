@@ -16,19 +16,19 @@ export default async function FeebackPage({
     feedbackId: string;
   }>;
 }) {
-  // const { feedbackId } = await params;
-  // const cookieStore = await cookies();
-  // const accessToken = cookieStore.get('accessToken')?.value;
-  // const refreshToken = cookieStore.get('refreshToken')?.value;
+  const { feedbackId } = await params;
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get('accessToken')?.value;
+  const refreshToken = cookieStore.get('refreshToken')?.value;
 
-  // const queryClient = new QueryClient();
+  const queryClient = new QueryClient();
 
-  // await queryClient.prefetchQuery({
-  //   queryKey: queryKeys.feedback.detail(Number(feedbackId)),
-  //   queryFn: () => fetchFeedbackData(Number(feedbackId), accessToken, refreshToken),
-  // });
+  await queryClient.prefetchQuery({
+    queryKey: queryKeys.feedback.detail(Number(feedbackId)),
+    queryFn: () => fetchFeedbackData(Number(feedbackId), accessToken, refreshToken),
+  });
 
-  // const dehydratedState = dehydrate(queryClient);
+  const dehydratedState = dehydrate(queryClient);
 
   // 임시 변수
   const admin_profile = {
@@ -115,9 +115,9 @@ export default async function FeebackPage({
         </div>
       </section>
       {/* 피드백 폼 */}
-      {/* <FeedbackForm feedbackId={Number(feedbackId)}/> */}
-      <FeedbackForm />
+      <FeedbackForm feedbackId={Number(feedbackId)}/>
     </main>
+
     // </HydrationBoundary>
   );
 }

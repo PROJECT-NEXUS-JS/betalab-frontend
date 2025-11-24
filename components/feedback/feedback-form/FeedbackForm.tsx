@@ -1,10 +1,17 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+
+import { Modal } from '@/components/category/molecules/Modal';
 import Button from '@/components/common/atoms/Button';
 import StarRating from './StarRating';
 import Chip from '@/components/common/atoms/Chip';
 import ToastPortal from '@/components/common/molecules/ToastPortal';
 import type { ToastProps } from '@/components/common/atoms/Toast';
+import TextAreaSection from './TextAreaSection';
+import { cn } from '@/lib/utils';
 import {
   FeedbackRequestType,
   FeedbackRequestSchema,
@@ -16,10 +23,6 @@ import useSaveFeedbackDraftMutation from '@/hooks/feedback/mutations/useSaveFeed
 import useSubmitFeedbackMutation from '@/hooks/feedback/mutations/useSubmitFeedbackMutation';
 
 import { INCONVENIENT_LABELS, BUG_TYPE_LABELS, HAS_BUGS_OPTIONS } from '@/constants/feedback';
-import Image from 'next/image';
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import TextAreaSection from './TextAreaSection';
-import { cn } from '@/lib/utils';
 
 const chunkArray = <T,>(arr: T[], size: number) => {
   const result: T[][] = [];
@@ -39,6 +42,8 @@ const CardHeader = ({ title }: { title: string }) => {
 };
 
 const FeedbackForm = ({ feedbackId }: { feedbackId: number }) => {
+  const router = useRouter();
+
   // --- 스타일 클래스 ---
   // 질문 카드 스타일 클래스
   const cardClass = 'px-3 py-5 shadow-card flex flex-col gap-y-5';
@@ -73,9 +78,10 @@ const FeedbackForm = ({ feedbackId }: { feedbackId: number }) => {
     additionalComments: '',
   });
 
+  // 유효성 검사 통과 여부
   const [isValid, setIsValid] = useState(false);
+  // 토스트
   type ToastStyle = ToastProps['style'];
-
   const [toast, setToast] = useState<{
     show: boolean;
     message: string;
@@ -85,6 +91,8 @@ const FeedbackForm = ({ feedbackId }: { feedbackId: number }) => {
     message: '',
     style: 'default',
   });
+  // 제출 성공 모달
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
 
   // --- 유효성 검사 ---
   // 상태 변경 시마다 유효성 검사 (Zod 활용)
@@ -118,7 +126,11 @@ const FeedbackForm = ({ feedbackId }: { feedbackId: number }) => {
       // Mac(Meta) 혹은 Windows(Ctrl) + S
       if ((e.metaKey || e.ctrlKey) && (e.key === 's' || e.key === 'S')) {
         e.preventDefault(); // 브라우저 저장 팝업 방지
-        handleSaveDraft();
+        if (isValid) {
+          handleSubmit();
+        } else {
+          handleSaveDraft();
+        }
       }
     };
 
@@ -183,11 +195,8 @@ const FeedbackForm = ({ feedbackId }: { feedbackId: number }) => {
     }
     submit(formData, {
       onSuccess: () => {
-        setToast({
-          show: true,
-          message: '성공적으로 제출되었습니다!',
-          style: 'default',
-        });
+        // 성공 모달 열기
+        setSuccessModalOpen(true);
       },
       onError: error => {
         setToast({
@@ -369,6 +378,29 @@ const FeedbackForm = ({ feedbackId }: { feedbackId: number }) => {
         onClose={() => setToast(prev => ({ ...prev, show: false }))}
         style={toast.style}
         message={toast.message}
+      />
+      {/* 모달 영역 */}
+      <Modal
+        title="성공적으로 테스트를 완료했어요!"
+        description="소중한 의견이 잘 전달되었어요. 시간을 내어주셔서 감사합니다."
+        isOpen={successModalOpen}
+        onClose={() => {
+          setSuccessModalOpen(false);
+          // 진행 중인 테스트
+          router.push('');
+        }}
+        btnLabel1="완료한 테스트 보기"
+        btnLabel2="남은 테스트 완료하기"
+        btnOnClick1={() => {
+          setSuccessModalOpen(false);
+          // 내가 참여한 테스트
+          router.push('/mypage?tab=participated-tests');
+        }}
+        btnOnClick2={() => {
+          setSuccessModalOpen(false);
+          // 진행 중인 테스트
+          router.push('');
+        }}
       />
     </>
   );
