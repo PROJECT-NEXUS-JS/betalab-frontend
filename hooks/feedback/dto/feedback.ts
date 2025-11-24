@@ -5,19 +5,20 @@ import { BaseModelSchema } from '@/types/models/base-model';
 const BugTypeEnum = z.enum([
   'UI_UX_ERROR',
   'FUNCTIONAL_ERROR',
-  'NOTIFICATION_PROBLEM',
+  'RESPONSE_SPEED',
   'DATA_INPUT_ERROR',
-  'CRASH_OR_FORCED_EXIT',
-  'TEXT_TYPO',
+  'CRASH',
+  'TYPO',
+  'NOTIFICATION_ISSUE',
   'OTHER',
 ]);
 
 const MostInconvenientEnum = z.enum([
   'UI_UX',
   'SPEED',
-  'FUNCTIONAL_ERROR',
-  'TEXT',
-  'GUIDE',
+  'FUNCTION',
+  'TEXT_GUIDE',
+  'LOADING',
   'OTHER',
 ]);
 
