@@ -42,6 +42,7 @@ export const transformToApplyCardProps = (
     conditions: conditions,
     attendees: data.currentParticipants,
     scraped: false,
+    status: data.status,
   };
 
   return transformedData;
