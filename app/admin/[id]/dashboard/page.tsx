@@ -11,6 +11,7 @@ import RecruitmentStatusToggle from './RecruitmentStatusToggle';
 import Logger from '@/lib/logger';
 import { StatsResponseSchema } from '@/hooks/dashboard/quries/useStatsQuery';
 import { BarChartResponseSchema } from '@/hooks/dashboard/quries/useBarChartQuery';
+import { PieChartResponseSchema } from '@/hooks/dashboard/quries/usePieChartQuery';
 import QuickActionSheet from '@/components/admin/QuickActionSheet';
 
 export default async function AdminDashboardPage({ params }: { params: Promise<{ id: number }> }) {
@@ -33,6 +34,15 @@ export default async function AdminDashboardPage({ params }: { params: Promise<{
     });
   } catch (err) {
     Logger.error('BarChart prefetch 실패:', err);
+  }
+
+  try {
+    await queryClient.prefetchQuery({
+      queryKey: queryKeys.dashboard.pieChart(id),
+      queryFn: () => getPieChart(id),
+    });
+  } catch (err) {
+    Logger.error('PieChart prefetch 실패:', err);
   }
 
   const dehydratedState = dehydrate(queryClient);
@@ -110,6 +120,35 @@ async function getBarChart(postId: number) {
     return response.data;
   } catch (err: any) {
     Logger.error('BarChartData 파싱 실패:', err);
+    if (err.response?.status === 401) {
+      throw new Error('Unauthorized');
+    }
+    throw err;
+  }
+}
+
+async function getPieChart(postId: number) {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get('accessToken')?.value;
+  const refreshToken = cookieStore.get('refreshToken')?.value;
+
+  if (!accessToken || !refreshToken) {
+    Logger.error('토큰이 없습니다:', {
+      hasAccessToken: !!accessToken,
+      hasRefreshToken: !!refreshToken,
+    });
+    throw new Error('Authentication required');
+  }
+
+  try {
+    const response = await serverInstance(accessToken, refreshToken).get(
+      `/v1/users/dashboard/${postId}/analytics/pie-chart`,
+    );
+    const parsedData = PieChartResponseSchema.parse(response.data);
+    Logger.log('PieChartData 파싱 성공:', parsedData);
+    return response.data;
+  } catch (err: any) {
+    Logger.error('PieChartData 파싱 실패:', err);
     if (err.response?.status === 401) {
       throw new Error('Unauthorized');
     }
