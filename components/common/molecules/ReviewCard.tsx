@@ -17,6 +17,11 @@ export interface ReviewCardProps {
   state: 'default' | 'stroke';
   showReplyButton?: boolean;
   replyOnClick?: () => void;
+  replyContent?: string | null;
+  isReplied?: boolean;
+  onReplySubmit?: (content: string) => void;
+  reviewId?: number;
+  onClick?: () => void;
 }
 
 export default function ReviewCard({
@@ -27,10 +32,18 @@ export default function ReviewCard({
   state = 'default',
   showReplyButton = false,
   replyOnClick = () => {},
+  replyContent,
+  isReplied = false,
+  onReplySubmit,
+  reviewId,
+  onClick,
 }: ReviewCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showMoreButton, setShowMoreButton] = useState(false);
+  const [isReplying, setIsReplying] = useState(false);
+  const [replyText, setReplyText] = useState('');
   const contentRef = useRef<HTMLParagraphElement>(null);
+  const replyTextareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (contentRef.current) {
@@ -45,12 +58,34 @@ export default function ReviewCard({
     setIsExpanded(!isExpanded);
   };
 
+  const handleReplyClick = () => {
+    if (isReplied) return;
+    setIsReplying(true);
+    setTimeout(() => {
+      replyTextareaRef.current?.focus();
+    }, 0);
+  };
+
+  const handleReplySubmit = () => {
+    if (!replyText.trim() || !onReplySubmit) return;
+    onReplySubmit(replyText.trim());
+    setReplyText('');
+    setIsReplying(false);
+  };
+
+  const handleReplyCancel = () => {
+    setReplyText('');
+    setIsReplying(false);
+  };
+
   return (
     <div
       className={cn(
         'flex  gap-2 p-3 bg-White rounded-sm shadow-[0_0_10px_0_rgba(26,30,39,0.08)]',
         state === 'default' ? 'w-[854px]' : 'w-[436px]',
+        onClick && 'cursor-pointer hover:shadow-[0_0_15px_0_rgba(26,30,39,0.12)] transition-shadow',
       )}
+      onClick={onClick}
     >
       <div className="flex items-start">
         {author.imageUrl ? (
@@ -87,12 +122,30 @@ export default function ReviewCard({
                   />
                 ))}
               </div>
-              <p className="text-xs text-gray-500">{date.toLocaleDateString()}</p>
+              <p className="text-xs text-gray-400 font-bold">
+                {typeof date === 'string'
+                  ? new Date(date)
+                      .toLocaleDateString('ko-KR')
+                      .replace(/\./g, '/')
+                      .replace(/\s/g, '')
+                      .slice(0, -1)
+                  : date
+                      .toLocaleDateString('ko-KR')
+                      .replace(/\./g, '/')
+                      .replace(/\s/g, '')
+                      .slice(0, -1)}
+              </p>
             </div>
             <h4 className="flex text-xs font-bold text-Light-Gray">{author.name}</h4>
           </div>
           {showReplyButton && (
-            <Button State="Sub" Size="lg" onClick={replyOnClick} label="답변하기" />
+            <>
+              {isReplied ? (
+                <Button State="Disabled" Size="lg" onClick={onClick} label="답변완료" />
+              ) : (
+                <Button State="Sub" Size="lg" onClick={onClick} label="답변하기" />
+              )}
+            </>
           )}
         </section>
         <section>
