@@ -44,7 +44,7 @@ export default function ApplyCard({
   const endDay = endDate.getDate();
 
   const viewConditions = viewMore ? conditions : conditions.slice(0, 3);
-
+  
   return (
     <div className="w-[258px] h-max p-3 flex flex-col flex-start gap-5 bg-White rounded-sm shadow-[0_0_10px_0_rgba(26,30,39,0.08)]">
       <div className="flex flex-col gap-4">
@@ -134,7 +134,7 @@ export default function ApplyCard({
               State="Primary"
               Size="lg"
               // 진행중이면 피드백 페이지로 이동하기 위해 완료하기 띄움
-              label={status === 'APPROVED' ? '완료하기' : '신청하기'}
+              label={status === 'ACTIVE' ? '완료하기' : '신청하기'}
               onClick={registerClicked}
               className="w-full flex-1"
             />

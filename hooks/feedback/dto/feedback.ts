@@ -51,9 +51,12 @@ export const FeedbackRequestSchema = z
     screenshotUrls: z.array(z.string()).optional(), // TODO: 입력 부분 없음
 
     // 서술형 항목
-    goodPoints: z.string().optional(), // 좋았던 점
-    improvementSuggestions: z.string().optional(), // 개선 제안
-    additionalComments: z.string().optional(), // 추가 의견
+    // goodPoints: z.string().optional(), // 좋았던 점
+    // improvementSuggestions: z.string().optional(), // 개선 제안
+    // additionalComments: z.string().optional(), // 추가 의견
+    goodPoints: z.string().min(1), // 좋았던 점
+    improvementSuggestions: z.string().min(1), // 개선 제안
+    additionalComments: z.string().min(1), // 추가 의견
   })
   .refine(
     data => {

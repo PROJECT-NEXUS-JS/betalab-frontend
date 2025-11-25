@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/constants/query-keys';
 import { FeedbackRequestType } from '../../feedback/dto/feedback';
 
-const BASE_PATH = `/v1/feedbacks/draft`;
+const BASE_PATH = `/v1/feedbacks`;
 
 const postFeedback = (data: FeedbackRequestType) => {
   return instance.post(BASE_PATH, data);

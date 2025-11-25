@@ -104,18 +104,29 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
   // --- 기능 ---
   // 임시 저장
   const handleSaveDraft = useCallback(() => {
-    console.log('임시 저장 시도:', formData);
+    // 임시: 임시 저장도 유효성 확인
+    const result = FeedbackRequestSchema.safeParse(formData);
+    if (!isValid) {
+      setToast({
+        show: true,
+        message:
+          result?.error?.issues[0].message ?? `앗! 빠진 항목이 있어요.\n내용을 확인해주세요.`,
+        style: 'error',
+      });
+      return;
+    }
+
     saveDraft(formData, {
       onSuccess: () => {
         setToast({ show: true, message: '임시 저장되었습니다.', style: 'default' });
       },
       onError: error => {
         console.error('임시 저장 실패', error);
-        setToast({
-          show: true,
-          message: `임시 저장에 실패했어요.\n(오류 코드: [${String(error)}])`,
-          style: 'error',
-        });
+        // setToast({
+        //   show: true,
+        //   message: `임시 저장에 실패했어요.\n(오류 코드: [${String(error)}])`,
+        //   style: 'error',
+        // });
       },
     });
   }, [formData, saveDraft]);
@@ -185,25 +196,29 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
   // 제출
   const handleSubmit = () => {
     // 버튼이 활성화되어 있어도 한 번 더 체크
+    const result = FeedbackRequestSchema.safeParse(formData);
     if (!isValid) {
       setToast({
         show: true,
-        message: `앗! 빠진 항목이 있어요.\n내용을 확인해주세요.`,
+        message:
+          result?.error?.issues[0].message ?? `앗! 빠진 항목이 있어요.\n내용을 확인해주세요.`,
         style: 'error',
       });
       return;
     }
+
     submit(formData, {
       onSuccess: () => {
         // 성공 모달 열기
         setSuccessModalOpen(true);
       },
       onError: error => {
-        setToast({
-          show: true,
-          message: `피드백 등록에 실패했어요.\n(오류 코드: [${String(error)}])`,
-          style: 'error',
-        });
+        console.error('피드백 등록 실패', error);
+        // setToast({
+        //   show: true,
+        //   message: `피드백 등록에 실패했어요.\n(오류 코드: [${String(error)}])`,
+        //   style: 'error',
+        // });
       },
     });
   };
