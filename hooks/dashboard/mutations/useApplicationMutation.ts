@@ -17,7 +17,7 @@ export const useApproveApplicationMutation = (postId: number) => {
         queryKey: queryKeys.dashboard.application(postId, 'PENDING'),
       });
       queryClient.invalidateQueries({
-        queryKey: queryKeys.dashboard.waitingParticipants(postId),
+        queryKey: [...queryKeys.dashboard.all, 'waitingParticipants', postId],
       });
     },
     onError: error => {
@@ -40,8 +40,9 @@ export const useRejectApplicationMutation = (postId: number) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.dashboard.application(postId, 'PENDING'),
       });
+      // waitingParticipants 쿼리 전체 invalidate (params 포함)
       queryClient.invalidateQueries({
-        queryKey: queryKeys.dashboard.waitingParticipants(postId),
+        queryKey: [...queryKeys.dashboard.all, 'waitingParticipants', postId],
       });
     },
     onError: error => {
