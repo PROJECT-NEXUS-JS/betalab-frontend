@@ -16,11 +16,14 @@ import {
   FeedbackRequestType,
   FeedbackRequestSchema,
   BugType,
+  BugTypeEnum,
   MostInconvenientType,
   MostInconvenientEnum,
 } from '@/hooks/feedback/dto/feedback';
 import useSaveFeedbackDraftMutation from '@/hooks/feedback/mutations/useSaveFeedbackDraftMutation';
 import useSubmitFeedbackMutation from '@/hooks/feedback/mutations/useSubmitFeedbackMutation';
+import useMyFeedbackQuery from '@/hooks/feedback/queries/useMyFeedbackQuery';
+import useFeedbackDetailQuery from '@/hooks/feedback/queries/useFeedbackDetailQuery';
 
 import { INCONVENIENT_LABELS, BUG_TYPE_LABELS, HAS_BUGS_OPTIONS } from '@/constants/feedback';
 
@@ -55,27 +58,35 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
   const { mutate: saveDraft } = useSaveFeedbackDraftMutation(projectId);
   // 저장
   const { mutate: submit } = useSubmitFeedbackMutation(projectId);
+  // --- API Query ---
+  // 기존 피드백 불러오기
+  const { data: existingFeedbackData, isLoading } = useFeedbackDetailQuery(projectId);
+  // const { data: feedbackDetail, isLoading } = useMyFeedbackQuery(projectId);
+  // const existingFeedbackData = feedbackDetail?.feedback;
 
   // --- State ---
   // 초기 상태
   const [formData, setFormData] = useState<FeedbackRequestType>({
-    participationId: 1, // 유저의 id
-    overallSatisfaction: 0,
-    recommendationIntent: 0,
-    reuseIntent: 0,
-    functionalityScore: 0,
-    comprehensibilityScore: 0,
-    speedScore: 0,
-    responseTimingScore: 0,
-    mostInconvenient: MostInconvenientEnum.enum.OTHER, // 기본값
-    hasBug: false,
-    bugTypes: [],
-    bugLocation: '',
-    bugDescription: '',
-    screenshotUrls: [],
-    goodPoints: '',
-    improvementSuggestions: '',
-    additionalComments: '',
+    participationId: existingFeedbackData?.participationId ?? 1,
+    overallSatisfaction: existingFeedbackData?.overallSatisfaction ?? 0,
+    recommendationIntent: existingFeedbackData?.recommendationIntent ?? 0,
+    reuseIntent: existingFeedbackData?.reuseIntent ?? 0,
+    functionalityScore: existingFeedbackData?.functionalityScore ?? 0,
+    comprehensibilityScore: existingFeedbackData?.comprehensibilityScore ?? 0,
+    speedScore: existingFeedbackData?.speedScore ?? 0,
+    responseTimingScore: existingFeedbackData?.responseTimingScore ?? 0,
+    mostInconvenient: existingFeedbackData?.mostInconvenient ?? MostInconvenientEnum.enum.OTHER,
+    hasBug: existingFeedbackData?.hasBug ?? false,
+    bugTypes:
+      (existingFeedbackData?.bugTypes ?? existingFeedbackData?.hasBug)
+        ? [BugTypeEnum.enum.OTHER]
+        : [],
+    bugLocation: existingFeedbackData?.bugLocation ?? '',
+    bugDescription: existingFeedbackData?.bugDescription ?? '',
+    screenshotUrls: existingFeedbackData?.screenshotUrls ?? [],
+    goodPoints: existingFeedbackData?.goodPoints ?? '',
+    improvementSuggestions: existingFeedbackData?.improvementSuggestions ?? '',
+    additionalComments: existingFeedbackData?.additionalComments ?? '',
   });
 
   // 유효성 검사 통과 여부
@@ -243,6 +254,10 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
     const entries = Object.entries(BUG_TYPE_LABELS) as [BugType, string][];
     return chunkArray(entries, 4);
   }, []);
+
+  if (isLoading) {
+    return <p>피드백 로딩 중...</p>;
+  }
 
   return (
     <>

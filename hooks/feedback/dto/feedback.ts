@@ -109,3 +109,11 @@ export const FeedbackSchema = z.object({
 });
 
 export const FeedbackDetailResponseSchema = BaseModelSchema(FeedbackSchema);
+
+export const MyFeedbackResponseSchema = BaseModelSchema(
+  z.object({
+    hasSubmitted: z.boolean(),
+    hasDraft: z.boolean(),
+    feedback: FeedbackSchema,
+  }),
+);

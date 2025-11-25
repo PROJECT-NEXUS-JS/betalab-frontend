@@ -12,6 +12,7 @@ export const queryKeys = {
   feedback: {
     all: ['feedback'] as const,
     detail: (feedbackId: number) => [...queryKeys.feedback.all, 'detail', feedbackId] as const,
+    my: (feedbackId: number) => [...queryKeys.feedback.all, 'my', feedbackId] as const,
   },
   // 다른 엔티티 (예: 사용자)
   users: {
