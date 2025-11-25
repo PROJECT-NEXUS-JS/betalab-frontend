@@ -41,7 +41,7 @@ const CardHeader = ({ title }: { title: string }) => {
   );
 };
 
-const FeedbackForm = ({ feedbackId }: { feedbackId: number }) => {
+const FeedbackForm = ({ projectId }: { projectId: number }) => {
   const router = useRouter();
 
   // --- 스타일 클래스 ---
@@ -52,9 +52,9 @@ const FeedbackForm = ({ feedbackId }: { feedbackId: number }) => {
 
   // --- API Mutation ---
   // 임시저장
-  const { mutate: saveDraft } = useSaveFeedbackDraftMutation(feedbackId);
+  const { mutate: saveDraft } = useSaveFeedbackDraftMutation(projectId);
   // 저장
-  const { mutate: submit } = useSubmitFeedbackMutation(feedbackId);
+  const { mutate: submit } = useSubmitFeedbackMutation(projectId);
 
   // --- State ---
   // 초기 상태
