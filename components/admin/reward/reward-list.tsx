@@ -1,0 +1,23 @@
+import RewardCard from './reward-card';
+
+interface RewardItem {
+  label: string;
+  count: number;
+  color: 'blue' | 'green' | 'red' | 'yellow' | 'black';
+}
+
+interface RewardListProps {
+  items: RewardItem[];
+}
+
+export default function RewardList({ items }: RewardListProps) {
+  return (
+    <div className="w-full inline-flex justify-start items-center gap-[23px]">
+      {items.map((item, index) => (
+        <div key={index} className="flex-1">
+          <RewardCard label={item.label} count={item.count} color={item.color} />
+        </div>
+      ))}
+    </div>
+  );
+}
