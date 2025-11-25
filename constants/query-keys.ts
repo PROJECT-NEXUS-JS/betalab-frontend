@@ -26,6 +26,8 @@ export const queryKeys = {
     lineChart: (postId: number) => [...queryKeys.dashboard.all, 'lineChart', postId] as const,
     application: (postId: number, status: StatusEnum) =>
       [...queryKeys.dashboard.all, 'application', postId, status] as const,
+    waitingParticipants: (postId: number, params?: any) =>
+      [...queryKeys.dashboard.all, 'waitingParticipants', postId, params] as const,
     profile: () => [...queryKeys.dashboard.all, 'profile'] as const,
   },
 };
