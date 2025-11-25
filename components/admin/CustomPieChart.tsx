@@ -20,6 +20,7 @@ const STATUS_COLORS: Record<string, string> = {
   진행중: '#DAE7FF',
   대기: '#0E62FF',
   완료: '#9CA3AF',
+  승인: '#DAE7FF',
   PENDING: '#0E62FF',
   APPROVED: '#DAE7FF',
   COMPLETED: '#9CA3AF',
