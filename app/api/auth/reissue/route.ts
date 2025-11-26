@@ -7,6 +7,11 @@ export async function POST(req: NextRequest) {
   const refreshToken = req.cookies.get('refreshToken')?.value;
 
   if (!accessToken || !refreshToken) {
+    console.error('리프레시 토큰 없음:', {
+      hasAccessToken: !!accessToken,
+      hasRefreshToken: !!refreshToken,
+      cookies: req.cookies.getAll().map(c => c.name),
+    });
     return NextResponse.json({ message: 'No refresh token' }, { status: 401 });
   }
 

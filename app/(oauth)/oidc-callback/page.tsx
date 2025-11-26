@@ -48,6 +48,7 @@ export default function OidcCallbackPage() {
     if (!isLoading && user) {
       const originalUrl = localStorage.getItem('redirectedFrom') || '/';
       if (user.roleType === 'ROLE_GUEST') {
+        console.log('게스트 유저로 로그인되었습니다.');
         router.replace('/login/gender-birth');
       } else {
         router.replace(originalUrl);
