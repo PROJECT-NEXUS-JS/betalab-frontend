@@ -134,7 +134,7 @@ export default function ApplyCard({
               State="Primary"
               Size="lg"
               // TODO: status 받아서 진행중이면 피드백 페이지로 이동
-              label={participationStatus === 'APPROVED' ? '완료하기' : '신청하기'}
+              label={participationStatus === 'TEST_COMPLETED' ? '완료하기' : '신청하기'}
               onClick={registerClicked}
               className="w-full flex-1"
             />
