@@ -4,7 +4,8 @@ import { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
 
 // RightSidebarModel을 ApplyCardProps로 변환하는 함수
 export const transformToApplyCardProps = (
-data: RightSidebarModel, status: string,
+  data: RightSidebarModel,
+  participationStatus: string,
 ): Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'> => {
   const conditions: ConditionProps[] = [
     {
@@ -42,7 +43,7 @@ data: RightSidebarModel, status: string,
     conditions: conditions,
     attendees: data.currentParticipants,
     scraped: false,
-    status,
+    participationStatus,
   };
 
   return transformedData;

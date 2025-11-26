@@ -75,6 +75,7 @@ export const ProjectDataSchema = z.object({
   createdBy: z.number(),
   isLiked: z.boolean(),
   isParticipated: z.boolean(),
+  participationStatus: z.string(),
 });
 
 export type ProjectDataModel = z.infer<typeof ProjectDataSchema>;
