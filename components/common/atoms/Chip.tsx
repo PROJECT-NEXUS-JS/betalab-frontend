@@ -11,6 +11,7 @@ export interface ChipProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>,
   children?: ReactNode;
   value?: string;
   defaultActive?: boolean;
+  active?: boolean; // 부모에서 강제로 활성 상태를 지정하는 prop
   showArrowIcon?: boolean;
   onToggleActive?: (active: boolean) => void;
 }
@@ -21,11 +22,16 @@ export default function Chip({
   children,
   value,
   defaultActive = false,
+  active = false,
   showArrowIcon = true,
   onToggleActive,
+  onClick,
   ...props
 }: ChipProps) {
-  const [isActive, setIsActive] = useState(defaultActive);
+  // 내부 상태 (단독으로 쓸 때 필요)
+  const [internalActive, setInternalActive] = useState(defaultActive);
+  // ctive props가 있으면 그것을 따르고, 없으면 내부 상태를 따름
+  const isActive = active !== undefined ? active : internalActive;
 
   const THEME_COLOR_CLASSNAME = {
     default: 'bg-Gray-100 text-Dark-Gray',
@@ -44,10 +50,16 @@ export default function Chip({
     lg: 'text-body-02 px-[20px] h-[44px]',
   };
 
-  const handleClick = () => {
-    const next = !isActive;
-    setIsActive(next);
-    onToggleActive?.(next);
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    // active props를 안 쓸 때만 내부 토글 동작
+    if (active === undefined) {
+      const next = !internalActive;
+      setInternalActive(next);
+      onToggleActive?.(next);
+    }
+
+    // 부모의 onClick 실행
+    onClick?.(e);
   };
 
   return (
@@ -63,7 +75,12 @@ export default function Chip({
     >
       {children}
       {showArrowIcon && (
-        <ArrowDown className="size-6 text-White group-hover:rotate-180 duration-200" />
+        <ArrowDown
+          className={cn(
+            'size-6 group-hover:rotate-180 duration-200',
+            variant === 'solid' ? 'text-Dark-Gray' : 'text-White',
+          )}
+        />
       )}
     </button>
   );

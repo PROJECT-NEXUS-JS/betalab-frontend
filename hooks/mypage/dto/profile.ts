@@ -7,9 +7,9 @@ const profileDataSchema = z
     profileImageUrl: z.string().nullable(),
     name: z.string(),
     affiliation: z.string().nullable(),
+    testsOngoing: z.number().int().nonnegative(),
     testsUploaded: z.number().int().nonnegative(),
     testsParticipating: z.number().int().nonnegative(),
-    testsOngoing: z.number().int().nonnegative().optional(),
   })
   .strict();
 
