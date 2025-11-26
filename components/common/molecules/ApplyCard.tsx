@@ -133,7 +133,7 @@ export default function ApplyCard({
             <Button
               State="Primary"
               Size="lg"
-              // 진행중이면 피드백 페이지로 이동하기 위해 완료하기 띄움
+              // TODO: status 받아서 진행중이면 피드백 페이지로 이동
               label={status === 'APPROVED' ? '완료하기' : '신청하기'}
               onClick={registerClicked}
               className="w-full flex-1"

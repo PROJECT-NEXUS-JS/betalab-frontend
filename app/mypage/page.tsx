@@ -72,7 +72,6 @@ export default function MyPage() {
                 nickname: profile.name,
                 avatar: profile.profileImageUrl || undefined,
                 affiliation: profile.affiliation || '소속 없음',
-                // 임시
                 ongoingCount: profile.testsOngoing,
                 postedCount: profile.testsUploaded,
                 participatingCount: profile.testsParticipating,
