@@ -50,7 +50,7 @@ export default function PostCardMini({ post, className }: PostCardMiniProps) {
         <div className="flex flex-row gap-1">
           {isTodayDeadline && <Tag style="purple" />}
           {!isTodayDeadline && <Tag style="gray" dday={dday} />}
-          {post.reward && <Tag style={getRewardTagStyle(post.reward.rewardDescription)} />}
+          {post.reward && <Tag style={getRewardTagStyle(post.reward.rewardDescription ?? '')} />}
         </div>
         {/* <BookMark className="size-6 fill-transparent text-transparent group-hover:fill-transparent group-hover:text-Gray-200 group-hover:stroke-Gray-200 group-hover:stroke-2" /> */}
       </div>
