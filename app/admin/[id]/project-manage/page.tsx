@@ -423,7 +423,7 @@ export default function Page() {
             : 'ALL',
           ageMin: conditionInitial.ageMin ?? undefined,
           ageMax: conditionInitial.ageMax ?? undefined,
-          additionalRequirements: Initial.extraText,
+          additionalRequirements: conditionInitial.extraText,
         },
         reward: {
           rewardDescription: conditionInitial.rewardText,
