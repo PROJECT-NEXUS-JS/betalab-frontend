@@ -36,7 +36,7 @@ export default function ProjectDetailCardClient({ projectId, ApplyCardProps }: P
 
   const handleRegister = () => {
     // status 받아서 진행중이면 피드백 페이지로 이동
-    if (ApplyCardProps.participationStatus === 'APPROVED') {
+    if (ApplyCardProps.participationStatus === 'TEST_COMPLETED') {
       router.push(`/project/${projectId}/feedback`);
     } else {
       router.push(`/project/${projectId}/application`);
