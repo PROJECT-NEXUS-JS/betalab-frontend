@@ -19,7 +19,6 @@ import { useSimilarPosts } from '@/hooks/posts/queries/useSimilarPostQuery';
 
 import { transformToApplyCardProps } from '@/lib/mapper/apply-card';
 import { transformToReviewCardProps } from '@/lib/mapper/review-card';
-import Input from '@/components/common/atoms/Input';
 
 interface ProjectDetailClientProps {
   id: number;
@@ -62,7 +61,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
         participationMethod: '',
         qnaMethod: '',
       },
-      postDetailData?.data.status ?? 'PENDING', // 상태 추가
+      postDetailData?.data.participationStatus ?? 'PENDING', // 상태 추가
     );
 
   const {

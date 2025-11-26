@@ -32,9 +32,11 @@ export default function ProjectDetailCardClient({ projectId, ApplyCardProps }: P
     });
   };
 
+  console.log('ApplyCardProps.participationStatus', ApplyCardProps.participationStatus);
+
   const handleRegister = () => {
-    // TODO: status 받아서 진행중이면 피드백 페이지로 이동
-    if (ApplyCardProps.status === 'ACTIVE') {
+    // status 받아서 진행중이면 피드백 페이지로 이동
+    if (ApplyCardProps.participationStatus === 'APPROVED') {
       router.push(`/project/${projectId}/feedback`);
     } else {
       router.push(`/project/${projectId}/application`);
