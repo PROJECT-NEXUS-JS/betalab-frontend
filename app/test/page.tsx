@@ -38,7 +38,7 @@ const TestPage = () => {
           State="Primary"
           Size="xxl"
           label="완료하기"
-          className='w-40'
+          className="w-40"
           onClick={() => {
             router.push(`/project/${feedbackId}/feedback`);
           }}
@@ -47,7 +47,7 @@ const TestPage = () => {
           State="Focused"
           Size="xxl"
           label="상세 페이지로 이동"
-          className='w-40 text-nowrap'
+          className="w-40 text-nowrap"
           onClick={() => {
             router.push(`/project/${projectId}`);
           }}

@@ -10,6 +10,7 @@ import TestTitleClient from './TestTitleClient';
 import RecruitmentStatusToggle from './RecruitmentStatusToggle';
 import { getStats, getBarChart, getPieChart, getLineChart } from './dashboard-api';
 import QuickActionSheet from '@/components/admin/QuickActionSheet';
+import Logger from '@/lib/logger';
 
 export default async function AdminDashboardPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

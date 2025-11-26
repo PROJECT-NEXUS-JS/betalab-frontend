@@ -55,7 +55,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
       router.back();
     }
   }, [isError, router]);
-    
+
   const applyCardData: ApplyCardDataProps = transformToApplyCardProps(
     rightSidebarData?.data ?? {
       testName: '',
