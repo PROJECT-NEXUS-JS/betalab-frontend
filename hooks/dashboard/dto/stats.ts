@@ -3,7 +3,7 @@ import { z } from 'zod';
 const StatsValueSchema = z.object({
   current: z.number().min(0),
   previousDay: z.number().min(0),
-  changeAmount: z.number().min(0),
+  changeAmount: z.number(),
 });
 
 export const StatsSchema = z.object({
@@ -12,6 +12,7 @@ export const StatsSchema = z.object({
   approvedParticipants: StatsValueSchema,
   reviews: StatsValueSchema,
   views: StatsValueSchema,
+  pendingPayments: StatsValueSchema.optional(),
   unreadMessages: z.number().min(0),
 });
 

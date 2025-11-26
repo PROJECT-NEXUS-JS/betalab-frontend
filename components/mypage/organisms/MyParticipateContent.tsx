@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import Pagination from '@/components/category/molecules/Pagination';
 import EmptyCard from '../molecules/EmptyCard';
 import { TestCardType } from '@/types/models/testCard';
+import { useQueries } from '@tanstack/react-query';
+import { getPostDetail } from '@/hooks/posts/queries/usePostDetailQuery';
+import { queryKeys } from '@/constants/query-keys';
 
 export default function MyApplicationContent() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -13,6 +16,26 @@ export default function MyApplicationContent() {
     size: 9,
   });
   const router = useRouter();
+
+  const applicationsNeedingPostData =
+    myApplicationsData?.data?.content.filter(app => !app.post && app.postId) ?? [];
+
+  const postQueries = useQueries({
+    queries: applicationsNeedingPostData.map(app => ({
+      queryKey: queryKeys.posts.detail(app.postId!),
+      queryFn: () => getPostDetail(app.postId!),
+      enabled: !!app.postId,
+    })),
+  });
+
+  // post 데이터를 postId로 매핑
+  const postDataMap = new Map(
+    postQueries.map((query, index) => [
+      applicationsNeedingPostData[index].postId!,
+      query.data?.data,
+    ]),
+  );
+  const isPostDataLoading = postQueries.some(query => query.isLoading);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -25,7 +48,7 @@ export default function MyApplicationContent() {
   return (
     <div className="flex flex-col mt-10">
       <div className="flex flex-wrap gap-10">
-        {isLoading ? (
+        {isLoading || isPostDataLoading ? (
           <div className="flex flex-wrap gap-4">
             {Array.from({ length: 9 }).map((_, index) => (
               <PostCardSkeleton key={index} />
@@ -46,25 +69,38 @@ export default function MyApplicationContent() {
             }}
           />
         ) : (
-          myApplicationsData.data.content.map(application => {
-            const postCardData: TestCardType = {
-              id: application.post.id,
-              title: application.post.title,
-              serviceSummary: application.post.serviceSummary,
-              thumbnailUrl: application.post.thumbnailUrl,
-              mainCategories: application.post.mainCategories,
-              platformCategories: application.post.platformCategories,
-              genreCategories: application.post.genreCategories,
-              schedule: application.post.schedule,
-              reward: application.post.reward,
-            };
+          myApplicationsData.data.content
+            .map(application => {
+              const post =
+                application.post ??
+                (application.postId ? postDataMap.get(application.postId) : null);
 
-            return (
-              <div key={application.id} onClick={() => handlePostClick(application.post.id)}>
-                <PostCard post={postCardData} />
-              </div>
-            );
-          })
+              if (!post) return null;
+
+              const postCardData: TestCardType = {
+                id: post.id,
+                title: post.title,
+                serviceSummary: post.serviceSummary,
+                thumbnailUrl: post.thumbnailUrl ?? null,
+                mainCategories: post.mainCategories,
+                platformCategories: post.platformCategories,
+                genreCategories: post.genreCategories,
+                schedule: post.schedule,
+                reward: post.reward
+                  ? {
+                      rewardType: post.reward.rewardType,
+                      rewardDescription: post.reward.rewardDescription,
+                    }
+                  : undefined,
+              };
+
+              return (
+                <div key={application.id} onClick={() => handlePostClick(post.id)}>
+                  <PostCard post={postCardData} />
+                </div>
+              );
+            })
+            .filter(Boolean)
         )}
       </div>
 

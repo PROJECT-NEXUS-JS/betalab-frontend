@@ -25,6 +25,7 @@ const HeaderIcons = ({ userData }: HeaderIconsProps) => {
 
   const handleLogout = () => {
     localStorage.clear();
+    window.dispatchEvent(new Event('localStorageChange'));
     queryCache.clear();
     setIsLogoutModalOpen(false);
     router.push('/login');

@@ -3,66 +3,7 @@ import { BaseModelSchema } from '@/types/models/base-model';
 import { categorySchema, scheduleSchema, rewardSchema } from '@/types/models/testCard';
 
 // 신청 상태 enum
-const applicationStatusSchema = z.enum(['PENDING', 'APPROVED', 'REJECTED']);
-
-// 요구사항 스키마
-const requirementSchema = z
-  .object({
-    maxParticipants: z.number(),
-    genderRequirement: z.string(),
-    ageMin: z.number(),
-    ageMax: z.number(),
-    additionalRequirements: z.string(),
-  })
-  .strict();
-
-// 피드백 스키마
-const feedbackSchema = z
-  .object({
-    feedbackMethod: z.string(),
-    feedbackItems: z.array(z.string()),
-    privacyItems: z.array(z.enum(['NAME', 'EMAIL', 'PHONE'])),
-  })
-  .strict();
-
-// 콘텐츠 스키마
-const contentSchema = z
-  .object({
-    participationMethod: z.string(),
-    storyGuide: z.string(),
-    mediaUrl: z.string(),
-  })
-  .strict();
-
-// 테스트 게시글 스키마 (TestCardType과 동일한 구조)
-const postSchema = z
-  .object({
-    id: z.number(),
-    title: z.string(),
-    serviceSummary: z.string(),
-    creatorIntroduction: z.string(),
-    creatorProfileUrl: z.string(),
-    description: z.string(),
-    thumbnailUrl: z.string().nullable(),
-    mainCategories: z.array(categorySchema),
-    platformCategories: z.array(categorySchema),
-    genreCategories: z.array(categorySchema),
-    status: z.enum(['DRAFT', 'PUBLISHED', 'CLOSED']),
-    qnaMethod: z.string(),
-    likeCount: z.number(),
-    viewCount: z.number(),
-    currentParticipants: z.number(),
-    schedule: scheduleSchema,
-    requirement: requirementSchema,
-    reward: rewardSchema,
-    feedback: feedbackSchema,
-    content: contentSchema,
-    createdAt: z.string(),
-    createdBy: z.number(),
-    isLiked: z.boolean(),
-    isParticipated: z.boolean(),
-  })
-  .strict();
+const applicationStatusSchema = z.enum(['PENDING', 'APPROVED', 'COMPLETED', 'REJECTED', 'PAID']);
 
 // 사용자 스키마
 const userSchema = z
@@ -73,30 +14,105 @@ const userSchema = z
   })
   .strict();
 
+// 요구사항 스키마
+const requirementSchema = z
+  .object({
+    maxParticipants: z.number(),
+    genderRequirement: z.string().nullable(),
+    ageMin: z.number().nullable(),
+    ageMax: z.number().nullable(),
+    additionalRequirements: z.string().nullable(),
+  })
+  .strict();
+
+// 피드백 스키마
+const feedbackSchema = z
+  .object({
+    feedbackMethod: z.string().nullable(),
+    feedbackItems: z.array(z.string()).nullable(),
+    privacyItems: z.array(z.enum(['NAME', 'EMAIL', 'CONTACT', 'OTHER'])),
+  })
+  .strict();
+
+// 콘텐츠 스키마
+const contentSchema = z
+  .object({
+    participationMethod: z.string().nullable(),
+    storyGuide: z.string().nullable(),
+    mediaUrls: z.array(z.string()).nullable(),
+  })
+  .strict();
+
+// 게시글 스키마
+const postSchema = z
+  .object({
+    id: z.number(),
+    title: z.string(),
+    serviceSummary: z.string(),
+    creatorIntroduction: z.string(),
+    creatorProfileUrl: z.string().nullable(),
+    description: z.string(),
+    thumbnailUrl: z.string().nullable(),
+    mainCategories: z.array(categorySchema),
+    platformCategories: z.array(categorySchema),
+    genreCategories: z.array(categorySchema),
+    status: z.enum(['DRAFT', 'ACTIVE', 'INACTIVE', 'COMPLETED', 'CANCELLED', 'EXPIRED']),
+    qnaMethod: z.string(),
+    likeCount: z.number(),
+    viewCount: z.number(),
+    currentParticipants: z.number(),
+    schedule: scheduleSchema,
+    requirement: requirementSchema,
+    reward: rewardSchema.nullable(),
+    feedback: feedbackSchema,
+    content: contentSchema,
+    createdAt: z.string(),
+    createdBy: z.number(),
+    isLiked: z.boolean(),
+    isParticipated: z.boolean(),
+  })
+  .strict();
+
 // 신청 내역 아이템 스키마
 const applicationItemSchema = z
   .object({
     id: z.number(),
     appliedAt: z.string(),
     approvedAt: z.string().nullable(),
+    completedAt: z.string().nullable(),
+    paidAt: z.string().nullable(),
     status: applicationStatusSchema,
+    isPaid: z.boolean(),
     applicantName: z.string(),
     contactNumber: z.string(),
     applicantEmail: z.string(),
     applicationReason: z.string(),
-    post: postSchema,
+    postId: z.number().optional(),
+    post: postSchema.optional(),
     user: userSchema,
   })
   .strict();
 
 export type ApplicationItemType = z.infer<typeof applicationItemSchema>;
 
-// 페이지네이션 메타 스키마
-const pageableMetaSchema = z
+// 정렬 스키마
+const sortSchema = z
   .object({
-    empty: z.boolean(),
     sorted: z.boolean(),
+    empty: z.boolean(),
     unsorted: z.boolean(),
+  })
+  .strict();
+
+// 페이지네이션 스키마
+const pageableSchema = z
+  .object({
+    paged: z.boolean(),
+    pageNumber: z.number(),
+    pageSize: z.number(),
+    offset: z.number(),
+    sort: sortSchema,
+    unpaged: z.boolean(),
   })
   .strict();
 
@@ -105,23 +121,14 @@ const pageSchema = z
   .object({
     totalElements: z.number(),
     totalPages: z.number(),
+    pageable: pageableSchema,
     size: z.number(),
     content: z.array(applicationItemSchema),
     number: z.number(),
-    sort: pageableMetaSchema,
+    sort: sortSchema,
     numberOfElements: z.number(),
-    pageable: z
-      .object({
-        offset: z.number(),
-        sort: pageableMetaSchema,
-        paged: z.boolean(),
-        pageNumber: z.number(),
-        pageSize: z.number(),
-        unpaged: z.boolean(),
-      })
-      .strict(),
-    last: z.boolean(),
     first: z.boolean(),
+    last: z.boolean(),
     empty: z.boolean(),
   })
   .strict();
@@ -131,6 +138,7 @@ export type PageType = z.infer<typeof pageSchema>;
 // 내 신청 내역 조회 요청 스키마
 export const getMyApplicationsRequestSchema = z
   .object({
+    status: z.enum(['PENDING', 'APPROVED', 'COMPLETED', 'REJECTED', 'PAID']).optional(),
     page: z.number().int().nonnegative().optional(),
     size: z.number().int().positive().optional(),
     sort: z.array(z.string()).optional(),

@@ -1,14 +1,17 @@
-import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
 const BACKEND_URL = process.env.BACKEND_URL!;
 
 export async function POST(req: NextRequest) {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get('accessToken');
-  const refreshToken = cookieStore.get('refreshToken');
+  const accessToken = req.cookies.get('accessToken')?.value;
+  const refreshToken = req.cookies.get('refreshToken')?.value;
 
   if (!accessToken || !refreshToken) {
+    console.error('리프레시 토큰 없음:', {
+      hasAccessToken: !!accessToken,
+      hasRefreshToken: !!refreshToken,
+      cookies: req.cookies.getAll().map(c => c.name),
+    });
     return NextResponse.json({ message: 'No refresh token' }, { status: 401 });
   }
 
@@ -16,29 +19,48 @@ export async function POST(req: NextRequest) {
     const backendResponse = await fetch(`${BACKEND_URL}/auth/reissue`, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${accessToken.value}`,
-        RefreshToken: refreshToken.value,
+        Authorization: `Bearer ${accessToken}`,
+        RefreshToken: refreshToken,
       },
       credentials: 'include',
     });
 
-    console.log(backendResponse);
-
     if (!backendResponse.ok) {
-      console.log('Failed to refresh token');
+      const errorText = await backendResponse.text().catch(() => '');
+      console.error('백엔드 리프레시 실패:', {
+        status: backendResponse.status,
+        statusText: backendResponse.statusText,
+        body: errorText,
+      });
       return NextResponse.json({ message: 'Refresh failed' }, { status: 401 });
     }
 
-    const json = await backendResponse.json();
-    const { accessToken: newAccessToken, refreshToken: newRefreshToken } = json.data;
+    const json = await backendResponse.json().catch(parseError => {
+      console.error('Failed to parse refresh response', parseError);
+      return null;
+    });
+
+    if (!json) {
+      return NextResponse.json({ message: 'Invalid refresh response' }, { status: 502 });
+    }
+
+    const tokensSource = json.data ?? json;
+    const newAccessToken = tokensSource?.accessToken;
+    const newRefreshToken = tokensSource?.refreshToken;
+
+    if (!newAccessToken || !newRefreshToken) {
+      console.error('Refresh response missing tokens', json);
+      return NextResponse.json({ message: 'Malformed refresh response' }, { status: 502 });
+    }
 
     const res = NextResponse.json({ message: newAccessToken }, { status: 200 });
+    const isProduction = process.env.NODE_ENV === 'production';
 
     res.cookies.set('accessToken', newAccessToken, {
       httpOnly: true,
       path: '/',
       maxAge: 60 * 60, // 1시간
-      secure: true,
+      secure: isProduction,
       sameSite: 'lax',
     });
 
@@ -46,7 +68,7 @@ export async function POST(req: NextRequest) {
       httpOnly: true,
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 7일
-      secure: true,
+      secure: isProduction,
       sameSite: 'lax',
     });
 

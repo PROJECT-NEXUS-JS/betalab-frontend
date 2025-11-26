@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import ApplyCard, { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
 import { usePostLikeCountQuery, usePostLikeMutation, usePostLikeStatusQuery } from '@/hooks/like';
-
 interface Props {
   projectId: number;
   ApplyCardProps: Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'>;
@@ -24,13 +23,22 @@ export default function ProjectDetailCardClient({ projectId, ApplyCardProps }: P
       onSuccess: data => {
         queryClient.invalidateQueries({ queryKey: ['postLikeStatus', projectId] });
         queryClient.invalidateQueries({ queryKey: ['postLikeCount', projectId] });
-        queryClient.invalidateQueries({ queryKey: ['myBookmarks'] });
+        // 쿼리 없이 바로 refetch
+        queryClient.invalidateQueries({
+          queryKey: ['myBookmarks'],
+          refetchType: 'active',
+        });
       },
     });
   };
 
   const handleRegister = () => {
-    router.push(`/project/${projectId}/application`);
+    // TODO: status 받아서 진행중이면 피드백 페이지로 이동
+    if (ApplyCardProps.status === 'ACTIVE') {
+      router.push(`/project/${projectId}/feedback`);
+    } else {
+      router.push(`/project/${projectId}/application`);
+    }
   };
 
   const updatedProps = {

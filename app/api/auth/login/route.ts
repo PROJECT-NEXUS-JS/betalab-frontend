@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND_URL = process.env.BACKEND_URL!;
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL!;
 
 async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs = 10000, retries = 2) {
   for (let attempt = 0; attempt <= retries; attempt++) {
@@ -66,7 +66,10 @@ export async function POST(req: NextRequest) {
 
     const response = NextResponse.json({
       success: true,
-      accessToken,
+      data: {
+        accessToken,
+        refreshToken,
+      },
     });
 
     response.cookies.set('accessToken', accessToken, {

@@ -1,13 +1,16 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { useWatchlistQuery } from '@/hooks/mypage/queries/useWatchlistQuery';
 import { useDashboardQuery } from '@/hooks/mypage/queries/useDashboardQuery';
+import { useTotalParticipationQuery } from '@/hooks/mypage/queries/useTotalParticipationQuery';
 import { useRouter } from 'next/navigation';
 import CardScroll from '@/components/home/molecules/CardScroll';
 import PostCard from '@/components/category/molecules/PostCard';
 import PostCardMini from '@/components/category/molecules/PostCardMini';
 import EmptyCard from '../molecules/EmptyCard';
 import { mapToTestCard } from '@/lib/mapper/test-card';
+import DonutChart, { type DonutChartData } from '../molecules/DonutChart';
+import NotificationComponent from '../molecules/NotificationComponent';
 
 interface MainContentProps {
   className?: string;
@@ -18,8 +21,22 @@ export default function MainContent({ className }: MainContentProps) {
   const [recentlyViewedPage, setRecentlyViewedPage] = useState(0);
   const { data: watchlistData, isLoading: watchlistLoading } = useWatchlistQuery();
   const { data: dashboardData, isLoading: dashboardLoading } = useDashboardQuery();
+  const { data: totalParticipationData, isLoading: totalParticipationLoading } =
+    useTotalParticipationQuery();
 
   const router = useRouter();
+  const donutChartData: DonutChartData[] = useMemo(() => {
+    if (!totalParticipationData?.countByCategory) {
+      return [];
+    }
+    return Object.entries(totalParticipationData.countByCategory)
+      .map(([label, value]) => ({
+        label,
+        value,
+      }))
+      .filter(item => item.value > 0)
+      .sort((a, b) => b.value - a.value);
+  }, [totalParticipationData]);
 
   const handleWatchlistPageChange = (page: number) => {
     setWatchlistPage(page);
@@ -30,7 +47,7 @@ export default function MainContent({ className }: MainContentProps) {
   };
 
   return (
-    <section className={cn('gap-10 flex flex-col bg-Gray-50', className)}>
+    <section className={cn('gap-10 flex flex-col', className)}>
       <div className="flex flex-col gap-5 p-5">
         <h3 className="text-body-01 font-semibold text-Dark-Gray">최근 본 테스트</h3>
 
@@ -115,12 +132,31 @@ export default function MainContent({ className }: MainContentProps) {
           />
         )}
         <h3 className="text-body-01 font-semibold text-Dark-Gray">알림</h3>
-        <EmptyCard
-          className="w-full py-[100px]"
-          title="알림 기능은 개발중이에요."
-          buttonLabel="베타랩 운영진에게 문의하기"
-          onClick={() => window.open('https://forms.gle/FBRFunCT8Mkufrj76', '_blank')}
-        />
+        <div className="w-full flex gap-10 items-stretch">
+          <NotificationComponent useApi={true} />
+          <div className="flex-1 bg-Gray-50 min-h-[288px] flex">
+            {totalParticipationLoading ? (
+              <div className="w-full h-full bg-Gray-100 rounded-lg animate-pulse" />
+            ) : totalParticipationData?.totalCount === 0 ? (
+              <EmptyCard
+                className="w-full h-full flex-1"
+                title="아직 참여중인 테스트가 없어요"
+                buttonLabel="테스트 보러가기"
+                onClick={() => {
+                  router.push('/');
+                }}
+              />
+            ) : (
+              <div className="w-full h-full flex justify-center items-center">
+                <DonutChart
+                  data={donutChartData}
+                  total={totalParticipationData?.totalCount || 0}
+                  totalLabel="총 참여 프로젝트"
+                />
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </section>
   );

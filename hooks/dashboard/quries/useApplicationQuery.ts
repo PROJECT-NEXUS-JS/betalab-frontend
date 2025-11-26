@@ -10,13 +10,11 @@ export const ApplicationResponseSchema = BaseModelSchema(ApplicationSchema);
 export type ApplicationResponseModel = z.infer<typeof ApplicationResponseSchema>;
 
 const BASE_PATH = (postId: number, status: StatusEnum) =>
-  `v1/users/posts/${postId}/applications/${status}`;
+  `/v1/users/posts/${postId}/applications/${status}`;
 
 export const getApplication = async (postId: number, status: StatusEnum) => {
   try {
-    const response = await instance.get<any>(`${BASE_PATH(postId, status)}`, {
-      params: { page: 0, size: 10, sort: '' },
-    });
+    const response = await instance.get<any>(`${BASE_PATH(postId, status)}`);
     console.log('실제 API 응답 데이터:', response.data);
     return ApplicationResponseSchema.parse(response.data);
   } catch (error) {

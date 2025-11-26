@@ -15,6 +15,9 @@ export default function TestAddIntroPage() {
 
   const [intro, setIntro] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  const [teamSize, setTeamSize] = useState('');
+  const [isTeamSizeFocused, setIsTeamSizeFocused] = useState(false);
+  const [isIndividual, setIsIndividual] = useState(false);
 
   const STEP_INDEX = 5;
   const MAX_LENGTH = 30;
@@ -30,6 +33,12 @@ export default function TestAddIntroPage() {
   const getInputState = (): InputProps['state'] => {
     if (intro.length === 0) return 'no value';
     if (isFocused) return 'focused';
+    return 'has value';
+  };
+
+  const getTeamSizeInputState = (): InputProps['state'] => {
+    if (teamSize.length === 0) return 'no value';
+    if (isTeamSizeFocused) return 'focused';
     return 'has value';
   };
 
@@ -77,6 +86,80 @@ export default function TestAddIntroPage() {
           />
           <div className="absolute right-1">
             <TextCounter value={intro} maxLength={MAX_LENGTH} />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-5">
+            <div className="flex items-end gap-3">
+              <div className="flex flex-col gap-2">
+                <p className="text-subtitle-01 font-bold">팀원 수를 적어주세요</p>
+              </div>
+            </div>
+            <div className="w-[556px] flex flex-col gap-1">
+              <div className="flex items-center gap-1">
+                <div className="text-base font-bold text-Black">직접 입력</div>
+              </div>
+              <div className={isIndividual ? 'opacity-50 pointer-events-none' : ''}>
+                <Input
+                  type="text"
+                  state={isIndividual ? 'disabled' : getTeamSizeInputState()}
+                  size="md"
+                  placeholder="모집자 수를 입력해주세요"
+                  value={teamSize}
+                  onChange={e => {
+                    const v = e.target.value.replace(/\D/g, '');
+                    setTeamSize(v);
+                  }}
+                  onFocus={() => setIsTeamSizeFocused(true)}
+                  onBlur={() => setIsTeamSizeFocused(false)}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setIsIndividual(!isIndividual);
+                if (!isIndividual) {
+                  setTeamSize('');
+                }
+              }}
+              className={`w-4 h-4 rounded flex items-center justify-center transition-colors ${
+                isIndividual
+                  ? 'bg-Primary-500 border border-Primary-500'
+                  : 'bg-white border border-gray-200'
+              }`}
+            >
+              {isIndividual && (
+                <svg
+                  className="w-2 h-1"
+                  viewBox="0 0 8 4"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1 2L3 4L7 0"
+                    stroke="white"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
+            </button>
+            <label
+              className="text-base font-medium text-gray-600 cursor-pointer"
+              onClick={() => {
+                setIsIndividual(!isIndividual);
+                if (!isIndividual) {
+                  setTeamSize('');
+                }
+              }}
+            >
+              개인이에요
+            </label>
           </div>
         </div>
       </div>

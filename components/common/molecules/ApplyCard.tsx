@@ -5,7 +5,7 @@ import Condition, { ConditionProps } from '../atoms/Condition';
 import Button from '../atoms/Button';
 import UserProfile from '../svg/UserProfile';
 import BookMark from '../svg/BookMark';
-
+import useFeedbackQuery from '@/hooks/feedback/queries/useMyFeedbackQuery';
 export interface ApplyCardProps {
   title: string;
   profile: {
@@ -22,6 +22,7 @@ export interface ApplyCardProps {
   scrapedAndRegisterShow?: boolean;
   scrapClicked?: () => void;
   registerClicked?: () => void;
+  status: string;
 }
 
 export default function ApplyCard({
@@ -36,6 +37,7 @@ export default function ApplyCard({
   scraped,
   scrapClicked,
   registerClicked,
+  status,
 }: ApplyCardProps) {
   const [viewMore, setViewMore] = useState(false);
   const endMonth = endDate.getMonth() + 1;
@@ -131,7 +133,8 @@ export default function ApplyCard({
             <Button
               State="Primary"
               Size="lg"
-              label="신청하기"
+              // TODO: status 받아서 진행중이면 피드백 페이지로 이동
+              label={status === 'APPROVED' ? '완료하기' : '신청하기'}
               onClick={registerClicked}
               className="w-full flex-1"
             />

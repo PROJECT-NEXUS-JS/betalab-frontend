@@ -9,6 +9,11 @@ export const queryKeys = {
     rightSidebar: (postId: number) => [...queryKeys.posts.all, 'rightSidebar', postId] as const,
     similarPosts: (postId: number) => [...queryKeys.posts.all, 'similarPost', postId] as const,
   },
+  feedback: {
+    all: ['feedback'] as const,
+    detail: (feedbackId: number) => [...queryKeys.feedback.all, 'detail', feedbackId] as const,
+    my: (feedbackId: number) => [...queryKeys.feedback.all, 'my', feedbackId] as const,
+  },
   // 다른 엔티티 (예: 사용자)
   users: {
     all: ['users'] as const,
@@ -22,8 +27,14 @@ export const queryKeys = {
     all: ['dashboard'] as const,
     stats: (postId: number) => [...queryKeys.dashboard.all, 'stats', postId] as const,
     barChart: (postId: number) => [...queryKeys.dashboard.all, 'barChart', postId] as const,
+    pieChart: (postId: number) => [...queryKeys.dashboard.all, 'pieChart', postId] as const,
+    lineChart: (postId: number) => [...queryKeys.dashboard.all, 'lineChart', postId] as const,
     application: (postId: number, status: StatusEnum) =>
       [...queryKeys.dashboard.all, 'application', postId, status] as const,
+    waitingParticipants: (postId: number, params?: any) =>
+      [...queryKeys.dashboard.all, 'waitingParticipants', postId, params] as const,
+    recentReviews: (postId: number, params?: any) =>
+      [...queryKeys.dashboard.all, 'recentReviews', postId, params] as const,
     profile: () => [...queryKeys.dashboard.all, 'profile'] as const,
   },
 };

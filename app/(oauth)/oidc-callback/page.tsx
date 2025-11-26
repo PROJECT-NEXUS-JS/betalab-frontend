@@ -21,7 +21,7 @@ export default function OidcCallbackPage() {
           throw new Error('OIDC 유저 정보 또는 id_token을 받지 못했습니다.');
         }
 
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`, {
+        const res = await fetch('/api/auth/login', {
           method: 'POST',
           headers: { id_token: user.id_token },
           credentials: 'include',
@@ -33,6 +33,8 @@ export default function OidcCallbackPage() {
         }
 
         localStorage.setItem('accessToken', responseData.data.accessToken);
+        // 같은 탭에서 localStorage 변경을 감지하기 위한 커스텀 이벤트 발생
+        window.dispatchEvent(new Event('localStorageChange'));
         setIsTokenReady(true);
       } catch (error) {
         console.error('OIDC 콜백 처리 중 오류 발생:', error);
@@ -48,7 +50,7 @@ export default function OidcCallbackPage() {
       const originalUrl = localStorage.getItem('redirectedFrom') || '/';
       if (user.roleType === 'ROLE_GUEST') {
         console.log('게스트 유저로 로그인되었습니다.');
-        router.replace('/login/survey');
+        router.replace('/login/gender-birth');
       } else {
         console.log('일반 유저로 로그인되었습니다.');
         console.log('원래 URL로 리다이렉트:', originalUrl);

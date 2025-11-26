@@ -6,6 +6,7 @@ import { MY_PAGE_MENUS, MyPageMenuKey } from '../const';
 
 interface SidebarProps {
   className?: string;
+  ongoingCount: number;
   postedCount: number;
   participatingCount: number;
   bookmarkedCount?: number;
@@ -16,6 +17,7 @@ interface SidebarProps {
 
 export default function Sidebar({
   className,
+  ongoingCount = 0,
   postedCount,
   participatingCount,
   bookmarkedCount = 0,
@@ -31,6 +33,8 @@ export default function Sidebar({
     if (!countKey) return undefined;
 
     switch (countKey) {
+      case 'ongoingCount':
+        return ongoingCount;
       case 'postedCount':
         return postedCount;
       case 'participatingCount':

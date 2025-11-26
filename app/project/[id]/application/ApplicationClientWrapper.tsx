@@ -13,6 +13,7 @@ import { useGetRightSidebar } from '@/hooks/posts/queries/usePostRightSidebar';
 
 import { usePostApplyMutation } from '@/hooks/application/mutations/usePostApplyMutation';
 import { Modal } from '@/components/category/molecules/Modal';
+import { useGetPostDetailQuery } from '@/hooks/posts/queries/usePostDetailQuery';
 
 export default function ApplicationClientWrapper({ id }: { id: number }) {
   const router = useRouter();
@@ -36,6 +37,9 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
     isLoading: isRightSidebarLoading,
     isError: isRightSidebarError,
   } = useGetRightSidebar(Number(id));
+  const {
+    data: postDetailData,
+  } = useGetPostDetailQuery(Number(id));
 
   const applyCardData: Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'> = {
     ...transformToApplyCardProps(
@@ -54,6 +58,7 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
         participationMethod: '',
         qnaMethod: '',
       },
+      postDetailData?.data?.status ?? 'PENDING', // 상태 추가
     ),
     scrapedAndRegisterShow: false,
   };
