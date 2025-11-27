@@ -27,7 +27,7 @@ export type MostInconvenientType = z.infer<typeof MostInconvenientEnum>;
 // ========== 요청 ===========
 export const FeedbackRequestSchema = z
   .object({
-    participationId: z.number().int().positive(),
+    participationId: z.number().int(),
 
     // 만족도 (1~5점)
     overallSatisfaction: z.number().int().min(1).max(5), // 전반적 만족도

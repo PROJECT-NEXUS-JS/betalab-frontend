@@ -23,7 +23,6 @@ import {
 import useSaveFeedbackDraftMutation from '@/hooks/feedback/mutations/useSaveFeedbackDraftMutation';
 import useSubmitFeedbackMutation from '@/hooks/feedback/mutations/useSubmitFeedbackMutation';
 import useMyFeedbackQuery from '@/hooks/feedback/queries/useMyFeedbackQuery';
-import useFeedbackDetailQuery from '@/hooks/feedback/queries/useFeedbackDetailQuery';
 
 import { INCONVENIENT_LABELS, BUG_TYPE_LABELS, HAS_BUGS_OPTIONS } from '@/constants/feedback';
 
@@ -60,14 +59,13 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
   const { mutate: submit } = useSubmitFeedbackMutation(projectId);
   // --- API Query ---
   // 기존 피드백 불러오기
-  const { data: existingFeedbackData, isLoading } = useFeedbackDetailQuery(projectId);
-  // const { data: feedbackDetail, isLoading } = useMyFeedbackQuery(projectId);
-  // const existingFeedbackData = feedbackDetail?.feedback;
+  const { data: feedbackDetail, isLoading } = useMyFeedbackQuery(projectId);
+  const existingFeedbackData = feedbackDetail?.feedback;
 
   // --- State ---
   // 초기 상태
   const [formData, setFormData] = useState<FeedbackRequestType>({
-    participationId: existingFeedbackData?.participationId ?? 1,
+    participationId: existingFeedbackData?.participationId ?? 0, // 기본값은 유효하지 않은 id
     overallSatisfaction: existingFeedbackData?.overallSatisfaction ?? 0,
     recommendationIntent: existingFeedbackData?.recommendationIntent ?? 0,
     reuseIntent: existingFeedbackData?.reuseIntent ?? 0,
@@ -115,6 +113,16 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
   // --- 기능 ---
   // 임시 저장
   const handleSaveDraft = useCallback(() => {
+    // 제출 전 participationId 검증
+    if (!formData.participationId || formData.participationId === 0) {
+      setToast({
+        show: true,
+        message: '참여 정보가 확인되지 않아 제출할 수 없습니다.',
+        style: 'error',
+      });
+      return;
+    }
+
     // 임시: 임시 저장도 유효성 확인
     const result = FeedbackRequestSchema.safeParse(formData);
     if (!isValid) {
@@ -206,6 +214,16 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
 
   // 제출
   const handleSubmit = () => {
+    // 제출 전 participationId 검증
+    if (!formData.participationId || formData.participationId === 0) {
+      setToast({
+        show: true,
+        message: '참여 정보가 확인되지 않아 제출할 수 없습니다.',
+        style: 'error',
+      });
+      return;
+    }
+
     // 버튼이 활성화되어 있어도 한 번 더 체크
     const result = FeedbackRequestSchema.safeParse(formData);
     if (!isValid) {
