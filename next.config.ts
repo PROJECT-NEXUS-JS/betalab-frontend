@@ -30,11 +30,6 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'betalabaws-storage.s3.ap-northeast-2.amazonaws.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'betalabaws-storage.s3.ap-northeast-2.amazonaws.com',
         port: '',
         pathname: '/**',
       },

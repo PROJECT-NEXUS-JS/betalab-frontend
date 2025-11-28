@@ -1,7 +1,7 @@
 'use client';
 import { useState, useRef } from 'react';
 
-import CustomImage from '@/components/common/atoms/CustomImage';
+import CustomMedia from '@/components/common/atoms/CustomMedia';
 import RemindCard from '@/components/common/atoms/RemindCard';
 import Chip from '@/components/common/atoms/Chip';
 import ReviewCard from '@/components/common/molecules/ReviewCard';
@@ -96,7 +96,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
             <p className="text-base font-bold text-Gray-200">
               {`홈 > ${projectData.mainCategories[0]?.name} > ${projectData.genreCategories.map(cat => cat.name).join(', ')}`}{' '}
             </p>
-            <CustomImage
+            <CustomMedia
               src={projectData.thumbnailUrl}
               alt={projectData.description || 'default description'}
               width={854}
@@ -127,7 +127,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
               className={`relative overflow-hidden flex flex-col gap-10 ${projectIntroduceFold ? 'max-h-[630px]' : ''}`}
             >
               {projectData.content.mediaUrls?.map((media, index) => (
-                <CustomImage
+                <CustomMedia
                   key={`media-${index}`}
                   src={media}
                   alt={projectData.description || 'default description'}
@@ -136,13 +136,13 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
                   state="default"
                 />
               ))}
-              <div className="p-4 rounded-xs border-[1px] border-Gray-100">
+              <div className="p-4 rounded-xs border border-Gray-100">
                 <p className="text-base font-normal text-Dark-Gray whitespace-pre-line">
                   {projectData.content.storyGuide || '설명이 없습니다.'}
                 </p>
               </div>
               {projectIntroduceFold && (
-                <div className="absolute bottom-0 w-full h-[150px] bg-gradient-to-t from-white to-transparent"></div>
+                <div className="absolute bottom-0 w-full h-[150px] bg-linear-to-t from-white to-transparent"></div>
               )}
             </div>
             <Button
