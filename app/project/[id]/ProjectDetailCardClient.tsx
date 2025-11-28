@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import ApplyCard, { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
 import { usePostLikeCountQuery, usePostLikeMutation, usePostLikeStatusQuery } from '@/hooks/like';
+import { ParticapationStatusEnum } from '@/hooks/posts/dto/postDetail';
+
 interface Props {
   projectId: number;
   ApplyCardProps: Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'>;
@@ -32,11 +34,9 @@ export default function ProjectDetailCardClient({ projectId, ApplyCardProps }: P
     });
   };
 
-  console.log('ApplyCardProps.participationStatus', ApplyCardProps.participationStatus);
-
   const handleRegister = () => {
-    // status 받아서 진행중이면 피드백 페이지로 이동
-    if (ApplyCardProps.participationStatus === 'TEST_COMPLETED') {
+    // status 받아서 테스트를 완료했으면 피드백 페이지로 이동
+    if (ApplyCardProps.participationStatus === ParticapationStatusEnum.enum.TEST_COMPLETED) {
       router.push(`/project/${projectId}/feedback`);
     } else {
       router.push(`/project/${projectId}/application`);

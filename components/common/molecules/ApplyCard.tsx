@@ -5,7 +5,7 @@ import Condition, { ConditionProps } from '../atoms/Condition';
 import Button from '../atoms/Button';
 import UserProfile from '../svg/UserProfile';
 import BookMark from '../svg/BookMark';
-import useFeedbackQuery from '@/hooks/feedback/queries/useMyFeedbackQuery';
+import { ParticapationStatusEnum } from '@/hooks/posts/dto/postDetail';
 export interface ApplyCardProps {
   title: string;
   profile: {
@@ -133,8 +133,12 @@ export default function ApplyCard({
             <Button
               State="Primary"
               Size="lg"
-              // TODO: status 받아서 진행중이면 피드백 페이지로 이동
-              label={participationStatus === 'TEST_COMPLETED' ? '완료하기' : '신청하기'}
+              // 테스트를 완료했으면 완료하기 버튼 띄움
+              label={
+                participationStatus === ParticapationStatusEnum.enum.TEST_COMPLETED
+                  ? '완료하기'
+                  : '신청하기'
+              }
               onClick={registerClicked}
               className="w-full flex-1"
             />
