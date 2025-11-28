@@ -49,6 +49,15 @@ const ContentSchema = z.object({
 });
 type ContentModel = z.infer<typeof ContentSchema>;
 
+// particapationStatus
+export const ParticapationStatusEnum = z.enum([
+  'PENDING',
+  'APPROVED',
+  'TEST_COMPLETED',
+  'COMPLETED',
+  'REJECTED',
+]);
+
 // Main ProjectDataSchema
 export const ProjectDataSchema = z.object({
   id: z.number(),
@@ -75,7 +84,7 @@ export const ProjectDataSchema = z.object({
   createdBy: z.number(),
   isLiked: z.boolean(),
   isParticipated: z.boolean(),
-  participationStatus: z.string(),
+  participationStatus: ParticapationStatusEnum.nullable(),
 });
 
 export type ProjectDataModel = z.infer<typeof ProjectDataSchema>;
