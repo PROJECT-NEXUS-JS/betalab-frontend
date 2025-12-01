@@ -168,7 +168,7 @@ export default function MyOngoingContent() {
                           className="w-40"
                           onClick={() => {
                             router.push(
-                              `/project/${post.id}/feedback?participantId=${application.id}`,
+                              `/project/${post.id}/feedback?participationId=${application.id}`,
                             );
                           }}
                         />

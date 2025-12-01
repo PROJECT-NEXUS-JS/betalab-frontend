@@ -29,7 +29,7 @@ export default function ProjectDetailCardClient({ projectId, ApplyCardProps }: P
   const myApplication = myApplicationsData?.data?.content.find(
     (app) => app.postId === Number(projectId)
   );
-  const participantId = myApplication?.id;
+  const participationId = myApplication?.id;
 
 
   const handleScrap = () => {
@@ -49,7 +49,7 @@ export default function ProjectDetailCardClient({ projectId, ApplyCardProps }: P
   const handleRegister = () => {
     // status 받아서 테스트를 완료했으면 피드백 페이지로 이동
     if (ApplyCardProps.participationStatus === ParticapationStatusEnum.enum.TEST_COMPLETED) {
-      router.push(`/project/${projectId}/feedback?participantId=${participantId}`);   
+      router.push(`/project/${projectId}/feedback?participationId=${participationId}`);   
     } else {
       router.push(`/project/${projectId}/application`);
     }

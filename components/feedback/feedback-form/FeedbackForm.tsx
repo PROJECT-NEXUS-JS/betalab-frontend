@@ -47,7 +47,7 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
   const router = useRouter();
 
   const searchParams = useSearchParams();
-  const participantId = Number(searchParams.get('participantId'));
+  const participationId = Number(searchParams.get('participationId'));
 
   // --- 스타일 클래스 ---
   // 질문 카드 스타일 클래스
@@ -68,7 +68,7 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
   // --- State ---
   // 초기 상태
   const [formData, setFormData] = useState<FeedbackRequestType>({
-    participationId: existingFeedbackData?.participationId ?? participantId,
+    participationId: existingFeedbackData?.participationId ?? participationId,
     overallSatisfaction: existingFeedbackData?.overallSatisfaction ?? 0,
     recommendationIntent: existingFeedbackData?.recommendationIntent ?? 0,
     reuseIntent: existingFeedbackData?.reuseIntent ?? 0,
@@ -408,7 +408,7 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
         {/* 하단 버튼 */}
         <div className="flex gap-10 items-center">
           <Button
-            State="Sub"
+            State={isValid ? 'Sub' : 'Disabled'}
             Size="xxl"
             label="임시 저장"
             className="w-full"
@@ -438,7 +438,7 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
         onClose={() => {
           setSuccessModalOpen(false);
           // 진행 중인 테스트
-          router.push('');
+          router.push('/mypage?tab=ongoing-tests');
         }}
         btnLabel1="완료한 테스트 보기"
         btnLabel2="남은 테스트 완료하기"
@@ -450,7 +450,7 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
         btnOnClick2={() => {
           setSuccessModalOpen(false);
           // 진행 중인 테스트
-          router.push('');
+          router.push('/mypage?tab=ongoing-tests');
         }}
       />
     </>
