@@ -63,15 +63,15 @@ export const ProjectDataSchema = z.object({
   id: z.number(),
   title: z.string(),
   serviceSummary: z.string(),
-  creatorIntroduction: z.string(),
+  creatorIntroduction: z.string().nullable(),
   creatorProfileUrl: z.string().or(z.null()), // 개발 편의상 이미지가 없어서 테스트시 널
-  description: z.string(),
+  description: z.string().nullable(),
   thumbnailUrl: z.string().or(z.null()).optional(), // 개발 편의상 이미지가 없어서 테스트시 널
   mainCategories: z.array(CategorySchema),
   platformCategories: z.array(CategorySchema),
   genreCategories: z.array(CategorySchema),
   status: z.enum(['DRAFT', 'ACTIVE', 'INACTIVE', 'COMPLETED', 'CANCELLED', 'EXPIRED']),
-  qnaMethod: z.string(),
+  qnaMethod: z.string().nullable(),
   likeCount: z.number(),
   viewCount: z.number(),
   currentParticipants: z.number(),

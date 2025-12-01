@@ -13,6 +13,7 @@ import { getPostDetail } from '@/hooks/posts/queries/usePostDetailQuery';
 import { queryKeys } from '@/constants/query-keys';
 import Chip from '@/components/common/atoms/Chip';
 import Button from '@/components/common/atoms/Button';
+import { ParticapationStatusEnum } from '@/hooks/posts/dto/postDetail';
 
 export default function MyOngoingContent() {
   const router = useRouter();
@@ -28,7 +29,7 @@ export default function MyOngoingContent() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const { data: myApplicationsData, isLoading } = useMyApplicationsQuery({
-    status: 'APPROVED',
+    status: ParticapationStatusEnum.enum.TEST_COMPLETED,
     page: currentPage,
     size: 9,
     sort: [sortOption],
@@ -56,10 +57,6 @@ export default function MyOngoingContent() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-  };
-
-  const handlePostClick = (postId: number) => {
-    router.push(`/project/${postId}`);
   };
 
   // 정렬 변경 핸들러
@@ -154,7 +151,7 @@ export default function MyOngoingContent() {
                       key={post.id}
                       className={cn(
                         'relative group w-[258px] h-[297px] rounded-sm overflow-hidden',
-                        'transition-shadow duration-300 hover:shadow-card-hover',
+                        'transition-shadow duration-300 shadow-card hover:shadow-card-hover',
                       )}
                     >
                       <PostCard post={postCardData} />
@@ -170,7 +167,9 @@ export default function MyOngoingContent() {
                           label="완료하기"
                           className="w-40"
                           onClick={() => {
-                            router.push(`/project/${post.id}/feedback`);
+                            router.push(
+                              `/project/${post.id}/feedback?participantId=${application.id}`,
+                            );
                           }}
                         />
                         <Button

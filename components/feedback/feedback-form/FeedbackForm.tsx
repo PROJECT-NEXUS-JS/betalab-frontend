@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 
@@ -46,6 +46,9 @@ const CardHeader = ({ title }: { title: string }) => {
 const FeedbackForm = ({ projectId }: { projectId: number }) => {
   const router = useRouter();
 
+  const searchParams = useSearchParams();
+  const participantId = Number(searchParams.get('participantId'));
+
   // --- 스타일 클래스 ---
   // 질문 카드 스타일 클래스
   const cardClass = 'px-3 py-5 shadow-card flex flex-col gap-y-5';
@@ -65,7 +68,7 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
   // --- State ---
   // 초기 상태
   const [formData, setFormData] = useState<FeedbackRequestType>({
-    participationId: existingFeedbackData?.participationId ?? 0, // 기본값은 유효하지 않은 id
+    participationId: existingFeedbackData?.participationId ?? participantId,
     overallSatisfaction: existingFeedbackData?.overallSatisfaction ?? 0,
     recommendationIntent: existingFeedbackData?.recommendationIntent ?? 0,
     reuseIntent: existingFeedbackData?.reuseIntent ?? 0,

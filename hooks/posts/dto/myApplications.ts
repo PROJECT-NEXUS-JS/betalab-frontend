@@ -138,7 +138,9 @@ export type PageType = z.infer<typeof pageSchema>;
 // 내 신청 내역 조회 요청 스키마
 export const getMyApplicationsRequestSchema = z
   .object({
-    status: z.enum(['PENDING', 'APPROVED', 'COMPLETED', 'REJECTED', 'PAID']).optional(),
+    status: z
+      .enum(['PENDING', 'APPROVED', 'COMPLETED', 'REJECTED', 'PAID', 'TEST_COMPLETED'])
+      .optional(),
     page: z.number().int().nonnegative().optional(),
     size: z.number().int().positive().optional(),
     sort: z.array(z.string()).optional(),

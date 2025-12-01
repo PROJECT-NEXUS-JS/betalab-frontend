@@ -5,6 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import ApplyCard, { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
 import { usePostLikeCountQuery, usePostLikeMutation, usePostLikeStatusQuery } from '@/hooks/like';
 import { ParticapationStatusEnum } from '@/hooks/posts/dto/postDetail';
+import { useMyApplicationsQuery } from '@/hooks/posts/queries/useMyApplicationsQuery';
 
 interface Props {
   projectId: number;
@@ -17,8 +18,19 @@ export default function ProjectDetailCardClient({ projectId, ApplyCardProps }: P
 
   const { data: isLiked } = usePostLikeStatusQuery(projectId);
   const { data: likeCount } = usePostLikeCountQuery(projectId);
-
+  
   const postLikeMutation = usePostLikeMutation();
+
+  const { data: myApplicationsData } = useMyApplicationsQuery({
+    status: ParticapationStatusEnum.enum.TEST_COMPLETED,
+  });
+
+  // 현재 projectId와 일치하는 내 신청 내역 찾기
+  const myApplication = myApplicationsData?.data?.content.find(
+    (app) => app.postId === Number(projectId)
+  );
+  const participantId = myApplication?.id;
+
 
   const handleScrap = () => {
     postLikeMutation.mutate(projectId, {
@@ -37,7 +49,7 @@ export default function ProjectDetailCardClient({ projectId, ApplyCardProps }: P
   const handleRegister = () => {
     // status 받아서 테스트를 완료했으면 피드백 페이지로 이동
     if (ApplyCardProps.participationStatus === ParticapationStatusEnum.enum.TEST_COMPLETED) {
-      router.push(`/project/${projectId}/feedback`);
+      router.push(`/project/${projectId}/feedback?participantId=${participantId}`);   
     } else {
       router.push(`/project/${projectId}/application`);
     }
