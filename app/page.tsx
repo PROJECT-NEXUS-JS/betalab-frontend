@@ -12,6 +12,8 @@ import { usePostsListHomeQuery } from '@/hooks/posts/queries/usePostsListHomeQue
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+const PAGE_CARD_SIZE = 4;
+
 export default function HomePage() {
   const { isLoggedIn } = useAuth();
   const router = useRouter();
@@ -120,15 +122,22 @@ export default function HomePage() {
             onPageChange={handlePopularPageChange}
           >
             {popularPostsLoading &&
-              Array.from({ length: 4 }).map((_, index) => <PostCardSkeleton key={index} />)}
+              Array.from({ length: PAGE_CARD_SIZE }).map((_, index) => <PostCardSkeleton key={index} />)}
             {popularPosts?.content.length === 0 && (
               <div className="h-[146px] flex justify-center items-center">
                 <p className="text-body-300">인기 테스트가 없어요.</p>
               </div>
             )}
-            {popularPosts?.content.map((post, index) => (
-              <PostCard key={post.id} post={post} ranking={index + 1} />
-            ))}
+            {popularPosts?.content.map((post, index) => {
+              const currentRanking = popularPage * PAGE_CARD_SIZE + index + 1;
+              return (
+                <PostCard
+                  key={post.id}
+                  post={post}
+                  ranking={currentRanking} 
+                />
+              );
+            })}
           </CardScroll>
           <ViewAllButton href={isLoggedIn ? '/category/popular' : '/login'}>
             인기 테스트 전체보기
