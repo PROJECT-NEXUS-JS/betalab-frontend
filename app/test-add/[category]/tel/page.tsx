@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Input from '@/components/common/atoms/Input';
-import TextCounter from '@/components/test-add/TextCounter';
 import type { InputProps } from '@/components/common/atoms/Input';
 import TestAddLayout from '@/components/test-add/layouts/TestAddLayout';
 import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
@@ -17,7 +16,6 @@ export default function TestAddContactPage() {
   const [isFocused, setIsFocused] = useState(false);
 
   const STEP_INDEX = 6;
-  const MAX_LENGTH = 30;
 
   useEffect(() => {
     setContact(typeof form.qnaMethod === 'string' ? form.qnaMethod : '');
@@ -71,16 +69,11 @@ export default function TestAddContactPage() {
             placeholder="예: open.kakao.com/abcd1234 또는 BetaLab@email.com"
             value={contact}
             onChange={e => {
-              const v = e.target.value;
-              if (v.length <= MAX_LENGTH) setContact(v);
+              setContact(e.target.value);
             }}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            maxLength={MAX_LENGTH}
           />
-          <div className="absolute right-1">
-            <TextCounter value={contact} maxLength={MAX_LENGTH} />
-          </div>
         </div>
       </div>
     </TestAddLayout>
