@@ -45,6 +45,7 @@ export default function HomeHeader({ className, ...props }: HomeHeaderProps) {
     },
   ];
 
+
   const handleSearch = (searchValue: string) => {
     if (isLoggedIn) {
       if (selectedCategory === '전체') {
@@ -53,7 +54,7 @@ export default function HomeHeader({ className, ...props }: HomeHeaderProps) {
           params.set('keyword', searchValue);
         }
         const queryString = params.toString();
-        router.push(`/category/popular${queryString ? `?${queryString}` : ''}`);
+        router.push(`/category/${queryString ? `?${queryString}` : ''}`);
       } else {
         const params = new URLSearchParams();
         if (selectedCategory) {

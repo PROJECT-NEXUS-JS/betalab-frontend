@@ -12,6 +12,8 @@ import { usePostsListHomeQuery } from '@/hooks/posts/queries/usePostsListHomeQue
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+const PAGE_CARD_SIZE = 4;
+
 export default function HomePage() {
   const { isLoggedIn } = useAuth();
   const router = useRouter();
@@ -34,24 +36,15 @@ export default function HomePage() {
   const {
     data: recommendPosts,
     isLoading: recommendPostsLoading,
-    error: recommendPostsError,
-  } = usePostsListHomeQuery({ sortBy: 'latest', page: recommendPage, size: 4 });
+  } = usePostsListHomeQuery({ sortBy: 'latest', page: recommendPage, size: PAGE_CARD_SIZE });
   const {
     data: deadlinePosts,
     isLoading: deadlinePostsLoading,
-    error: deadlinePostsError,
-  } = usePostsListHomeQuery({ sortBy: 'deadline', page: deadlinePage, size: 4 });
+  } = usePostsListHomeQuery({ sortBy: 'deadline', page: deadlinePage, size: PAGE_CARD_SIZE });
   const {
     data: popularPosts,
     isLoading: popularPostsLoading,
-    error: popularPostsError,
-  } = usePostsListHomeQuery({ sortBy: 'popular', page: popularPage, size: 4 });
-
-  const hasError = recommendPostsError || deadlinePostsError || popularPostsError;
-
-  if (hasError) {
-    router.push('/login');
-  }
+  } = usePostsListHomeQuery({ sortBy: 'popular', page: popularPage, size: PAGE_CARD_SIZE });
 
   return (
     <div className="w-full flex flex-col  items-center mt-10">
@@ -72,7 +65,7 @@ export default function HomePage() {
             onPageChange={handleRecommendPageChange}
           >
             {recommendPostsLoading &&
-              Array.from({ length: 4 }).map((_, index) => <PostCardSkeleton key={index} />)}
+              Array.from({ length: PAGE_CARD_SIZE }).map((_, index) => <PostCardSkeleton key={index} />)}
             {recommendPosts?.content.length === 0 && (
               <div className="h-[146px] flex justify-center items-center">
                 <p className="text-body-01 text-Gray-300">오늘의 추천 테스트가 없어요.</p>
@@ -92,7 +85,7 @@ export default function HomePage() {
             onPageChange={handleDeadlinePageChange}
           >
             {deadlinePostsLoading &&
-              Array.from({ length: 4 }).map((_, index) => <PostCardSkeleton key={index} />)}
+              Array.from({ length: PAGE_CARD_SIZE }).map((_, index) => <PostCardSkeleton key={index} />)}
             {deadlinePosts?.content.length === 0 && (
               <div className="h-[146px] flex justify-center items-center">
                 <p className="text-body-01 text-Gray-300">곧 마감되는 테스트가 없어요.</p>
@@ -120,15 +113,22 @@ export default function HomePage() {
             onPageChange={handlePopularPageChange}
           >
             {popularPostsLoading &&
-              Array.from({ length: 4 }).map((_, index) => <PostCardSkeleton key={index} />)}
+              Array.from({ length: PAGE_CARD_SIZE }).map((_, index) => <PostCardSkeleton key={index} />)}
             {popularPosts?.content.length === 0 && (
               <div className="h-[146px] flex justify-center items-center">
                 <p className="text-body-300">인기 테스트가 없어요.</p>
               </div>
             )}
-            {popularPosts?.content.map((post, index) => (
-              <PostCard key={post.id} post={post} ranking={index + 1} />
-            ))}
+            {popularPosts?.content.map((post, index) => {
+              const currentRanking = popularPage * PAGE_CARD_SIZE + index + 1;
+              return (
+                <PostCard
+                  key={post.id}
+                  post={post}
+                  ranking={currentRanking} 
+                />
+              );
+            })}
           </CardScroll>
           <ViewAllButton href={isLoggedIn ? '/category/popular' : '/login'}>
             인기 테스트 전체보기
