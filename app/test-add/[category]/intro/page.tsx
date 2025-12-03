@@ -50,12 +50,23 @@ export default function TestAddIntroPage() {
   const handleNext = () => {
     const trimmed = intro.trim();
     if (!trimmed) return alert('소속이나 이름을 입력해주세요!');
-    update({ creatorIntroduction: trimmed });
+
+    const teamMemberCount = isIndividual ? 1 : teamSize ? parseInt(teamSize, 10) : undefined;
+
+    update({
+      creatorIntroduction: trimmed,
+      teamMemberCount: teamMemberCount,
+    });
     router.push(`/test-add/${category}/tel`);
   };
 
   const handleSave = () => {
-    update({ creatorIntroduction: intro });
+    const teamMemberCount = isIndividual ? 1 : teamSize ? parseInt(teamSize, 10) : undefined;
+
+    update({
+      creatorIntroduction: intro,
+      teamMemberCount: teamMemberCount,
+    });
     save();
   };
 
