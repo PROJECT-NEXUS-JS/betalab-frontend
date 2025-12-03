@@ -20,6 +20,7 @@ interface TestAddLayoutProps {
   saveLabel?: string;
   className?: string;
   category?: string;
+  showNextButton?: boolean;
 }
 
 export default function TestAddLayout({
@@ -35,6 +36,7 @@ export default function TestAddLayout({
   saveLabel = '임시 저장',
   className,
   category,
+  showNextButton = true,
 }: TestAddLayoutProps) {
   const adjustedStepIndex = category === 'web' && stepIndex >= 2 ? stepIndex - 1 : stepIndex;
 
@@ -88,7 +90,7 @@ export default function TestAddLayout({
               <CarouselBar activeIndex={adjustedStepIndex} total={totalSteps} />
             </div>
             <div className="flex justify-end">
-              <StepNextButton onClick={onNext} />
+              {showNextButton && <StepNextButton onClick={onNext} />}
             </div>
           </div>
         </div>
