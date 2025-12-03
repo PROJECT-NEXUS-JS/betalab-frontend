@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import ImageButton from '@/components/common/atoms/ImageButton';
 import ImageThumb from '@/components/test-add/ImageThumb';
 import Image from 'next/image';
+import { compressImages } from '@/lib/image-compression';
 
 type Props = {
   files: File[];
@@ -15,6 +16,7 @@ type Props = {
 export default function ImageStrip({ files, total, onUpload, onRemove }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [canRight, setCanRight] = useState(false);
+  const [isCompressing, setIsCompressing] = useState(false);
 
   const checkScroll = () => {
     const el = wrapRef.current;
@@ -26,8 +28,40 @@ export default function ImageStrip({ files, total, onUpload, onRemove }: Props) 
     checkScroll();
   }, [files]);
 
+  const handleUpload = (fileList: FileList | null) => {
+    if (!fileList || fileList.length === 0) return;
+
+    setIsCompressing(true);
+    const originalFiles = Array.from(fileList);
+    compressImages(originalFiles, {
+      maxWidth: 1920,
+      maxHeight: 1080,
+      format: 'image/png',
+      maintainAspectRatio: true,
+    })
+      .then(compressedFiles => {
+        const dataTransfer = new DataTransfer();
+        compressedFiles.forEach(file => {
+          dataTransfer.items.add(file);
+        });
+
+        onUpload(dataTransfer.files);
+      })
+      .catch(error => {
+        console.error('이미지 압축 실패:', error);
+        onUpload(fileList);
+      })
+      .finally(() => {
+        setIsCompressing(false);
+      });
+  };
+
   return (
-    <div className="relative">
+    <div className="relative w-full flex items-center gap-4">
+      <div className="shrink-0">
+        <ImageButton current={files.length} total={total} onUpload={handleUpload} />
+      </div>
+
       <div
         ref={wrapRef}
         onScroll={checkScroll}
@@ -35,18 +69,15 @@ export default function ImageStrip({ files, total, onUpload, onRemove }: Props) 
           flex items-center gap-4 overflow-x-auto
           py-2 pr-10
           scrollbar-thin
+          flex-1
+          min-w-0
         "
+        style={{ scrollbarWidth: 'thin' }}
       >
-        <ImageButton
-          current={files.length}
-          total={total}
-          onUpload={fl => {
-            if (!fl || fl.length === 0) return;
-            onUpload(fl);
-          }}
-        />
         {files.map((f, i) => (
-          <ImageThumb key={`${f.name}-${i}`} file={f} onRemove={() => onRemove(i)} />
+          <div key={`${f.name}-${i}`} className="shrink-0">
+            <ImageThumb file={f} onRemove={() => onRemove(i)} />
+          </div>
         ))}
       </div>
       {canRight && (

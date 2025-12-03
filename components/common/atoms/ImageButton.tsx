@@ -21,7 +21,7 @@ export default function ImageButton({ current, total, onUpload }: ImageButtonPro
     <>
       <button
         onClick={handleClick}
-        className="flex flex-col justify-center items-center gap-1 border border-Gray-100 bg-white rounded-[2px] w-[76px] h-[76px] p-2"
+        className="flex flex-col justify-center items-center gap-1 border border-Gray-100 bg-white rounded-[6px] w-[76px] h-[76px] p-2 shrink-0"
       >
         <img src="/icons/camera.svg" alt="camera" width={20} height={20} />
         <span className="text-Light-Gray text-[12px] font-medium leading-[16px]">
