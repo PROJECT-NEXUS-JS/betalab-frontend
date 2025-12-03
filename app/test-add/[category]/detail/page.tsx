@@ -11,7 +11,7 @@ import Image from 'next/image';
 import Card from '@/components/common/atoms/Card';
 import ImageStrip from '@/components/test-add/ImageStrip';
 import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
-import { createUserPostFromForm } from '@/lib/test-add/api';
+import { useCreatePostMutation } from '@/hooks/test-add/mutations/useCreatePostMutation';
 import Chip from '@/components/common/atoms/Chip';
 import CheckTag from '@/components/common/atoms/CheckTag';
 
@@ -37,6 +37,7 @@ export default function TestAddSettingPage() {
   const router = useRouter();
   const { category } = useParams<{ category?: string }>();
   const { form, update, save } = useTestAddForm();
+  const createPostMutation = useCreatePostMutation();
 
   const [piSelected, setPiSelected] = useState<PI[]>([]);
   const [piPurpose, setPiPurpose] = useState('');
@@ -44,7 +45,6 @@ export default function TestAddSettingPage() {
   const [summary, setSummary] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
   const [mediaTab, setMediaTab] = useState<'video' | 'photo'>('video');
-  const [submitting, setSubmitting] = useState(false);
   const stepIndex = 9;
   const totalSteps = 10;
   const total = 10;
@@ -82,24 +82,24 @@ export default function TestAddSettingPage() {
   const onNext = async () => {
     if (!title.trim()) return alert('제목을 입력해주세요.');
     if (!summary.trim()) return alert('한 줄 소개를 입력해주세요.');
-    if (submitting) return;
+    if (createPostMutation.isPending) return;
 
     const patch = buildPatch();
     const merged = { ...form, ...patch };
 
-    setSubmitting(true);
     try {
-      const created = await createUserPostFromForm(merged, {
-        thumbnail: thumbnailImages[0] ?? null,
-        images: galleryImages,
+      const created = await createPostMutation.mutateAsync({
+        form: merged,
+        files: {
+          thumbnail: thumbnailImages[0] ?? null,
+          images: galleryImages,
+        },
       });
       update(patch);
       router.replace(`/test-add/${category}/finish${created?.id ? `?id=${created.id}` : ''}`);
     } catch (e: any) {
       console.error('생성 실패:', e);
       alert(e?.message ?? '등록에 실패했습니다.');
-    } finally {
-      setSubmitting(false);
     }
   };
 

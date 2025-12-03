@@ -29,9 +29,5 @@ export function useTestAddForm(initial?: TestAddState) {
     localStorage.removeItem(STORAGE_KEY);
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(form));
-  }, [form]);
-
   return { form, update, save, reset } as const;
 }
