@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import TestAddLayout from '@/components/test-add/layouts/TestAddLayout';
 import Selector from '@/components/common/molecules/Selector';
 import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
@@ -24,7 +24,22 @@ export default function TestAddCategoryStep() {
   const STEP_INDEX = 0;
   const router = useRouter();
   const { form, update } = useTestAddForm();
-  const [selected, setSelected] = useState<Category | null>(null);
+  const getCategoryFromForm = (mainCategory?: string[]): Category | null => {
+    const cat = mainCategory?.[0];
+    if (cat === 'APP') return '앱';
+    if (cat === 'WEB') return '웹';
+    if (cat === 'GAME') return '게임';
+    return null;
+  };
+
+  const [selected, setSelected] = useState<Category | null>(() =>
+    getCategoryFromForm(form.mainCategory),
+  );
+
+  useEffect(() => {
+    const restored = getCategoryFromForm(form.mainCategory);
+    if (restored) setSelected(restored);
+  }, [form.mainCategory]);
 
   const handleNext = makeHandleNext(form, update, router.push, {
     select: () => ({ mainCategory: selected ? API_MAIN_CATEGORY[selected] : [] }),
