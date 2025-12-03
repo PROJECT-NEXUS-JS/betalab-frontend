@@ -37,17 +37,17 @@ export default function HomePage() {
     data: recommendPosts,
     isLoading: recommendPostsLoading,
     error: recommendPostsError,
-  } = usePostsListHomeQuery({ sortBy: 'latest', page: recommendPage, size: 4 });
+  } = usePostsListHomeQuery({ sortBy: 'latest', page: recommendPage, size: PAGE_CARD_SIZE });
   const {
     data: deadlinePosts,
     isLoading: deadlinePostsLoading,
     error: deadlinePostsError,
-  } = usePostsListHomeQuery({ sortBy: 'deadline', page: deadlinePage, size: 4 });
+  } = usePostsListHomeQuery({ sortBy: 'deadline', page: deadlinePage, size: PAGE_CARD_SIZE });
   const {
     data: popularPosts,
     isLoading: popularPostsLoading,
     error: popularPostsError,
-  } = usePostsListHomeQuery({ sortBy: 'popular', page: popularPage, size: 4 });
+  } = usePostsListHomeQuery({ sortBy: 'popular', page: popularPage, size: PAGE_CARD_SIZE });
 
   const hasError = recommendPostsError || deadlinePostsError || popularPostsError;
 
@@ -74,7 +74,7 @@ export default function HomePage() {
             onPageChange={handleRecommendPageChange}
           >
             {recommendPostsLoading &&
-              Array.from({ length: 4 }).map((_, index) => <PostCardSkeleton key={index} />)}
+              Array.from({ length: PAGE_CARD_SIZE }).map((_, index) => <PostCardSkeleton key={index} />)}
             {recommendPosts?.content.length === 0 && (
               <div className="h-[146px] flex justify-center items-center">
                 <p className="text-body-01 text-Gray-300">오늘의 추천 테스트가 없어요.</p>
@@ -94,7 +94,7 @@ export default function HomePage() {
             onPageChange={handleDeadlinePageChange}
           >
             {deadlinePostsLoading &&
-              Array.from({ length: 4 }).map((_, index) => <PostCardSkeleton key={index} />)}
+              Array.from({ length: PAGE_CARD_SIZE }).map((_, index) => <PostCardSkeleton key={index} />)}
             {deadlinePosts?.content.length === 0 && (
               <div className="h-[146px] flex justify-center items-center">
                 <p className="text-body-01 text-Gray-300">곧 마감되는 테스트가 없어요.</p>
