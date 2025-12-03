@@ -85,7 +85,7 @@ export type FeedbackRequestType = z.infer<typeof FeedbackRequestSchema>;
 
 // 공통으로 사용되는 핵심 데이터 (설문 내용)
 const FeedbackBaseSchema = z.object({
-  participationId: z.number().int().positive(),
+  participationId: z.number().int(),
 
   // 만족도 & 의향
   overallSatisfaction: z.number().int().min(0).max(5),

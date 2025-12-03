@@ -25,6 +25,7 @@ import useSubmitFeedbackMutation from '@/hooks/feedback/mutations/useSubmitFeedb
 import useMyFeedbackQuery from '@/hooks/feedback/queries/useMyFeedbackQuery';
 
 import { INCONVENIENT_LABELS, BUG_TYPE_LABELS, HAS_BUGS_OPTIONS } from '@/constants/feedback';
+import { LoaderCircle } from 'lucide-react';
 
 const chunkArray = <T,>(arr: T[], size: number) => {
   const result: T[][] = [];
@@ -63,35 +64,64 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
   // --- API Query ---
   // 기존 피드백 불러오기
   const { data: feedbackDetail, isLoading } = useMyFeedbackQuery(projectId);
-  const existingFeedbackData = feedbackDetail?.feedback;
+  const existingFeedbackData = feedbackDetail?.draft;
 
   // --- State ---
   // 초기 상태
   const [formData, setFormData] = useState<FeedbackRequestType>({
-    participationId: existingFeedbackData?.participationId ?? participationId,
-    overallSatisfaction: existingFeedbackData?.overallSatisfaction ?? 0,
-    recommendationIntent: existingFeedbackData?.recommendationIntent ?? 0,
-    reuseIntent: existingFeedbackData?.reuseIntent ?? 0,
-    functionalityScore: existingFeedbackData?.functionalityScore ?? 0,
-    comprehensibilityScore: existingFeedbackData?.comprehensibilityScore ?? 0,
-    speedScore: existingFeedbackData?.speedScore ?? 0,
-    responseTimingScore: existingFeedbackData?.responseTimingScore ?? 0,
-    mostInconvenient: existingFeedbackData?.mostInconvenient ?? MostInconvenientEnum.enum.OTHER,
-    hasBug: existingFeedbackData?.hasBug ?? false,
-    bugTypes:
-      (existingFeedbackData?.bugTypes ?? existingFeedbackData?.hasBug)
-        ? [BugTypeEnum.enum.OTHER]
-        : [],
-    bugLocation: existingFeedbackData?.bugLocation ?? '',
-    bugDescription: existingFeedbackData?.bugDescription ?? '',
-    screenshotUrls: existingFeedbackData?.screenshotUrls ?? [],
-    goodPoints: existingFeedbackData?.goodPoints ?? '',
-    improvementSuggestions: existingFeedbackData?.improvementSuggestions ?? '',
-    additionalComments: existingFeedbackData?.additionalComments ?? '',
+    participationId: participationId,
+    overallSatisfaction: 0,
+    recommendationIntent: 0,
+    reuseIntent: 0,
+    functionalityScore: 0,
+    comprehensibilityScore: 0,
+    speedScore: 0,
+    responseTimingScore: 0,
+    mostInconvenient: MostInconvenientEnum.enum.OTHER,
+    hasBug: false,
+    bugTypes: [],
+    bugLocation: '',
+    bugDescription: '',
+    screenshotUrls: [],
+    goodPoints: '',
+    improvementSuggestions: '',
+    additionalComments: '',
   });
 
+  // 서버에서 데이터(draft)가 들어오면 폼에 채워넣기
+  useEffect(() => {
+    if (existingFeedbackData) {
+      setFormData(prev => ({
+        ...prev,
+        // 서버 데이터가 있으면 덮어쓰고, 없으면 기존 값 유지
+        participationId: existingFeedbackData.participationId ?? prev.participationId,
+        overallSatisfaction: existingFeedbackData.overallSatisfaction ?? 0,
+        recommendationIntent: existingFeedbackData.recommendationIntent ?? 0,
+        reuseIntent: existingFeedbackData.reuseIntent ?? 0,
+        functionalityScore: existingFeedbackData.functionalityScore ?? 0,
+        comprehensibilityScore: existingFeedbackData.comprehensibilityScore ?? 0,
+        speedScore: existingFeedbackData.speedScore ?? 0,
+        responseTimingScore: existingFeedbackData.responseTimingScore ?? 0,
+        mostInconvenient: existingFeedbackData.mostInconvenient ?? MostInconvenientEnum.enum.OTHER,
+
+        hasBug: existingFeedbackData.hasBug ?? false,
+        bugTypes: existingFeedbackData.bugTypes ?? [],
+        bugLocation: existingFeedbackData.bugLocation ?? '',
+        bugDescription: existingFeedbackData.bugDescription ?? '',
+        screenshotUrls: existingFeedbackData.screenshotUrls ?? [],
+
+        goodPoints: existingFeedbackData.goodPoints ?? '',
+        improvementSuggestions: existingFeedbackData.improvementSuggestions ?? '',
+        additionalComments: existingFeedbackData.additionalComments ?? '',
+      }));
+    }
+  }, [existingFeedbackData]); // existingFeedbackData가 변경될 때(로딩 완료 시)
+
   // 유효성 검사 통과 여부
-  const [isValid, setIsValid] = useState(false);
+  const isValid = useMemo(() => {
+    return FeedbackRequestSchema.safeParse(formData).success;
+  }, [formData]);
+
   // 토스트
   type ToastStyle = ToastProps['style'];
   const [toast, setToast] = useState<{
@@ -105,13 +135,6 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
   });
   // 제출 성공 모달
   const [successModalOpen, setSuccessModalOpen] = useState(false);
-
-  // --- 유효성 검사 ---
-  // 상태 변경 시마다 유효성 검사 (Zod 활용)
-  useEffect(() => {
-    const result = FeedbackRequestSchema.safeParse(formData);
-    setIsValid(result.success);
-  }, [formData]);
 
   // --- 기능 ---
   // 임시 저장
@@ -129,6 +152,7 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
     // 임시: 임시 저장도 유효성 확인
     const result = FeedbackRequestSchema.safeParse(formData);
     if (!isValid) {
+      console.log('isValid', isValid);
       setToast({
         show: true,
         message:
@@ -137,6 +161,8 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
       });
       return;
     }
+
+    console.log('FeedbackForm 렌더링됨. projectId:', projectId);
 
     saveDraft(formData, {
       onSuccess: () => {
@@ -277,7 +303,11 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
   }, []);
 
   if (isLoading) {
-    return <p>피드백 로딩 중...</p>;
+    return (
+      <div className="flex justify-center items-center flex-1">
+        <LoaderCircle className="animate-spin" />
+      </div>
+    );
   }
 
   return (
