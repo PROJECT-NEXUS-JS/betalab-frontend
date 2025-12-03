@@ -17,7 +17,7 @@ export const MostInconvenientEnum = z.enum([
   'UI_UX',
   'SPEED',
   'FUNCTION',
-  'TEXT',
+  'TEXT_GUIDE',
   'GUIDE',
   'OTHER',
 ]);
