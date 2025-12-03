@@ -36,24 +36,15 @@ export default function HomePage() {
   const {
     data: recommendPosts,
     isLoading: recommendPostsLoading,
-    error: recommendPostsError,
   } = usePostsListHomeQuery({ sortBy: 'latest', page: recommendPage, size: PAGE_CARD_SIZE });
   const {
     data: deadlinePosts,
     isLoading: deadlinePostsLoading,
-    error: deadlinePostsError,
   } = usePostsListHomeQuery({ sortBy: 'deadline', page: deadlinePage, size: PAGE_CARD_SIZE });
   const {
     data: popularPosts,
     isLoading: popularPostsLoading,
-    error: popularPostsError,
   } = usePostsListHomeQuery({ sortBy: 'popular', page: popularPage, size: PAGE_CARD_SIZE });
-
-  const hasError = recommendPostsError || deadlinePostsError || popularPostsError;
-
-  if (hasError) {
-    router.push('/login');
-  }
 
   return (
     <div className="w-full flex flex-col  items-center mt-10">
