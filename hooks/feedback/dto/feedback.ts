@@ -112,8 +112,8 @@ const FeedbackBaseSchema = z.object({
   additionalComments: z.string(),
 
   // 날짜
-  createdAt: z.iso.datetime(),
-  updatedAt: z.iso.datetime(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
 });
 
 export const DraftSchema = FeedbackBaseSchema.extend({
@@ -130,9 +130,10 @@ export const FeedbackDetailResponseSchema = BaseModelSchema(FeedbackSchema);
 
 export const MyFeedbackResponseSchema = BaseModelSchema(
   z.object({
+    participationId: z.number().int(),
     hasSubmitted: z.boolean(),
     hasDraft: z.boolean(),
-    feedback: FeedbackSchema,
-    draft: DraftSchema,
+    feedback: FeedbackSchema.nullable(),
+    draft: DraftSchema.nullable(),
   }),
 );

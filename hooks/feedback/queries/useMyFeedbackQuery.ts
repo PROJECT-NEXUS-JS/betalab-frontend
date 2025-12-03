@@ -10,7 +10,15 @@ export async function getMyFeedback(postId: number) {
       postId: postId,
     },
   });
-  return response.data;
+  
+  const parsed = MyFeedbackResponseSchema.safeParse(response.data);
+
+  if (!parsed.success) {
+    console.error('❌ 데이터 스키마 파싱 실패:', parsed.error);
+    throw parsed.error;
+  }
+
+  return parsed.data;
 }
 
 /**
