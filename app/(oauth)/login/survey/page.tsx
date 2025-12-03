@@ -49,7 +49,10 @@ export default function SurveyPage() {
 
   const handleEnterDirectlyToggle = () => {
     const totalSelected = selectedTags.length + (enterDirectly ? 0 : 1);
-    if (totalSelected > TEST_CHIP_SELECT_MAX) return;
+    if (totalSelected >= TEST_CHIP_SELECT_MAX) {
+      setShowToast(true);
+      return;
+    }
 
     setEnterDirectly(prev => !prev);
     setEnterDirectlyValue('');
