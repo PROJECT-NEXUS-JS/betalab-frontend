@@ -1,7 +1,6 @@
-// components/test-add/layouts/TestAddLayout.tsx
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import Button from '@/components/common/atoms/Button';
@@ -38,6 +37,28 @@ export default function TestAddLayout({
   category,
 }: TestAddLayoutProps) {
   const adjustedStepIndex = category === 'web' && stepIndex >= 2 ? stepIndex - 1 : stepIndex;
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' && e.target instanceof HTMLElement) {
+        const isInputFocused =
+          e.target.tagName === 'INPUT' ||
+          e.target.tagName === 'TEXTAREA' ||
+          e.target.isContentEditable;
+
+        if (!isInputFocused && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+          e.preventDefault();
+          onNext();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onNext]);
+
   return (
     <div className={cn('min-h-screen w-full flex flex-col bg-White', className)}>
       <div className="flex flex-1 w-full">
