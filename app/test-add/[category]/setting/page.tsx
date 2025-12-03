@@ -361,8 +361,9 @@ export default function TestAddSettingPage() {
               {(() => {
                 const STEP = 10;
                 const MIN = 0;
+                const MAX = 10000;
 
-                const clamp = (n: number) => Math.max(MIN, n);
+                const clamp = (n: number) => Math.max(MIN, Math.min(MAX, n));
 
                 const inc = () => {
                   setRecruitTouched(true);
