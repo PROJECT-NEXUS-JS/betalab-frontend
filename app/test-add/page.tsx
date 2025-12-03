@@ -11,7 +11,6 @@ const CATEGORY_MAP = {
   앱: 'app',
   웹: 'web',
   게임: 'game',
-  기타: 'etc',
 } as const;
 type Category = keyof typeof CATEGORY_MAP;
 
@@ -19,7 +18,6 @@ const API_MAIN_CATEGORY: Record<Category, string[]> = {
   앱: ['APP'],
   웹: ['WEB'],
   게임: ['GAME'],
-  기타: ['ETC'],
 };
 
 export default function TestAddCategoryStep() {
