@@ -18,9 +18,18 @@ type Props = {
 
 export default function StorySection({ initial, onChange }: Props) {
   const [value, setValue] = useState(initial?.storyGuide ?? '');
-  const [guideOn, setGuideOn] = useState(false);
+
+  const isBetalabGuide = (text: string | undefined) => {
+    if (!text) return false;
+    return text.trim() === BETALAB_GUIDE.trim();
+  };
+
+  const [guideOn, setGuideOn] = useState(() => isBetalabGuide(initial?.storyGuide));
+
   useEffect(() => {
-    setValue(initial?.storyGuide ?? '');
+    const restoredValue = initial?.storyGuide ?? '';
+    setValue(restoredValue);
+    setGuideOn(isBetalabGuide(restoredValue));
   }, [initial?.storyGuide]);
   const emit = (next: string) => {
     onChange?.({ storyGuide: isEmpty(next) ? undefined : next });
