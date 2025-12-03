@@ -199,6 +199,7 @@ export default function TestAddConditionsPage() {
       onSave={handleSave}
       showSave
       saveLabel="임시 저장"
+      category={category}
     >
       <div className="mx-auto w-full max-w-[1000px]">
         <h1 className="text-subtitle-01 font-bold mb-6">참여 조건 설정이 필요하신가요 ?</h1>

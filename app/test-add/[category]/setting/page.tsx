@@ -252,6 +252,7 @@ export default function TestAddSettingPage() {
       onNext={handleNext}
       showSave
       onSave={handleSave}
+      category={category}
     >
       <div className="flex flex-col gap-10">
         {/* 피드백 수집 방식 */}

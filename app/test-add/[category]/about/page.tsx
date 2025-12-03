@@ -53,6 +53,7 @@ export default function TestAddAboutPage() {
       showSave
       onSave={handleSave}
       saveLabel="임시 저장"
+      category={category}
     >
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-1">

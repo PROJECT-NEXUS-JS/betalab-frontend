@@ -88,6 +88,7 @@ export default function TestAddPurposePage() {
       showSave
       onSave={handleSave}
       saveLabel="임시 저장"
+      category={category}
     >
       <div className="flex flex-col gap-10">
         <div className="flex items-center gap-2">

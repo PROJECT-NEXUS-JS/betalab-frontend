@@ -20,6 +20,7 @@ interface TestAddLayoutProps {
   onSave?: () => void;
   saveLabel?: string;
   className?: string;
+  category?: string;
 }
 
 export default function TestAddLayout({
@@ -34,7 +35,9 @@ export default function TestAddLayout({
   onSave,
   saveLabel = '임시 저장',
   className,
+  category,
 }: TestAddLayoutProps) {
+  const adjustedStepIndex = category === 'web' && stepIndex >= 2 ? stepIndex - 1 : stepIndex;
   return (
     <div className={cn('min-h-screen w-full flex flex-col bg-White', className)}>
       <div className="flex flex-1 w-full">
@@ -61,7 +64,7 @@ export default function TestAddLayout({
             </div>
 
             <div className="flex-1 flex justify-center">
-              <CarouselBar activeIndex={stepIndex} total={totalSteps} />
+              <CarouselBar activeIndex={adjustedStepIndex} total={totalSteps} />
             </div>
             <div className="flex justify-end">
               <StepNextButton onClick={onNext} />
