@@ -10,7 +10,15 @@ export async function getMyFeedback(postId: number) {
       postId: postId,
     },
   });
-  return MyFeedbackResponseSchema.parse(response.data);
+  
+  const parsed = MyFeedbackResponseSchema.safeParse(response.data);
+
+  if (!parsed.success) {
+    console.error('❌ 데이터 스키마 파싱 실패:', parsed.error);
+    throw parsed.error;
+  }
+
+  return parsed.data;
 }
 
 /**
@@ -22,5 +30,6 @@ export default function useMyFeedbackQuery(postId: number) {
     queryFn: () => getMyFeedback(postId),
     staleTime: 1000 * 60 * 5, // 5분 동안 stale 아님
     select: data => data.data,
+    enabled: !!postId,
   });
 }
