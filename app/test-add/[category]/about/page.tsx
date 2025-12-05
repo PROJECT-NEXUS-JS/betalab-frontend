@@ -37,6 +37,7 @@ export default function TestAddAboutPage() {
     const trimmed = summary.trim();
     if (!trimmed) return alert('한줄 소개를 입력해주세요!');
     update({ description: trimmed });
+    save();
     router.push(`/test-add/${category}/intro`);
   };
 

@@ -72,6 +72,7 @@ export default function TestAddPurposePage() {
       return;
     }
     update({ feedbackItems: selected });
+    save();
     router.push(`/test-add/${category}/setting`);
   };
 

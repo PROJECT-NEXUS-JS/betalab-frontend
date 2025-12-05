@@ -23,7 +23,7 @@ const API_MAIN_CATEGORY: Record<Category, string[]> = {
 export default function TestAddCategoryStep() {
   const STEP_INDEX = 0;
   const router = useRouter();
-  const { form, update } = useTestAddForm();
+  const { form, update, save } = useTestAddForm();
   const getCategoryFromForm = (mainCategory?: string[]): Category | null => {
     const cat = mainCategory?.[0];
     if (cat === 'APP') return '앱';
@@ -41,7 +41,7 @@ export default function TestAddCategoryStep() {
     if (restored) setSelected(restored);
   }, [form.mainCategory]);
 
-  const handleNext = makeHandleNext(form, update, router.push, {
+  const handleNext = makeHandleNext(form, update, save, router.push, {
     select: () => ({ mainCategory: selected ? API_MAIN_CATEGORY[selected] : [] }),
     validate: () => (selected ? null : '카테고리를 선택해주세요!'),
     next: merged => {

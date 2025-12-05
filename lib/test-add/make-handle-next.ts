@@ -9,6 +9,7 @@ type NextConfig = {
 export function makeHandleNext(
   form: TestAddState,
   update: (p: TestAddState) => void,
+  save: () => void,
   push: (path: string) => void,
   cfg: NextConfig,
 ) {
@@ -21,6 +22,7 @@ export function makeHandleNext(
     const patch = cfg.select();
     const merged = { ...form, ...patch };
     update(patch);
+    save();
 
     const nextPath = typeof cfg.next === 'string' ? cfg.next : cfg.next(merged);
     push(nextPath);

@@ -35,6 +35,7 @@ export default function TestAddContactPage() {
     const trimmed = contact.trim();
     if (!trimmed) return alert('연락처를 입력해주세요!');
     update({ qnaMethod: trimmed });
+    save();
     router.push(`/test-add/${category}/purpose`);
   };
 

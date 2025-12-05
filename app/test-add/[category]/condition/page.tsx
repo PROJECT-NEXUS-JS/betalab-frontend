@@ -186,6 +186,7 @@ export default function TestAddConditionsPage() {
     }
 
     update(patch);
+    save();
     router.push(`/test-add/${category}/detail`);
   };
 

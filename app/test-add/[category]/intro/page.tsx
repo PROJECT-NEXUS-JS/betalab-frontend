@@ -22,13 +22,15 @@ export default function TestAddIntroPage() {
 
   const STEP_INDEX = 5;
   const MAX_LENGTH = 30;
+  const MOCK_CREATOR_INTRODUCTION = '풀스택 개발자 5년차입니다.';
 
   useEffect(() => {
-    setIntro(typeof form.creatorIntroduction === 'string' ? form.creatorIntroduction : '');
-  }, [form.creatorIntroduction]);
-
-  useEffect(() => {
-    setIntro(typeof form.creatorIntroduction === 'string' ? form.creatorIntroduction : '');
+    if (typeof form.creatorIntroduction === 'string' && form.creatorIntroduction.trim()) {
+      setIntro(form.creatorIntroduction);
+    } else {
+      setIntro(MOCK_CREATOR_INTRODUCTION);
+      update({ creatorIntroduction: MOCK_CREATOR_INTRODUCTION });
+    }
   }, [form.creatorIntroduction]);
 
   const getInputState = (): InputProps['state'] => {
@@ -57,6 +59,7 @@ export default function TestAddIntroPage() {
       creatorIntroduction: trimmed,
       teamMemberCount: teamMemberCount,
     });
+    save();
     router.push(`/test-add/${category}/tel`);
   };
 

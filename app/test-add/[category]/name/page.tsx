@@ -33,6 +33,7 @@ export default function TestAddNamePage() {
     const trimmed = title.trim();
     if (!trimmed) return alert('제목을 입력해주세요!');
     update({ title: trimmed });
+    save();
     router.push(`/test-add/${category}/about`);
   };
 

@@ -191,7 +191,7 @@ export default function TestAddSettingPage() {
       endDate: deadlineRange?.to?.toISOString(),
       recruitmentDeadline: deadlineRange?.to?.toISOString(),
     });
-
+    save();
     router.push(`/test-add/${category}/condition`);
   };
 

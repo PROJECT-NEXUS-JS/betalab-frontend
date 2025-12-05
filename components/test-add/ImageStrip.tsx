@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import ImageButton from '@/components/common/atoms/ImageButton';
 import ImageThumb from '@/components/test-add/ImageThumb';
 import Image from 'next/image';
-import { compressImages } from '@/lib/image-compression';
 
 type Props = {
   files: File[];
@@ -16,7 +15,6 @@ type Props = {
 export default function ImageStrip({ files, total, onUpload, onRemove }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [canRight, setCanRight] = useState(false);
-  const [isCompressing, setIsCompressing] = useState(false);
 
   const checkScroll = () => {
     const el = wrapRef.current;
@@ -30,30 +28,7 @@ export default function ImageStrip({ files, total, onUpload, onRemove }: Props) 
 
   const handleUpload = (fileList: FileList | null) => {
     if (!fileList || fileList.length === 0) return;
-
-    setIsCompressing(true);
-    const originalFiles = Array.from(fileList);
-    compressImages(originalFiles, {
-      maxWidth: 1920,
-      maxHeight: 1080,
-      format: 'image/png',
-      maintainAspectRatio: true,
-    })
-      .then(compressedFiles => {
-        const dataTransfer = new DataTransfer();
-        compressedFiles.forEach(file => {
-          dataTransfer.items.add(file);
-        });
-
-        onUpload(dataTransfer.files);
-      })
-      .catch(error => {
-        console.error('이미지 압축 실패:', error);
-        onUpload(fileList);
-      })
-      .finally(() => {
-        setIsCompressing(false);
-      });
+    onUpload(fileList);
   };
 
   return (
