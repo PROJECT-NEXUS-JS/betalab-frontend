@@ -22,15 +22,9 @@ export default function TestAddIntroPage() {
 
   const STEP_INDEX = 5;
   const MAX_LENGTH = 30;
-  const MOCK_CREATOR_INTRODUCTION = '풀스택 개발자 5년차입니다.';
 
   useEffect(() => {
-    if (typeof form.creatorIntroduction === 'string' && form.creatorIntroduction.trim()) {
-      setIntro(form.creatorIntroduction);
-    } else {
-      setIntro(MOCK_CREATOR_INTRODUCTION);
-      update({ creatorIntroduction: MOCK_CREATOR_INTRODUCTION });
-    }
+    setIntro(typeof form.creatorIntroduction === 'string' ? form.creatorIntroduction : '');
   }, [form.creatorIntroduction]);
 
   const getInputState = (): InputProps['state'] => {
