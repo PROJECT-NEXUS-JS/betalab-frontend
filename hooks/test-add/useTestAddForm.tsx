@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import type { TestAddState } from '@/types/test-add';
 
 const STORAGE_KEY = 'testAddForm';
@@ -16,22 +16,34 @@ export function useTestAddForm(initial?: TestAddState) {
     return initial ?? {};
   });
 
+  const formRef = useRef(form);
+  formRef.current = form;
+
   const update = useCallback((patch: TestAddState) => {
-    setForm(prev => ({ ...prev, ...patch }));
+    setForm(prev => {
+      const next = { ...prev, ...patch };
+      formRef.current = next;
+      // update와 동시에 localStorage에 저장
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      }
+      return next;
+    });
   }, []);
 
   const save = useCallback(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(form));
-  }, [form]);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(formRef.current));
+    }
+  }, []);
 
   const reset = useCallback(() => {
     setForm({});
+    formRef.current = {};
     localStorage.removeItem(STORAGE_KEY);
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(form));
-  }, [form]);
+  const getForm = useCallback(() => formRef.current, []);
 
-  return { form, update, save, reset } as const;
+  return { form, update, save, reset, getForm } as const;
 }

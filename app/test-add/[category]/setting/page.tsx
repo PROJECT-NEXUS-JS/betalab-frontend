@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import TestAddLayout from '@/components/test-add/layouts/TestAddLayout';
@@ -159,24 +159,6 @@ export default function TestAddSettingPage() {
   const isDeadlineDone = !!(deadlineRange?.from && deadlineRange?.to);
   const canProceed = isFeedbackDone && isTimeDone && isRecruitDone && isDeadlineDone;
 
-  const timeRef = useRef<HTMLDivElement | null>(null);
-  const recruitRef = useRef<HTMLDivElement | null>(null);
-  const deadlineRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (showTimeSection) timeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, [showTimeSection]);
-
-  useEffect(() => {
-    if (showRecruitSection)
-      recruitRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, [showRecruitSection]);
-
-  useEffect(() => {
-    if (showDeadlineSection)
-      deadlineRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, [showDeadlineSection]);
-
   const toggleTag = (tag: string, type: 'feedback' | 'time') => {
     if (type === 'feedback') {
       setFeedbackTags(prev => (prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]));
@@ -209,7 +191,7 @@ export default function TestAddSettingPage() {
       endDate: deadlineRange?.to?.toISOString(),
       recruitmentDeadline: deadlineRange?.to?.toISOString(),
     });
-
+    save();
     router.push(`/test-add/${category}/condition`);
   };
 
@@ -252,6 +234,7 @@ export default function TestAddSettingPage() {
       onNext={handleNext}
       showSave
       onSave={handleSave}
+      category={category}
     >
       <div className="flex flex-col gap-10">
         {/* 피드백 수집 방식 */}
@@ -308,7 +291,6 @@ export default function TestAddSettingPage() {
         <AnimatePresence>
           {(feedbackTags.length > 0 || (customFeedbackOpen && !!customFeedbackValue.trim())) && (
             <motion.div
-              ref={timeRef}
               className="flex flex-col gap-6"
               variants={sectionVariants}
               initial="hidden"
@@ -367,7 +349,6 @@ export default function TestAddSettingPage() {
         <AnimatePresence>
           {(timeTags.length > 0 || (customTimeOpen && !!customTimeValue.trim())) && (
             <motion.div
-              ref={recruitRef}
               className="flex flex-col gap-6"
               variants={sectionVariants}
               initial="hidden"
@@ -380,8 +361,9 @@ export default function TestAddSettingPage() {
               {(() => {
                 const STEP = 10;
                 const MIN = 0;
+                const MAX = 10000;
 
-                const clamp = (n: number) => Math.max(MIN, n);
+                const clamp = (n: number) => Math.max(MIN, Math.min(MAX, n));
 
                 const inc = () => {
                   setRecruitTouched(true);
@@ -482,7 +464,6 @@ export default function TestAddSettingPage() {
           {recruitTouched &&
             (customRecruitOpen ? Number(customRecruitValue) > 0 : recruitCount > 0) && (
               <motion.div
-                ref={deadlineRef}
                 className="flex flex-col gap-4"
                 variants={sectionVariants}
                 initial="hidden"

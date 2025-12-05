@@ -41,7 +41,7 @@ export default function TestAddPlatformStep() {
   const { category } = useParams<{ category: string }>();
   const STEP_INDEX = 1;
   const router = useRouter();
-  const { form, update } = useTestAddForm();
+  const { form, update, save } = useTestAddForm();
 
   const options = useMemo(() => PLATFORM_MAP[category] ?? [], [category]);
   const [selected, setSelected] = useState<string | null>(null);
@@ -52,7 +52,7 @@ export default function TestAddPlatformStep() {
     if (ui && options.includes(ui)) setSelected(ui);
   }, [form.platformCategory, options]);
 
-  const handleNext = makeHandleNext(form, update, router.push, {
+  const handleNext = makeHandleNext(form, update, save, router.push, {
     select: () => ({ platformCategory: selected ? [UI_TO_API[selected]] : [] }),
     validate: () => (selected ? null : '플랫폼을 선택해주세요!'),
     next: `/test-add/${category}/genre`,

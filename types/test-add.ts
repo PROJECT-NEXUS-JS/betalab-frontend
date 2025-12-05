@@ -40,6 +40,7 @@ export const TestAddSchema = z
     storyGuide: z.string().optional(),
     privacyItems: z.array(z.enum(['NAME', 'EMAIL', 'CONTACT', 'ETC'])).optional(),
     mediaUrl: z.string().url().optional(),
+    teamMemberCount: z.coerce.number().int().positive().optional(),
   })
   .superRefine((d, ctx) => {
     if (new Date(d.recruitmentDeadline) > new Date(d.startDate)) {

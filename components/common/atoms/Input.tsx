@@ -99,6 +99,16 @@ export default function Input(props: InputProps) {
   // input 전용 핸들러 타입 안전
   const { onChange, onFocus, onBlur } = props as InputKindProps;
 
+  const handleClear = () => {
+    if (onChange && state !== 'disabled') {
+      const syntheticEvent = {
+        target: { value: '' },
+        currentTarget: { value: '' },
+      } as React.ChangeEvent<HTMLInputElement>;
+      onChange(syntheticEvent);
+    }
+  };
+
   return (
     <div className={`${baseClasses} flex justify-between items-center max-w-full`}>
       <input
@@ -112,7 +122,12 @@ export default function Input(props: InputProps) {
         disabled={state === 'disabled'}
         maxLength={maxLength}
       />
-      <button type="button" className={`${THEME_BUTTON_SHOW[state]}`}>
+      <button
+        type="button"
+        onClick={handleClear}
+        className={`${THEME_BUTTON_SHOW[state]} cursor-pointer`}
+        disabled={state === 'disabled'}
+      >
         <Image src={CircleX} alt="Clear input" />
       </button>
     </div>

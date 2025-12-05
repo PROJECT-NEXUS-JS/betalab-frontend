@@ -17,6 +17,7 @@ export const CreatePostPayloadSchema = z
     durationTime: z.string().optional(),
     participationMethod: z.string().optional(),
     maxParticipants: z.number().int().positive().optional(),
+    teamMemberCount: z.number().int().positive().optional(),
     ageMin: z.number().optional(),
     ageMax: z.number().optional(),
     genderRequirement: z.enum(['무관', '남성', '여성']).optional(),

@@ -71,9 +71,7 @@ export async function createUserPost(
   log.req('POST /v1/users/posts', url, 'POST', { hasThumbnail: !!thumbnail, payload });
   const payloadClone = JSON.parse(JSON.stringify(payload));
   console.log('[PAYLOAD]', payloadClone);
-  const res = await instance.post(path, fd, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  const res = await instance.post(path, fd);
 
   log.res('POST /v1/users/posts', res.status, res.data);
 

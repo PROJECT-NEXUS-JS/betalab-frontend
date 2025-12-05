@@ -7,6 +7,7 @@ import ConditionCard from '@/components/test-add/ConditionCard';
 import Input from '@/components/common/atoms/Input';
 import Button from '@/components/common/atoms/Button';
 import Chip from '@/components/common/atoms/Chip';
+import TextCounter from '@/components/test-add/TextCounter';
 import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
 
 type ButtonState = 'Focused' | 'Solid';
@@ -42,6 +43,8 @@ export default function TestAddConditionsPage() {
   const [rewardType, setRewardType] = useState<RewardUI | null>(null);
   const [rewardDesc, setRewardDesc] = useState('');
   const [rewardRule, setRewardRule] = useState('');
+
+  const MAX_REWARD_LENGTH = 30;
 
   useEffect(() => {
     if (form.genderRequirement === '남성') {
@@ -183,6 +186,7 @@ export default function TestAddConditionsPage() {
     }
 
     update(patch);
+    save();
     router.push(`/test-add/${category}/detail`);
   };
 
@@ -199,6 +203,7 @@ export default function TestAddConditionsPage() {
       onSave={handleSave}
       showSave
       saveLabel="임시 저장"
+      category={category}
     >
       <div className="mx-auto w-full max-w-[1000px]">
         <h1 className="text-subtitle-01 font-bold mb-6">참여 조건 설정이 필요하신가요 ?</h1>
@@ -292,7 +297,7 @@ export default function TestAddConditionsPage() {
             >
               <div className="mb-2 text-caption-01 text-Gray-300">대상 조건</div>
               <Input
-                type="text area"
+                type="text"
                 state={otherConditions ? 'has value' : 'no value'}
                 size="sm"
                 placeholder="ex. 서울 거주자, iOS 사용자 등"
@@ -343,26 +348,44 @@ export default function TestAddConditionsPage() {
 
                 <div className="col-span-12 lg:col-span-4">
                   <p className="text-caption-01 text-Gray-300 mb-2">리워드 세부 설명</p>
-                  <Input
-                    type="text"
-                    state={rewardDesc ? 'has value' : 'no value'}
-                    size="sm"
-                    placeholder="ex. 설문 완료 시 현금 1만 원 지급"
-                    value={rewardDesc}
-                    onChange={e => setRewardDesc(e.target.value)}
-                  />
+                  <div className="relative w-fit">
+                    <Input
+                      type="text"
+                      state={rewardDesc ? 'has value' : 'no value'}
+                      size="sm"
+                      placeholder="ex. 설문 완료 시 현금 1만 원 지급"
+                      value={rewardDesc}
+                      onChange={e => {
+                        const v = e.target.value;
+                        if (v.length <= MAX_REWARD_LENGTH) setRewardDesc(v);
+                      }}
+                      maxLength={MAX_REWARD_LENGTH}
+                    />
+                    <div className="absolute right-1">
+                      <TextCounter value={rewardDesc} maxLength={MAX_REWARD_LENGTH} />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="col-span-12 lg:col-span-4">
                   <p className="text-caption-01 text-Gray-300 mb-2">지급 조건</p>
-                  <Input
-                    type="text"
-                    state={rewardRule ? 'has value' : 'no value'}
-                    size="sm"
-                    placeholder="ex. 설문 내역 검수 후 리워드 제공"
-                    value={rewardRule}
-                    onChange={e => setRewardRule(e.target.value)}
-                  />
+                  <div className="relative w-fit">
+                    <Input
+                      type="text"
+                      state={rewardRule ? 'has value' : 'no value'}
+                      size="sm"
+                      placeholder="ex. 설문 내역 검수 후 리워드 제공"
+                      value={rewardRule}
+                      onChange={e => {
+                        const v = e.target.value;
+                        if (v.length <= MAX_REWARD_LENGTH) setRewardRule(v);
+                      }}
+                      maxLength={MAX_REWARD_LENGTH}
+                    />
+                    <div className="absolute right-1">
+                      <TextCounter value={rewardRule} maxLength={MAX_REWARD_LENGTH} />
+                    </div>
+                  </div>
                 </div>
               </div>
             </ConditionCard>

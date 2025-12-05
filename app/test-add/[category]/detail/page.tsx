@@ -11,7 +11,7 @@ import Image from 'next/image';
 import Card from '@/components/common/atoms/Card';
 import ImageStrip from '@/components/test-add/ImageStrip';
 import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
-import { createUserPostFromForm } from '@/lib/test-add/api';
+import { useCreatePostMutation } from '@/hooks/test-add/mutations/useCreatePostMutation';
 import Chip from '@/components/common/atoms/Chip';
 import CheckTag from '@/components/common/atoms/CheckTag';
 
@@ -36,7 +36,8 @@ const valueState = (v: string) => (v.trim() ? 'has value' : 'no value');
 export default function TestAddSettingPage() {
   const router = useRouter();
   const { category } = useParams<{ category?: string }>();
-  const { form, update, save } = useTestAddForm();
+  const { form, update, save, getForm } = useTestAddForm();
+  const createPostMutation = useCreatePostMutation();
 
   const [piSelected, setPiSelected] = useState<PI[]>([]);
   const [piPurpose, setPiPurpose] = useState('');
@@ -44,7 +45,6 @@ export default function TestAddSettingPage() {
   const [summary, setSummary] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
   const [mediaTab, setMediaTab] = useState<'video' | 'photo'>('video');
-  const [submitting, setSubmitting] = useState(false);
   const stepIndex = 9;
   const totalSteps = 10;
   const total = 10;
@@ -77,29 +77,70 @@ export default function TestAddSettingPage() {
     privacyItems: piSelected.length ? piSelected.map(p => UI_TO_API[p]) : undefined,
     mediaUrl: mediaTab === 'video' && videoUrl.trim() ? videoUrl.trim() : undefined,
     participationMethod: '온라인' as const,
+    storyGuide: form.storyGuide || undefined,
   });
 
   const onNext = async () => {
     if (!title.trim()) return alert('제목을 입력해주세요.');
     if (!summary.trim()) return alert('한 줄 소개를 입력해주세요.');
-    if (submitting) return;
+    if (createPostMutation.isPending) return;
 
     const patch = buildPatch();
-    const merged = { ...form, ...patch };
+    // update 전에 현재 상태를 가져와서 patch와 병합
+    const currentForm = getForm();
+    const merged = { ...currentForm, ...patch };
+    update(patch);
 
-    setSubmitting(true);
+    console.log('=== Form 데이터 확인 ===');
+    console.log('현재 form state:', form);
+    console.log('formRef.current:', currentForm);
+    console.log(
+      'localStorage 데이터:',
+      typeof window !== 'undefined' ? localStorage.getItem('testAddForm') : 'N/A',
+    );
+    console.log('전체 form 데이터 (merged):', merged);
+    console.log('각 필드 확인:');
+    console.log('- title:', merged.title);
+    console.log('- serviceSummary:', merged.serviceSummary);
+    console.log('- creatorIntroduction:', merged.creatorIntroduction);
+    console.log('- description:', merged.description);
+    console.log('- mainCategory:', merged.mainCategory);
+    console.log('- platformCategory:', merged.platformCategory);
+    console.log('- genreCategories:', merged.genreCategories);
+    console.log('- qnaMethod:', merged.qnaMethod);
+    console.log('- startDate:', merged.startDate);
+    console.log('- endDate:', merged.endDate);
+    console.log('- recruitmentDeadline:', merged.recruitmentDeadline);
+    console.log('- durationTime:', merged.durationTime);
+    console.log('- maxParticipants:', merged.maxParticipants);
+    console.log('- genderRequirement:', merged.genderRequirement);
+    console.log('- ageMin:', merged.ageMin);
+    console.log('- ageMax:', merged.ageMax);
+    console.log('- additionalRequirements:', merged.additionalRequirements);
+    console.log('- rewardType:', merged.rewardType);
+    console.log('- rewardDescription:', merged.rewardDescription);
+    console.log('- feedbackMethod:', merged.feedbackMethod);
+    console.log('- feedbackItems:', merged.feedbackItems);
+    console.log('- privacyItems:', merged.privacyItems);
+    console.log('- participationMethod:', merged.participationMethod);
+    console.log('- storyGuide:', merged.storyGuide);
+    console.log('- mediaUrl:', merged.mediaUrl);
+    console.log('- teamMemberCount:', merged.teamMemberCount);
+    console.log('======================');
+
     try {
-      const created = await createUserPostFromForm(merged, {
-        thumbnail: thumbnailImages[0] ?? null,
-        images: galleryImages,
+      const created = await createPostMutation.mutateAsync({
+        form: merged,
+        files: {
+          thumbnail: thumbnailImages[0] ?? null,
+          images: galleryImages,
+        },
       });
-      update(patch);
+      save();
       router.replace(`/test-add/${category}/finish${created?.id ? `?id=${created.id}` : ''}`);
     } catch (e: any) {
       console.error('생성 실패:', e);
       alert(e?.message ?? '등록에 실패했습니다.');
-    } finally {
-      setSubmitting(false);
     }
   };
 
