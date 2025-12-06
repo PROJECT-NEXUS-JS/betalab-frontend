@@ -1,6 +1,6 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import EmptyData from './EmptyData';
-
+import CustomTooltip from '@/components/mypage/molecules/CustomTooltip';
 interface EvaluationBarChartProps {
   averageSatisfaction: number;
   averageRecommendation: number;
@@ -52,13 +52,14 @@ const EvaluationBarChart = ({
               dy={-5}
             />
             <Tooltip
+              content={
+                <CustomTooltip
+                  displayLabel="점수"
+                  type="value" // 값을 그대로 표시
+                  unit="점" // 숫자 뒤에 붙을 단위
+                />
+              }
               cursor={{ fill: 'transparent' }}
-              contentStyle={{
-                borderRadius: '8px',
-                border: `1px solid ${Gray100}`,
-                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-              }}
-              formatter={(value: number) => [`${value.toFixed(1)}점`]}
             />
             {/* radius로 막대 상단 둥글게 처리 */}
             <Bar dataKey="score" fill={Primary500} radius={[4, 4, 0, 0]} />
