@@ -3,7 +3,7 @@ import { BaseModelSchema } from '@/types/models/base-model';
 
 export type StatusEnum = 'PENDING' | 'APPROVED' | 'COMPLETED' | 'REJECTED';
 
-const InsightItemSchema = z.object({
+export const InsightItemSchema = z.object({
   feedbackId: z.number(),
   summary: z.string(),
   fullContent: z.string(),
@@ -75,3 +75,5 @@ const AnalyticsDataSchema = z.object({
 });
 
 export const DataCenterDetailResponseModel = BaseModelSchema(AnalyticsDataSchema);
+
+export type InsightItem = z.infer<typeof InsightItemSchema>;
