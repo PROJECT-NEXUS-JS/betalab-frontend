@@ -39,6 +39,9 @@ export const queryKeys = {
   },
   dataCenter: {
     all: ['dataCenter'] as const,
-    detail: (postId: number, days: number) => [...queryKeys.dataCenter.all, 'detail', postId, days] as const,
-  }
+    detail: (postId: number, days: number) =>
+      [...queryKeys.dataCenter.all, 'detail', postId, days] as const,
+    pdfUrl: (postId: number, days: number) =>
+      [...queryKeys.dataCenter.all, 'pdfUrl', postId, days] as const,
+  },
 };

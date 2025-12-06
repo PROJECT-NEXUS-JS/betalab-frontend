@@ -13,7 +13,7 @@ export const getDataCenterDetail = async (postId: number, days: number) => {
   return DataCenterDetailResponseModel.parse(response.data);
 };
 
-export default function useDaterCenterDetailQuery(postId: number, days: number) {
+export default function useGetDaterCenterDetailQuery(postId: number, days: number) {
   return useQuery({
     queryKey: queryKeys.dataCenter.detail(postId, days),
     queryFn: () => getDataCenterDetail(postId, days),

@@ -1,12 +1,12 @@
 'use client';
 
 import Chip from '@/components/common/atoms/Chip';
-import useDaterCenterDetail from '@/hooks/data-center/queries/useDaterCenterDetailQuery';
+import useGetDaterCenterDetailQuery from '@/hooks/data-center/queries/useGetDaterCenterDetailQuery';
 import { useGetPostDetailQuery } from '@/hooks/posts/queries/usePostDetailQuery';
 import { useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useState } from 'react';
-import { queryKeys } from '@/constants/query-keys';
+import { instance } from '@/apis/instance';
 
 const DAY_OPTIONS = [
   { label: '최근 7일', value: 7 },
@@ -19,8 +19,8 @@ const DataCenterDetail = ({ postId }: { postId: number }) => {
   const postDetailData = postDetail?.data;
 
   const [selectedDay, setSelectedDay] = useState(7);
-  const [isOpenDayDropdown, setIsOpenDayDropdown] = useState(false);
-  const { data: dataCenterDetailData } = useDaterCenterDetail(postId, selectedDay);
+  const [isDayDropdownOpen, setIsDayDropdownOpen] = useState(false);
+  const { data: dataCenterDetailData } = useGetDaterCenterDetailQuery(postId, selectedDay);
 
   const queryClient = useQueryClient();
 
@@ -28,6 +28,38 @@ const DataCenterDetail = ({ postId }: { postId: number }) => {
 
   // 현재 선택된 날짜의 라벨 찾기 (7 -> "최근 7일") - Chip에 표시할 텍스트를 위해 계산
   const currentDayLabel = DAY_OPTIONS.find(opt => opt.value === selectedDay)?.label;
+
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownload = async () => {
+    try {
+      setIsDownloading(true);
+
+      // API 호출하여 Blob 데이터 받기
+      const response = await instance.get(`v1/data-center/${postId}/report/pdf`, {
+        params: { selectedDay },
+        responseType: 'blob', // 바이너리 데이터로 받음
+      });
+
+      // 브라우저 메모리에 가상 URL 생성
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+
+      // 가상의 <a> 태그를 만들어 클릭 이벤트 트리거
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `report_${postId}_${selectedDay}days.pdf`);
+      document.body.appendChild(link);
+      link.click();
+
+      // 메모리 해제 및 태그 삭제
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('PDF 다운로드 실패:', error);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   return (
     <main className="flex flex-col gap-y-10">
@@ -40,41 +72,45 @@ const DataCenterDetail = ({ postId }: { postId: number }) => {
           </p>
         </span>
         <span className="flex gap-x-2">
-          <Chip
-            value={String(selectedDay)}
-            variant="solid"
-            size="lg"
-            onClick={() => {
-              setIsOpenDayDropdown(!isOpenDayDropdown);
-            }}
-            showArrowIcon={true}
-          >
-            {currentDayLabel}
-          </Chip>
-          {isOpenDayDropdown && (
-            <div className="absolute top-full mt-2 w-32 bg-white border rounded shadow-lg z-10 flex flex-col">
-              {DAY_OPTIONS.map(option => (
-                <button
-                  key={option.value}
-                  className={`p-2 text-left hover:bg-gray-100 ${
-                    selectedDay === option.value ? 'font-bold text-blue-600' : ''
-                  }`}
-                  onClick={() => {
-                    setSelectedDay(option.value);
-                    queryClient.invalidateQueries({
-                      queryKey: queryKeys.dataCenter.detail(postId, selectedDay),
-                    });
-                    setIsOpenDayDropdown(false); // 선택 후 드롭다운 닫기
-                  }}
-                >
-                  {option.label}
-                </button>
-              ))}
+          {/* Day 필터 */}
+          <div className="relative">
+            {/* 드롭다운 트리거 버튼 */}
+            <Chip
+              variant="solid"
+              showArrowIcon={true}
+              size="lg"
+              onClick={() => {
+                setIsDayDropdownOpen(prev => !prev);
+              }}
+              value={String(selectedDay)}
+              active={isDayDropdownOpen}
+            >
+              {currentDayLabel}
+            </Chip>
+            {isDayDropdownOpen && (
+              <div className="absolute shadow-card right-0 mt-[9px] w-[108px] bg-white rounded-sm flex flex-col">
+                {DAY_OPTIONS.map(option => (
+                  <button
+                    key={option.value}
+                    className={`p-2 text-[10px] hover:bg-Gray-50 cursor-pointer text-left text-Dark-Gray ${
+                      selectedDay === option.value && 'font-bold'
+                    }`}
+                    onClick={() => {
+                      setSelectedDay(option.value);
+                      setIsDayDropdownOpen(false); // 선택 후 드롭다운 닫기
+                    }}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <Chip showArrowIcon={false}>
+            <div className="cursor-pointer flex items-center" onClick={handleDownload}>
+              {isDownloading ? '다운로드 중...' : '리포트 다운로드'}
+              <Image src="/icons/download.svg" alt="download" width={24} height={24} />
             </div>
-          )}
-          <Chip>
-            리포트 다운로드
-            <Image src="/icons/download.svg" alt="download" width={24} height={24} />
           </Chip>
         </span>
       </div>
