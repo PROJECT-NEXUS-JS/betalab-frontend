@@ -13,9 +13,15 @@ import Chip from '@/components/common/atoms/Chip';
 
 import SummaryCard from './SummaryCard';
 import BugOccurCard from './BugOccurCard';
-import GoodAndInsightSection from './FeedbackSection/FeedbackSection';
 import InsightSection from './InsightSection';
 import FeedbackSection from './FeedbackSection/FeedbackSection';
+import EvaluationBarChart from './charts/EvaluationBarChart';
+import UsabilityRadarChart from './charts/UsabilityRadarChart';
+import TopInconvenience from './charts/TopInconvenience';
+import ProblemTypeChart from './charts/ProblemTypeChart';
+import SatisfactionDonutChart from './charts/SatisfactionDonutChart';
+import BugExistenceBonutChart from './charts/BugExistenceBonutChart';
+import EmptyData from './charts/EmptyData';
 
 const DAY_OPTIONS = [
   { label: '최근 7일', value: 7 },
@@ -29,156 +35,157 @@ const DataCenterDetail = ({ postId }: { postId: number }) => {
 
   const [selectedDay, setSelectedDay] = useState(7);
   const [isDayDropdownOpen, setIsDayDropdownOpen] = useState(false);
-  // const { data: dataCenterDetail } = useGetDaterCenterDetailQuery(postId, selectedDay);
+  const { data: dataCenterDetail } = useGetDaterCenterDetailQuery(postId, selectedDay);
 
   // 목데이터
-  const dataCenterDetail = {
-    // 1. 요약 정보 (대시보드 상단 카드)
-    summary: {
-      totalParticipants: 5200,
-      participantChangeRate: -14.2, // 감소 추세
-      thisWeekParticipants: 156,
-      averageSatisfaction: 4.2,
-      satisfactionChangeRate: 14.2, // 증가 추세
-      bugOccurrenceRate: 32,
-      bugRateChangeRate: 14.2, // 증가 추세 (부정적)
-      totalFeedbacks: 400,
-      bugCount: 128,
-      positiveFeedbackRate: 78,
-      positiveFeedbackChangeRate: 14.2,
-      positiveFeedbackCount: 312,
-    },
+  // const dataCenterDetail = {
+  //   // 1. 요약 정보 (대시보드 상단 카드)
+  //   summary: {
+  //     totalParticipants: 5200,
+  //     participantChangeRate: -14.2, // 감소 추세
+  //     thisWeekParticipants: 156,
+  //     averageSatisfaction: 4.2,
+  //     satisfactionChangeRate: 14.2, // 증가 추세
+  //     bugOccurrenceRate: 32,
+  //     bugRateChangeRate: 14.2, // 증가 추세 (부정적)
+  //     totalFeedbacks: 400,
+  //     bugCount: 128,
+  //     positiveFeedbackRate: 78,
+  //     positiveFeedbackChangeRate: 14.2,
+  //     positiveFeedbackCount: 312,
+  //   },
 
-    // 2. 전체 평가 지표 (방사형 차트나 바 차트용)
-    overallEvaluation: {
-      averageSatisfaction: 4.2,
-      averageRecommendation: 3.8,
-      averageReuse: 4.5,
-      satisfactionDistribution: {
-        '5점': 45,
-        '4점': 30,
-        '3점': 15,
-        '2점': 5,
-        '1점': 5,
-      },
-      recommendationDistribution: {
-        '5점': 40,
-        '4점': 35,
-        '3점': 15,
-        '2점': 5,
-        '1점': 5,
-      },
-      reuseDistribution: {
-        '5점': 60,
-        '4점': 25,
-        '3점': 10,
-        '2점': 3,
-        '1점': 2,
-      },
-    },
+  //   // 2. 전체 평가 지표 (방사형 차트나 바 차트용)
+  //   overallEvaluation: {
+  //     averageSatisfaction: 4.2,
+  //     averageRecommendation: 3.8,
+  //     averageReuse: 4.5,
+  //     satisfactionDistribution: {
+  //       '5점': 45,
+  //       '4점': 30,
+  //       '3점': 15,
+  //       '2점': 5,
+  //       '1점': 5,
+  //     },
+  //     recommendationDistribution: {
+  //       '5점': 40,
+  //       '4점': 35,
+  //       '3점': 15,
+  //       '2점': 5,
+  //       '1점': 5,
+  //     },
+  //     reuseDistribution: {
+  //       '5점': 60,
+  //       '4점': 25,
+  //       '3점': 10,
+  //       '2점': 3,
+  //       '1점': 2,
+  //     },
+  //   },
 
-    // 3. 품질 피드백 (버그 및 불편 사항)
-    qualityFeedback: {
-      topInconvenientElements: {
-        '결제 프로세스': 42,
-        '회원가입 절차': 28,
-        '이미지 로딩 속도': 15,
-        '검색 결과 정확도': 10,
-        기타: 5,
-      },
-      bugExistenceRate: 32,
-      bugExistCount: 128,
-      noBugCount: 272,
-      satisfactionScoreDistribution: {
-        상: 50,
-        중: 30,
-        하: 20,
-      },
-      problemTypeProportions: {
-        'UI/UX 디자인': 40,
-        '기능 오류': 35,
-        '성능 이슈': 15,
-        '네트워크/서버': 10,
-      },
-      topProblemLocations: [
-        {
-          location: '메인 홈 > 배너',
-          problemType: '이미지 엑박',
-          reportCount: 45,
-        },
-        {
-          location: '마이페이지 > 설정',
-          problemType: '저장 버튼 미작동',
-          reportCount: 32,
-        },
-        {
-          location: '상품 상세 페이지',
-          problemType: '옵션 선택 불가',
-          reportCount: 21,
-        },
-      ],
-      screenshotPreviews: [
-        'https://placehold.co/600x400/png?text=Bug+Screenshot+1',
-        'https://placehold.co/600x400/png?text=Bug+Screenshot+2',
-        'https://placehold.co/600x400/png?text=Bug+Screenshot+3',
-      ],
-    },
+  //   // 3. 품질 피드백 (버그 및 불편 사항)
+  //   qualityFeedback: {
+  //     topInconvenientElements: {
+  //       '결제 프로세스': 42,
+  //       '회원가입 절차': 28,
+  //       '이미지 로딩 속도': 15,
+  //       '검색 결과 정확도': 10,
+  //       기타: 5,
+  //     },
+  //     bugExistenceRate: 32,
+  //     bugExistCount: 128,
+  //     noBugCount: 272,
+  //     satisfactionScoreDistribution: {
+  //       상: 50,
+  //       중: 30,
+  //       하: 20,
+  //     },
+  //     problemTypeProportions: {
+  //       'UI/UX 디자인': 40,
+  //       '기능 오류': 35,
+  //       '성능 이슈': 15,
+  //       '네트워크/서버': 10,
+  //       '알림 문제': 10,
+  //     },
+  //     topProblemLocations: [
+  //       {
+  //         location: '메인 홈 > 배너',
+  //         problemType: '이미지 엑박',
+  //         reportCount: 45,
+  //       },
+  //       {
+  //         location: '마이페이지 > 설정',
+  //         problemType: '저장 버튼 미작동',
+  //         reportCount: 32,
+  //       },
+  //       {
+  //         location: '상품 상세 페이지',
+  //         problemType: '옵션 선택 불가',
+  //         reportCount: 21,
+  //       },
+  //     ],
+  //     screenshotPreviews: [
+  //       'https://placehold.co/600x400/png?text=Bug+Screenshot+1',
+  //       'https://placehold.co/600x400/png?text=Bug+Screenshot+2',
+  //       'https://placehold.co/600x400/png?text=Bug+Screenshot+3',
+  //     ],
+  //   },
 
-    // 4. 사용성 평가 점수 (5점 만점 혹은 100점 만점 기준)
-    usabilityEvaluation: {
-      functionalityScore: 85, // 기능성
-      comprehensibilityScore: 72, // 이해 용이성
-      loadingSpeedScore: 64, // 로딩 속도
-      responseTimingScore: 90, // 반응 속도
-      stabilityScore: 78, // 안정성
-    },
+  //   // 4. 사용성 평가 점수 (5점 만점 기준)
+  //   usabilityEvaluation: {
+  //     functionalityScore: 85, // 기능
+  //     comprehensibilityScore: 72, // 이해
+  //     loadingSpeedScore: 64, // 로딩 속도
+  //     responseTimingScore: 90, // 알림 타이밍
+  //     stabilityScore: 78, // 안정성
+  //   },
 
-    // 5. 인사이트 (AI 요약 등)
-    insights: {
-      positiveFeedbacks: [
-        {
-          feedbackId: 101,
-          summary: '직관적인 인터페이스',
-          fullContent: '이전 버전보다 메뉴 찾기가 훨씬 쉬워졌어요. 디자인이 깔끔합니다.',
-          emoji: '🥰',
-        },
-        {
-          feedbackId: 102,
-          summary: '빠른 고객 응대',
-          fullContent: '문의사항을 남겼는데 10분 만에 답변이 와서 놀랐습니다.',
-          emoji: '⚡️',
-        },
-        {
-          feedbackId: 103,
-          summary: '다크모드 지원',
-          fullContent: '눈이 편안해서 밤에 쓰기 좋아요.',
-          emoji: '🌙',
-        },
-      ],
-      improvementSuggestions: [
-        {
-          feedbackId: 201,
-          summary: '폰트 크기 조절 필요',
-          fullContent: '어르신들이 쓰기에는 글씨가 너무 작아 보입니다.',
-          emoji: '🔍',
-        },
-        {
-          feedbackId: 202,
-          summary: '검색 필터 세분화',
-          fullContent: '가격대별로만 볼 게 아니라 색상별 필터도 있으면 좋겠어요.',
-          emoji: '🎨',
-        },
-      ],
-      keywords: {
-        깔끔함: 150,
-        빠름: 120,
-        복잡함: 80,
-        오류: 45,
-        친절함: 40,
-        가독성: 35,
-      },
-    },
-  };
+  //   // 5. 인사이트 (AI 요약 등)
+  //   insights: {
+  //     positiveFeedbacks: [
+  //       {
+  //         feedbackId: 101,
+  //         summary: '직관적인 인터페이스',
+  //         fullContent: '이전 버전보다 메뉴 찾기가 훨씬 쉬워졌어요. 디자인이 깔끔합니다.',
+  //         emoji: '🥰',
+  //       },
+  //       {
+  //         feedbackId: 102,
+  //         summary: '빠른 고객 응대',
+  //         fullContent: '문의사항을 남겼는데 10분 만에 답변이 와서 놀랐습니다.',
+  //         emoji: '⚡️',
+  //       },
+  //       {
+  //         feedbackId: 103,
+  //         summary: '다크모드 지원',
+  //         fullContent: '눈이 편안해서 밤에 쓰기 좋아요.',
+  //         emoji: '🌙',
+  //       },
+  //     ],
+  //     improvementSuggestions: [
+  //       {
+  //         feedbackId: 201,
+  //         summary: '폰트 크기 조절 필요',
+  //         fullContent: '어르신들이 쓰기에는 글씨가 너무 작아 보입니다.',
+  //         emoji: '🔍',
+  //       },
+  //       {
+  //         feedbackId: 202,
+  //         summary: '검색 필터 세분화',
+  //         fullContent: '가격대별로만 볼 게 아니라 색상별 필터도 있으면 좋겠어요.',
+  //         emoji: '🎨',
+  //       },
+  //     ],
+  //     keywords: {
+  //       깔끔함: 150,
+  //       빠름: 120,
+  //       복잡함: 80,
+  //       오류: 45,
+  //       친절함: 40,
+  //       가독성: 35,
+  //     },
+  //   },
+  // };
 
   const titleStyleClass = 'text-Dark-Gray text-body-01 font-semibold';
   const sectionStyleClass = 'flex flex-col gap-y-[14px]';
@@ -218,8 +225,11 @@ const DataCenterDetail = ({ postId }: { postId: number }) => {
     }
   };
 
+  const problemList = dataCenterDetail?.qualityFeedback.topProblemLocations ?? [];
+  const isProblemListEmpty = problemList.length === 0;
+
   return (
-    <main className="flex flex-col gap-y-10">
+    <main className="flex flex-col gap-y-10 pb-30">
       <h1 className="text-black text-subtitle-01 font-semibold">{postDetailData?.title}</h1>
       <section className="flex flex-row justify-between items-center">
         <div>
@@ -266,7 +276,7 @@ const DataCenterDetail = ({ postId }: { postId: number }) => {
           <Chip showArrowIcon={false}>
             <div className="cursor-pointer flex items-center" onClick={handleDownload}>
               {isDownloading ? '다운로드 중...' : '리포트 다운로드'}
-              <Image src="/icons/admin-icom/download.svg" alt="download" width={24} height={24} />
+              <Image src="/icons/admin-icon/download.svg" alt="download" width={24} height={24} />
             </div>
           </Chip>
         </div>
@@ -315,17 +325,42 @@ const DataCenterDetail = ({ postId }: { postId: number }) => {
             subTextNode="만족도 4점 이상"
           />
         </div>
-        <div className="flex gap-x-[14px] items-center">
-          <span></span>
-          <span></span>
+        <div className="flex gap-x-[14px] h-[268px] items-center">
+          <EvaluationBarChart
+            averageSatisfaction={dataCenterDetail?.overallEvaluation.averageSatisfaction ?? 0}
+            averageRecommendation={dataCenterDetail?.overallEvaluation.averageRecommendation ?? 0}
+            averageReuse={dataCenterDetail?.overallEvaluation.averageReuse ?? 0}
+          />
+          <SatisfactionDonutChart
+            satisfactionDistribution={dataCenterDetail?.overallEvaluation.satisfactionDistribution}
+          />
+          <></>
+        </div>
+      </section>
+
+      <section className={sectionStyleClass}>
+        <h2 className={titleStyleClass}>품질 피드백</h2>
+        <div className="flex gap-x-[14px]">
+          <TopInconvenience
+            topInconvenientElements={dataCenterDetail?.qualityFeedback.topInconvenientElements}
+          />
+          <BugExistenceBonutChart
+            bugExistenceRate={dataCenterDetail?.qualityFeedback.bugExistenceRate ?? 0}
+          />
+          <ProblemTypeChart
+            problemTypeProportions={dataCenterDetail?.qualityFeedback.problemTypeProportions}
+          />
         </div>
       </section>
 
       <section className={sectionStyleClass}>
         <h2 className={titleStyleClass}>주요 문제 발생 위치</h2>
-        <div className="grid">
+        {isProblemListEmpty ? (
+          <EmptyData className="pb-2.5" />
+        ) : (
+          // 데이터가 있을 때: Grid 레이아웃 및 리스트 표시
           <div className="grid grid-cols-2 gap-[14px]">
-            {dataCenterDetail?.qualityFeedback.topProblemLocations.map((problem, index) => (
+            {problemList.map((problem, index) => (
               <BugOccurCard
                 key={index}
                 location={problem.location}
@@ -334,8 +369,15 @@ const DataCenterDetail = ({ postId }: { postId: number }) => {
               />
             ))}
           </div>
-        </div>
+        )}
       </section>
+
+      <UsabilityRadarChart
+        functionalityScore={dataCenterDetail?.usabilityEvaluation.functionalityScore ?? 0}
+        comprehensibilityScore={dataCenterDetail?.usabilityEvaluation.comprehensibilityScore ?? 0}
+        loadingSpeedScore={dataCenterDetail?.usabilityEvaluation.loadingSpeedScore ?? 0}
+        responseTimingScore={dataCenterDetail?.usabilityEvaluation.responseTimingScore ?? 0}
+      />
 
       <InsightSection keywords={dataCenterDetail?.insights.keywords} />
 

@@ -3,9 +3,10 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 import { InsightItem } from '@/hooks/data-center/dto/dataCenterDetail';
+import EmptyData from '../charts/EmptyData';
 
 interface FeedbackColumnProps {
-  items: InsightItem[];
+  items: InsightItem[] | undefined;
   variant: 'positive' | 'improvement';
 }
 
@@ -38,8 +39,8 @@ const FeedbackColumn = ({ items, variant }: FeedbackColumnProps) => {
 
       {/* 리스트 영역 */}
       <div className="flex flex-col gap-2.5">
-        {items.length > 0 ? (
-          items.map(item => (
+        {(items?.length ?? 0 > 0) ? (
+          items?.map(item => (
             <div
               key={item.feedbackId}
               className={cn(
@@ -52,7 +53,7 @@ const FeedbackColumn = ({ items, variant }: FeedbackColumnProps) => {
             </div>
           ))
         ) : (
-          <p className="text-gray-400 text-body-02 text-center py-4">데이터가 없습니다.</p>
+          <EmptyData className='pb-4'/>
         )}
       </div>
     </div>

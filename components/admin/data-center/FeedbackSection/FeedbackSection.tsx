@@ -7,8 +7,8 @@ import { InsightItem } from '@/hooks/data-center/dto/dataCenterDetail';
 import FeedbackCard from './FeedbackCard';
 
 interface FeedbackSectionProps {
-  positiveFeedbacks: InsightItem[];
-  improvementSuggestions: InsightItem[];
+  positiveFeedbacks: InsightItem[] | undefined;
+  improvementSuggestions: InsightItem[] | undefined;
 }
 
 const FeedbackSection = ({ positiveFeedbacks, improvementSuggestions }: FeedbackSectionProps) => {
