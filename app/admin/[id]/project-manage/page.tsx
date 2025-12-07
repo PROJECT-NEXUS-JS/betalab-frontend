@@ -255,7 +255,7 @@ export default function Page() {
         const { data } = await instance.get(`/v1/users/posts/${postId}`);
         const d = data?.data ?? data;
 
-        // ① 개인정보 항목 (feedback.privacyItems)
+        // 개인정보 항목
         type PIItem = string | { code?: string; value?: string; name?: string };
         const rawPI = firstArray<PIItem>(
           d?.feedback?.privacyItems,
@@ -293,19 +293,19 @@ export default function Page() {
         });
         if (d?.title) setTitle(d.title);
 
-        // ② 메인 카테고리 → 테스트 타입
+        // 메인 카테고리 → 테스트 타입
         const mainCode: string | undefined = d?.mainCategories?.[0]?.code;
         const tt: TestType = MAIN_API_TO_UI[mainCode ?? ''] ?? 'web';
         setTestType(tt);
 
-        // ③ 플랫폼
+        // 플랫폼
         const platformCodes = firstArray<string>(
           d?.platformCategories?.map((x: any) => x?.code ?? x),
           d?.platforms,
         );
         setPlatforms(platformCodes.map(c => PLATFORM_API_TO_UI[c] ?? c).filter(Boolean));
 
-        // ④ 장르
+        // 장르
         const genreCodes = firstArray<string>(
           d?.genreCategories?.map((x: any) => x?.code ?? x),
           d?.genres,
@@ -313,17 +313,17 @@ export default function Page() {
         const genreMap = pickGenreMap(tt);
         setGenres(genreCodes.map(c => genreMap[c] ?? c).filter(Boolean));
 
-        // ⑤ 피드백 방식 (feedback.feedbackItems 우선)
+        // 피드백 방식
         const fb = firstArray<string>(d?.feedback?.feedbackItems, d?.feedbacks, d?.feedbackTypes);
         setFeedbacks(fb.map(k => FEEDBACK_API_TO_UI[k] ?? k).filter(Boolean));
 
-        // ⑥ 소요시간 (schedule.durationTime 우선)
+        // 소요시간
         const durServer = d?.schedule?.durationTime ?? d?.durationTimeCode ?? d?.durationTime;
         const durUi =
           typeof durServer === 'string' ? (DUR_API_TO_UI[durServer] ?? durServer) : '3d+';
         setDuration(durUi);
 
-        // ⑦ 인원 (requirement.maxParticipants 우선)
+        // 인원
         const maxP =
           d?.requirement?.maxParticipants ??
           d?.recruitment?.maxParticipants ??
@@ -333,7 +333,7 @@ export default function Page() {
           50;
         setPeople(Number(maxP) || 50);
 
-        // ⑧ 일정
+        // 일정
         const start = d?.schedule?.startDate ?? d?.startDate;
         const end = d?.schedule?.endDate ?? d?.endDate;
         setRange({
@@ -341,7 +341,7 @@ export default function Page() {
           to: parseISOorNull(end) ?? addDays(new Date(), 7),
         });
 
-        // ⑨ 참여 조건/리워드 초기값 (requirement, reward)
+        // 참여 조건/리워드 초기값 (requirement, reward)
         const req = d?.requirement ?? {};
         const rwd = d?.reward ?? {};
 
