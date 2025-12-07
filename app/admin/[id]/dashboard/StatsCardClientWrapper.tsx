@@ -9,14 +9,27 @@ export default function StatsCardClientWrapper({ postId }: { postId: number }) {
   if (isError || !stats?.data) return <p>통계 정보를 불러오는 데 실패했습니다.</p>;
   const statsData = stats.data;
 
-  //수정 예정 - API 수정 대기중
+  const sanitizeStatValue = (value: {
+    current: number;
+    previousDay: number;
+    changeAmount: number;
+  }) => {
+    return {
+      current: Math.max(0, value.current),
+      previousDay: Math.max(0, value.previousDay),
+      changeAmount: value.changeAmount,
+    };
+  };
   const statsDataWithMock = {
     ...statsData,
-    pendingPayments: statsData.pendingPayments || {
-      current: 23,
-      previousDay: 0,
-      changeAmount: 0,
-    },
+    likes: sanitizeStatValue(statsData.likes),
+    pendingApplications: sanitizeStatValue(statsData.pendingApplications),
+    approvedParticipants: sanitizeStatValue(statsData.approvedParticipants),
+    reviews: sanitizeStatValue(statsData.reviews),
+    views: sanitizeStatValue(statsData.views),
+    pendingPayments: statsData.pendingRewards
+      ? sanitizeStatValue(statsData.pendingRewards)
+      : undefined,
   };
 
   const { unreadMessages } = statsData;
