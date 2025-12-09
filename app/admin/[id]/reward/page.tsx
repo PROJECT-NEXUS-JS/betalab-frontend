@@ -6,6 +6,7 @@ import Logger from '@/lib/logger';
 import { ProjectDetailResponseSchema } from '@/hooks/posts/queries/usePostDetailQuery';
 import { getStatistics } from './reward-api';
 import RewardListClient from './RewardListClient';
+import RewardStateListClient from './RewardStateListClient';
 
 export default async function AdminRewardPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -59,6 +60,9 @@ export default async function AdminRewardPage({ params }: { params: Promise<{ id
       <div>
         <h1 className="text-subtitle-01 font-semibold text-Black mb-10">리워드 지급관리</h1>
         <RewardListClient postId={postId} />
+        <div className="mt-10">
+          <RewardStateListClient postId={postId} />
+        </div>
       </div>
     </HydrationBoundary>
   );
