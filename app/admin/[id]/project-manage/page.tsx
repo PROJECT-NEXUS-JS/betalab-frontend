@@ -169,9 +169,9 @@ const DUR_API_TO_UI: Record<string, string> = {
 
 function Row({ label, children }: React.PropsWithChildren<{ label: string }>) {
   return (
-    <div className="grid grid-cols-[120px_1fr] items-center gap-4">
+    <div className="grid grid-cols-[120px_1fr] items-center gap-4 min-w-0">
       <div className="text-body-01 text-Dark-Gray">{label}</div>
-      <div>{children}</div>
+      <div className="min-w-0 overflow-hidden">{children}</div>
     </div>
   );
 }
@@ -454,7 +454,7 @@ export default function Page() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-[920px] px-6 py-8">
+    <div className="mx-auto w-full max-w-[920px] px-6 py-8 overflow-x-hidden">
       <div className="mb-8">
         {!editingTitle ? (
           <p
