@@ -54,8 +54,8 @@ export default function TestAddSettingPage() {
   useEffect(() => {
     const pis = Array.isArray(form.privacyItems) ? form.privacyItems : [];
     const restored = pis
-      .map(api => API_TO_UI[api])
-      .filter((v): v is PI => !!v && (PI_OPTIONS as readonly string[]).includes(v));
+      .map((api: string) => API_TO_UI[api])
+      .filter((v: PI | undefined): v is PI => !!v && (PI_OPTIONS as readonly string[]).includes(v));
     setPiSelected(restored);
     setTitle(typeof form.title === 'string' ? form.title : '');
     setSummary(typeof form.serviceSummary === 'string' ? form.serviceSummary : '');
