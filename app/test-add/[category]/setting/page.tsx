@@ -48,10 +48,10 @@ export default function TestAddSettingPage() {
     if (typeof form.feedbackMethod === 'string' && form.feedbackMethod.trim()) {
       const tokens = form.feedbackMethod
         .split(',')
-        .map(t => t.trim())
+        .map((t: string) => t.trim())
         .filter(Boolean);
-      const inList = tokens.filter(t => FEEDBACK_OPTIONS.includes(t as any));
-      const extras = tokens.filter(t => !FEEDBACK_OPTIONS.includes(t as any));
+      const inList = tokens.filter((t: string) => FEEDBACK_OPTIONS.includes(t as any));
+      const extras = tokens.filter((t: string) => !FEEDBACK_OPTIONS.includes(t as any));
       setFeedbackTags(inList);
       if (extras.length) {
         setCustomFeedbackOpen(true);
@@ -62,10 +62,10 @@ export default function TestAddSettingPage() {
     if (typeof form.durationTime === 'string' && form.durationTime.trim()) {
       const tokens = form.durationTime
         .split(',')
-        .map(t => t.trim())
+        .map((t: string) => t.trim())
         .filter(Boolean);
-      const inList = tokens.filter(t => TIME_OPTIONS.includes(t as any));
-      const extras = tokens.filter(t => !TIME_OPTIONS.includes(t as any));
+      const inList = tokens.filter((t: string) => TIME_OPTIONS.includes(t as any));
+      const extras = tokens.filter((t: string) => !TIME_OPTIONS.includes(t as any));
       setTimeTags(inList);
       if (extras.length) {
         setCustomTimeOpen(true);
@@ -91,10 +91,10 @@ export default function TestAddSettingPage() {
     if (typeof form.feedbackMethod === 'string' && form.feedbackMethod.trim()) {
       const tokens = form.feedbackMethod
         .split(',')
-        .map(t => t.trim())
+        .map((t: string) => t.trim())
         .filter(Boolean);
-      const inList = tokens.filter(t => FEEDBACK_OPTIONS.includes(t as any));
-      const extras = tokens.filter(t => !FEEDBACK_OPTIONS.includes(t as any));
+      const inList = tokens.filter((t: string) => FEEDBACK_OPTIONS.includes(t as any));
+      const extras = tokens.filter((t: string) => !FEEDBACK_OPTIONS.includes(t as any));
       setFeedbackTags(inList);
       if (extras.length) {
         setCustomFeedbackOpen(true);
@@ -105,10 +105,10 @@ export default function TestAddSettingPage() {
     if (typeof form.durationTime === 'string' && form.durationTime.trim()) {
       const tokens = form.durationTime
         .split(',')
-        .map(t => t.trim())
+        .map((t: string) => t.trim())
         .filter(Boolean);
-      const inList = tokens.filter(t => TIME_OPTIONS.includes(t as any));
-      const extras = tokens.filter(t => !TIME_OPTIONS.includes(t as any));
+      const inList = tokens.filter((t: string) => TIME_OPTIONS.includes(t as any));
+      const extras = tokens.filter((t: string) => !TIME_OPTIONS.includes(t as any));
       setTimeTags(inList);
       if (extras.length) {
         setCustomTimeOpen(true);

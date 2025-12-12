@@ -30,8 +30,7 @@ export const serverInstance = (accessToken?: string, refreshToken?: string) => {
     timeout: 10000,
     withCredentials: true,
   });
-  console.log('accessToken:', accessToken);
-  console.log('refreshToken:', refreshToken);
+
   // 요청 인터셉터
   instance.interceptors.request.use(async config => {
     if (currentAccessToken) {

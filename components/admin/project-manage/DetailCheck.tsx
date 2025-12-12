@@ -17,7 +17,7 @@ export type DetailInitial = {
   mediaUrl?: string;
   privacyItems?: string[];
   thumbnailUrl?: string;
-  galleryUrls?: string[];
+  mediaUrls?: string[];
 };
 
 type Files = { thumbnail?: File | null; gallery?: File[] };
@@ -36,13 +36,23 @@ export default function DetailCheck({ initial }: Props) {
   const [summary, setSummary] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
   const [mediaTab, setMediaTab] = useState<'video' | 'photo'>('video');
-  const [thumbFiles, setThumbFiles] = useState<File[]>([]);
-  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
+  const [thumbFiles, setThumbFiles] = useState<(File | string)[]>([]);
+  const [galleryFiles, setGalleryFiles] = useState<(File | string)[]>([]);
 
   useEffect(() => {
     setTitle(initial?.title ?? '');
     setSummary(initial?.serviceSummary ?? '');
-    setVideoUrl(initial?.mediaUrl ?? '');
+    const mediaUrl = initial?.mediaUrl ?? '';
+    setVideoUrl(mediaUrl);
+    const isImageUrl =
+      mediaUrl &&
+      !mediaUrl.includes('youtube.com') &&
+      !mediaUrl.includes('youtu.be') &&
+      !mediaUrl.includes('vimeo.com');
+    if (isImageUrl) {
+      setMediaTab('photo');
+    }
+
     setPiSelected(
       Array.isArray(initial?.privacyItems)
         ? (initial!.privacyItems!.filter((v): v is PI => PI_OPTIONS.includes(v as PI)) as PI[])
@@ -51,39 +61,21 @@ export default function DetailCheck({ initial }: Props) {
   }, [initial]);
 
   useEffect(() => {
-    async function urlToFile(url: string, name = 'image.jpg') {
-      const r = await fetch(url);
-      const b = await r.blob();
-      return new File([b], name, { type: b.type });
+    if (initial?.thumbnailUrl) {
+      setThumbFiles([initial.thumbnailUrl]);
+    } else {
+      setThumbFiles([]);
     }
-    (async () => {
-      if (initial?.thumbnailUrl) {
-        try {
-          const f = await urlToFile(initial.thumbnailUrl, 'thumb.jpg');
-          setThumbFiles([f]);
-        } catch {}
-      }
-      if (Array.isArray(initial?.galleryUrls) && initial.galleryUrls.length) {
-        try {
-          const list = await Promise.all(
-            initial.galleryUrls.map((u, i) => urlToFile(u, `gallery-${i + 1}.jpg`)),
-          );
-          setGalleryFiles(list);
-        } catch {}
-      }
-    })();
-  }, [initial?.thumbnailUrl, initial?.galleryUrls]);
+
+    if (Array.isArray(initial?.mediaUrls) && initial.mediaUrls.length) {
+      setGalleryFiles(initial.mediaUrls);
+    } else {
+      setGalleryFiles([]);
+    }
+  }, [initial]);
 
   const togglePI = (opt: PI) =>
     setPiSelected(prev => (prev.includes(opt) ? prev.filter(v => v !== opt) : [...prev, opt]));
-
-  const files: Files = { thumbnail: thumbFiles[0] ?? null, gallery: galleryFiles };
-  const patch: Partial<DetailInitial> = {
-    title: title.trim() || undefined,
-    serviceSummary: summary.trim() || undefined,
-    mediaUrl: mediaTab === 'video' ? videoUrl.trim() || undefined : undefined,
-    privacyItems: piSelected.length ? piSelected : undefined,
-  };
 
   return (
     <div className="mx-auto w-full max-w-[920px]">
