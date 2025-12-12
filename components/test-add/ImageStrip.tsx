@@ -6,7 +6,7 @@ import ImageThumb from '@/components/test-add/ImageThumb';
 import Image from 'next/image';
 
 type Props = {
-  files: File[];
+  files: (File | string)[];
   total: number;
   onUpload: (files: FileList) => void;
   onRemove: (index: number) => void;
@@ -50,7 +50,7 @@ export default function ImageStrip({ files, total, onUpload, onRemove }: Props) 
         style={{ scrollbarWidth: 'thin' }}
       >
         {files.map((f, i) => (
-          <div key={`${f.name}-${i}`} className="shrink-0">
+          <div key={typeof f === 'string' ? f : `${f.name}-${i}`} className="shrink-0">
             <ImageThumb file={f} onRemove={() => onRemove(i)} />
           </div>
         ))}
