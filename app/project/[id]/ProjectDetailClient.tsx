@@ -1,5 +1,6 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 import CustomMedia from '@/components/common/atoms/CustomMedia';
 import RemindCard from '@/components/common/atoms/RemindCard';
@@ -19,12 +20,15 @@ import { useSimilarPosts } from '@/hooks/posts/queries/useSimilarPostQuery';
 
 import { transformToApplyCardProps } from '@/lib/mapper/apply-card';
 import { transformToReviewCardProps } from '@/lib/mapper/review-card';
+import { ReviewCardProps } from '@/components/common/molecules/ReviewCard';
+import { SimilarPost } from '@/hooks/posts/dto/similarPost';
 
 interface ProjectDetailClientProps {
   id: number;
 }
 
 export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
+  const router = useRouter();
   const [projectIntroduceFold, setProjectIntroduceFold] = useState(true);
   const [reviewFold, setReviewFold] = useState(true);
 
@@ -37,12 +41,19 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
     }
   };
 
-  const { data: postDetailData, isLoading, isError } = useGetPostDetailQuery(Number(id));
+  const { data: postDetailData, isLoading, isError, error } = useGetPostDetailQuery(Number(id));
   const {
     data: rightSidebarData,
     isLoading: isRightSidebarLoading,
     isError: isRightSidebarError,
   } = useGetRightSidebar(Number(id));
+
+  useEffect(() => {
+    if (isError && error) {
+      alert('마감된 테스트에요!');
+      router.back();
+    }
+  }, [isError, error, router]);
 
   const applyCardData: Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'> =
     transformToApplyCardProps(
@@ -78,8 +89,10 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
 
   if (isLoading || isRightSidebarLoading || isReviewLoading || isSimilarPostLoading)
     return <div>로딩 중...</div>;
-  if (isError || isRightSidebarError || isReviewError || isSimilarPostError)
+  if (isError || isRightSidebarError || isReviewError || isSimilarPostError) {
+    // useEffect에서 이미 alert와 리다이렉트 처리됨
     return <div>에러 발생</div>;
+  }
 
   const projectData = postDetailData?.data;
   if (!projectData) return <div>데이터 없음</div>;
@@ -94,7 +107,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
           {/* 프로젝트 간단 정보 */}
           <section className="flex flex-col gap-4">
             <p className="text-base font-bold text-Gray-200">
-              {`홈 > ${projectData.mainCategories[0]?.name} > ${projectData.genreCategories.map(cat => cat.name).join(', ')}`}{' '}
+              {`홈 > ${projectData.mainCategories[0]?.name} > ${projectData.genreCategories.map((cat: { code: string; name: string }) => cat.name).join(', ')}`}{' '}
             </p>
             <CustomMedia
               src={projectData.thumbnailUrl}
@@ -126,7 +139,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
             <div
               className={`relative overflow-hidden flex flex-col gap-10 ${projectIntroduceFold ? 'max-h-[630px]' : ''}`}
             >
-              {projectData.content.mediaUrls?.map((media, index) => (
+              {projectData.content.mediaUrls?.map((media: string, index: number) => (
                 <CustomMedia
                   key={`media-${index}`}
                   src={media}
@@ -163,7 +176,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
                 최신순
               </Chip>
             </div>
-            {displayReviews.map((review, idx) => (
+            {displayReviews.map((review: ReviewCardProps & { id: number }, idx: number) => (
               <ReviewCard key={idx} {...review} />
             ))}
             {reviews.length > 3 && (
@@ -180,7 +193,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
           <section className="flex flex-col gap-4">
             <h3 className="text-xl text-Black font-bold">비슷한 테스트는 어때요 ?</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
-              {similarPostData?.data.map(post => (
+              {similarPostData?.data.map((post: SimilarPost) => (
                 <SimilarPostCard key={post.id} post={post} />
               ))}
             </div>

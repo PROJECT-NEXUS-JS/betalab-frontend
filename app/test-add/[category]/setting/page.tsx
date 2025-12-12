@@ -153,7 +153,7 @@ export default function TestAddSettingPage() {
   const isRecruitValid = customRecruitOpen
     ? !!customRecruitValue && Number(customRecruitValue) > 0
     : recruitCount > 0;
-  const isRecruitDone = recruitTouched && isRecruitValid;
+  const isRecruitDone = customRecruitOpen ? recruitTouched && isRecruitValid : isRecruitValid; // 기본값 50이어도 유효한 값으로 처리
   const showDeadlineSection = showRecruitSection && isRecruitDone;
 
   const isDeadlineDone = !!(deadlineRange?.from && deadlineRange?.to);
@@ -461,27 +461,28 @@ export default function TestAddSettingPage() {
 
         {/* 기간 선택 */}
         <AnimatePresence>
-          {recruitTouched &&
-            (customRecruitOpen ? Number(customRecruitValue) > 0 : recruitCount > 0) && (
-              <motion.div
-                className="flex flex-col gap-4"
-                variants={sectionVariants}
-                initial="hidden"
-                animate="visible"
-                exit={{ opacity: 0, y: 10 }}
-                custom={3}
-                layout
-              >
-                <p className="text-subtitle-01 font-semibold">언제까지 참여자를 모집할까요?</p>
-                <DatePicker value={deadlineRange} onChange={setDeadlineRange} />
-                {deadlineRange?.from && deadlineRange?.to && (
-                  <p className="text-body-02 text-Gray-300">
-                    {format(deadlineRange.from, 'yyyy.MM.dd')} -{' '}
-                    {format(deadlineRange.to, 'yyyy.MM.dd')}
-                  </p>
-                )}
-              </motion.div>
-            )}
+          {(customRecruitOpen
+            ? recruitTouched && Number(customRecruitValue) > 0
+            : recruitCount > 0) && (
+            <motion.div
+              className="flex flex-col gap-4"
+              variants={sectionVariants}
+              initial="hidden"
+              animate="visible"
+              exit={{ opacity: 0, y: 10 }}
+              custom={3}
+              layout
+            >
+              <p className="text-subtitle-01 font-semibold">언제까지 참여자를 모집할까요?</p>
+              <DatePicker value={deadlineRange} onChange={setDeadlineRange} />
+              {deadlineRange?.from && deadlineRange?.to && (
+                <p className="text-body-02 text-Gray-300">
+                  {format(deadlineRange.from, 'yyyy.MM.dd')} -{' '}
+                  {format(deadlineRange.to, 'yyyy.MM.dd')}
+                </p>
+              )}
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
     </TestAddLayout>
