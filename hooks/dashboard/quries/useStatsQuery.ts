@@ -32,8 +32,9 @@ export const useStatsQuery = (postId: number): UseQueryResult<StatsResponseModel
   return useQuery({
     queryKey: queryKeys.dashboard.stats(postId),
     queryFn: () => getStats(postId),
-    staleTime: 1000 * 60 * 5, // 5분 동안 stale 아님
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
+    staleTime: 0, // 항상 stale로 간주하여 즉시 refetch
+    refetchOnMount: true, // 마운트 시 refetch
+    refetchOnWindowFocus: true, // 윈도우 포커스 시 refetch
+    refetchInterval: 30000, // 30초마다 자동 refetch
   });
 };
