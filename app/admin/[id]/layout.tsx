@@ -24,7 +24,8 @@ export default async function AdminLayout({
 
   const SIDEBAR_ITEMS = [
     { label: '대시보드', path: `/admin/${id}/dashboard` },
-    { label: '내 프로필', path: `/admin/${id}/profile` },
+    // { label: '내 프로필', path: `/admin/${id}/profile` },
+    { label: '데이터 센터', path: `/admin/${id}/data-center` },
     { label: '프로젝트 관리', path: `/admin/${id}/project-manage` },
     { label: '리뷰', path: `/admin/${id}/review` },
     { label: '리워드 지급관리', path: `/admin/${id}/reward` },

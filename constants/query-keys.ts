@@ -37,4 +37,11 @@ export const queryKeys = {
       [...queryKeys.dashboard.all, 'recentReviews', postId, params] as const,
     profile: () => [...queryKeys.dashboard.all, 'profile'] as const,
   },
+  dataCenter: {
+    all: ['dataCenter'] as const,
+    detail: (postId: number, days: number) =>
+      [...queryKeys.dataCenter.all, 'detail', postId, days] as const,
+    pdfUrl: (postId: number, days: number) =>
+      [...queryKeys.dataCenter.all, 'pdfUrl', postId, days] as const,
+  },
 };

@@ -91,43 +91,6 @@ export default function TestAddSettingPage() {
     const merged = { ...currentForm, ...patch };
     update(patch);
 
-    console.log('=== Form 데이터 확인 ===');
-    console.log('현재 form state:', form);
-    console.log('formRef.current:', currentForm);
-    console.log(
-      'localStorage 데이터:',
-      typeof window !== 'undefined' ? localStorage.getItem('testAddForm') : 'N/A',
-    );
-    console.log('전체 form 데이터 (merged):', merged);
-    console.log('각 필드 확인:');
-    console.log('- title:', merged.title);
-    console.log('- serviceSummary:', merged.serviceSummary);
-    console.log('- creatorIntroduction:', merged.creatorIntroduction);
-    console.log('- description:', merged.description);
-    console.log('- mainCategory:', merged.mainCategory);
-    console.log('- platformCategory:', merged.platformCategory);
-    console.log('- genreCategories:', merged.genreCategories);
-    console.log('- qnaMethod:', merged.qnaMethod);
-    console.log('- startDate:', merged.startDate);
-    console.log('- endDate:', merged.endDate);
-    console.log('- recruitmentDeadline:', merged.recruitmentDeadline);
-    console.log('- durationTime:', merged.durationTime);
-    console.log('- maxParticipants:', merged.maxParticipants);
-    console.log('- genderRequirement:', merged.genderRequirement);
-    console.log('- ageMin:', merged.ageMin);
-    console.log('- ageMax:', merged.ageMax);
-    console.log('- additionalRequirements:', merged.additionalRequirements);
-    console.log('- rewardType:', merged.rewardType);
-    console.log('- rewardDescription:', merged.rewardDescription);
-    console.log('- feedbackMethod:', merged.feedbackMethod);
-    console.log('- feedbackItems:', merged.feedbackItems);
-    console.log('- privacyItems:', merged.privacyItems);
-    console.log('- participationMethod:', merged.participationMethod);
-    console.log('- storyGuide:', merged.storyGuide);
-    console.log('- mediaUrl:', merged.mediaUrl);
-    console.log('- teamMemberCount:', merged.teamMemberCount);
-    console.log('======================');
-
     try {
       const created = await createPostMutation.mutateAsync({
         form: merged,

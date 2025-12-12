@@ -60,6 +60,7 @@ export async function createUserPost(
   const url = `${BASE_URL}${path}`;
 
   const fd = new FormData();
+  // 서버가 object를 기대하므로 Blob으로 전송 (project-manage와 동일한 방식)
   fd.append('data', new Blob([JSON.stringify(payload)], { type: 'application/json' }));
   if (thumbnail instanceof File) fd.append('thumbnail', thumbnail, thumbnail.name);
   if (images && images.length) {
@@ -69,14 +70,18 @@ export async function createUserPost(
   }
 
   log.req('POST /v1/users/posts', url, 'POST', { hasThumbnail: !!thumbnail, payload });
-  const payloadClone = JSON.parse(JSON.stringify(payload));
-  console.log('[PAYLOAD]', payloadClone);
-  const res = await instance.post(path, fd);
 
-  log.res('POST /v1/users/posts', res.status, res.data);
+  try {
+    const res = await instance.post(path, fd, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    log.res('POST /v1/users/posts', res.status, res.data);
 
-  const parsed = UserPostSchema.safeParse(res.data);
-  return parsed.success ? parsed.data : (res.data as UserPostModel);
+    const parsed = UserPostSchema.safeParse(res.data);
+    return parsed.success ? parsed.data : (res.data as UserPostModel);
+  } catch (error: any) {
+    throw error;
+  }
 }
 
 export async function getUserPosts(params?: {
