@@ -12,6 +12,7 @@ import Button from '@/components/common/atoms/Button';
 import ConditionCheck from '@/components/admin/project-manage/ConditionCheck';
 import DetailCheck, { DetailInitial } from '@/components/admin/project-manage/DetailCheck';
 import { instance } from '@/apis/instance';
+import { updatePost } from './project-manage-api';
 
 type TestType = 'game' | 'app' | 'web';
 
@@ -22,9 +23,10 @@ const TEST_TYPES: { label: string; value: TestType }[] = [
 ];
 
 const DURATIONS = [
-  { label: '하루 미만', value: '1d' },
-  { label: '3일 미만 사용', value: '3d+' },
-  { label: '1주 미만 사용', value: '1w+' },
+  { label: '하루 미만', value: '하루 미만' },
+  { label: '3일 미만 사용', value: '3일 미만 사용' },
+  { label: '일주일 이상 사용', value: '일주일 이상 사용' },
+  { label: '하루 미만 사용', value: '하루 미만 사용' },
 ];
 
 const PLATFORMS: CheckOption[] = [
@@ -38,10 +40,18 @@ const PLATFORMS: CheckOption[] = [
   { label: '기타', value: 'etc' },
 ];
 
+const APP_PLATFORM_OPTIONS = [
+  { label: 'iOS', value: 'ios' },
+  { label: 'Android', value: 'android' },
+  { label: '무관', value: 'any' },
+];
+
 const FEEDBACKS: CheckOption[] = [
-  { label: '구글폼 제출', value: 'googleform' },
-  { label: '이메일 회신', value: 'email' },
-  { label: '설문 도구', value: 'tool' },
+  { label: '구글폼 제출', value: '구글폼 제출' },
+  { label: '앱 내 피드백 경로', value: '앱 내 피드백 경로' },
+  { label: '이메일 회신', value: '이메일 회신' },
+  { label: '슬랙/디스코드 커뮤니티 댓글', value: '슬랙/디스코드 커뮤니티 댓글' },
+  { label: '직접 입력', value: '직접 입력' },
 ];
 
 const GENRES_APP: CheckOption[] = [
@@ -153,25 +163,21 @@ const pickGenreMap = (tt: TestType) =>
   tt === 'web' ? GENRE_API_TO_UI_WEB : tt === 'app' ? GENRE_API_TO_UI_APP : GENRE_API_TO_UI_GAME;
 
 const FEEDBACK_API_TO_UI: Record<string, string> = {
-  GOOGLE_FORM: 'googleform',
-  EMAIL: 'email',
-  TOOL: 'tool',
-};
-
-const DUR_API_TO_UI: Record<string, string> = {
-  '1D': '1d',
-  '1d': '1d',
-  '3D_PLUS': '3d+',
-  '3d+': '3d+',
-  '1W_PLUS': '1w+',
-  '1w+': '1w+',
+  GOOGLE_FORM: '구글폼 제출',
+  EMAIL: '이메일 회신',
+  TOOL: '설문 도구',
+  '구글폼 제출': '구글폼 제출',
+  '앱 내 피드백 경로': '앱 내 피드백 경로',
+  '이메일 회신': '이메일 회신',
+  '슬랙/디스코드 커뮤니티 댓글': '슬랙/디스코드 커뮤니티 댓글',
+  '직접 입력': '직접 입력',
 };
 
 function Row({ label, children }: React.PropsWithChildren<{ label: string }>) {
   return (
     <div className="grid grid-cols-[120px_1fr] items-center gap-4 min-w-0">
       <div className="text-body-01 text-Dark-Gray">{label}</div>
-      <div className="min-w-0 overflow-hidden">{children}</div>
+      <div className="min-w-0 overflow-visible">{children}</div>
     </div>
   );
 }
@@ -244,6 +250,13 @@ export default function Page() {
   });
 
   const genreOptions = useMemo<CheckOption[]>(() => GENRES_BY_TYPE[testType], [testType]);
+  const isWeb = testType === 'web';
+
+  useEffect(() => {
+    if (isWeb) {
+      setPlatforms([]);
+    }
+  }, [isWeb]);
   useEffect(() => {
     setGenres(prev => prev.filter(v => genreOptions.some(o => o.value === v)));
   }, [testType, genreOptions]);
@@ -285,7 +298,7 @@ export default function Page() {
           mediaUrl: d?.creatorProfileUrl ?? d?.mediaUrl ?? '',
           privacyItems: mappedPI,
           thumbnailUrl: d?.thumbnailUrl ?? d?.thumbnail ?? undefined,
-          galleryUrls:
+          mediaUrls:
             d?.content?.mediaUrls ??
             d?.mediaImages ??
             d?.images ??
@@ -314,14 +327,23 @@ export default function Page() {
         setGenres(genreCodes.map(c => genreMap[c] ?? c).filter(Boolean));
 
         // 피드백 방식
-        const fb = firstArray<string>(d?.feedback?.feedbackItems, d?.feedbacks, d?.feedbackTypes);
-        setFeedbacks(fb.map(k => FEEDBACK_API_TO_UI[k] ?? k).filter(Boolean));
+        const fbMethod = d?.feedback?.feedbackMethod ?? d?.feedbackMethod;
+        if (fbMethod) {
+          const mappedFb =
+            FEEDBACK_API_TO_UI[fbMethod] ?? FEEDBACK_API_TO_UI[fbMethod.toUpperCase()] ?? fbMethod;
+          setFeedbacks([mappedFb].filter(Boolean));
+        }
 
         // 소요시간
-        const durServer = d?.schedule?.durationTime ?? d?.durationTimeCode ?? d?.durationTime;
-        const durUi =
-          typeof durServer === 'string' ? (DUR_API_TO_UI[durServer] ?? durServer) : '3d+';
-        setDuration(durUi);
+        const durServer =
+          d?.schedule?.durationTime ??
+          d?.durationTime ??
+          d?.durationTimeCode ??
+          d?.duration ??
+          d?.testDuration;
+        if (typeof durServer === 'string' && durServer.trim()) {
+          setDuration(durServer);
+        }
 
         // 인원
         const maxP =
@@ -341,14 +363,13 @@ export default function Page() {
           to: parseISOorNull(end) ?? addDays(new Date(), 7),
         });
 
-        // 참여 조건/리워드 초기값 (requirement, reward)
+        // 참여 조건/리워드 초기값
         const req = d?.requirement ?? {};
         const rwd = d?.reward ?? {};
 
-        const genderRequired =
-          req?.genderRequirement != null && String(req.genderRequirement).toUpperCase() !== 'ALL';
-        // 서버가 'MALE'/'FEMALE'/'ALL' 또는 '남성'/'여성' 형태일 수 있으므로 매핑
         const genderStr = String(req?.genderRequirement ?? '').toUpperCase();
+        const isAllOrNone = genderStr === 'ALL' || genderStr === '무관' || genderStr === '';
+        const genderRequired = req?.genderRequirement != null && !isAllOrNone;
         const gender =
           genderStr === 'MALE' || genderStr === '남성'.toUpperCase()
             ? 'male'
@@ -379,7 +400,7 @@ export default function Page() {
           rewardText,
         });
       } catch (e) {
-        console.error('GET /v1/users/posts/:id error', e);
+        console.error('프로젝트 상세 조회 실패', e);
       }
     })();
   }, [postId]);
@@ -393,15 +414,16 @@ export default function Page() {
     try {
       const payload = {
         title,
-        serviceSummary: detailInitial.serviceSummary,
-        mediaUrl: detailInitial.mediaUrl,
-        privacyItems: detailInitial.privacyItems?.map(pi => {
-          if (pi === '이름') return 'NAME';
-          if (pi === '이메일') return 'EMAIL';
-          if (pi === '연락처') return 'CONTACT';
-          if (pi === '기타') return 'ETC';
-          return pi;
-        }),
+        serviceSummary: detailInitial.serviceSummary ?? undefined,
+        mediaUrl: detailInitial.mediaUrl ?? undefined,
+        privacyItems:
+          detailInitial.privacyItems?.map(pi => {
+            if (pi === '이름') return 'NAME';
+            if (pi === '이메일') return 'EMAIL';
+            if (pi === '연락처') return 'CONTACT';
+            if (pi === '기타') return 'ETC';
+            return pi;
+          }) ?? undefined,
         mainCategory: [
           Object.keys(MAIN_API_TO_UI).find(k => MAIN_API_TO_UI[k] === testType) ?? 'GAME',
         ],
@@ -430,20 +452,7 @@ export default function Page() {
         },
       };
 
-      const fd = new FormData();
-      fd.append('data', new Blob([JSON.stringify(payload)], { type: 'application/json' }));
-      if (thumbnailFile) {
-        fd.append('thumbnail', thumbnailFile, thumbnailFile.name);
-      }
-      if (galleryFiles.length) {
-        for (const img of galleryFiles) {
-          fd.append('images', img, img.name);
-        }
-      }
-
-      const { data } = await instance.patch(`/v1/users/posts/${postId}`, fd, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      const data = await updatePost(postId, payload, thumbnailFile, galleryFiles);
 
       alert('저장 성공!');
       console.log('PATCH 결과:', data);
@@ -492,13 +501,28 @@ export default function Page() {
         </Row>
 
         <Row label="플랫폼 종류">
-          <div className="w-[540px]">
-            <CheckDropDown
-              key={`platforms-${platforms.join('|')}`}
-              options={PLATFORMS}
-              value={platforms}
-              onChange={(v: unknown) => setPlatforms(Array.isArray(v) ? (v as string[]) : [])}
-            />
+          <div className="w-[340px]">
+            {testType === 'app' ? (
+              <Dropdown
+                value={platforms[0]}
+                onChange={(v: unknown) => setPlatforms(v ? [String(v)] : [])}
+                options={APP_PLATFORM_OPTIONS}
+                placeholder="선택하세요"
+              />
+            ) : (
+              <CheckDropDown
+                widthClass="w-[340px]"
+                key={`platforms-${platforms.join('|')}`}
+                options={PLATFORMS}
+                value={platforms}
+                disabled={isWeb}
+                onChange={
+                  isWeb
+                    ? undefined
+                    : (v: unknown) => setPlatforms(Array.isArray(v) ? (v as string[]) : [])
+                }
+              />
+            )}
           </div>
         </Row>
 
