@@ -10,6 +10,7 @@ import { ProjectDetailResponseSchema } from '@/hooks/posts/queries/usePostDetail
 import { RightSidebarResponseSchema } from '@/hooks/posts/queries/usePostRightSidebar';
 import { PostReviewResponseSchema } from '@/hooks/review/queries/usePostReviewQuery';
 import { SimilarPostResponseSchema } from '@/hooks/posts/queries/useSimilarPostQuery';
+import Screener from '@/components/project/screener/Screener';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -52,6 +53,7 @@ export default async function ProjectDetailPage({
   return (
     <HydrationBoundary state={dehydratedState}>
       <ProjectDetailClient id={Number(id)} />
+      <Screener id={Number(id)} />
     </HydrationBoundary>
   );
 }
