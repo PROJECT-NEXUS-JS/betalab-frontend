@@ -15,6 +15,7 @@ import imageCompression from 'browser-image-compression';
 import { Loader } from 'lucide-react';
 import { QueryCache } from '@tanstack/react-query';
 import PrivacyContent from './PrivacyContent';
+import CustomInfoContent from './CustomInfoContent';
 
 const ProfileSkeleton = () => {
   return (
@@ -44,6 +45,7 @@ export default function AccountContent() {
   const [compressError, setCompressError] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [showPrivacyContent, setShowPrivacyContent] = useState(false);
+  const [showCustomInfoContent, setShowCustomInfoContent] = useState(false);
   const queryCache = new QueryCache();
 
   const { data: userData, isLoading } = useMyPageProfileQuery();
@@ -86,6 +88,14 @@ export default function AccountContent() {
 
   const handlePrivacyBack = () => {
     setShowPrivacyContent(false);
+  };
+
+  const handleCustomInfoClick = () => {
+    setShowCustomInfoContent(true);
+  };
+
+  const handleCustomInfoBack = () => {
+    setShowCustomInfoContent(false);
   };
 
   const handleEditClick = () => {
@@ -192,6 +202,10 @@ export default function AccountContent() {
 
   if (showPrivacyContent) {
     return <PrivacyContent onBack={handlePrivacyBack} />;
+  }
+
+  if (showCustomInfoContent) {
+    return <CustomInfoContent onBack={handleCustomInfoBack} />;
   }
 
   return (
@@ -316,7 +330,7 @@ export default function AccountContent() {
       {/* 내 맞춤 정보 */}
       <div className="flex flex-row justify-between w-full items-center">
         <h2 className="text-subtitle-02 font-semibold text-Black">내 맞춤 정보</h2>
-        <button className="cursor-pointer" onClick={handleLogoutClick}>
+        <button className="cursor-pointer" onClick={handleCustomInfoClick}>
           <ArrowRight className="size-6" />
         </button>
       </div>
