@@ -14,6 +14,7 @@ import { useState, useRef } from 'react';
 import imageCompression from 'browser-image-compression';
 import { Loader } from 'lucide-react';
 import { QueryCache } from '@tanstack/react-query';
+import PrivacyContent from './PrivacyContent';
 
 const ProfileSkeleton = () => {
   return (
@@ -42,6 +43,7 @@ export default function AccountContent() {
   const [isCompressing, setIsCompressing] = useState(false);
   const [compressError, setCompressError] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [showPrivacyContent, setShowPrivacyContent] = useState(false);
   const queryCache = new QueryCache();
 
   const { data: userData, isLoading } = useMyPageProfileQuery();
@@ -76,6 +78,14 @@ export default function AccountContent() {
 
   const handleWithdrawClick = () => {
     setIsWithdrawModalOpen(true);
+  };
+
+  const handlePrivacyClick = () => {
+    setShowPrivacyContent(true);
+  };
+
+  const handlePrivacyBack = () => {
+    setShowPrivacyContent(false);
   };
 
   const handleEditClick = () => {
@@ -179,6 +189,10 @@ export default function AccountContent() {
     if (isCompressing) return;
     fileInputRef.current?.click();
   };
+
+  if (showPrivacyContent) {
+    return <PrivacyContent onBack={handlePrivacyBack} />;
+  }
 
   return (
     <section className="flex flex-col gap-10 mt-10 w-full items-start">
@@ -294,7 +308,7 @@ export default function AccountContent() {
       {/* 개인 정보 관리 */}
       <div className="flex flex-row justify-between w-full items-center">
         <h2 className="text-subtitle-02 font-semibold text-Black">개인정보 관리</h2>
-        <button className="cursor-pointer" onClick={handleLogoutClick}>
+        <button className="cursor-pointer" onClick={handlePrivacyClick}>
           <ArrowRight className="size-6" />
         </button>
       </div>
