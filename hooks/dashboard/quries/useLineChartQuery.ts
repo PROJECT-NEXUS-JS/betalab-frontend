@@ -12,17 +12,8 @@ export type LineChartResponseModel = z.infer<typeof LineChartResponseSchema>;
 const BASE_PATH = (postId: number) => `/v1/users/dashboard/${postId}/analytics/line-chart`;
 
 export const getLineChart = async (postId: number) => {
-  try {
-    const response = await instance.get<any>(`${BASE_PATH(postId)}`);
-    return LineChartResponseSchema.parse(response.data);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      console.error('Zod 파싱 에러:', error.issues);
-    } else {
-      console.error('getLineChart 함수 에러:', error);
-    }
-    throw error;
-  }
+  const response = await instance.get<any>(`${BASE_PATH(postId)}`);
+  return LineChartResponseSchema.parse(response.data);
 };
 
 export const useLineChartQuery = (postId: number): UseQueryResult<LineChartResponseModel> => {

@@ -219,7 +219,6 @@ const DataCenterDetail = ({ postId }: { postId: number }) => {
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('PDF 다운로드 실패:', error);
     } finally {
       setIsDownloading(false);
     }

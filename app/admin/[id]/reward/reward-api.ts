@@ -1,6 +1,5 @@
 import { cookies } from 'next/headers';
 import { serverInstance } from '@/apis/server-instance';
-import Logger from '@/lib/logger';
 import { StatisticsResponseSchema } from '@/hooks/reward/dto/statistics';
 import { ParticipantsResponseSchema } from '@/hooks/reward/dto/participants';
 import { ProjectDetailResponseSchema } from '@/hooks/posts/queries/usePostDetailQuery';
@@ -12,10 +11,6 @@ export async function getStatistics(postId: number) {
   const refreshToken = cookieStore.get('refreshToken')?.value;
 
   if (!accessToken || !refreshToken) {
-    Logger.error('토큰이 없습니다:', {
-      hasAccessToken: !!accessToken,
-      hasRefreshToken: !!refreshToken,
-    });
     throw new Error('Authentication required');
   }
 
@@ -23,11 +18,9 @@ export async function getStatistics(postId: number) {
     const response = await serverInstance(accessToken, refreshToken).get(
       `/v1/users/participations/posts/${postId}/statistics`,
     );
-    const parsedData = StatisticsResponseSchema.parse(response.data);
-    Logger.log('StatisticsData 파싱 성공:', parsedData);
+    StatisticsResponseSchema.parse(response.data);
     return response.data;
   } catch (err: any) {
-    Logger.error('StatisticsData 파싱 실패:', err);
     if (err.response?.status === 401) {
       throw new Error('Unauthorized');
     }
@@ -51,10 +44,6 @@ export async function getParticipants(
   const refreshToken = cookieStore.get('refreshToken')?.value;
 
   if (!accessToken || !refreshToken) {
-    Logger.error('토큰이 없습니다:', {
-      hasAccessToken: !!accessToken,
-      hasRefreshToken: !!refreshToken,
-    });
     throw new Error('Authentication required');
   }
 
@@ -79,10 +68,8 @@ export async function getParticipants(
     const url = `/v1/users/participations/posts/${postId}/participants${params.toString() ? `?${params.toString()}` : ''}`;
     const response = await serverInstance(accessToken, refreshToken).get(url);
     const parsedData = ParticipantsResponseSchema.parse(response.data);
-    Logger.log('ParticipantsData 파싱 성공:', parsedData);
     return response.data;
   } catch (err: any) {
-    Logger.error('ParticipantsData 파싱 실패:', err);
     if (err.response?.status === 401) {
       throw new Error('Unauthorized');
     }
@@ -96,10 +83,6 @@ export async function getPostDetail(postId: number) {
   const refreshToken = cookieStore.get('refreshToken')?.value;
 
   if (!accessToken || !refreshToken) {
-    Logger.error('토큰이 없습니다:', {
-      hasAccessToken: !!accessToken,
-      hasRefreshToken: !!refreshToken,
-    });
     throw new Error('Authentication required');
   }
 
@@ -108,10 +91,8 @@ export async function getPostDetail(postId: number) {
       `/v1/users/posts/${postId}`,
     );
     const parsedData = ProjectDetailResponseSchema.parse(response.data);
-    Logger.log('PostDetailData 파싱 성공:', parsedData);
     return parsedData;
   } catch (err: any) {
-    Logger.error('PostDetailData 파싱 실패:', err);
     if (err.response?.status === 401) {
       throw new Error('Unauthorized');
     }
@@ -125,20 +106,14 @@ export async function getProfile() {
   const refreshToken = cookieStore.get('refreshToken')?.value;
 
   if (!accessToken || !refreshToken) {
-    Logger.error('토큰이 없습니다:', {
-      hasAccessToken: !!accessToken,
-      hasRefreshToken: !!refreshToken,
-    });
     throw new Error('Authentication required');
   }
 
   try {
     const response = await serverInstance(accessToken, refreshToken).get('/v1/users/profile');
     const parsedData = ProfileResponseSchema.parse(response.data);
-    Logger.log('ProfileData 파싱 성공:', parsedData);
     return parsedData;
   } catch (err: any) {
-    Logger.error('ProfileData 파싱 실패:', err);
     if (err.response?.status === 401) {
       throw new Error('Unauthorized');
     }

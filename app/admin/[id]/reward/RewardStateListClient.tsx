@@ -122,14 +122,9 @@ export default function RewardStateListClient({ postId }: RewardStateListClientP
         rewardStatus: mapRewardStatus(item.rewardStatus),
         paidDate: formatDate(item.paidAt),
         type: rowType,
-        onApprove:
-          rowType === '승인전' ? () => console.log(`승인하기: ${item.participationId}`) : undefined,
-        onComplete:
-          rowType === '완료요청'
-            ? () => console.log(`완료처리: ${item.participationId}`)
-            : undefined,
-        onPay:
-          rowType === '지급전' ? () => console.log(`지급하기: ${item.participationId}`) : undefined,
+        onApprove: rowType === '승인전' ? () => {} : undefined,
+        onComplete: rowType === '완료요청' ? () => {} : undefined,
+        onPay: rowType === '지급전' ? () => {} : undefined,
       };
     },
   );

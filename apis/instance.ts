@@ -25,8 +25,6 @@ instance.interceptors.request.use(
     const accessToken = localStorage.getItem('accessToken');
     if (accessToken) {
       config.headers['Authorization'] = `Bearer ${accessToken}`;
-    } else {
-      console.warn('요청에 accessToken이 없습니다:', config.url);
     }
 
     return config;

@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useWaitingParticipantsQuery } from '@/hooks/dashboard/quries/useWaitingParticipantsQuery';
+import { WaitingParticipantModel } from '@/hooks/dashboard/dto/waitingParticipants';
 import {
   useApproveApplicationMutation,
   useRejectApplicationMutation,
@@ -59,7 +60,7 @@ export default function WaitingParticipantsSection({ postId }: { postId: number 
     try {
       await approveMutation.mutateAsync(participant.participationId);
     } catch (error: any) {
-      console.error('승인 실패:', error);
+      // 승인 실패 무시
     }
   };
 
@@ -67,7 +68,7 @@ export default function WaitingParticipantsSection({ postId }: { postId: number 
     try {
       await rejectMutation.mutateAsync(participant.participationId);
     } catch (error: any) {
-      console.error('거절 실패:', error);
+      // 거절 실패 무시
     }
   };
 
@@ -89,7 +90,7 @@ export default function WaitingParticipantsSection({ postId }: { postId: number 
         <p className="text-sm text-Dark-Gray">참여 대기중인 신청이 없습니다.</p>
       ) : (
         <div className="self-stretch flex flex-col justify-start items-start gap-5">
-          {participants.map(participant => (
+          {participants.map((participant: WaitingParticipantModel) => (
             <div
               key={participant.participationId}
               className="self-stretch inline-flex justify-between items-start"
@@ -153,4 +154,3 @@ export default function WaitingParticipantsSection({ postId }: { postId: number 
     </div>
   );
 }
-

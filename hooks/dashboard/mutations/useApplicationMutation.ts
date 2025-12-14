@@ -20,9 +20,7 @@ export const useApproveApplicationMutation = (postId: number) => {
         queryKey: [...queryKeys.dashboard.all, 'waitingParticipants', postId],
       });
     },
-    onError: error => {
-      console.error('신청서 승인 실패:', error);
-    },
+    onError: error => {},
   });
 };
 
@@ -46,7 +44,7 @@ export const useRejectApplicationMutation = (postId: number) => {
       });
     },
     onError: error => {
-      console.error('신청서 거절 실패:', error);
+      // 신청서 거절 실패 무시
     },
   });
 };

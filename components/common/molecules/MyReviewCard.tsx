@@ -38,9 +38,7 @@ export default function MyReviewCard({ review, className }: MyReviewCardProps) {
   const handleDelete = async () => {
     try {
       await deleteReviewMutation.mutateAsync(review.reviewId);
-    } catch (error) {
-      console.error('리뷰 삭제 실패:', error);
-    }
+    } catch (error) {}
   };
 
   const handleEdit = () => {
@@ -64,9 +62,7 @@ export default function MyReviewCard({ review, className }: MyReviewCardProps) {
         setEditContent(result.data.content);
         setEditRating(result.data.rating);
       }
-    } catch (error) {
-      console.error('리뷰 수정 실패:', error);
-    }
+    } catch (error) {}
   };
 
   const handleCancel = () => {

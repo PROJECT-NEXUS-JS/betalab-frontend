@@ -29,11 +29,6 @@ export function Modal({
   btnOnClick1,
   btnOnClick2,
 }: ModalProps) {
-  const handleSomeAction = () => {
-    console.log('어떤 작업 완료! 이제 모달을 엽니다.');
-    onClose();
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="p-10 !rounded-sm !gap-10">

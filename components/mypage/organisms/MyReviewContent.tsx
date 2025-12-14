@@ -1,6 +1,8 @@
 import Chip from '@/components/common/atoms/Chip';
 import { useState } from 'react';
 import { useMyWritableReviewsQuery } from '@/hooks/posts/queries/useMyWritableReviewsQuery';
+import { WritableReviewItemType } from '@/hooks/posts/dto/myWritableReviews';
+import { WrittenReviewItemType } from '@/hooks/review/dto/writtenReviews';
 import PostCard, { PostCardSkeleton } from '@/components/category/molecules/PostCard';
 import { useRouter } from 'next/navigation';
 import Pagination from '@/components/category/molecules/Pagination';
@@ -75,7 +77,7 @@ export default function MyReviewContent() {
       setIsModalOpen(false);
       setSelectedPost(null);
     } catch (error) {
-      console.error('리뷰 작성 실패:', error);
+      // 리뷰 작성 실패 무시
     }
   };
 
@@ -126,7 +128,7 @@ export default function MyReviewContent() {
                 }}
               />
             ) : (
-              writableReviewsData.data.content.map(review => {
+              writableReviewsData.data.content.map((review: WritableReviewItemType) => {
                 const postCardData: TestCardType = {
                   id: review.postId,
                   title: review.postTitle,
@@ -196,7 +198,7 @@ export default function MyReviewContent() {
           ) : (
             <>
               <div className="flex flex-col gap-10">
-                {writtenReviewsData.data.content.map(review => (
+                {writtenReviewsData.data.content.map((review: WrittenReviewItemType) => (
                   <div key={review.reviewId}>
                     <MyReviewCard review={review} />
                   </div>

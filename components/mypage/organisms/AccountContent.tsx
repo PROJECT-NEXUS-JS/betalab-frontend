@@ -111,7 +111,6 @@ export default function AccountContent() {
       setIsCompressing(false);
       return finalFile;
     } catch (error) {
-      console.error('❌ 이미지 압축 실패:', error);
       setCompressError(true);
       setIsCompressing(false);
       return null;
@@ -137,7 +136,6 @@ export default function AccountContent() {
         alert('이미지 압축에 실패했습니다. 다른 이미지를 선택해 주세요.');
       }
     } catch (error) {
-      console.error('이미지 처리 실패:', error);
       alert('이미지 처리 중 오류가 발생했습니다.');
     }
   };
@@ -157,7 +155,7 @@ export default function AccountContent() {
       setPreviewImage(null);
       setCompressError(false);
     } catch (error) {
-      console.error('프로필 업데이트 실패:', error);
+      // 프로필 업데이트 실패 무시
     }
   };
 

@@ -2,7 +2,6 @@ import { cookies } from 'next/headers';
 import { dehydrate, QueryClient, HydrationBoundary } from '@tanstack/react-query';
 import { queryKeys } from '@/constants/query-keys';
 import { serverInstance } from '@/apis/server-instance';
-import Logger from '@/lib/logger';
 
 import ApplicationClientWrapper from './ApplicationClientWrapper';
 import { RightSidebarResponseSchema } from '@/hooks/posts/queries/usePostRightSidebar';
@@ -35,16 +34,6 @@ async function fetchRightSidebarData(postId: number) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
 
-  try {
-    const response = await serverInstance(accessToken).get(`/v1/users/posts/${postId}/sidebar`);
-    Logger.log('RightSidebarData 원본:', response.data);
-
-    const parsedData = RightSidebarResponseSchema.parse(response.data);
-    Logger.log('RightSidebarData 파싱 성공:', parsedData);
-
-    return parsedData;
-  } catch (err) {
-    Logger.error('RightSidebarData 파싱 실패:', err);
-    throw err;
-  }
+  const response = await serverInstance(accessToken).get(`/v1/users/posts/${postId}/sidebar`);
+  return RightSidebarResponseSchema.parse(response.data);
 }
