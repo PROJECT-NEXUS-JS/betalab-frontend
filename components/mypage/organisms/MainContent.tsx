@@ -9,7 +9,7 @@ import PostCard from '@/components/category/molecules/PostCard';
 import PostCardMini from '@/components/category/molecules/PostCardMini';
 import EmptyCard from '../molecules/EmptyCard';
 import { mapToTestCard } from '@/lib/mapper/test-card';
-import DonutChart, { type DonutChartData } from '../molecules/DonutChart';
+import DonutChart from '../molecules/DonutChart';
 import NotificationComponent from '../molecules/NotificationComponent';
 
 interface MainContentProps {
@@ -132,29 +132,32 @@ export default function MainContent({ className }: MainContentProps) {
           />
         )}
         <h3 className="text-body-01 font-semibold text-Dark-Gray">알림</h3>
-        <div className="w-full flex gap-10 items-stretch">
+        <div className="w-214 flex gap-10 items-start">
           <NotificationComponent useApi={true} />
-          <div className="flex-1 bg-Gray-50 min-h-[288px] flex">
-            {totalParticipationLoading ? (
-              <div className="w-full h-full bg-Gray-100 rounded-lg animate-pulse" />
-            ) : totalParticipationData?.totalCount === 0 ? (
-              <EmptyCard
-                className="w-full h-full flex-1"
-                title="아직 참여중인 테스트가 없어요"
-                buttonLabel="테스트 보러가기"
-                onClick={() => {
-                  router.push('/');
-                }}
-              />
-            ) : (
-              <div className="w-full h-full flex justify-center items-center">
-                <DonutChart
-                  data={donutChartData}
-                  total={totalParticipationData?.totalCount || 0}
-                  totalLabel="총 참여 프로젝트"
-                />
-              </div>
-            )}
+          <div className="flex-1 flex justify-center bg-Gray-50">
+            {(() => {
+              const donutChartData = [
+                { label: '게임', value: 1 },
+                { label: '웹', value: 1 },
+                { label: '앱', value: 2 },
+              ];
+              const total = donutChartData.reduce((sum, item) => sum + item.value, 0);
+              if (total === 0) {
+                return (
+                  <EmptyCard
+                    className="w-72"
+                    title="아직 참여중인 테스트가 없어요"
+                    buttonLabel="테스트 보러가기"
+                    onClick={() => {
+                      router.push('/');
+                    }}
+                  />
+                );
+              }
+              return (
+                <DonutChart data={donutChartData} total={total} totalLabel="총 참여 프로젝트" />
+              );
+            })()}
           </div>
         </div>
       </div>

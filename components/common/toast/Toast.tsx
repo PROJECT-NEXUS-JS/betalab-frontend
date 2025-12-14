@@ -30,7 +30,7 @@ export function Toast({ type = 'alert', message, icon, className }: ToastProps) 
         <div className="w-5 h-5 flex justify-center items-center">{icon}</div>
         <div
           className={clsx(
-            "font-['SUIT_Variable'] text-left whitespace-pre-wrap text-base font-bold leading-6",
+            "font-['SUIT_Variable'] text-base font-bold leading-6",
             !isError ? 'text-[var(--color-Dark-Gray)]' : 'text-[var(--color-White)]',
           )}
         >
