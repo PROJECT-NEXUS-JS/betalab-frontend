@@ -11,6 +11,8 @@ import EmptyCard from '../molecules/EmptyCard';
 import { mapToTestCard } from '@/lib/mapper/test-card';
 import DonutChart, { type DonutChartData } from '../molecules/DonutChart';
 import NotificationComponent from '../molecules/NotificationComponent';
+import { RecentlyViewedTestType } from '@/hooks/mypage/dto/dashboard';
+import { TestDeadlineType } from '@/hooks/mypage/dto/watchlist';
 
 interface MainContentProps {
   className?: string;
@@ -32,7 +34,7 @@ export default function MainContent({ className }: MainContentProps) {
     return Object.entries(totalParticipationData.countByCategory)
       .map(([label, value]) => ({
         label,
-        value,
+        value: value as number,
       }))
       .filter(item => item.value > 0)
       .sort((a, b) => b.value - a.value);
@@ -68,7 +70,7 @@ export default function MainContent({ className }: MainContentProps) {
           >
             {dashboardData.recentlyViewedTests
               .slice(recentlyViewedPage * 3, recentlyViewedPage * 3 + 3)
-              .map(test => {
+              .map((test: RecentlyViewedTestType) => {
                 const mappedTest = mapToTestCard(test);
                 return (
                   <div key={mappedTest.id} onClick={() => router.push(`/project/${mappedTest.id}`)}>
@@ -111,7 +113,7 @@ export default function MainContent({ className }: MainContentProps) {
           >
             {watchlistData.testsNearingDeadline
               .slice(watchlistPage * 3, watchlistPage * 3 + 3)
-              .map(test => (
+              .map((test: TestDeadlineType) => (
                 <div
                   key={test.postId}
                   className="cursor-pointer"

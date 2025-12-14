@@ -41,6 +41,7 @@ export default function AccountContent() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isCompressing, setIsCompressing] = useState(false);
   const [compressError, setCompressError] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const queryCache = new QueryCache();
 
   const { data: userData, isLoading } = useMyPageProfileQuery();
@@ -141,21 +142,36 @@ export default function AccountContent() {
   };
 
   const handleSaveChanges = async () => {
+    const trimmedNickname = nickname.trim();
+    if (!trimmedNickname) {
+      return;
+    }
+
+    setIsSaving(true);
     try {
-      await updateBasicInfoMutation.mutateAsync({
+      const payload: {
+        basicInfo: { nickname: string };
+        profileImage?: File;
+      } = {
         basicInfo: {
-          nickname: nickname.trim(),
+          nickname: trimmedNickname,
         },
-        profileImage: selectedImage || undefined,
-      });
+      };
+
+      if (selectedImage) {
+        payload.profileImage = selectedImage;
+      }
+
+      await updateBasicInfoMutation.mutateAsync(payload);
 
       setIsEditMode(false);
       setNickname('');
       setSelectedImage(null);
       setPreviewImage(null);
       setCompressError(false);
-    } catch (error) {
-      // 프로필 업데이트 실패 무시
+    } catch (error: any) {
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -179,11 +195,11 @@ export default function AccountContent() {
                 onClick={handleCancelEdit}
               />
               <Button
-                label="변경사항 저장하기"
+                label={isSaving ? '저장 중...' : '변경사항 저장하기'}
                 Size="lg"
-                State="Primary"
-                className="cursor-pointer"
-                onClick={handleSaveChanges}
+                State={isSaving ? 'Disabled' : 'Primary'}
+                className={isSaving ? 'cursor-not-allowed' : 'cursor-pointer'}
+                onClick={isSaving ? () => {} : handleSaveChanges}
               />
             </div>
           ) : (

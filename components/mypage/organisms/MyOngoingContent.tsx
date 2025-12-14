@@ -13,7 +13,8 @@ import { getPostDetail } from '@/hooks/posts/queries/usePostDetailQuery';
 import { queryKeys } from '@/constants/query-keys';
 import Chip from '@/components/common/atoms/Chip';
 import Button from '@/components/common/atoms/Button';
-import { ParticapationStatusEnum } from '@/hooks/posts/dto/postDetail';
+import { ApplicationItemType } from '@/hooks/posts/dto/myApplications';
+import { ProjectDetailResponseModel } from '@/hooks/posts/queries/usePostDetailQuery';
 
 export default function MyOngoingContent() {
   const router = useRouter();
@@ -29,17 +30,19 @@ export default function MyOngoingContent() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const { data: myApplicationsData, isLoading } = useMyApplicationsQuery({
-    status: ParticapationStatusEnum.enum.TEST_COMPLETED,
+    status: 'APPROVED',
     page: currentPage,
     size: 9,
     sort: [sortOption],
   });
 
   const applicationsNeedingPostData =
-    myApplicationsData?.data?.content.filter(app => !app.post && app.postId) ?? [];
+    myApplicationsData?.data?.content.filter(
+      (app: ApplicationItemType) => !app.post && app.postId,
+    ) ?? [];
 
   const postQueries = useQueries({
-    queries: applicationsNeedingPostData.map(app => ({
+    queries: applicationsNeedingPostData.map((app: ApplicationItemType) => ({
       queryKey: queryKeys.posts.detail(app.postId!),
       queryFn: () => getPostDetail(app.postId!),
       enabled: !!app.postId,
@@ -47,11 +50,11 @@ export default function MyOngoingContent() {
   });
 
   // post 데이터를 postId로 매핑
-  const postDataMap = new Map(
-    postQueries.map((query, index) => [
-      applicationsNeedingPostData[index].postId!,
-      query.data?.data,
-    ]),
+  const postDataMap = new Map<number, ProjectDetailResponseModel['data'] | undefined>(
+    postQueries.map((query, index) => {
+      const data = query.data as ProjectDetailResponseModel | undefined;
+      return [applicationsNeedingPostData[index].postId!, data?.data];
+    }),
   );
   const isPostDataLoading = postQueries.some(query => query.isLoading);
 
@@ -73,7 +76,7 @@ export default function MyOngoingContent() {
   return (
     <div className="relative">
       {/* 필터 */}
-      <div className="absolute right-0 -top-6">
+      <div className="absolute right-0 -top-6 z-0">
         <div className="relative">
           {/* 드롭다운 트리거 버튼 */}
           <Chip
@@ -122,7 +125,7 @@ export default function MyOngoingContent() {
           ) : (
             <>
               {myApplicationsData.data.content
-                .map(application => {
+                .map((application: ApplicationItemType) => {
                   const post =
                     application.post ??
                     (application.postId ? postDataMap.get(application.postId) : null);
@@ -167,9 +170,7 @@ export default function MyOngoingContent() {
                           label="완료하기"
                           className="w-40"
                           onClick={() => {
-                            router.push(
-                              `/project/${post.id}/feedback`,
-                            );
+                            router.push(`/project/${post.id}/feedback`);
                           }}
                         />
                         <Button
