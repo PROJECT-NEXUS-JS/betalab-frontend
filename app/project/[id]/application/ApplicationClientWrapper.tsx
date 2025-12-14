@@ -66,10 +66,15 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
 
     if (!result.success) {
       // 유효성 검사 실패 시 에러 상태 업데이트
-      const fieldErrors: { [key: string]: string } = {};
+      const fieldErrors: Partial<Record<keyof ApplicationFormData, string>> = {};
       for (const issue of result.error.issues) {
-        const key = issue.path[0] as keyof ApplicationFormData;
-        fieldErrors[key] = issue.message;
+        const pathKey = issue.path[0];
+        if (typeof pathKey === 'string' || typeof pathKey === 'number') {
+          const key = String(pathKey) as keyof ApplicationFormData;
+          if (key in applicationData) {
+            fieldErrors[key] = issue.message;
+          }
+        }
       }
       setErrors(fieldErrors);
       return;
