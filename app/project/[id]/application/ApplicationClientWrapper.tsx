@@ -72,7 +72,7 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
         if (typeof pathKey === 'string' || typeof pathKey === 'number') {
           const key = String(pathKey) as keyof ApplicationFormData;
           if (key in applicationData) {
-            fieldErrors[key] = issue.message;
+        fieldErrors[key] = issue.message;
           }
         }
       }
