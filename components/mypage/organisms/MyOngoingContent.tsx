@@ -77,7 +77,7 @@ export default function MyOngoingContent() {
   return (
     <div className="relative">
       {/* 필터 */}
-      <div className="absolute right-0 -top-6">
+      <div className="absolute right-0 -top-6 z-0">
         <div className="relative">
           {/* 드롭다운 트리거 버튼 */}
           <Chip

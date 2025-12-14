@@ -88,9 +88,8 @@ const HeaderIcons = ({ userData }: HeaderIconsProps) => {
             <UserProfile className="size-6" />
           )}
           <ArrowDown className="size-6" />
-          <div className="absolute right-0 hidden group-hover:block">
-            <div className="h-10 w-full" />
-            <Dropdown elements={DROPDOWN_ELEMENTS} className="" />
+          <div className="absolute right-0 top-full mt-2 hidden group-hover:block z-50">
+            <Dropdown elements={DROPDOWN_ELEMENTS} />
           </div>
         </div>
       </div>
