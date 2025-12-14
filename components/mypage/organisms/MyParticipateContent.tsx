@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Pagination from '@/components/category/molecules/Pagination';
 import EmptyCard from '../molecules/EmptyCard';
 import { TestCardType } from '@/types/models/testCard';
-import { useQueries } from '@tanstack/react-query';
+import { useQueries, UseQueryResult } from '@tanstack/react-query';
 import { getPostDetail } from '@/hooks/posts/queries/usePostDetailQuery';
 import { queryKeys } from '@/constants/query-keys';
 import { ApplicationItemType } from '@/hooks/posts/dto/myApplications';
@@ -35,12 +35,14 @@ export default function MyApplicationContent() {
 
   // post 데이터를 postId로 매핑
   const postDataMap = new Map<number, ProjectDetailResponseModel['data'] | undefined>(
-    postQueries.map((query, index) => {
+    postQueries.map((query: UseQueryResult<ProjectDetailResponseModel, Error>, index: number) => {
       const data = query.data as ProjectDetailResponseModel | undefined;
       return [applicationsNeedingPostData[index].postId!, data?.data];
     }),
   );
-  const isPostDataLoading = postQueries.some(query => query.isLoading);
+  const isPostDataLoading = postQueries.some(
+    (query: UseQueryResult<ProjectDetailResponseModel, Error>) => query.isLoading,
+  );
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);

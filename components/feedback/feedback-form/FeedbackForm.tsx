@@ -88,7 +88,7 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
   // 서버에서 데이터(draft)가 들어오면 폼에 채워넣기
   useEffect(() => {
     if (existingFeedbackDraft) {
-      setFormData(prev => ({
+      setFormData((prev: FeedbackRequestType) => ({
         ...prev,
         // 서버 데이터가 있으면 덮어쓰고, 없으면 기존 값 유지
         participationId: feedbackDetail.participationId ?? prev.participationId,
@@ -179,7 +179,7 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
       onSuccess: () => {
         setToast({ show: true, message: '임시 저장되었습니다.', style: 'default' });
       },
-      onError: error => {
+      onError: (error: Error) => {
         console.error('임시 저장 실패', error);
         // setToast({
         //   show: true,
@@ -224,27 +224,27 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
   // --- 핸들러 ---
   // 숫자형 (별점)
   const handleNumberChange = (field: keyof FeedbackRequestType, value: number) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev: FeedbackRequestType) => ({ ...prev, [field]: value }));
   };
   // 텍스트
   const handleTextChange = (field: keyof FeedbackRequestType, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev: FeedbackRequestType) => ({ ...prev, [field]: value }));
   };
   // 가장 불편했던 점 선택 (단일 선택)
   const selectMostIncovenientType = (value: MostInconvenientType) => {
-    setFormData(prev => ({
+    setFormData((prev: FeedbackRequestType) => ({
       ...prev,
       mostInconvenient: value, // 필드명은 스키마(mostInconvenient)와 일치해야 함
     }));
   };
   // 버그 타입 (다중 선택)
   const toggleBugType = (type: BugType) => {
-    setFormData(prev => {
+    setFormData((prev: FeedbackRequestType) => {
       const currentTypes = prev.bugTypes ?? [];
 
       if (currentTypes.includes(type)) {
         // 이미 있으면 제거
-        return { ...prev, bugTypes: currentTypes.filter(t => t !== type) };
+        return { ...prev, bugTypes: currentTypes.filter((t: BugType) => t !== type) };
       } else {
         // 없으면 추가
         return { ...prev, bugTypes: [...currentTypes, type] };
@@ -281,7 +281,7 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
         // 성공 모달 열기
         setSuccessModalOpen(true);
       },
-      onError: error => {
+      onError: (error: Error) => {
         console.error('피드백 등록 실패', error);
         // setToast({
         //   show: true,
@@ -372,7 +372,9 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
                   key={label}
                   variant="solid"
                   active={formData.hasBug === value}
-                  onClick={() => setFormData(prev => ({ ...prev, hasBug: value }))}
+                  onClick={() =>
+                    setFormData((prev: FeedbackRequestType) => ({ ...prev, hasBug: value }))
+                  }
                   showArrowIcon={false}
                 >
                   {label}

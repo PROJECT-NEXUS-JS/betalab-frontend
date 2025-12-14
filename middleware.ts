@@ -4,6 +4,7 @@ import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
   const token = request.cookies.get('accessToken');
   const isAuthenticated = !!token;
+  console.log('isAuthenticated', isAuthenticated);
 
   if (!isAuthenticated && request.nextUrl.pathname.startsWith('/admin')) {
     const url = request.nextUrl.clone();
