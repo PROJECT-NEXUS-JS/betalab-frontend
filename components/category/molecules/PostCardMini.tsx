@@ -23,7 +23,7 @@ export default function PostCardMini({ post, className }: PostCardMiniProps) {
 
     const today = new Date();
     const deadlineDate = new Date(deadline);
-    
+
     const diffTime = deadlineDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;

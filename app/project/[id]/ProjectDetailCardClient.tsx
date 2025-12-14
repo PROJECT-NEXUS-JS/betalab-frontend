@@ -26,7 +26,6 @@ export default function ProjectDetailCardClient({ projectId, applyCardData }: Pr
 
   // 피드백이 이미 제출되었는지 여부
   const isFeedbackSubmitted = !!feedbackDetail?.feedback;
-
   const { data: isLiked } = usePostLikeStatusQuery(projectId);
   const { data: likeCount } = usePostLikeCountQuery(projectId);
 

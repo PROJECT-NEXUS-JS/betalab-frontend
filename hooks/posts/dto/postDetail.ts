@@ -71,6 +71,15 @@ export const ParticipationStatusEnum = z.enum([
 const ParticipationStatus = ParticipationStatusEnum.nullable();
 export type ParticipationStatusType = z.infer<typeof ParticipationStatus>;
 
+// particapationStatus
+export const ParticapationStatusEnum = z.enum([
+  'PENDING',
+  'APPROVED',
+  'TEST_COMPLETED',
+  'COMPLETED',
+  'REJECTED',
+]);
+
 // Main ProjectDataSchema
 export const ProjectDataSchema = z.object({
   id: z.number(),

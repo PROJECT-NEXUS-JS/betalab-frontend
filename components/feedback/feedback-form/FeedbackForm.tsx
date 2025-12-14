@@ -168,6 +168,8 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
       return;
     }
 
+    console.log('FeedbackForm 렌더링됨. projectId:', projectId);
+
     saveDraft(formData, {
       onSuccess: () => {
         showToast({
