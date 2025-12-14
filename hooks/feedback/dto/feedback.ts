@@ -17,7 +17,7 @@ export const MostInconvenientEnum = z.enum([
   'UI_UX',
   'SPEED',
   'FUNCTION',
-  'TEXT',
+  'TEXT_GUIDE',
   'GUIDE',
   'OTHER',
 ]);
@@ -27,7 +27,7 @@ export type MostInconvenientType = z.infer<typeof MostInconvenientEnum>;
 // ========== 요청 ===========
 export const FeedbackRequestSchema = z
   .object({
-    participationId: z.number().int().positive(),
+    participationId: z.number().int(),
 
     // 만족도 (1~5점)
     overallSatisfaction: z.number().int().min(1).max(5), // 전반적 만족도
@@ -59,7 +59,7 @@ export const FeedbackRequestSchema = z
     additionalComments: z.string().min(1), // 추가 의견
   })
   .refine(
-    data => {
+    (data: z.infer<typeof FeedbackRequestSchema>) => {
       if (!data.hasBug) return true;
       return !!data.bugTypes && data.bugTypes.length > 0;
     },
@@ -69,7 +69,7 @@ export const FeedbackRequestSchema = z
     },
   )
   .refine(
-    data => {
+    (data: z.infer<typeof FeedbackRequestSchema>) => {
       if (!data.hasBug) return true;
       return !!data.bugLocation && data.bugLocation.trim().length > 0;
     },
@@ -83,37 +83,59 @@ export type FeedbackRequestType = z.infer<typeof FeedbackRequestSchema>;
 
 // ========== 응답 ===========
 
-export const FeedbackSchema = z.object({
-  participationId: z.number().int().positive(),
-  overallSatisfaction: z.number().int().min(0).max(5), // 0~5점
+// 공통으로 사용되는 핵심 데이터 (설문 내용)
+const FeedbackBaseSchema = z.object({
+  participationId: z.number().int(),
+
+  // 만족도 & 의향
+  overallSatisfaction: z.number().int().min(0).max(5),
   recommendationIntent: z.number().int().min(0).max(5),
   reuseIntent: z.number().int().min(0).max(5),
+
+  // 버그 관련
   mostInconvenient: MostInconvenientEnum,
   hasBug: z.boolean(),
   bugTypes: z.array(BugTypeEnum),
   bugLocation: z.string(),
   bugDescription: z.string(),
   screenshotUrls: z.array(z.string()),
+
+  // 사용성 점수
   functionalityScore: z.number().int().min(0).max(5),
   comprehensibilityScore: z.number().int().min(0).max(5),
   speedScore: z.number().int().min(0).max(5),
   responseTimingScore: z.number().int().min(0).max(5),
+
+  // 서술형
   goodPoints: z.string(),
   improvementSuggestions: z.string(),
   additionalComments: z.string(),
+
+  // 날짜
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+export const DraftSchema = FeedbackBaseSchema.extend({
+  draftId: z.number().int().positive(),
+});
+
+export const FeedbackSchema = FeedbackBaseSchema.extend({
   feedbackId: z.number().int().positive(),
   averageSatisfaction: z.number().min(0).max(5),
   averageUsabilityScore: z.number().min(0).max(5),
-  createdAt: z.iso.datetime(),
-  updatedAt: z.iso.datetime(),
 });
 
 export const FeedbackDetailResponseSchema = BaseModelSchema(FeedbackSchema);
 
 export const MyFeedbackResponseSchema = BaseModelSchema(
   z.object({
+    participationId: z.number().int(),
     hasSubmitted: z.boolean(),
     hasDraft: z.boolean(),
-    feedback: FeedbackSchema,
+    feedback: FeedbackSchema.nullable(),
+    draft: DraftSchema.nullable(),
   }),
 );
+
+export type MyFeedbackResponseType = z.infer<typeof MyFeedbackResponseSchema>;

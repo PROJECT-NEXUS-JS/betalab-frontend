@@ -27,16 +27,10 @@ export async function POST(req: NextRequest) {
 
     if (!backendResponse.ok) {
       const errorText = await backendResponse.text().catch(() => '');
-      console.error('백엔드 리프레시 실패:', {
-        status: backendResponse.status,
-        statusText: backendResponse.statusText,
-        body: errorText,
-      });
       return NextResponse.json({ message: 'Refresh failed' }, { status: 401 });
     }
 
-    const json = await backendResponse.json().catch(parseError => {
-      console.error('Failed to parse refresh response', parseError);
+    const json = await backendResponse.json().catch(() => {
       return null;
     });
 
@@ -49,7 +43,6 @@ export async function POST(req: NextRequest) {
     const newRefreshToken = tokensSource?.refreshToken;
 
     if (!newAccessToken || !newRefreshToken) {
-      console.error('Refresh response missing tokens', json);
       return NextResponse.json({ message: 'Malformed refresh response' }, { status: 502 });
     }
 
@@ -74,7 +67,6 @@ export async function POST(req: NextRequest) {
 
     return res;
   } catch (err) {
-    console.error('refresh error', err);
     return NextResponse.json({ message: 'Internal error' }, { status: 500 });
   }
 }

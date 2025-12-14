@@ -98,6 +98,7 @@ export default function GenderBirthPage() {
           placeholder="YYYY.MM.DD"
           disabledBeforeToday={false}
           className="w-full"
+          singleDate={true}
         />
       </div>
 

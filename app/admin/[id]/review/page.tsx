@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { usePostReviewQuery } from '@/hooks/review/queries/usePostReviewQuery';
+import { ReviewDataModel } from '@/hooks/review/dto';
 import ReviewCard from '@/components/common/molecules/ReviewCard';
 import ReviewCountCard from '@/components/admin/ReviewCountCard';
 import ReviewDetailSidebar from '@/components/admin/ReviewDetailSidebar';
@@ -40,7 +41,6 @@ export default function AdminReviewPage() {
 
   const handleReplyEdit = () => {
     // 수정 예정
-    console.log('답변 편집');
   };
 
   const handleReplyDelete = () => {
@@ -52,7 +52,9 @@ export default function AdminReviewPage() {
     });
   };
 
-  const selectedReviewData = selectedReview ? reviews.find(r => r.id === selectedReview) : null;
+  const selectedReviewData = selectedReview
+    ? reviews.find((r: ReviewDataModel) => r.id === selectedReview)
+    : null;
 
   return (
     <section className="flex flex-col gap-10">
@@ -68,7 +70,7 @@ export default function AdminReviewPage() {
             등록된 리뷰가 없어요
           </div>
         ) : (
-          reviews.map(review => {
+          reviews.map((review: ReviewDataModel) => {
             const hasReply = repliedReviews[review.id] !== undefined;
             return (
               <ReviewCard

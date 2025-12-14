@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { BaseModelSchema } from '@/types/models/base-model';
 
 export const applicationSchema = z.object({
   applicantName: z.string().min(1, '이름을 입력해주세요.'),
@@ -28,3 +29,5 @@ export const applicationSchema = z.object({
 });
 
 export type ApplicationFormData = z.infer<typeof applicationSchema>;
+
+export const GetApplicationStatusResponseSchema = BaseModelSchema(z.boolean());

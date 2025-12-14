@@ -41,6 +41,7 @@ export type CreatePostPayload = {
   storyGuide?: string;
   privacyItems?: Array<'NAME' | 'EMAIL' | 'CONTACT' | 'ETC'>;
   mediaUrl?: string;
+  teamMemberCount?: number;
 };
 
 export function buildCreatePostPayload(form: TestAddState): CreatePostPayload {
@@ -82,6 +83,7 @@ export function buildCreatePostPayload(form: TestAddState): CreatePostPayload {
     storyGuide: form.storyGuide,
     privacyItems: (form.privacyItems as CreatePostPayload['privacyItems']) ?? [],
     mediaUrl: form.mediaUrl,
+    teamMemberCount: form.teamMemberCount,
   };
 
   return compact(payload) as CreatePostPayload;

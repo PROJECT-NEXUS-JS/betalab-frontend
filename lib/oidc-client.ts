@@ -29,12 +29,8 @@ export function getUserManager(): UserManager {
   if (!userManager) {
     const settings = createOidcConfig();
     userManager = new UserManager(settings);
-    userManager.events.addAccessTokenExpiring(() => {
-      console.warn('access token expiring');
-    });
-    userManager.events.addAccessTokenExpired(() => {
-      console.warn('access token expired');
-    });
+    userManager.events.addAccessTokenExpiring(() => {});
+    userManager.events.addAccessTokenExpired(() => {});
   }
   return userManager;
 }

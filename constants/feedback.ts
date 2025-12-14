@@ -14,7 +14,7 @@ export const INCONVENIENT_LABELS: Record<MostInconvenientType, string> = {
   UI_UX: 'UI/UX',
   SPEED: '속도',
   FUNCTION: '기능오류',
-  TEXT: '텍스트',
+  TEXT_GUIDE: '텍스트',
   GUIDE: '가이드',
   OTHER: '기타',
 };

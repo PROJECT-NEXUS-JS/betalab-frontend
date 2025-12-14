@@ -25,7 +25,9 @@ export default function DashBoardCard({
       <div className="w-full flex flex-col gap-3">
         <h3 className="text-[40px] text-Black font-bold">{current}</h3>
         <div className="flex justify-start items-center gap-1">
-          <p className="text-Gray-300 text-sm font-medium">{`${TEXT_MAP[type]} ${changeAmount}`}</p>
+          <p className="text-Gray-300 text-sm font-medium">
+            {`${TEXT_MAP[type]} ${Math.abs(changeAmount)}`}
+          </p>
           <Image
             src={`/icons/admin-icon/triangle.svg`}
             alt={type}

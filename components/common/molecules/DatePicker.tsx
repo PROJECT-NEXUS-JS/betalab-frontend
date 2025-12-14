@@ -30,6 +30,7 @@ type Props = {
   placeholder?: string;
   disabledBeforeToday?: boolean;
   className?: string;
+  singleDate?: boolean; // 단일 날짜 선택 모드 (회원가입용)
 };
 
 export default function DatePicker({
@@ -38,6 +39,7 @@ export default function DatePicker({
   placeholder = 'YYYY.MM.DD',
   disabledBeforeToday = true,
   className,
+  singleDate = false,
 }: Props) {
   const [open, setOpen] = useState(false);
   const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -124,17 +126,22 @@ export default function DatePicker({
               range={draft}
               onPick={r => setDraft(r)}
               disabledBeforeToday={disabledBeforeToday}
+              singleDate={singleDate}
             />
 
             <div className="mt-4 flex items-center justify-between">
               <div className="text-caption-01 text-Dark-Gray">
-                {draft?.from && draft?.to
-                  ? isSameDay(draft.from, draft.to)
+                {singleDate
+                  ? draft?.from
                     ? format(draft.from, 'yyyy.MM.dd')
-                    : `${format(draft.from, 'yyyy.MM.dd')} ~ ${format(draft.to, 'yyyy.MM.dd')}`
-                  : draft?.from
-                    ? `${format(draft.from, 'yyyy.MM.dd')} - 종료일을 선택하세요`
-                    : '시작일과 종료일을 선택하세요'}
+                    : '날짜를 선택하세요'
+                  : draft?.from && draft?.to
+                    ? isSameDay(draft.from, draft.to)
+                      ? format(draft.from, 'yyyy.MM.dd')
+                      : `${format(draft.from, 'yyyy.MM.dd')} ~ ${format(draft.to, 'yyyy.MM.dd')}`
+                    : draft?.from
+                      ? `${format(draft.from, 'yyyy.MM.dd')} - 종료일을 선택하세요`
+                      : '시작일과 종료일을 선택하세요'}
               </div>
               <div className="flex gap-2">
                 <button
@@ -145,11 +152,20 @@ export default function DatePicker({
                 </button>
                 <button
                   onClick={() => {
-                    // 단일 날짜 선택인 경우 from과 to를 같게 설정
-                    if (draft?.from && !draft?.to) {
-                      onChange({ from: draft.from, to: draft.from });
+                    if (singleDate) {
+                      // 단일 날짜 선택 모드
+                      if (draft?.from) {
+                        onChange({ from: draft.from, to: draft.from });
+                      } else {
+                        onChange(undefined);
+                      }
                     } else {
-                      onChange(draft);
+                      // 기간 선택 모드
+                      if (draft?.from && !draft?.to) {
+                        onChange({ from: draft.from, to: draft.from });
+                      } else {
+                        onChange(draft);
+                      }
                     }
                     setOpen(false);
                   }}
@@ -177,6 +193,7 @@ type CalProps = {
   onPick: (range: DateRange | undefined) => void;
   disabledBeforeToday?: boolean;
   weekStartsOn?: 0 | 1;
+  singleDate?: boolean;
 };
 
 function Calendar({
@@ -189,6 +206,7 @@ function Calendar({
   onPick,
   disabledBeforeToday = true,
   weekStartsOn = 0,
+  singleDate = false,
 }: CalProps) {
   const today = new Date();
   const [viewMode, setViewMode] = useState<'month' | 'year' | 'month-select'>('month');
@@ -221,6 +239,10 @@ function Calendar({
   const handleClickDay = (day: Date) => {
     if (disabledBeforeToday && isBefore(strip(day), strip(today))) return;
 
+    if (singleDate) {
+      onPick({ from: day, to: day });
+      return;
+    }
     if (!range?.from || (range?.from && range?.to)) {
       onPick({ from: day, to: undefined });
       return;
@@ -374,19 +396,19 @@ function Calendar({
               className="relative flex items-center justify-center"
               style={{ ['--day' as any]: '40px' }}
             >
-              {m && (
+              {!singleDate && m && (
                 <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[var(--day)] bg-Primary-100" />
               )}
-              {range?.from && range?.to && s && (
+              {!singleDate && range?.from && range?.to && s && (
                 <div className="absolute left-1/2 right-0 top-1/2 -translate-y-1/2 h-[var(--day)] bg-Primary-100" />
               )}
-              {range?.from && range?.to && e && (
+              {!singleDate && range?.from && range?.to && e && (
                 <div className="absolute left-0 right-1/2 top-1/2 -translate-y-1/2 h-[var(--day)] bg-Primary-100" />
               )}
-              {s && (
+              {!singleDate && s && (
                 <div className="absolute left-1/2 right-0 top-1/2 -translate-y-1/2 h-[var(--day)] bg-Primary-500" />
               )}
-              {e && (
+              {!singleDate && e && (
                 <div className="absolute left-0 right-1/2 top-1/2 -translate-y-1/2 h-[var(--day)] bg-Primary-500" />
               )}
               <button
@@ -395,13 +417,19 @@ function Calendar({
                 disabled={disabled}
                 className={clsx(
                   'relative z-[1] mx-auto flex w-[var(--day)] h-[var(--day)] items-center justify-center rounded-full text-body-02 transition',
-                  s || e
-                    ? 'bg-Primary-500 text-White'
-                    : m
-                      ? 'text-Black'
+                  singleDate
+                    ? s || e
+                      ? 'bg-Primary-500 text-White'
                       : out
                         ? 'text-Gray-300'
-                        : 'text-Black',
+                        : 'text-Black'
+                    : s || e
+                      ? 'bg-Primary-500 text-White'
+                      : m
+                        ? 'text-Black'
+                        : out
+                          ? 'text-Gray-300'
+                          : 'text-Black',
                   disabled ? 'opacity-30 cursor-not-allowed' : 'active:scale-95',
                 )}
               >

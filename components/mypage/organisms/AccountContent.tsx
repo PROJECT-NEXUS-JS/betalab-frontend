@@ -14,6 +14,7 @@ import { useState, useRef } from 'react';
 import imageCompression from 'browser-image-compression';
 import { Loader } from 'lucide-react';
 import { QueryCache } from '@tanstack/react-query';
+import PrivacyContent from './PrivacyContent';
 
 const ProfileSkeleton = () => {
   return (
@@ -41,6 +42,8 @@ export default function AccountContent() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isCompressing, setIsCompressing] = useState(false);
   const [compressError, setCompressError] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [showPrivacyContent, setShowPrivacyContent] = useState(false);
   const queryCache = new QueryCache();
 
   const { data: userData, isLoading } = useMyPageProfileQuery();
@@ -77,6 +80,14 @@ export default function AccountContent() {
     setIsWithdrawModalOpen(true);
   };
 
+  const handlePrivacyClick = () => {
+    setShowPrivacyContent(true);
+  };
+
+  const handlePrivacyBack = () => {
+    setShowPrivacyContent(false);
+  };
+
   const handleEditClick = () => {
     setIsEditMode(true);
     setNickname(userData?.name || '');
@@ -111,7 +122,6 @@ export default function AccountContent() {
       setIsCompressing(false);
       return finalFile;
     } catch (error) {
-      console.error('❌ 이미지 압축 실패:', error);
       setCompressError(true);
       setIsCompressing(false);
       return null;
@@ -137,27 +147,41 @@ export default function AccountContent() {
         alert('이미지 압축에 실패했습니다. 다른 이미지를 선택해 주세요.');
       }
     } catch (error) {
-      console.error('이미지 처리 실패:', error);
       alert('이미지 처리 중 오류가 발생했습니다.');
     }
   };
 
   const handleSaveChanges = async () => {
+    const trimmedNickname = nickname.trim();
+    if (!trimmedNickname) {
+      return;
+    }
+
+    setIsSaving(true);
     try {
-      await updateBasicInfoMutation.mutateAsync({
+      const payload: {
+        basicInfo: { nickname: string };
+        profileImage?: File;
+      } = {
         basicInfo: {
-          nickname: nickname.trim(),
+          nickname: trimmedNickname,
         },
-        profileImage: selectedImage || undefined,
-      });
+      };
+
+      if (selectedImage) {
+        payload.profileImage = selectedImage;
+      }
+
+      await updateBasicInfoMutation.mutateAsync(payload);
 
       setIsEditMode(false);
       setNickname('');
       setSelectedImage(null);
       setPreviewImage(null);
       setCompressError(false);
-    } catch (error) {
-      console.error('프로필 업데이트 실패:', error);
+    } catch (error: any) {
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -165,6 +189,10 @@ export default function AccountContent() {
     if (isCompressing) return;
     fileInputRef.current?.click();
   };
+
+  if (showPrivacyContent) {
+    return <PrivacyContent onBack={handlePrivacyBack} />;
+  }
 
   return (
     <section className="flex flex-col gap-10 mt-10 w-full items-start">
@@ -181,11 +209,11 @@ export default function AccountContent() {
                 onClick={handleCancelEdit}
               />
               <Button
-                label="변경사항 저장하기"
+                label={isSaving ? '저장 중...' : '변경사항 저장하기'}
                 Size="lg"
-                State="Primary"
-                className="cursor-pointer"
-                onClick={handleSaveChanges}
+                State={isSaving ? 'Disabled' : 'Primary'}
+                className={isSaving ? 'cursor-not-allowed' : 'cursor-pointer'}
+                onClick={isSaving ? () => {} : handleSaveChanges}
               />
             </div>
           ) : (
@@ -280,7 +308,7 @@ export default function AccountContent() {
       {/* 개인 정보 관리 */}
       <div className="flex flex-row justify-between w-full items-center">
         <h2 className="text-subtitle-02 font-semibold text-Black">개인정보 관리</h2>
-        <button className="cursor-pointer" onClick={handleLogoutClick}>
+        <button className="cursor-pointer" onClick={handlePrivacyClick}>
           <ArrowRight className="size-6" />
         </button>
       </div>

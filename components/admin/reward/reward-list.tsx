@@ -12,7 +12,7 @@ interface RewardListProps {
 
 export default function RewardList({ items }: RewardListProps) {
   return (
-    <div className="w-full inline-flex justify-start items-center gap-[23px]">
+    <div className="w-253 inline-flex justify-start items-center gap-1">
       {items.map((item, index) => (
         <div key={index} className="flex-1">
           <RewardCard label={item.label} count={item.count} color={item.color} />

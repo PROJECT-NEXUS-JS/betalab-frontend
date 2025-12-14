@@ -37,7 +37,6 @@ export default function OidcCallbackPage() {
         window.dispatchEvent(new Event('localStorageChange'));
         setIsTokenReady(true);
       } catch (error) {
-        console.error('OIDC 콜백 처리 중 오류 발생:', error);
         router.replace('/login?error=callback_failed');
       }
     };
@@ -52,8 +51,6 @@ export default function OidcCallbackPage() {
         console.log('게스트 유저로 로그인되었습니다.');
         router.replace('/login/gender-birth');
       } else {
-        console.log('일반 유저로 로그인되었습니다.');
-        console.log('원래 URL로 리다이렉트:', originalUrl);
         router.replace(originalUrl);
         localStorage.removeItem('redirectedFrom');
       }
