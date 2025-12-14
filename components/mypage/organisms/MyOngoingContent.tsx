@@ -13,6 +13,8 @@ import { getPostDetail } from '@/hooks/posts/queries/usePostDetailQuery';
 import { queryKeys } from '@/constants/query-keys';
 import Chip from '@/components/common/atoms/Chip';
 import Button from '@/components/common/atoms/Button';
+import { ApplicationItemType } from '@/hooks/posts/dto/myApplications';
+import { ProjectDetailResponseModel } from '@/hooks/posts/queries/usePostDetailQuery';
 
 export default function MyOngoingContent() {
   const router = useRouter();
@@ -35,10 +37,12 @@ export default function MyOngoingContent() {
   });
 
   const applicationsNeedingPostData =
-    myApplicationsData?.data?.content.filter(app => !app.post && app.postId) ?? [];
+    myApplicationsData?.data?.content.filter(
+      (app: ApplicationItemType) => !app.post && app.postId,
+    ) ?? [];
 
   const postQueries = useQueries({
-    queries: applicationsNeedingPostData.map(app => ({
+    queries: applicationsNeedingPostData.map((app: ApplicationItemType) => ({
       queryKey: queryKeys.posts.detail(app.postId!),
       queryFn: () => getPostDetail(app.postId!),
       enabled: !!app.postId,
@@ -46,20 +50,16 @@ export default function MyOngoingContent() {
   });
 
   // post 데이터를 postId로 매핑
-  const postDataMap = new Map(
-    postQueries.map((query, index) => [
-      applicationsNeedingPostData[index].postId!,
-      query.data?.data,
-    ]),
+  const postDataMap = new Map<number, ProjectDetailResponseModel['data'] | undefined>(
+    postQueries.map((query, index) => {
+      const data = query.data as ProjectDetailResponseModel | undefined;
+      return [applicationsNeedingPostData[index].postId!, data?.data];
+    }),
   );
   const isPostDataLoading = postQueries.some(query => query.isLoading);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-  };
-
-  const handlePostClick = (postId: number) => {
-    router.push(`/project/${postId}`);
   };
 
   // 정렬 변경 핸들러
@@ -76,7 +76,7 @@ export default function MyOngoingContent() {
   return (
     <div className="relative">
       {/* 필터 */}
-      <div className="absolute right-0 -top-6">
+      <div className="absolute right-0 -top-6 z-0">
         <div className="relative">
           {/* 드롭다운 트리거 버튼 */}
           <Chip
@@ -125,7 +125,7 @@ export default function MyOngoingContent() {
           ) : (
             <>
               {myApplicationsData.data.content
-                .map(application => {
+                .map((application: ApplicationItemType) => {
                   const post =
                     application.post ??
                     (application.postId ? postDataMap.get(application.postId) : null);
@@ -154,7 +154,7 @@ export default function MyOngoingContent() {
                       key={post.id}
                       className={cn(
                         'relative group w-[258px] h-[297px] rounded-sm overflow-hidden',
-                        'transition-shadow duration-300 hover:shadow-card-hover',
+                        'transition-shadow duration-300 shadow-card hover:shadow-card-hover',
                       )}
                     >
                       <PostCard post={postCardData} />

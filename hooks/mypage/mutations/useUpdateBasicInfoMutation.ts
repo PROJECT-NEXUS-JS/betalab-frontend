@@ -19,7 +19,7 @@ const updateBasicInfo = async (
     const response = await instance.put('/auth/account/basic-info', formData, {
       timeout: 60000,
       headers: {
-        'Content-Type': undefined,
+        'Content-Type': 'multipart/form-data',
       },
     });
 

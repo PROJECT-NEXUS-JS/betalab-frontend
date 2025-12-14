@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import TestAddLayout from '@/components/test-add/layouts/TestAddLayout';
@@ -48,10 +48,10 @@ export default function TestAddSettingPage() {
     if (typeof form.feedbackMethod === 'string' && form.feedbackMethod.trim()) {
       const tokens = form.feedbackMethod
         .split(',')
-        .map(t => t.trim())
+        .map((t: string) => t.trim())
         .filter(Boolean);
-      const inList = tokens.filter(t => FEEDBACK_OPTIONS.includes(t as any));
-      const extras = tokens.filter(t => !FEEDBACK_OPTIONS.includes(t as any));
+      const inList = tokens.filter((t: string) => FEEDBACK_OPTIONS.includes(t as any));
+      const extras = tokens.filter((t: string) => !FEEDBACK_OPTIONS.includes(t as any));
       setFeedbackTags(inList);
       if (extras.length) {
         setCustomFeedbackOpen(true);
@@ -62,10 +62,10 @@ export default function TestAddSettingPage() {
     if (typeof form.durationTime === 'string' && form.durationTime.trim()) {
       const tokens = form.durationTime
         .split(',')
-        .map(t => t.trim())
+        .map((t: string) => t.trim())
         .filter(Boolean);
-      const inList = tokens.filter(t => TIME_OPTIONS.includes(t as any));
-      const extras = tokens.filter(t => !TIME_OPTIONS.includes(t as any));
+      const inList = tokens.filter((t: string) => TIME_OPTIONS.includes(t as any));
+      const extras = tokens.filter((t: string) => !TIME_OPTIONS.includes(t as any));
       setTimeTags(inList);
       if (extras.length) {
         setCustomTimeOpen(true);
@@ -91,10 +91,10 @@ export default function TestAddSettingPage() {
     if (typeof form.feedbackMethod === 'string' && form.feedbackMethod.trim()) {
       const tokens = form.feedbackMethod
         .split(',')
-        .map(t => t.trim())
+        .map((t: string) => t.trim())
         .filter(Boolean);
-      const inList = tokens.filter(t => FEEDBACK_OPTIONS.includes(t as any));
-      const extras = tokens.filter(t => !FEEDBACK_OPTIONS.includes(t as any));
+      const inList = tokens.filter((t: string) => FEEDBACK_OPTIONS.includes(t as any));
+      const extras = tokens.filter((t: string) => !FEEDBACK_OPTIONS.includes(t as any));
       setFeedbackTags(inList);
       if (extras.length) {
         setCustomFeedbackOpen(true);
@@ -105,10 +105,10 @@ export default function TestAddSettingPage() {
     if (typeof form.durationTime === 'string' && form.durationTime.trim()) {
       const tokens = form.durationTime
         .split(',')
-        .map(t => t.trim())
+        .map((t: string) => t.trim())
         .filter(Boolean);
-      const inList = tokens.filter(t => TIME_OPTIONS.includes(t as any));
-      const extras = tokens.filter(t => !TIME_OPTIONS.includes(t as any));
+      const inList = tokens.filter((t: string) => TIME_OPTIONS.includes(t as any));
+      const extras = tokens.filter((t: string) => !TIME_OPTIONS.includes(t as any));
       setTimeTags(inList);
       if (extras.length) {
         setCustomTimeOpen(true);
@@ -153,29 +153,11 @@ export default function TestAddSettingPage() {
   const isRecruitValid = customRecruitOpen
     ? !!customRecruitValue && Number(customRecruitValue) > 0
     : recruitCount > 0;
-  const isRecruitDone = recruitTouched && isRecruitValid;
+  const isRecruitDone = customRecruitOpen ? recruitTouched && isRecruitValid : isRecruitValid; // 기본값 50이어도 유효한 값으로 처리
   const showDeadlineSection = showRecruitSection && isRecruitDone;
 
   const isDeadlineDone = !!(deadlineRange?.from && deadlineRange?.to);
   const canProceed = isFeedbackDone && isTimeDone && isRecruitDone && isDeadlineDone;
-
-  const timeRef = useRef<HTMLDivElement | null>(null);
-  const recruitRef = useRef<HTMLDivElement | null>(null);
-  const deadlineRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (showTimeSection) timeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, [showTimeSection]);
-
-  useEffect(() => {
-    if (showRecruitSection)
-      recruitRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, [showRecruitSection]);
-
-  useEffect(() => {
-    if (showDeadlineSection)
-      deadlineRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, [showDeadlineSection]);
 
   const toggleTag = (tag: string, type: 'feedback' | 'time') => {
     if (type === 'feedback') {
@@ -209,7 +191,7 @@ export default function TestAddSettingPage() {
       endDate: deadlineRange?.to?.toISOString(),
       recruitmentDeadline: deadlineRange?.to?.toISOString(),
     });
-
+    save();
     router.push(`/test-add/${category}/condition`);
   };
 
@@ -252,6 +234,7 @@ export default function TestAddSettingPage() {
       onNext={handleNext}
       showSave
       onSave={handleSave}
+      category={category}
     >
       <div className="flex flex-col gap-10">
         {/* 피드백 수집 방식 */}
@@ -308,7 +291,6 @@ export default function TestAddSettingPage() {
         <AnimatePresence>
           {(feedbackTags.length > 0 || (customFeedbackOpen && !!customFeedbackValue.trim())) && (
             <motion.div
-              ref={timeRef}
               className="flex flex-col gap-6"
               variants={sectionVariants}
               initial="hidden"
@@ -367,7 +349,6 @@ export default function TestAddSettingPage() {
         <AnimatePresence>
           {(timeTags.length > 0 || (customTimeOpen && !!customTimeValue.trim())) && (
             <motion.div
-              ref={recruitRef}
               className="flex flex-col gap-6"
               variants={sectionVariants}
               initial="hidden"
@@ -380,8 +361,9 @@ export default function TestAddSettingPage() {
               {(() => {
                 const STEP = 10;
                 const MIN = 0;
+                const MAX = 10000;
 
-                const clamp = (n: number) => Math.max(MIN, n);
+                const clamp = (n: number) => Math.max(MIN, Math.min(MAX, n));
 
                 const inc = () => {
                   setRecruitTouched(true);
@@ -479,28 +461,28 @@ export default function TestAddSettingPage() {
 
         {/* 기간 선택 */}
         <AnimatePresence>
-          {recruitTouched &&
-            (customRecruitOpen ? Number(customRecruitValue) > 0 : recruitCount > 0) && (
-              <motion.div
-                ref={deadlineRef}
-                className="flex flex-col gap-4"
-                variants={sectionVariants}
-                initial="hidden"
-                animate="visible"
-                exit={{ opacity: 0, y: 10 }}
-                custom={3}
-                layout
-              >
-                <p className="text-subtitle-01 font-semibold">언제까지 참여자를 모집할까요?</p>
-                <DatePicker value={deadlineRange} onChange={setDeadlineRange} />
-                {deadlineRange?.from && deadlineRange?.to && (
-                  <p className="text-body-02 text-Gray-300">
-                    {format(deadlineRange.from, 'yyyy.MM.dd')} -{' '}
-                    {format(deadlineRange.to, 'yyyy.MM.dd')}
-                  </p>
-                )}
-              </motion.div>
-            )}
+          {(customRecruitOpen
+            ? recruitTouched && Number(customRecruitValue) > 0
+            : recruitCount > 0) && (
+            <motion.div
+              className="flex flex-col gap-4"
+              variants={sectionVariants}
+              initial="hidden"
+              animate="visible"
+              exit={{ opacity: 0, y: 10 }}
+              custom={3}
+              layout
+            >
+              <p className="text-subtitle-01 font-semibold">언제까지 참여자를 모집할까요?</p>
+              <DatePicker value={deadlineRange} onChange={setDeadlineRange} />
+              {deadlineRange?.from && deadlineRange?.to && (
+                <p className="text-body-02 text-Gray-300">
+                  {format(deadlineRange.from, 'yyyy.MM.dd')} -{' '}
+                  {format(deadlineRange.to, 'yyyy.MM.dd')}
+                </p>
+              )}
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
     </TestAddLayout>

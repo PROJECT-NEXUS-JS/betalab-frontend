@@ -30,3 +30,7 @@ body {
   /* color: var(--foreground); */
   font-family: 'SUIT Variable', sans-serif;
 }
+
+button {
+  cursor: pointer;
+}

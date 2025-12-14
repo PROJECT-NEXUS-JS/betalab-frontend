@@ -1,7 +1,7 @@
 'use client';
 import { useCallback, useEffect, Suspense } from 'react';
 import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 import BetalabLogo from '@/components/common/svg/BetalabLogo';
 import Button from '@/components/common/atoms/Button';
@@ -10,6 +10,7 @@ import { getUserManager } from '@/lib/oidc-client';
 
 export default function LoginPage() {
   const mgr = getUserManager();
+  const router = useRouter();
 
   const handleLogin = useCallback(() => {
     mgr.signinRedirect();
@@ -29,7 +30,7 @@ export default function LoginPage() {
           label="카카오 로그인"
           onClick={handleLogin}
         />
-        <Button Size="md" State="Text btn" label="그냥 둘러보기" onClick={() => {}} />
+        <Button Size="md" State="Text btn" label="그냥 둘러보기" onClick={() => router.push('/')} />
       </div>
       <Suspense fallback={<div>Loading...</div>}>
         <RedirectUrlSetter />

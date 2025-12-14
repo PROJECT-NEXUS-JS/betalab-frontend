@@ -68,6 +68,7 @@ export default function AppGenreStep() {
   const handleNext = () => {
     if (selected.length === 0) return alert('장르를 하나 이상 선택해주세요!');
     update({ genreCategories: selected.map(v => UI_TO_API[v]) });
+    save();
     router.push('/test-add/app/name');
   };
 

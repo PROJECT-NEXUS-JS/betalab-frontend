@@ -40,8 +40,9 @@ export const TestAddSchema = z
     storyGuide: z.string().optional(),
     privacyItems: z.array(z.enum(['NAME', 'EMAIL', 'CONTACT', 'ETC'])).optional(),
     mediaUrl: z.string().url().optional(),
+    teamMemberCount: z.coerce.number().int().positive().optional(),
   })
-  .superRefine((d, ctx) => {
+  .superRefine((d: z.infer<typeof TestAddSchema>, ctx: z.RefinementCtx) => {
     if (new Date(d.recruitmentDeadline) > new Date(d.startDate)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,

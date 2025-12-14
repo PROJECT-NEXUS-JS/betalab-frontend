@@ -14,7 +14,6 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs = 1
     } catch (err) {
       clearTimeout(id);
       if (attempt === retries) throw err; // 마지막 시도 실패하면 throw
-      console.warn(`Fetch 재시도 ${attempt + 1} 실패, 재시도 중...`, err);
     }
   }
   throw new Error('Fetch 실패'); // 안전장치
@@ -48,7 +47,6 @@ export async function POST(req: NextRequest) {
       responseData = await backendRes.json();
     } else {
       const rawText = await backendRes.text();
-      console.error('JSON 아님:', rawText);
       return NextResponse.json(
         { success: false, message: `예상치 못한 응답 형식: ${rawText}` },
         { status: backendRes.status },
@@ -90,7 +88,6 @@ export async function POST(req: NextRequest) {
 
     return response;
   } catch (err) {
-    console.error('API 로그인 에러:', err);
     return NextResponse.json({ success: false, message: '서버 오류' }, { status: 500 });
   }
 }

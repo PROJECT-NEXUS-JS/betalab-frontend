@@ -16,16 +16,15 @@ import {
   FeedbackRequestType,
   FeedbackRequestSchema,
   BugType,
-  BugTypeEnum,
   MostInconvenientType,
   MostInconvenientEnum,
 } from '@/hooks/feedback/dto/feedback';
 import useSaveFeedbackDraftMutation from '@/hooks/feedback/mutations/useSaveFeedbackDraftMutation';
 import useSubmitFeedbackMutation from '@/hooks/feedback/mutations/useSubmitFeedbackMutation';
 import useMyFeedbackQuery from '@/hooks/feedback/queries/useMyFeedbackQuery';
-import useFeedbackDetailQuery from '@/hooks/feedback/queries/useFeedbackDetailQuery';
 
 import { INCONVENIENT_LABELS, BUG_TYPE_LABELS, HAS_BUGS_OPTIONS } from '@/constants/feedback';
+import { LoaderCircle } from 'lucide-react';
 
 const chunkArray = <T,>(arr: T[], size: number) => {
   const result: T[][] = [];
@@ -60,37 +59,69 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
   const { mutate: submit } = useSubmitFeedbackMutation(projectId);
   // --- API Query ---
   // 기존 피드백 불러오기
-  const { data: existingFeedbackData, isLoading } = useFeedbackDetailQuery(projectId);
-  // const { data: feedbackDetail, isLoading } = useMyFeedbackQuery(projectId);
-  // const existingFeedbackData = feedbackDetail?.feedback;
+  const { data: feedbackDetail, isLoading } = useMyFeedbackQuery(projectId);
+  const existingFeedback = feedbackDetail?.feedback;
+  const existingFeedbackDraft = feedbackDetail?.draft;
 
   // --- State ---
   // 초기 상태
   const [formData, setFormData] = useState<FeedbackRequestType>({
-    participationId: existingFeedbackData?.participationId ?? 1,
-    overallSatisfaction: existingFeedbackData?.overallSatisfaction ?? 0,
-    recommendationIntent: existingFeedbackData?.recommendationIntent ?? 0,
-    reuseIntent: existingFeedbackData?.reuseIntent ?? 0,
-    functionalityScore: existingFeedbackData?.functionalityScore ?? 0,
-    comprehensibilityScore: existingFeedbackData?.comprehensibilityScore ?? 0,
-    speedScore: existingFeedbackData?.speedScore ?? 0,
-    responseTimingScore: existingFeedbackData?.responseTimingScore ?? 0,
-    mostInconvenient: existingFeedbackData?.mostInconvenient ?? MostInconvenientEnum.enum.OTHER,
-    hasBug: existingFeedbackData?.hasBug ?? false,
-    bugTypes:
-      (existingFeedbackData?.bugTypes ?? existingFeedbackData?.hasBug)
-        ? [BugTypeEnum.enum.OTHER]
-        : [],
-    bugLocation: existingFeedbackData?.bugLocation ?? '',
-    bugDescription: existingFeedbackData?.bugDescription ?? '',
-    screenshotUrls: existingFeedbackData?.screenshotUrls ?? [],
-    goodPoints: existingFeedbackData?.goodPoints ?? '',
-    improvementSuggestions: existingFeedbackData?.improvementSuggestions ?? '',
-    additionalComments: existingFeedbackData?.additionalComments ?? '',
+    participationId: 0,
+    overallSatisfaction: 0,
+    recommendationIntent: 0,
+    reuseIntent: 0,
+    functionalityScore: 0,
+    comprehensibilityScore: 0,
+    speedScore: 0,
+    responseTimingScore: 0,
+    mostInconvenient: MostInconvenientEnum.enum.OTHER,
+    hasBug: false,
+    bugTypes: [],
+    bugLocation: '',
+    bugDescription: '',
+    screenshotUrls: [],
+    goodPoints: '',
+    improvementSuggestions: '',
+    additionalComments: '',
   });
 
+  // 서버에서 데이터(draft)가 들어오면 폼에 채워넣기
+  useEffect(() => {
+    if (existingFeedbackDraft) {
+      setFormData(prev => ({
+        ...prev,
+        // 서버 데이터가 있으면 덮어쓰고, 없으면 기존 값 유지
+        participationId: feedbackDetail.participationId ?? prev.participationId,
+        overallSatisfaction: existingFeedbackDraft.overallSatisfaction ?? prev.overallSatisfaction,
+        recommendationIntent:
+          existingFeedbackDraft.recommendationIntent ?? prev.recommendationIntent,
+        reuseIntent: existingFeedbackDraft.reuseIntent ?? prev.reuseIntent,
+        functionalityScore: existingFeedbackDraft.functionalityScore ?? prev.functionalityScore,
+        comprehensibilityScore:
+          existingFeedbackDraft.comprehensibilityScore ?? prev.comprehensibilityScore,
+        speedScore: existingFeedbackDraft.speedScore ?? prev.speedScore,
+        responseTimingScore: existingFeedbackDraft.responseTimingScore ?? prev.responseTimingScore,
+        mostInconvenient: existingFeedbackDraft.mostInconvenient ?? prev.mostInconvenient,
+
+        hasBug: existingFeedbackDraft.hasBug ?? prev.hasBug,
+        bugTypes: existingFeedbackDraft.bugTypes ?? prev.bugTypes,
+        bugLocation: existingFeedbackDraft.bugLocation ?? prev.bugLocation,
+        bugDescription: existingFeedbackDraft.bugDescription ?? prev.bugDescription,
+        screenshotUrls: existingFeedbackDraft.screenshotUrls ?? prev.screenshotUrls,
+
+        goodPoints: existingFeedbackDraft.goodPoints ?? prev.goodPoints,
+        improvementSuggestions:
+          existingFeedbackDraft.improvementSuggestions ?? prev.improvementSuggestions,
+        additionalComments: existingFeedbackDraft.additionalComments ?? prev.additionalComments,
+      }));
+    }
+  }, [existingFeedbackDraft]); // existingFeedbackDraft가 변경될 때(로딩 완료 시)
+
   // 유효성 검사 통과 여부
-  const [isValid, setIsValid] = useState(false);
+  const isValid = useMemo(() => {
+    return FeedbackRequestSchema.safeParse(formData).success;
+  }, [formData]);
+
   // 토스트
   type ToastStyle = ToastProps['style'];
   const [toast, setToast] = useState<{
@@ -104,20 +135,35 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
   });
   // 제출 성공 모달
   const [successModalOpen, setSuccessModalOpen] = useState(false);
+  // 피드백 이미 제출 모달
+  const [existingFeedbackModal, setExistingFeedbackModal] = useState(false);
 
-  // --- 유효성 검사 ---
-  // 상태 변경 시마다 유효성 검사 (Zod 활용)
+  // 이미 제출된 피드백이 있다면 토스트 띄우고 뒤로가기
   useEffect(() => {
-    const result = FeedbackRequestSchema.safeParse(formData);
-    setIsValid(result.success);
-  }, [formData]);
+    // 로딩 끝났고, 데이터가 있다면 모달 오픈
+    if (!isLoading && existingFeedback) {
+      setExistingFeedbackModal(true);
+    }
+  }, [isLoading, existingFeedback]);
 
   // --- 기능 ---
   // 임시 저장
   const handleSaveDraft = useCallback(() => {
+    // 제출 전 participationId 검증
+    console.log('formData.participationId', formData.participationId);
+    if (!formData.participationId || formData.participationId === 0) {
+      setToast({
+        show: true,
+        message: '참여 정보가 확인되지 않아 제출할 수 없습니다.',
+        style: 'error',
+      });
+      return;
+    }
+
     // 임시: 임시 저장도 유효성 확인
     const result = FeedbackRequestSchema.safeParse(formData);
     if (!isValid) {
+      console.log('isValid', isValid);
       setToast({
         show: true,
         message:
@@ -126,6 +172,8 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
       });
       return;
     }
+
+    console.log('FeedbackForm 렌더링됨. projectId:', projectId);
 
     saveDraft(formData, {
       onSuccess: () => {
@@ -206,6 +254,16 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
 
   // 제출
   const handleSubmit = () => {
+    // 제출 전 participationId 검증
+    if (!formData.participationId || formData.participationId === 0) {
+      setToast({
+        show: true,
+        message: '참여 정보가 확인되지 않아 제출할 수 없습니다.',
+        style: 'error',
+      });
+      return;
+    }
+
     // 버튼이 활성화되어 있어도 한 번 더 체크
     const result = FeedbackRequestSchema.safeParse(formData);
     if (!isValid) {
@@ -256,7 +314,11 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
   }, []);
 
   if (isLoading) {
-    return <p>피드백 로딩 중...</p>;
+    return (
+      <div className="flex justify-center items-center flex-1">
+        <LoaderCircle className="animate-spin" />
+      </div>
+    );
   }
 
   return (
@@ -387,7 +449,7 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
         {/* 하단 버튼 */}
         <div className="flex gap-10 items-center">
           <Button
-            State="Sub"
+            State={isValid ? 'Sub' : 'Disabled'}
             Size="xxl"
             label="임시 저장"
             className="w-full"
@@ -417,7 +479,7 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
         onClose={() => {
           setSuccessModalOpen(false);
           // 진행 중인 테스트
-          router.push('');
+          router.push('/mypage?tab=ongoing-tests');
         }}
         btnLabel1="완료한 테스트 보기"
         btnLabel2="남은 테스트 완료하기"
@@ -429,7 +491,26 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
         btnOnClick2={() => {
           setSuccessModalOpen(false);
           // 진행 중인 테스트
-          router.push('');
+          router.push('/mypage?tab=ongoing-tests');
+        }}
+      />
+      <Modal
+        title="이미 제출한 피드백이에요"
+        description="작성해주신 소중한 의견은 관리자가 검토 중이에요."
+        isOpen={existingFeedbackModal}
+        onClose={() => {
+          setExistingFeedbackModal(false);
+          router.back();
+        }}
+        btnLabel1="이전 화면으로"
+        btnLabel2="내 참여 내역 보기"
+        btnOnClick1={() => {
+          setExistingFeedbackModal(false);
+          router.back();
+        }}
+        btnOnClick2={() => {
+          setExistingFeedbackModal(false);
+          router.replace('/mypage?tab=participated-tests');
         }}
       />
     </>

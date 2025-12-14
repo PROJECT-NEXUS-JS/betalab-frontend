@@ -37,6 +37,7 @@ export default function TestAddAboutPage() {
     const trimmed = summary.trim();
     if (!trimmed) return alert('한줄 소개를 입력해주세요!');
     update({ description: trimmed });
+    save();
     router.push(`/test-add/${category}/intro`);
   };
 
@@ -53,6 +54,7 @@ export default function TestAddAboutPage() {
       showSave
       onSave={handleSave}
       saveLabel="임시 저장"
+      category={category}
     >
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-1">

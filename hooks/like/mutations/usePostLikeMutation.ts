@@ -17,11 +17,7 @@ export const usePostLikeMutation = (): UseMutationResult<
 > => {
   return useMutation({
     mutationFn: togglePostLike,
-    onSuccess: data => {
-      console.log('찜하기/찜하기 취소 성공:', data);
-    },
-    onError: error => {
-      console.error('찜하기/찜하기 취소 실패:', error);
-    },
+    onSuccess: () => {},
+    onError: () => {},
   });
 };

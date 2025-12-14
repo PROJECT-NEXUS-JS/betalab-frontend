@@ -6,7 +6,7 @@ import ImageThumb from '@/components/test-add/ImageThumb';
 import Image from 'next/image';
 
 type Props = {
-  files: File[];
+  files: (File | string)[];
   total: number;
   onUpload: (files: FileList) => void;
   onRemove: (index: number) => void;
@@ -26,8 +26,17 @@ export default function ImageStrip({ files, total, onUpload, onRemove }: Props) 
     checkScroll();
   }, [files]);
 
+  const handleUpload = (fileList: FileList | null) => {
+    if (!fileList || fileList.length === 0) return;
+    onUpload(fileList);
+  };
+
   return (
-    <div className="relative">
+    <div className="relative w-full flex items-center gap-4">
+      <div className="shrink-0">
+        <ImageButton current={files.length} total={total} onUpload={handleUpload} />
+      </div>
+
       <div
         ref={wrapRef}
         onScroll={checkScroll}
@@ -35,18 +44,15 @@ export default function ImageStrip({ files, total, onUpload, onRemove }: Props) 
           flex items-center gap-4 overflow-x-auto
           py-2 pr-10
           scrollbar-thin
+          flex-1
+          min-w-0
         "
+        style={{ scrollbarWidth: 'thin' }}
       >
-        <ImageButton
-          current={files.length}
-          total={total}
-          onUpload={fl => {
-            if (!fl || fl.length === 0) return;
-            onUpload(fl);
-          }}
-        />
         {files.map((f, i) => (
-          <ImageThumb key={`${f.name}-${i}`} file={f} onRemove={() => onRemove(i)} />
+          <div key={typeof f === 'string' ? f : `${f.name}-${i}`} className="shrink-0">
+            <ImageThumb file={f} onRemove={() => onRemove(i)} />
+          </div>
         ))}
       </div>
       {canRight && (

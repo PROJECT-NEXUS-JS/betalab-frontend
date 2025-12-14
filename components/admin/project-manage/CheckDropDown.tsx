@@ -14,7 +14,9 @@ type Props = {
   defaultValue?: string[];
   placeholder?: string;
   className?: string;
+  widthClass?: string;
   onChange?: (values: string[]) => void;
+  disabled?: boolean;
 };
 
 export default function CheckDropDown({
@@ -23,7 +25,9 @@ export default function CheckDropDown({
   defaultValue = [],
   placeholder = '선택하세요',
   className = '',
+  widthClass = 'w-[556px]',
   onChange,
+  disabled = false,
 }: Props) {
   const id = useId();
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -33,6 +37,7 @@ export default function CheckDropDown({
   const isControlled = value !== undefined;
   const [inner, setInner] = useState<string[]>(defaultValue);
   const [open, setOpen] = useState(false);
+  const isDisabled = disabled;
 
   const selected = isControlled ? value! : inner;
   const setSelected = (vals: string[]) => {
@@ -50,6 +55,7 @@ export default function CheckDropDown({
   }, []);
 
   const onKeyDown = (e: React.KeyboardEvent) => {
+    if (isDisabled) return;
     if (!open && (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown')) {
       e.preventDefault();
       setOpen(true);
@@ -67,6 +73,7 @@ export default function CheckDropDown({
   };
 
   const toggle = (val: string) => {
+    if (isDisabled) return;
     setSelected(selected.includes(val) ? selected.filter(v => v !== val) : [...selected, val]);
   };
 
@@ -82,7 +89,7 @@ export default function CheckDropDown({
   );
 
   return (
-    <div ref={wrapperRef} className={`relative w-556 ${className}`} onKeyDown={onKeyDown}>
+    <div ref={wrapperRef} className={`relative ${widthClass} ${className}`} onKeyDown={onKeyDown}>
       <div
         id={`chkdd-btn-${id}`}
         role="button"
@@ -90,9 +97,15 @@ export default function CheckDropDown({
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={`chkdd-list-${id}`}
-        onClick={() => setOpen(o => !o)}
-        className="w-[556px] min-h-[48px] text-left rounded-[1px] border border-Gray-100 bg-white)]
-                   px-3 py-4 outline-none flex items-center justify-between"
+        aria-disabled={isDisabled}
+        onClick={() => {
+          if (isDisabled) return;
+          setOpen(o => !o);
+        }}
+        className={`${widthClass} min-h-[48px] text-left rounded-[1px] border border-Gray-100 ${
+          isDisabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'
+        }
+                   px-3 py-4 outline-none flex items-center justify-between`}
       >
         <div className="fflex-1 flex flex-wrap items-center gap-2">
           {chips.length === 0 ? (
@@ -110,9 +123,11 @@ export default function CheckDropDown({
                   type="button"
                   aria-label={`${chip.label} 제거`}
                   onClick={e => {
+                    if (isDisabled) return;
                     e.stopPropagation();
                     toggle(chip.value);
                   }}
+                  disabled={isDisabled}
                   className="grid h-5 w-5 place-items-center rounded-full
                              hover:bg-Primary-200"
                 >
@@ -144,11 +159,11 @@ export default function CheckDropDown({
         </svg>
       </div>
 
-      {open && (
+      {open && !isDisabled && (
         <div
           role="presentation"
-          className="absolute left-[445px] top-full mt-2 z-50 min-w-[108px] w-max max-w-[90vw] border border-Gray-100)]
-                     bg-white shadow-card"
+          className={`absolute right-0 top-full mt-2 z-50 min-w-[108px] w-max max-w-[90vw] border border-Gray-100
+                     bg-white shadow-card`}
         >
           <ul
             ref={listRef}

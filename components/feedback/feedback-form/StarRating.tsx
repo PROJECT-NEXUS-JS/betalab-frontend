@@ -22,7 +22,7 @@ const StarRating = ({ value, onChange }: StarRatingProps) => {
             onClick={() => onChange(star)}
             onMouseEnter={() => setHoverValue(star)}
             onMouseLeave={() => setHoverValue(null)}
-            className="focus:outline-none transition-transform active:scale-90"
+            className="focus:outline-none transition-transform active:scale-90 cursor-pointer"
           >
             <Image
               src={

@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type Props = {
-  file: File;
+  file: File | string;
   onRemove: () => void;
 };
 
@@ -11,6 +11,10 @@ export default function ImageThumb({ file, onRemove }: Props) {
   const [url, setUrl] = useState<string>('');
 
   useEffect(() => {
+    if (typeof file === 'string') {
+      setUrl(file);
+      return;
+    }
     const objectUrl = URL.createObjectURL(file);
     setUrl(objectUrl);
     return () => URL.revokeObjectURL(objectUrl);

@@ -33,6 +33,7 @@ export default function TestAddNamePage() {
     const trimmed = title.trim();
     if (!trimmed) return alert('제목을 입력해주세요!');
     update({ title: trimmed });
+    save();
     router.push(`/test-add/${category}/about`);
   };
 
@@ -49,6 +50,7 @@ export default function TestAddNamePage() {
       showSave
       onSave={handleSave}
       saveLabel="임시 저장"
+      category={category}
     >
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-1">
