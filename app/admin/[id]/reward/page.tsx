@@ -1,6 +1,5 @@
 import { dehydrate, QueryClient, HydrationBoundary } from '@tanstack/react-query';
 import { redirect } from 'next/navigation';
-import Logger from '@/lib/logger';
 import { getStatistics, getPostDetail, getProfile } from './reward-api';
 import RewardListClient from './RewardListClient';
 import RewardStateListClient from './RewardStateListClient';
@@ -17,15 +16,9 @@ export default async function AdminRewardPage({ params }: { params: Promise<{ id
     const currentUserId = profileData.data.userId || profileData.data.id;
 
     if (postCreatorId !== currentUserId) {
-      Logger.error('권한 없음:', {
-        postId,
-        postCreatorId,
-        currentUserId,
-      });
       redirect('/');
     }
   } catch (err: any) {
-    Logger.error('권한 확인 실패:', err);
     redirect('/');
   }
   const queryClient = new QueryClient();
@@ -35,9 +28,7 @@ export default async function AdminRewardPage({ params }: { params: Promise<{ id
       queryKey: ['reward', 'statistics', postId],
       queryFn: () => getStatistics(postId),
     });
-  } catch (err) {
-    Logger.error('Statistics prefetch 실패:', err);
-  }
+  } catch (err) {}
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

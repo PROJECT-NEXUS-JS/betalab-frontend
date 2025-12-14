@@ -11,7 +11,6 @@ import TestTitleClient from './TestTitleClient';
 import RecruitmentStatusToggle from './RecruitmentStatusToggle';
 import { getStats, getBarChart, getPieChart, getLineChart } from './dashboard-api';
 import QuickActionSheet from '@/components/admin/QuickActionSheet';
-import Logger from '@/lib/logger';
 
 export default async function AdminDashboardPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -39,7 +38,6 @@ export default async function AdminDashboardPage({ params }: { params: Promise<{
       postData = ProjectDetailResponseSchema.parse(postResponse.data);
       postCreatorId = postData.data.createdBy;
     } catch (err: any) {
-      Logger.error('Post 조회 실패:', err?.message, err?.response?.status, err?.response?.data);
       throw err;
     }
 
@@ -47,27 +45,17 @@ export default async function AdminDashboardPage({ params }: { params: Promise<{
       profileResponse = await serverInstance(accessToken, refreshToken).get('/v1/users/profile');
       currentUserId = profileResponse.data.data.userId || profileResponse.data.data.id;
     } catch (err: any) {
-      Logger.error('Profile 조회 실패:', err?.message, err?.response?.status, err?.response?.data);
       throw err;
     }
 
     // 작성자만 접근 가능하게
     if (postCreatorId !== currentUserId) {
-      Logger.error('권한 없음:', postId, postCreatorId, currentUserId);
       redirect('/');
     }
   } catch (err: any) {
-    Logger.error(
-      '권한 확인 실패:',
-      err?.message || 'Unknown error',
-      err?.response?.status,
-      err?.response?.data,
-      postId,
-    );
     redirect('/');
   }
 
-  // 권한 검증 통과 후에만 QueryClient 사용
   const queryClient = new QueryClient();
 
   try {
@@ -75,36 +63,28 @@ export default async function AdminDashboardPage({ params }: { params: Promise<{
       queryKey: queryKeys.dashboard.stats(postId),
       queryFn: () => getStats(postId),
     });
-  } catch (err) {
-    Logger.error('Stats prefetch 실패:', err);
-  }
+  } catch (err) {}
 
   try {
     await queryClient.prefetchQuery({
       queryKey: queryKeys.dashboard.barChart(postId),
       queryFn: () => getBarChart(postId),
     });
-  } catch (err) {
-    Logger.error('BarChart prefetch 실패:', err);
-  }
+  } catch (err) {}
 
   try {
     await queryClient.prefetchQuery({
       queryKey: queryKeys.dashboard.pieChart(postId),
       queryFn: () => getPieChart(postId),
     });
-  } catch (err) {
-    Logger.error('PieChart prefetch 실패:', err);
-  }
+  } catch (err) {}
 
   try {
     await queryClient.prefetchQuery({
       queryKey: queryKeys.dashboard.lineChart(postId),
       queryFn: () => getLineChart(postId),
     });
-  } catch (err) {
-    Logger.error('LineChart prefetch 실패:', err);
-  }
+  } catch (err) {}
 
   const dehydratedState = dehydrate(queryClient);
 

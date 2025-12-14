@@ -22,8 +22,6 @@ export const useUpdateReviewMutation = () => {
       // 작성한 리뷰 목록 초기화
       queryClient.invalidateQueries({ queryKey: ['writtenReviews'] });
     },
-    onError: error => {
-      console.error('리뷰 수정 실패:', error);
-    },
+    onError: error => {},
   });
 };

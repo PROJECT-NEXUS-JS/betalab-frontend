@@ -37,9 +37,7 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
     isLoading: isRightSidebarLoading,
     isError: isRightSidebarError,
   } = useGetRightSidebar(Number(id));
-  const {
-    data: postDetailData,
-  } = useGetPostDetailQuery(Number(id));
+  const { data: postDetailData } = useGetPostDetailQuery(Number(id));
 
   const applyCardData: Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'> = {
     ...transformToApplyCardProps(
@@ -79,7 +77,6 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
 
     // 유효성 검사 성공 시
     setErrors({}); // 에러 메시지 초기화
-    console.log('유효성 검사 통과! 제출할 데이터:', result.data);
     setConfirmModalOpen(true);
   };
 

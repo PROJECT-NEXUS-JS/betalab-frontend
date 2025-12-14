@@ -102,7 +102,6 @@ export default function TestAddSettingPage() {
       save();
       router.replace(`/test-add/${category}/finish${created?.id ? `?id=${created.id}` : ''}`);
     } catch (e: any) {
-      console.error('생성 실패:', e);
       alert(e?.message ?? '등록에 실패했습니다.');
     }
   };

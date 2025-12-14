@@ -26,7 +26,6 @@ export default function ReviewModal({
   onSubmit,
   isLoading = false,
 }: ReviewModalProps) {
-  console.log(postData);
   const [rating, setRating] = useState(0);
   const [content, setContent] = useState('');
 

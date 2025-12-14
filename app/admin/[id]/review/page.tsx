@@ -40,7 +40,6 @@ export default function AdminReviewPage() {
 
   const handleReplyEdit = () => {
     // 수정 예정
-    console.log('답변 편집');
   };
 
   const handleReplyDelete = () => {
