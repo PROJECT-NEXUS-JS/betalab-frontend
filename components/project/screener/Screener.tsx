@@ -11,6 +11,8 @@ import { ProjectDataModel } from '@/hooks/posts/dto/postDetail';
 
 import useScreenerStore from '@/stores/screenerStore';
 
+import { PRIVACY_ITEM_LABELS } from '@/constants/screener';
+
 import CarouselBar from '@/components/common/molecules/CarouselBar';
 import { Modal } from '@/components/category/molecules/Modal';
 import Button from '@/components/common/atoms/Button';
@@ -46,10 +48,11 @@ function createQuestions(postDetail: ProjectDataModel | undefined) {
         category.code === 'ETC_ALL',
     ) !== -1
   ) {
-    // TODO: 배열의 모든 기기 표시
+    const platformNames = postDetail.platformCategories.map(p => p.name);
+    const platformString = platformNames.join(' 또는 ');
     questions.push({
       id: 'platform',
-      question: `현재 ${postDetail.platformCategories[0].name} 기기를 사용하고 계신가요?`,
+      question: `현재 ${platformString} 기기를 사용하고 계신가요?`,
     });
   }
   // 2. 성별 질문
@@ -77,19 +80,28 @@ function createQuestions(postDetail: ProjectDataModel | undefined) {
       question: `나이가 ${postDetail.requirement.ageMax}세 이하이신가요?`,
     });
   }
-  // 4. 추가 조건
-  if (postDetail.requirement.additionalRequirements) {
-    questions.push({
-      id: 'additionalRequirments',
-      question: `추가 조건 "${postDetail.requirement.additionalRequirements}"을 만족하시나요?`,
-    });
-  }
+  // // 4. 추가 조건
+  // if (postDetail.requirement.additionalRequirements) {
+  //   questions.push({
+  //     id: 'additionalRequirments',
+  //     question: `추가 조건 "${postDetail.requirement.additionalRequirements}"을 만족하시나요?`,
+  //   });
+  // }
+
   // 5. 개인정보 이용 동의
-  // TODO: 배열의 모든 조건 표시
-  if (postDetail.feedback.privacyItems.length > 0) {
+  if (
+    postDetail.feedback.privacyItems.length > 0 &&
+    !postDetail.feedback.privacyItems.includes('OTHER')
+  ) {
+    // 한국어로 바꿈
+    const koreanPrivacyItems = postDetail.feedback.privacyItems.map(
+      (key: string) => PRIVACY_ITEM_LABELS[key]
+    );
+    // 쉼표로 연결
+    const privacyItemsString = koreanPrivacyItems.join(', ');
     questions.push({
       id: 'privacyAgree',
-      question: `개인 정보 이용에 동의하시나요?`,
+      question: `개인 정보 이용 (${privacyItemsString})에 동의하시나요?`,
     });
   }
 
@@ -183,7 +195,7 @@ const Screener = ({ id }: ScreenerProps) => {
         >
           <div className="flex flex-col gap-y-10 items-center">
             <div className="flex flex-col gap-y-1">
-              <DialogHeader className="flex justify-between">
+              <DialogHeader className="flex !flex-row justify-between">
                 <DialogTitle className="text-Black text-subtitle-02 font-semibold">
                   아래 질문에 답변해주세요
                 </DialogTitle>
@@ -193,6 +205,7 @@ const Screener = ({ id }: ScreenerProps) => {
                   width={24}
                   height={24}
                   onClick={() => setIsScreenerOpen(false)}
+                  className="cursor-pointer"
                 />
               </DialogHeader>
               <p className="text-body-01  text-Dark-Gray font-medium">
