@@ -92,7 +92,7 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
       onSuccess: () => {
         setSuccessModalOpen(true);
       },
-      onError: error => {
+      onError: (error: Error) => {
         alert(`신청 실패: ${error.message}`);
       },
     });

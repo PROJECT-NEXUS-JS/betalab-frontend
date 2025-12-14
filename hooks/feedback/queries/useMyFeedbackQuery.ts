@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { instance } from '@/apis/instance';
 import { queryKeys } from '@/constants/query-keys';
-import { MyFeedbackResponseSchema } from '../dto/feedback';
+import { MyFeedbackResponseSchema, MyFeedbackResponseType } from '../dto/feedback';
 
 const BASE_PATH = '/v1/feedbacks/my-status';
 export async function getMyFeedback(postId: number) {
@@ -28,7 +28,7 @@ export default function useMyFeedbackQuery(postId: number) {
     queryKey: queryKeys.feedback.my(postId),
     queryFn: () => getMyFeedback(postId),
     staleTime: 1000 * 60 * 5, // 5분 동안 stale 아님
-    select: data => data.data,
+    select: (data: MyFeedbackResponseType) => data.data,
     enabled: !!postId,
   });
 }
