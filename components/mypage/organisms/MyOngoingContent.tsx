@@ -13,7 +13,6 @@ import { getPostDetail } from '@/hooks/posts/queries/usePostDetailQuery';
 import { queryKeys } from '@/constants/query-keys';
 import Chip from '@/components/common/atoms/Chip';
 import Button from '@/components/common/atoms/Button';
-import { ParticapationStatusEnum } from '@/hooks/posts/dto/postDetail';
 import { ApplicationItemType } from '@/hooks/posts/dto/myApplications';
 import { ProjectDetailResponseModel } from '@/hooks/posts/queries/usePostDetailQuery';
 
@@ -31,7 +30,7 @@ export default function MyOngoingContent() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const { data: myApplicationsData, isLoading } = useMyApplicationsQuery({
-    status: ParticapationStatusEnum.enum.TEST_COMPLETED,
+    status: 'APPROVED',
     page: currentPage,
     size: 9,
     sort: [sortOption],

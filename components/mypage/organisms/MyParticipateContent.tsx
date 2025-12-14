@@ -8,20 +8,25 @@ import { TestCardType } from '@/types/models/testCard';
 import { useQueries } from '@tanstack/react-query';
 import { getPostDetail } from '@/hooks/posts/queries/usePostDetailQuery';
 import { queryKeys } from '@/constants/query-keys';
+import { ApplicationItemType } from '@/hooks/posts/dto/myApplications';
+import { ProjectDetailResponseModel } from '@/hooks/posts/queries/usePostDetailQuery';
 
 export default function MyApplicationContent() {
   const [currentPage, setCurrentPage] = useState(0);
   const { data: myApplicationsData, isLoading } = useMyApplicationsQuery({
+    status: 'PAID',
     page: currentPage,
     size: 9,
   });
   const router = useRouter();
 
   const applicationsNeedingPostData =
-    myApplicationsData?.data?.content.filter(app => !app.post && app.postId) ?? [];
+    myApplicationsData?.data?.content.filter(
+      (app: ApplicationItemType) => !app.post && app.postId,
+    ) ?? [];
 
   const postQueries = useQueries({
-    queries: applicationsNeedingPostData.map(app => ({
+    queries: applicationsNeedingPostData.map((app: ApplicationItemType) => ({
       queryKey: queryKeys.posts.detail(app.postId!),
       queryFn: () => getPostDetail(app.postId!),
       enabled: !!app.postId,
@@ -29,11 +34,11 @@ export default function MyApplicationContent() {
   });
 
   // post 데이터를 postId로 매핑
-  const postDataMap = new Map(
-    postQueries.map((query, index) => [
-      applicationsNeedingPostData[index].postId!,
-      query.data?.data,
-    ]),
+  const postDataMap = new Map<number, ProjectDetailResponseModel['data'] | undefined>(
+    postQueries.map((query, index) => {
+      const data = query.data as ProjectDetailResponseModel | undefined;
+      return [applicationsNeedingPostData[index].postId!, data?.data];
+    }),
   );
   const isPostDataLoading = postQueries.some(query => query.isLoading);
 
@@ -70,7 +75,7 @@ export default function MyApplicationContent() {
           />
         ) : (
           myApplicationsData.data.content
-            .map(application => {
+            .map((application: ApplicationItemType) => {
               const post =
                 application.post ??
                 (application.postId ? postDataMap.get(application.postId) : null);
