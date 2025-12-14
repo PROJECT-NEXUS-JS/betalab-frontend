@@ -35,12 +35,12 @@ export default function MyApplicationContent() {
 
   // post 데이터를 postId로 매핑
   const postDataMap = new Map<number, ProjectDetailResponseModel['data'] | undefined>(
-    postQueries.map((query, index) => {
+    postQueries.map((query: any, index: number) => {
       const data = query.data as ProjectDetailResponseModel | undefined;
       return [applicationsNeedingPostData[index].postId!, data?.data];
     }),
   );
-  const isPostDataLoading = postQueries.some(query => query.isLoading);
+  const isPostDataLoading = postQueries.some((query: any) => query.isLoading);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
