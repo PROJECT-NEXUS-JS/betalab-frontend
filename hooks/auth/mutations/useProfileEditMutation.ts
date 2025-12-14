@@ -27,11 +27,7 @@ export function useProfileEditMutation() {
         });
       }
       queryClient.invalidateQueries({ queryKey: ['userProfile'] });
-
-      console.log('프로필 업데이트 성공:', data);
     },
-    onError: error => {
-      console.error('프로필 업데이트 실패:', error);
-    },
+    onError: () => {},
   });
 }

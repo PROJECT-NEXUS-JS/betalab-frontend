@@ -4,7 +4,6 @@ import { queryKeys } from '@/constants/query-keys';
 import { serverInstance } from '@/apis/server-instance';
 
 import ProjectDetailClient from './ProjectDetailClient';
-import Logger from '@/lib/logger';
 
 import { ProjectDetailResponseSchema } from '@/hooks/posts/queries/usePostDetailQuery';
 import { RightSidebarResponseSchema } from '@/hooks/posts/queries/usePostRightSidebar';
@@ -57,67 +56,27 @@ export default async function ProjectDetailPage({
 }
 
 async function fetchProjectData(id: number, accessToken?: string, refreshToken?: string) {
-  try {
-    const response = await serverInstance(accessToken, refreshToken).get(`/v1/users/posts/${id}`);
-    Logger.log('ProjectData 원본:', response.data);
-
-    const parsedData = ProjectDetailResponseSchema.parse(response.data);
-    Logger.log('ProjectData 파싱 성공:', parsedData);
-
-    return parsedData;
-  } catch (err) {
-    Logger.error('ProjectData 파싱 실패:', err);
-    throw err; // 필요하면 에러를 상위로 던짐
-  }
+  const response = await serverInstance(accessToken, refreshToken).get(`/v1/users/posts/${id}`);
+  return ProjectDetailResponseSchema.parse(response.data);
 }
 
 async function fetchRightSidebarData(postId: number, accessToken?: string, refreshToken?: string) {
-  try {
-    const response = await serverInstance(accessToken, refreshToken).get(
-      `/v1/users/posts/${postId}/sidebar`,
-    );
-    Logger.log('RightSidebarData 원본:', response.data);
-
-    const parsedData = RightSidebarResponseSchema.parse(response.data);
-    Logger.log('RightSidebarData 파싱 성공:', parsedData);
-
-    return parsedData;
-  } catch (err) {
-    Logger.error('RightSidebarData 파싱 실패:', err);
-    throw err;
-  }
+  const response = await serverInstance(accessToken, refreshToken).get(
+    `/v1/users/posts/${postId}/sidebar`,
+  );
+  return RightSidebarResponseSchema.parse(response.data);
 }
 
 async function fetchPostReviewData(postId: number, accessToken?: string, refreshToken?: string) {
-  try {
-    const response = await serverInstance(accessToken, refreshToken).get(
-      `/v1/users/reviews/post/${postId}`,
-    );
-    Logger.log('PostReviewData 원본:', response.data);
-
-    const parsedData = PostReviewResponseSchema.parse(response.data);
-    Logger.log('PostReviewData 파싱 성공:', parsedData);
-
-    return parsedData;
-  } catch (err) {
-    Logger.error('PostReviewData 파싱 실패:', err);
-    throw err;
-  }
+  const response = await serverInstance(accessToken, refreshToken).get(
+    `/v1/users/reviews/post/${postId}`,
+  );
+  return PostReviewResponseSchema.parse(response.data);
 }
 
 async function fetchSimilarPostsData(postId: number, accessToken?: string, refreshToken?: string) {
-  try {
-    const response = await serverInstance(accessToken, refreshToken).get(
-      `/v1/users/posts/${postId}/similar`,
-    );
-    Logger.log('PostReviewData 원본:', response.data);
-
-    const parsedData = SimilarPostResponseSchema.parse(response.data);
-    Logger.log('PostReviewData 파싱 성공:', parsedData);
-
-    return parsedData;
-  } catch (err) {
-    Logger.error('PostReviewData 파싱 실패:', err);
-    throw err;
-  }
+  const response = await serverInstance(accessToken, refreshToken).get(
+    `/v1/users/posts/${postId}/similar`,
+  );
+  return SimilarPostResponseSchema.parse(response.data);
 }

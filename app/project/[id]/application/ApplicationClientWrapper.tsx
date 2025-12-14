@@ -37,9 +37,7 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
     isLoading: isRightSidebarLoading,
     isError: isRightSidebarError,
   } = useGetRightSidebar(Number(id));
-  const {
-    data: postDetailData,
-  } = useGetPostDetailQuery(Number(id));
+  const { data: postDetailData } = useGetPostDetailQuery(Number(id));
 
   const applyCardData: Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'> = {
     ...transformToApplyCardProps(
@@ -68,10 +66,15 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
 
     if (!result.success) {
       // 유효성 검사 실패 시 에러 상태 업데이트
-      const fieldErrors: { [key: string]: string } = {};
+      const fieldErrors: Partial<Record<keyof ApplicationFormData, string>> = {};
       for (const issue of result.error.issues) {
-        const key = issue.path[0] as keyof ApplicationFormData;
-        fieldErrors[key] = issue.message;
+        const pathKey = issue.path[0];
+        if (typeof pathKey === 'string' || typeof pathKey === 'number') {
+          const key = String(pathKey) as keyof ApplicationFormData;
+          if (key in applicationData) {
+            fieldErrors[key] = issue.message;
+          }
+        }
       }
       setErrors(fieldErrors);
       return;
@@ -79,7 +82,6 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
 
     // 유효성 검사 성공 시
     setErrors({}); // 에러 메시지 초기화
-    console.log('유효성 검사 통과! 제출할 데이터:', result.data);
     setConfirmModalOpen(true);
   };
 

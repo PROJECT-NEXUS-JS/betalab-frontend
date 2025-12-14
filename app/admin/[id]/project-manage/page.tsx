@@ -399,9 +399,7 @@ export default function Page() {
           rewardRequired,
           rewardText,
         });
-      } catch (e) {
-        console.error('프로젝트 상세 조회 실패', e);
-      }
+      } catch (e) {}
     })();
   }, [postId]);
 
@@ -455,9 +453,7 @@ export default function Page() {
       const data = await updatePost(postId, payload, thumbnailFile, galleryFiles);
 
       alert('저장 성공!');
-      console.log('PATCH 결과:', data);
     } catch (e: any) {
-      console.error('PATCH 실패:', e);
       alert(e?.response?.data?.message ?? '저장 실패');
     }
   };

@@ -18,8 +18,6 @@ export const useDeleteReviewMutation = () => {
       // 작성한 리뷰 목록 초기화
       queryClient.invalidateQueries({ queryKey: ['writtenReviews'] });
     },
-    onError: error => {
-      console.error('리뷰 삭제 실패:', error);
-    },
+    onError: error => {},
   });
 };
