@@ -11,7 +11,7 @@ import { useMyPageProfileQuery } from '@/hooks/mypage/queries/useMyPageProfileQu
 import { MyPageMenuKey, getBreadcrumbItems, getHeadingTitle } from '@/components/mypage/const';
 import { cn } from '@/lib/utils';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import Button from '@/components/common/atoms/Button';
 import MyBookmarkContent from '@/components/mypage/organisms/MyBookmarkContent';
@@ -36,13 +36,24 @@ export default function MyPage() {
     router.push(`/mypage?tab=${menuKey}`, { scroll: false });
   };
 
+  const [customInfoRef, setCustomInfoRef] = useState<{
+    handleSave: () => void;
+    isFormValid: boolean;
+  } | null>(null);
+
   const tabComponents = {
     'ongoing-tests': <MyOngoingContent />,
     'posted-tests': <MyPostContent />,
     'participated-tests': <MyParticipateContent />,
     'bookmarked-tests': <MyBookmarkContent />,
     'my-reviews': <MyReviewContent />,
-    'account-management': <AccountContent />,
+    'account-management': (
+      <AccountContent
+        onCustomInfoReady={ref => {
+          setCustomInfoRef(ref);
+        }}
+      />
+    ),
   };
 
   const renderMainContent = () => {
@@ -54,7 +65,11 @@ export default function MyPage() {
   };
 
   const breadcrumbItems = activeTab ? getBreadcrumbItems(activeTab) : null;
-  const headingTitle = getHeadingTitle(activeTab);
+  const sub = searchParams.get('sub');
+  const headingTitle =
+    activeTab === 'account-management' && sub === 'custom-info'
+      ? '내 맞춤 정보'
+      : getHeadingTitle(activeTab);
 
   return (
     <div className={cn('flex gap-10 py-10 px-16 min-h-screen')}>
@@ -108,16 +123,42 @@ export default function MyPage() {
             {breadcrumbItems && <Breadcrumb className="mb-2" items={breadcrumbItems} />}
             <h1 className="text-subtitle-01 font-semibold text-Black">{headingTitle}</h1>
           </div>
-          {activeTab !== 'ongoing-tests' && (
-            <Button
-              label="테스트 등록하기"
-              Size="xl"
-              State="Primary"
-              className="cursor-pointer"
-              onClick={() => {
-                router.push('/test-add');
-              }}
-            />
+          {activeTab === 'account-management' && sub === 'custom-info' ? (
+            <div className="flex gap-4">
+              <Button
+                label="이전으로"
+                Size="lg"
+                State="Default"
+                className="cursor-pointer"
+                onClick={() => {
+                  router.push('/mypage?tab=account-management', { scroll: false });
+                }}
+              />
+              <Button
+                label="변경사항 저장하기"
+                Size="lg"
+                State={customInfoRef?.isFormValid ? 'Primary' : 'Disabled'}
+                className={customInfoRef?.isFormValid ? 'cursor-pointer' : ''}
+                onClick={() => {
+                  if (customInfoRef?.isFormValid) {
+                    customInfoRef.handleSave();
+                  }
+                }}
+              />
+            </div>
+          ) : (
+            activeTab !== 'ongoing-tests' &&
+            activeTab !== 'account-management' && (
+              <Button
+                label="테스트 등록하기"
+                Size="xl"
+                State="Primary"
+                className="cursor-pointer"
+                onClick={() => {
+                  router.push('/test-add');
+                }}
+              />
+            )
           )}
         </div>
         {renderMainContent()}
