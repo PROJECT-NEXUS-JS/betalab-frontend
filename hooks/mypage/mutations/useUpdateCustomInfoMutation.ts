@@ -31,6 +31,7 @@ export const useUpdateCustomInfoMutation = () => {
   return useMutation({
     mutationFn: updateCustomInfo,
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userInfo'] });
       queryClient.invalidateQueries({ queryKey: ['basic-info'] });
       queryClient.invalidateQueries({ queryKey: ['get-my-page-profile'] });
     },
