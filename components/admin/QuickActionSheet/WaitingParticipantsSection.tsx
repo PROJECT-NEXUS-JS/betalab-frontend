@@ -59,17 +59,13 @@ export default function WaitingParticipantsSection({ postId }: { postId: number 
   const handleApprove = async (participant: { participationId: number }) => {
     try {
       await approveMutation.mutateAsync(participant.participationId);
-    } catch (error: any) {
-      // 승인 실패 무시
-    }
+    } catch (error: any) {}
   };
 
   const handleReject = async (participant: { participationId: number }) => {
     try {
       await rejectMutation.mutateAsync(participant.participationId);
-    } catch (error: any) {
-      // 거절 실패 무시
-    }
+    } catch (error: any) {}
   };
 
   const handleViewAll = () => {

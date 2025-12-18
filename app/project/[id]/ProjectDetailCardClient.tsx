@@ -24,7 +24,7 @@ export default function ProjectDetailCardClient({ projectId, ApplyCardProps }: P
 
   const handleScrap = () => {
     postLikeMutation.mutate(projectId, {
-      onSuccess: data => {
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['postLikeStatus', projectId] });
         queryClient.invalidateQueries({ queryKey: ['postLikeCount', projectId] });
         // 쿼리 없이 바로 refetch
