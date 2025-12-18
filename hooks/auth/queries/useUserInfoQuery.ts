@@ -16,5 +16,16 @@ export const useUserInfoQuery = (enabled: boolean = true) => {
       return parsed.data.data;
     },
     enabled: enabled,
+    staleTime: 1000 * 60 * 30,
+    cacheTime: 1000 * 60 * 60,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    retry: (failureCount: number, error: any) => {
+      if (error?.response?.status === 401 || error?.response?.data?.code === 'AUTH401') {
+        return false;
+      }
+      return failureCount < 3;
+    },
   });
 };

@@ -9,13 +9,13 @@ import { useMyPageProfileQuery } from '@/hooks/mypage/queries/useMyPageProfileQu
 import { useUpdateBasicInfoMutation } from '@/hooks/mypage/mutations/useUpdateBasicInfoMutation';
 import { useWithdrawMutation } from '@/hooks/mypage/mutations/useWithdrawMutation';
 import { useKakaoToken } from '@/hooks/common/useKakaoToken';
-import { useRouter } from 'next/navigation';
-import { useState, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useRef, useEffect } from 'react';
 import imageCompression from 'browser-image-compression';
 import { Loader } from 'lucide-react';
 import { QueryCache } from '@tanstack/react-query';
 import PrivacyContent from './PrivacyContent';
-import CustomInfoContent from './CustomInfoContent';
+import CustomInfoContent, { CustomInfoContentRef } from './CustomInfoContent';
 
 const ProfileSkeleton = () => {
   return (
@@ -32,8 +32,15 @@ const ProfileSkeleton = () => {
   );
 };
 
-export default function AccountContent() {
+interface AccountContentProps {
+  onCustomInfoReady?: (ref: CustomInfoContentRef | null) => void;
+}
+
+export default function AccountContent(
+  { onCustomInfoReady }: AccountContentProps = {} as AccountContentProps,
+) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
@@ -46,7 +53,33 @@ export default function AccountContent() {
   const [isSaving, setIsSaving] = useState(false);
   const [showPrivacyContent, setShowPrivacyContent] = useState(false);
   const [showCustomInfoContent, setShowCustomInfoContent] = useState(false);
+  const customInfoContentRef = useRef<CustomInfoContentRef>(null);
   const queryCache = new QueryCache();
+
+  useEffect(() => {
+    const sub = searchParams.get('sub');
+    if (sub === 'custom-info') {
+      setShowCustomInfoContent(true);
+    } else if (sub === 'privacy') {
+      setShowPrivacyContent(true);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (showCustomInfoContent && onCustomInfoReady) {
+      const timer = setTimeout(() => {
+        onCustomInfoReady(customInfoContentRef.current);
+      }, 0);
+      return () => clearTimeout(timer);
+    } else if (!showCustomInfoContent && onCustomInfoReady) {
+      onCustomInfoReady(null);
+    }
+  }, [showCustomInfoContent, onCustomInfoReady]);
+  const handleFormValidChange = () => {
+    if (showCustomInfoContent && onCustomInfoReady && customInfoContentRef.current) {
+      onCustomInfoReady(customInfoContentRef.current);
+    }
+  };
 
   const { data: userData, isLoading } = useMyPageProfileQuery();
   const updateBasicInfoMutation = useUpdateBasicInfoMutation();
@@ -92,10 +125,12 @@ export default function AccountContent() {
 
   const handleCustomInfoClick = () => {
     setShowCustomInfoContent(true);
+    router.push('/mypage?tab=account-management&sub=custom-info', { scroll: false });
   };
 
   const handleCustomInfoBack = () => {
     setShowCustomInfoContent(false);
+    router.push('/mypage?tab=account-management', { scroll: false });
   };
 
   const handleEditClick = () => {
@@ -205,7 +240,13 @@ export default function AccountContent() {
   }
 
   if (showCustomInfoContent) {
-    return <CustomInfoContent onBack={handleCustomInfoBack} />;
+    return (
+      <CustomInfoContent
+        ref={customInfoContentRef}
+        onBack={handleCustomInfoBack}
+        onFormValidChange={handleFormValidChange}
+      />
+    );
   }
 
   return (
