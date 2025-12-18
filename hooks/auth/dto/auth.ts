@@ -25,8 +25,11 @@ export const MeResponseSchema = BaseModelSchema(
     nickname: z.string(),
     profileUrl: z.string().optional(),
     lastLoginAt: z.string().optional(),
-    // roleType은 백엔드에 정보 요청 필요
     roleType: z.enum(['ROLE_GUEST', 'ROLE_USER']),
+    job: z.string().nullable().optional(),
+    interests: z.array(z.string()).nullable().optional(),
+    gender: z.enum(['MALE', 'FEMALE']).nullable().optional(),
+    birthDate: z.string().nullable().optional(),
   }),
 );
 
