@@ -59,7 +59,7 @@ export const FeedbackRequestSchema = z
     additionalComments: z.string().min(1), // 추가 의견
   })
   .refine(
-    (data) => {
+    (data: z.infer<typeof FeedbackRequestSchema>) => {
       if (!data.hasBug) return true;
       return !!data.bugTypes && data.bugTypes.length > 0;
     },
@@ -69,7 +69,7 @@ export const FeedbackRequestSchema = z
     },
   )
   .refine(
-    (data) => {
+    (data: z.infer<typeof FeedbackRequestSchema>) => {
       if (!data.hasBug) return true;
       return !!data.bugLocation && data.bugLocation.trim().length > 0;
     },
