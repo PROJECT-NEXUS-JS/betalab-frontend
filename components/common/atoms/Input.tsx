@@ -30,6 +30,7 @@ type InputKindProps = CommonProps & {
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   onFocus?: React.FocusEventHandler<HTMLInputElement>;
   onBlur?: React.FocusEventHandler<HTMLInputElement>;
+  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
 };
 
 type TextAreaKindProps = CommonProps & {
@@ -96,8 +97,7 @@ export default function Input(props: InputProps) {
     );
   }
 
-  // input 전용 핸들러 타입 안전
-  const { onChange, onFocus, onBlur } = props as InputKindProps;
+  const { onChange, onFocus, onBlur, onKeyDown } = props as InputKindProps;
 
   const handleClear = () => {
     if (onChange && state !== 'disabled') {
@@ -119,6 +119,7 @@ export default function Input(props: InputProps) {
         onChange={onChange}
         onFocus={onFocus}
         onBlur={onBlur}
+        onKeyDown={onKeyDown}
         disabled={state === 'disabled'}
         maxLength={maxLength}
       />

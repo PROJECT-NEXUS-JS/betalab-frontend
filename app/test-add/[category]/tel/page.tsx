@@ -74,6 +74,12 @@ export default function TestAddContactPage() {
             }}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleNext();
+              }
+            }}
           />
         </div>
       </div>
