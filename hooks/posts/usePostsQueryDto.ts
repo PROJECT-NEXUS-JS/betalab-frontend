@@ -1,12 +1,12 @@
 import { useQuery, QueryKey, UseQueryOptions } from '@tanstack/react-query';
-import { ZodTypeAny } from 'zod';
+import { z } from 'zod';
 
 type QueryFn<TResponse> = () => Promise<TResponse>;
 
 export function usePostsQueryDto<TData, TResponse, TError = unknown>(
   key: QueryKey,
   queryFn: QueryFn<TResponse>,
-  responseSchema: ZodTypeAny,
+  responseSchema: z.ZodType<any>,
   options?: Omit<
     UseQueryOptions<TResponse, TError, TData, QueryKey>,
     'queryKey' | 'queryFn' | 'select'

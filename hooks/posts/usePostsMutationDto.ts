@@ -1,11 +1,11 @@
 import { useMutation, UseMutationOptions } from '@tanstack/react-query';
-import { ZodTypeAny } from 'zod';
+import { z } from 'zod';
 
 type MutationFn<TVariables, TResponse> = (variables: TVariables) => Promise<TResponse>;
 
 export function usePostsMutationDto<TVariables, TData, TResponse, TError = unknown>(
   mutationFn: MutationFn<TVariables, TResponse>,
-  responseSchema: ZodTypeAny,
+  responseSchema: z.ZodType<any>,
   options?: Omit<
     UseMutationOptions<TResponse, TError, TVariables, unknown>,
     'mutationFn' | 'onSuccess'

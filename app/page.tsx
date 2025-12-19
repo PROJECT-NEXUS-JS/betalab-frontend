@@ -43,6 +43,7 @@ export default function HomePage() {
     sortBy: 'deadline',
     page: deadlinePage,
     size: PAGE_CARD_SIZE,
+    daysRemaining: 7,
   });
   const { data: popularPosts, isLoading: popularPostsLoading } = usePostsListHomeQuery({
     sortBy: 'popular',
@@ -68,18 +69,19 @@ export default function HomePage() {
             totalPages={recommendPosts?.totalPages || 1}
             onPageChange={handleRecommendPageChange}
           >
-            {recommendPostsLoading &&
+            {recommendPostsLoading ? (
               Array.from({ length: PAGE_CARD_SIZE }).map((_, index) => (
                 <PostCardSkeleton key={index} />
-              ))}
-            {recommendPosts?.content.length === 0 && (
+              ))
+            ) : !recommendPosts?.content || recommendPosts.content.length === 0 ? (
               <div className="h-[146px] flex justify-center items-center">
                 <p className="text-body-01 text-Gray-300">오늘의 추천 테스트가 없어요.</p>
               </div>
+            ) : (
+              recommendPosts.content.map((post: TestCardType) => (
+                <PostCard key={post.id} post={post} />
+              ))
             )}
-            {recommendPosts?.content.map((post: TestCardType) => (
-              <PostCard key={post.id} post={post} />
-            ))}
           </CardScroll>
           <div className="h-5" />
         </HomeSection>
@@ -90,24 +92,25 @@ export default function HomePage() {
             totalPages={deadlinePosts?.totalPages || 1}
             onPageChange={handleDeadlinePageChange}
           >
-            {deadlinePostsLoading &&
+            {deadlinePostsLoading ? (
               Array.from({ length: PAGE_CARD_SIZE }).map((_, index) => (
                 <PostCardSkeleton key={index} />
-              ))}
-            {deadlinePosts?.content.length === 0 && (
+              ))
+            ) : !deadlinePosts?.content || deadlinePosts.content.length === 0 ? (
               <div className="h-[146px] flex justify-center items-center">
                 <p className="text-body-01 text-Gray-300">곧 마감되는 테스트가 없어요.</p>
               </div>
+            ) : (
+              deadlinePosts.content.map((post: TestCardType) => (
+                <div
+                  key={post.id}
+                  className="cursor-pointer"
+                  onClick={() => router.push(`/project/${post.id}`)}
+                >
+                  <PostCardMini post={post} />
+                </div>
+              ))
             )}
-            {deadlinePosts?.content.map((post: TestCardType) => (
-              <div
-                key={post.id}
-                className="cursor-pointer"
-                onClick={() => router.push(`/project/${post.id}`)}
-              >
-                <PostCardMini key={post.id} post={post} />
-              </div>
-            ))}
           </CardScroll>
           <ViewAllButton href={isLoggedIn ? '/category?category=마감임박' : '/login'}>
             마감 임박 테스트 전체보기
@@ -120,19 +123,20 @@ export default function HomePage() {
             totalPages={popularPosts?.totalPages || 1}
             onPageChange={handlePopularPageChange}
           >
-            {popularPostsLoading &&
+            {popularPostsLoading ? (
               Array.from({ length: PAGE_CARD_SIZE }).map((_, index) => (
                 <PostCardSkeleton key={index} />
-              ))}
-            {popularPosts?.content.length === 0 && (
+              ))
+            ) : !popularPosts?.content || popularPosts.content.length === 0 ? (
               <div className="h-[146px] flex justify-center items-center">
-                <p className="text-body-300">인기 테스트가 없어요.</p>
+                <p className="text-body-01 text-Gray-300">인기 테스트가 없어요.</p>
               </div>
+            ) : (
+              popularPosts.content.map((post: TestCardType, index: number) => {
+                const currentRanking = popularPage * PAGE_CARD_SIZE + index + 1;
+                return <PostCard key={post.id} post={post} ranking={currentRanking} />;
+              })
             )}
-            {popularPosts?.content.map((post: TestCardType, index: number) => {
-              const currentRanking = popularPage * PAGE_CARD_SIZE + index + 1;
-              return <PostCard key={post.id} post={post} ranking={currentRanking} />;
-            })}
           </CardScroll>
           <ViewAllButton href={isLoggedIn ? '/category/popular' : '/login'}>
             인기 테스트 전체보기

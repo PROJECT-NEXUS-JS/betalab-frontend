@@ -1,4 +1,4 @@
-import { TestCardType } from '@/types/models/testCard';
+import { TestCardType, CategoryType } from '@/types/models/testCard';
 import Tag from '@/components/common/atoms/Tag';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -9,8 +9,10 @@ interface PostCardMiniProps {
 }
 
 export default function PostCardMini({ post, className }: PostCardMiniProps) {
-  const mainCategoryNames = post.mainCategories.map(category => category.name);
-  const platformCategoryNames = post.platformCategories.map(category => category.name);
+  const mainCategoryNames = post.mainCategories.map((category: CategoryType) => category.name);
+  const platformCategoryNames = post.platformCategories.map(
+    (category: CategoryType) => category.name,
+  );
 
   const allCategoryNames = [...mainCategoryNames, ...platformCategoryNames];
   const categoryText = allCategoryNames.join('  ·  ');
@@ -24,7 +26,7 @@ export default function PostCardMini({ post, className }: PostCardMiniProps) {
   };
 
   const dday = post.schedule ? calculateDday(post.schedule.recruitmentDeadline) : 0;
-  const isTodayDeadline = dday === 0;
+  const isTodayDeadline = dday === 1;
 
   const getRewardTagStyle = (rewardType: string): 'orange' | 'black' => {
     switch (rewardType) {
@@ -46,11 +48,13 @@ export default function PostCardMini({ post, className }: PostCardMiniProps) {
         <p className="text-caption-02 font-medium text-Primary-500">{categoryText}</p>
         <h3 className="text-body-02 font-semibold text-black line-clamp-2 w-full">{post.title}</h3>
       </div>
-      <div className="flex flex-row justify-between items-center">
+      <div className="flex flex-row justify-between items-center min-h-5">
         <div className="flex flex-row gap-1">
           {isTodayDeadline && <Tag style="purple" />}
-          {!isTodayDeadline && <Tag style="gray" dday={dday} />}
-          {post.reward && <Tag style={getRewardTagStyle(post.reward.rewardDescription ?? '')} />}
+          {!isTodayDeadline && dday > 1 && <Tag style="gray" dday={dday} />}
+          {post.hasReward && (
+            <Tag style={getRewardTagStyle(post.reward?.rewardDescription ?? 'NONE')} />
+          )}
         </div>
         {/* <BookMark className="size-6 fill-transparent text-transparent group-hover:fill-transparent group-hover:text-Gray-200 group-hover:stroke-Gray-200 group-hover:stroke-2" /> */}
       </div>
