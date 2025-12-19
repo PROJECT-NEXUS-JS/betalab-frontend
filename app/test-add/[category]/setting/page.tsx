@@ -43,6 +43,7 @@ export default function TestAddSettingPage() {
   const [customRecruitOpen, setCustomRecruitOpen] = useState(false);
   const [customRecruitValue, setCustomRecruitValue] = useState('');
   const [recruitTouched, setRecruitTouched] = useState(false);
+  const [showDeadlineField, setShowDeadlineField] = useState(false);
 
   useEffect(() => {
     if (typeof form.feedbackMethod === 'string' && form.feedbackMethod.trim()) {
@@ -150,11 +151,20 @@ export default function TestAddSettingPage() {
   const isTimeDone = timeTags.length > 0 || (customTimeOpen && customTimeValue.trim().length > 0);
   const showRecruitSection = showTimeSection && isTimeDone;
 
+  useEffect(() => {
+    if (showRecruitSection && !showDeadlineField && !recruitTouched) {
+      const timer = setTimeout(() => {
+        setShowDeadlineField(true);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [showRecruitSection, showDeadlineField, recruitTouched]);
+
   const isRecruitValid = customRecruitOpen
     ? !!customRecruitValue && Number(customRecruitValue) > 0
     : recruitCount > 0;
   const isRecruitDone = customRecruitOpen ? recruitTouched && isRecruitValid : isRecruitValid; // 기본값 50이어도 유효한 값으로 처리
-  const showDeadlineSection = showRecruitSection && isRecruitDone;
+  const showDeadlineSection = showRecruitSection && showDeadlineField && isRecruitDone;
 
   const isDeadlineDone = !!(deadlineRange?.from && deadlineRange?.to);
   const canProceed = isFeedbackDone && isTimeDone && isRecruitDone && isDeadlineDone;
@@ -367,6 +377,7 @@ export default function TestAddSettingPage() {
 
                 const inc = () => {
                   setRecruitTouched(true);
+                  setShowDeadlineField(true); // 인원수 변경 시 즉시 표시
                   setRecruitCount(prev => {
                     const next = clamp(prev + STEP);
                     setCustomRecruitValue(String(next));
@@ -376,6 +387,7 @@ export default function TestAddSettingPage() {
 
                 const dec = () => {
                   setRecruitTouched(true);
+                  setShowDeadlineField(true);
                   setRecruitCount(prev => {
                     const next = clamp(prev - STEP);
                     setCustomRecruitValue(String(next));
@@ -385,12 +397,14 @@ export default function TestAddSettingPage() {
 
                 const openDirectInput = () => {
                   setRecruitTouched(true);
+                  setShowDeadlineField(true);
                   setCustomRecruitOpen(prev => !prev);
                   if (!customRecruitOpen) setCustomRecruitValue(String(recruitCount));
                 };
 
                 const onInputChange: React.ChangeEventHandler<HTMLInputElement> = e => {
                   setRecruitTouched(true);
+                  setShowDeadlineField(true);
                   const raw = e.currentTarget.value;
                   setCustomRecruitValue(raw);
                   if (raw.trim() === '') return;
@@ -406,6 +420,7 @@ export default function TestAddSettingPage() {
                   const normalized = Number.isNaN(num) ? recruitCount : clamp(Math.floor(num));
                   setRecruitCount(normalized);
                   setCustomRecruitValue(String(normalized));
+                  setShowDeadlineField(true);
                 };
 
                 return (
@@ -461,9 +476,7 @@ export default function TestAddSettingPage() {
 
         {/* 기간 선택 */}
         <AnimatePresence>
-          {(customRecruitOpen
-            ? recruitTouched && Number(customRecruitValue) > 0
-            : recruitCount > 0) && (
+          {showDeadlineSection && (
             <motion.div
               className="flex flex-col gap-4"
               variants={sectionVariants}
