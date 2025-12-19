@@ -22,7 +22,9 @@ function buildQueryParams(params: GetUsersPostsListRequestType): string {
   // page, size를 직접 전송 (useUsersPostsListQuery와 동일하게)
   if (typeof params.page === 'number') qp.set('page', String(params.page));
   if (typeof params.size === 'number') qp.set('size', String(params.size));
-  (params.sort ?? []).forEach(s => qp.append('sort', s));
+  if (typeof params.daysRemaining === 'number')
+    qp.set('daysRemaining', String(params.daysRemaining));
+  (params.sort ?? []).forEach((s: string) => qp.append('sort', s));
 
   const qs = qp.toString();
   return qs ? `${BASE_PATH}?${qs}` : BASE_PATH;
