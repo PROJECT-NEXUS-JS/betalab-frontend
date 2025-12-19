@@ -295,7 +295,9 @@ export default function TestAddConditionsPage() {
               checked={openOther}
               onToggle={() => setOpenOther(v => !v)}
             >
-              <div className="mb-2 text-caption-01 text-Gray-300">대상 조건</div>
+              <div className="mb-2 text-caption-01 text-Gray-300">
+                최대 5개의 조건을 입력해주세요{' '}
+              </div>
               <Input
                 type="text"
                 state={otherConditions ? 'has value' : 'no value'}
