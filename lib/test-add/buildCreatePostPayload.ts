@@ -21,6 +21,7 @@ export type CreatePostPayload = {
   creatorIntroduction: string;
   description: string;
   mainCategory: string[];
+  genreCategories: string[];
   platformCategory?: string[];
   startDate: string;
   endDate: string;
@@ -28,7 +29,6 @@ export type CreatePostPayload = {
   durationTime: string;
   feedbackMethod: string;
   participationMethod: string;
-  genreCategories?: string[];
   maxParticipants?: number;
   ageMin?: number;
   ageMax?: number;
@@ -40,6 +40,7 @@ export type CreatePostPayload = {
   qnaMethod?: string;
   storyGuide?: string;
   privacyItems?: Array<'NAME' | 'EMAIL' | 'CONTACT' | 'ETC'>;
+  privacyPurpose?: string;
   mediaUrl?: string;
   teamMemberCount?: number;
 };
@@ -53,14 +54,18 @@ export function buildCreatePostPayload(form: TestAddState): CreatePostPayload {
   if (!form.durationTime) throw new Error('durationTime이 없습니다.');
   if (!form.feedbackMethod) throw new Error('feedbackMethod가 없습니다.');
   if (!form.participationMethod) throw new Error('participationMethod가 없습니다.');
+  if (!form.genreCategories || form.genreCategories.length === 0) {
+    throw new Error('genreCategories가 비어있습니다.');
+  }
 
   const payload: CreatePostPayload = {
-    // 필수
+    //필수 필드
     title: form.title,
     serviceSummary: form.serviceSummary,
     creatorIntroduction: form.creatorIntroduction,
     description: form.description,
     mainCategory: form.mainCategory,
+    genreCategories: form.genreCategories,
     startDate: mustISO('startDate', form.startDate),
     endDate: mustISO('endDate', form.endDate),
     recruitmentDeadline: mustISO('recruitmentDeadline', form.recruitmentDeadline),
@@ -68,9 +73,8 @@ export function buildCreatePostPayload(form: TestAddState): CreatePostPayload {
     feedbackMethod: form.feedbackMethod,
     participationMethod: form.participationMethod,
 
-    // 선택
+    //선택 필드
     platformCategory: form.platformCategory,
-    genreCategories: form.genreCategories,
     maxParticipants: form.maxParticipants,
     ageMin: form.ageMin,
     ageMax: form.ageMax,
@@ -82,9 +86,9 @@ export function buildCreatePostPayload(form: TestAddState): CreatePostPayload {
     qnaMethod: form.qnaMethod,
     storyGuide: form.storyGuide,
     privacyItems: (form.privacyItems as CreatePostPayload['privacyItems']) ?? [],
+    privacyPurpose: form.privacyPurpose,
     mediaUrl: form.mediaUrl,
     teamMemberCount: form.teamMemberCount,
   };
-
   return compact(payload) as CreatePostPayload;
 }
