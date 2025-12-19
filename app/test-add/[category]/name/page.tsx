@@ -75,6 +75,12 @@ export default function TestAddNamePage() {
             }}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleNext();
+              }
+            }}
             maxLength={MAX_LENGTH}
           />
           <div className="absolute right-1">

@@ -12,6 +12,7 @@ export const getUsersPostsListRequestSchema = z
     page: z.number().int().nonnegative().optional(),
     size: z.number().int().positive().optional(),
     sort: z.array(z.string()).optional(),
+    daysRemaining: z.number().int().positive().optional(),
   })
   .strict();
 
@@ -36,6 +37,7 @@ const postSummarySchema = z
     genreCategories: z.array(categorySchema),
     schedule: scheduleSchema.optional(),
     reward: rewardSchema.optional(),
+    hasReward: z.boolean(),
   })
   .strict();
 

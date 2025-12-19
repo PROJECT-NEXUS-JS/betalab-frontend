@@ -58,9 +58,15 @@ export default function TestAddSettingPage() {
       .filter((v: PI | undefined): v is PI => !!v && (PI_OPTIONS as readonly string[]).includes(v));
     setPiSelected(restored);
     setTitle(typeof form.title === 'string' ? form.title : '');
-    setSummary(typeof form.serviceSummary === 'string' ? form.serviceSummary : '');
+    const summaryValue =
+      typeof form.serviceSummary === 'string' && form.serviceSummary.trim()
+        ? form.serviceSummary
+        : typeof form.description === 'string'
+          ? form.description
+          : '';
+    setSummary(summaryValue);
     setVideoUrl(typeof form.mediaUrl === 'string' ? form.mediaUrl : '');
-  }, [form.privacyItems, form.title, form.serviceSummary, form.mediaUrl]);
+  }, [form.privacyItems, form.title, form.serviceSummary, form.description, form.mediaUrl]);
 
   const togglePI = (opt: PI) =>
     setPiSelected(prev => (prev.includes(opt) ? prev.filter(v => v !== opt) : [...prev, opt]));

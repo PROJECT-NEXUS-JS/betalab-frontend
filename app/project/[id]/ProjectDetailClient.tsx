@@ -72,7 +72,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
         participationMethod: '',
         qnaMethod: '',
       },
-      postDetailData?.data.participationStatus ?? 'PENDING', // 상태 추가
+      postDetailData?.data.participationStatus ?? 'PENDING',
     );
 
   const {

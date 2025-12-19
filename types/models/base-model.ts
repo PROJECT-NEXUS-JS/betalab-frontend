@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const BaseModelSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
+export const BaseModelSchema = <T extends z.ZodType<any>>(dataSchema: T) =>
   z.object({
     success: z.boolean(),
     code: z.string(),
@@ -8,4 +8,4 @@ export const BaseModelSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
     data: dataSchema,
   });
 
-export type BaseModel<T extends z.ZodTypeAny> = z.infer<ReturnType<typeof BaseModelSchema<T>>>;
+export type BaseModel<T extends z.ZodType<any>> = z.infer<ReturnType<typeof BaseModelSchema<T>>>;

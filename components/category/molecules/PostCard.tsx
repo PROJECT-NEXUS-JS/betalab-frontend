@@ -28,7 +28,7 @@ export default function PostCard({ post, className, ranking }: PostCardProps) {
   };
 
   const dday = calculateDday(post.schedule?.recruitmentDeadline || '');
-  const isTodayDeadline = dday === 0;
+  const isTodayDeadline = dday === 1;
 
   const getRewardTagStyle = (rewardType: string): 'orange' | 'black' => {
     switch (rewardType) {
@@ -72,10 +72,12 @@ export default function PostCard({ post, className, ranking }: PostCardProps) {
           {post.serviceSummary}
         </p>
       </div>
-      <div className="flex flex-row gap-1">
+      <div className="flex flex-row gap-1 min-h-5">
         {isTodayDeadline && <Tag style="purple" />}
-        {dday > 0 && <Tag style="gray" dday={dday} />}
-        <Tag style={getRewardTagStyle(post.reward?.rewardDescription || 'NONE')} />
+        {dday > 1 && <Tag style="gray" dday={dday} />}
+        {post.hasReward && (
+          <Tag style={getRewardTagStyle(post.reward?.rewardDescription || 'NONE')} />
+        )}
       </div>
       {ranking && (
         <div className="absolute top-0 left-[22px]">

@@ -44,6 +44,7 @@ export const testCardSchema = z
     genreCategories: z.array(categorySchema),
     schedule: scheduleSchema.optional(),
     reward: rewardSchema.optional(),
+    hasReward: z.boolean(),
   })
   .strict();
 

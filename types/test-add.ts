@@ -39,6 +39,7 @@ export const TestAddSchema = z
     qnaMethod: z.string().optional(),
     storyGuide: z.string().optional(),
     privacyItems: z.array(z.enum(['NAME', 'EMAIL', 'CONTACT', 'ETC'])).optional(),
+    privacyPurpose: z.string().optional(),
     mediaUrl: z.string().url().optional(),
     teamMemberCount: z.coerce.number().int().positive().optional(),
   })

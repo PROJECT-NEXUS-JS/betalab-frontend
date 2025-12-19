@@ -4,36 +4,37 @@ export const CreatePostPayloadSchema = z
   .object({
     title: z.string().min(1),
     serviceSummary: z.string().min(1),
-    description: z.string().optional(),
+    description: z.string().min(1),
+    creatorIntroduction: z.string().min(1),
 
     genreCategories: z.array(z.string()).nonempty(),
     mainCategory: z.array(z.string()).nonempty(),
 
     platformCategory: z.array(z.string()).optional(),
-    startDate: z.string().datetime().optional(),
-    endDate: z.string().datetime().optional(),
-    recruitmentDeadline: z.string().datetime().optional(),
+    startDate: z.string().datetime(),
+    endDate: z.string().datetime(),
+    recruitmentDeadline: z.string().datetime(),
 
-    durationTime: z.string().optional(),
-    participationMethod: z.string().optional(),
+    durationTime: z.string().min(1),
+    participationMethod: z.string().min(1),
     maxParticipants: z.number().int().positive().optional(),
     teamMemberCount: z.number().int().positive().optional(),
-    ageMin: z.number().optional(),
-    ageMax: z.number().optional(),
+    ageMin: z.number().int().min(0).optional(),
+    ageMax: z.number().int().min(0).optional(),
     genderRequirement: z.enum(['무관', '남성', '여성']).optional(),
     additionalRequirements: z.string().optional(),
 
     rewardType: z.enum(['CASH', 'GIFT_CARD', 'PRODUCT', 'ETC']).optional(),
     rewardDescription: z.string().optional(),
 
-    feedbackMethod: z.string().optional(),
+    feedbackMethod: z.string().min(1),
     feedbackItems: z.array(z.string()).optional(),
 
     qnaMethod: z.string().optional(),
     storyGuide: z.string().optional(),
-    creatorIntroduction: z.string().optional(),
 
     privacyItems: z.array(z.enum(['NAME', 'EMAIL', 'CONTACT', 'ETC'])).optional(),
+    privacyPurpose: z.string().optional(),
     mediaUrl: z.string().url().optional(),
   })
   .strict();

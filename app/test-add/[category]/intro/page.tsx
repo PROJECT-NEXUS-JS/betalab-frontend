@@ -155,8 +155,14 @@ export default function TestAddIntroPage() {
                         if (!isIndividual) {
                           const v = e.target.value.replace(/\D/g, '');
                           const num = parseInt(v, 10);
-                          if (v === '' || (!Number.isNaN(num) && num <= 1000)) {
+                          if (v === '') {
                             setTeamSize(v);
+                          } else if (!Number.isNaN(num)) {
+                            if (num > 30) {
+                              alert('30명 이내로 입력해주세요');
+                            } else {
+                              setTeamSize(v);
+                            }
                           }
                         }
                       }}
