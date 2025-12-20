@@ -7,37 +7,13 @@ import Selector from '@/components/common/molecules/Selector';
 import Chip from '@/components/common/atoms/Chip';
 import CheckTag from '@/components/common/atoms/CheckTag';
 import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
-import { makeHandleNext } from '@/lib/test-add/make-handle-next';
-
-const UI_TO_API: Record<string, string> = {
-  Android: 'ANDROID',
-  iOS: 'IOS',
-  무관: 'ETC_ALL',
-  'PC 클라이언트': 'PC',
-  'Stream VR': 'STEAM_VR',
-  'Play Station': 'PLAYSTATION',
-  Xbox: 'XBOX',
-  'Meta Quest': 'META_QUEST',
-  기타: 'ETC',
-};
-
-const API_TO_UI: Record<string, string> = Object.fromEntries(
-  Object.entries(UI_TO_API).map(([ui, api]) => [api, ui]),
-);
-
-const PLATFORM_MAP: Record<string, string[]> = {
-  app: ['Android', 'iOS', '무관'],
-  game: [
-    'Android',
-    'iOS',
-    'PC 클라이언트',
-    'Stream VR',
-    'Play Station',
-    'Xbox',
-    'Meta Quest',
-    '기타',
-  ],
-};
+import {
+  UI_TO_API_APP,
+  UI_TO_API_GAME,
+  API_TO_UI_APP,
+  API_TO_UI_GAME,
+  PLATFORM_MAP,
+} from '@/constants/platformMapping';
 
 export default function TestAddPlatformStep() {
   const { category } = useParams<{ category: string }>();
@@ -52,6 +28,7 @@ export default function TestAddPlatformStep() {
 
   useEffect(() => {
     const apiValues: string[] = Array.isArray(form.platformCategory) ? form.platformCategory : [];
+    const API_TO_UI = isGame ? API_TO_UI_GAME : API_TO_UI_APP;
     const uiValues = apiValues.map((api: string) => API_TO_UI[api]).filter(Boolean) as string[];
 
     if (isGame) {
@@ -69,6 +46,8 @@ export default function TestAddPlatformStep() {
     );
 
   const handleNext = () => {
+    const UI_TO_API = isGame ? UI_TO_API_GAME : UI_TO_API_APP;
+
     if (isGame) {
       if (selectedMultiple.length === 0) {
         alert('플랫폼을 선택해주세요!');
