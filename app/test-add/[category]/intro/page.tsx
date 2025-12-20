@@ -47,6 +47,10 @@ export default function TestAddIntroPage() {
     const trimmed = intro.trim();
     if (!trimmed) return alert('소속이나 이름을 입력해주세요!');
 
+    if (!isIndividual && !teamSize.trim()) {
+      return alert('팀원 수를 입력해주세요!');
+    }
+
     const teamMemberCount = isIndividual ? 1 : teamSize ? parseInt(teamSize, 10) : undefined;
 
     update({
