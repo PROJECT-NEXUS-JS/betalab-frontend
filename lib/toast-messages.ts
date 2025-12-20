@@ -7,11 +7,35 @@ type ToastConfig = {
 };
 
 export const TOAST_MESSAGES: Record<string, ToastConfig> = {
-  // 성공 (200, 201, 202, 203)
-  COMMON200: {
+  // 테스트 모집 요청 생성
+  POST_CREATED: {
     type: 'alert',
     iconName: 'check',
-    message: '요청 성공!',
+    message: '테스트 모집이 등록되었어요',
+  },
+  // 테스터 신청 요청
+  APPLICATION_CREATED: {
+    type: 'alert',
+    iconName: 'check',
+    message: '신청이 완료되었어요',
+  },
+  // 피드백 작성
+  FEEDBACK_CREATED: {
+    type: 'alert',
+    iconName: 'check',
+    message: '피드백이 등록되었어요',
+  },
+  // 리뷰 작성
+  REVIEW_CREATED: {
+    type: 'alert',
+    iconName: 'check',
+    message: '리뷰가 등록되었어요',
+  },
+  // 임시 저장
+  DRAFT_SAVED: {
+    type: 'alert',
+    iconName: 'check',
+    message: '임시 저장되었어요',
   },
   COMMON201: {
     type: 'alert',
@@ -133,11 +157,6 @@ export const TOAST_MESSAGES: Record<string, ToastConfig> = {
 };
 
 export const DEFAULT_TOAST_BY_STATUS: Record<number, ToastConfig> = {
-  200: {
-    type: 'alert',
-    iconName: 'check',
-    message: '요청 성공!',
-  },
   201: {
     type: 'alert',
     iconName: 'check',
@@ -210,14 +229,6 @@ export function getToastConfig(
   }
   if (status && DEFAULT_TOAST_BY_STATUS[status]) {
     return DEFAULT_TOAST_BY_STATUS[status];
-  }
-
-  if (message) {
-    return {
-      type: 'error',
-      iconName: 'red',
-      message,
-    };
   }
 
   return null;
