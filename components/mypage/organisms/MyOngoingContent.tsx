@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMyApplicationsQuery } from '@/hooks/posts/queries/useMyApplicationsQuery';
 import PostCard, { PostCardSkeleton } from '@/components/category/molecules/PostCard';
 import { useRouter } from 'next/navigation';
@@ -29,12 +29,20 @@ export default function MyOngoingContent() {
   const [sortOption, setSortOption] = useState('DESC'); // 기본값: 최신순
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const { data: myApplicationsData, isLoading } = useMyApplicationsQuery({
+  const {
+    data: myApplicationsData,
+    isLoading,
+    refetch,
+  } = useMyApplicationsQuery({
     status: 'APPROVED',
     page: currentPage,
     size: 9,
     sort: [sortOption],
   });
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   const applicationsNeedingPostData =
     myApplicationsData?.data?.content.filter(
