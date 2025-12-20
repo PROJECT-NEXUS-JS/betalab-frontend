@@ -6,6 +6,8 @@ import RewardStateList, {
 } from '@/components/admin/reward/RewardStateList';
 import { useParticipantsQuery } from '@/hooks/reward/queries/useParticipantsQuery';
 import { ParticipantItemType } from '@/hooks/reward/dto/participants';
+import { useApproveApplicationMutation } from '@/hooks/dashboard/mutations/useApplicationMutation';
+import { useCompleteApplicationMutation } from '@/hooks/dashboard/mutations/useApplicationMutation';
 
 interface RewardStateListClientProps {
   postId: number;
@@ -100,6 +102,9 @@ export default function RewardStateListClient({ postId }: RewardStateListClientP
     size: 100,
   });
 
+  const approveMutation = useApproveApplicationMutation(postId);
+  const completeMutation = useCompleteApplicationMutation(postId);
+
   if (error) {
     return <div>데이터를 불러오는 중 오류가 발생했습니다.</div>;
   }
@@ -122,8 +127,26 @@ export default function RewardStateListClient({ postId }: RewardStateListClientP
         rewardStatus: mapRewardStatus(item.rewardStatus),
         paidDate: formatDate(item.paidAt),
         type: rowType,
-        onApprove: rowType === '승인전' ? () => {} : undefined,
-        onComplete: rowType === '완료요청' ? () => {} : undefined,
+        onApprove:
+          rowType === '승인전'
+            ? async () => {
+                try {
+                  await approveMutation.mutateAsync(item.participationId);
+                } catch (error) {
+                  console.error('승인 실패:', error);
+                }
+              }
+            : undefined,
+        onComplete:
+          rowType === '완료요청'
+            ? async () => {
+                try {
+                  await completeMutation.mutateAsync(item.participationId);
+                } catch (error) {
+                  console.error('완료처리 실패:', error);
+                }
+              }
+            : undefined,
         onPay: rowType === '지급전' ? () => {} : undefined,
       };
     },
