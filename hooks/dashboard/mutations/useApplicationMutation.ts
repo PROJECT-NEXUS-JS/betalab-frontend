@@ -19,8 +19,11 @@ export const useApproveApplicationMutation = (postId: number) => {
       queryClient.invalidateQueries({
         queryKey: [...queryKeys.dashboard.all, 'waitingParticipants', postId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ['reward', 'participants', postId],
+      });
     },
-    onError: error => {},
+    onError: (error: unknown) => {},
   });
 };
 
@@ -43,8 +46,25 @@ export const useRejectApplicationMutation = (postId: number) => {
         queryKey: [...queryKeys.dashboard.all, 'waitingParticipants', postId],
       });
     },
-    onError: error => {
-      // 신청서 거절 실패 무시
+    onError: (error: unknown) => {},
+  });
+};
+
+const completeApplication = async (participationId: number): Promise<void> => {
+  const response = await instance.patch(`/v1/users/participations/${participationId}/complete`);
+  return response.data;
+};
+
+export const useCompleteApplicationMutation = (postId: number) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: completeApplication,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['reward', 'participants', postId],
+      });
     },
+    onError: (error: unknown) => {},
   });
 };
