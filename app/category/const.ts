@@ -1,5 +1,5 @@
 // 메인 카테고리
-export const MAIN_CATEGORIES = ['전체', '앱', '웹', '게임', '인기순위', '마감임박'] as const;
+export const MAIN_CATEGORIES = ['앱', '웹', '게임', '인기순위', '마감임박'] as const;
 
 export const MAIN_CATEGORY_API_MAP: Record<string, string> = {
   앱: 'APP',
