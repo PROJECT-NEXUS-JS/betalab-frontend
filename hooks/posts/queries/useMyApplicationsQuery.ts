@@ -19,7 +19,7 @@ const getMyApplications = async (
     searchParams.append('size', params.size.toString());
   }
   if (params.sort && params.sort.length > 0) {
-    params.sort.forEach(sort => searchParams.append('sort', sort));
+    params.sort.forEach((sort: string) => searchParams.append('sort', sort));
   }
 
   const response = await instance.get(`${BASE_PATH}?${searchParams.toString()}`);
@@ -32,8 +32,8 @@ export const useMyApplicationsQuery = (
   return useQuery({
     queryKey: ['myApplications', params],
     queryFn: () => getMyApplications(params),
-    staleTime: 1000 * 60 * 5, // 5분
-    refetchOnMount: false,
+    staleTime: 0,
+    refetchOnMount: true,
     refetchOnWindowFocus: false,
   });
 };

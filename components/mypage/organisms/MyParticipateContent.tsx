@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMyApplicationsQuery } from '@/hooks/posts/queries/useMyApplicationsQuery';
 import PostCard, { PostCardSkeleton } from '@/components/category/molecules/PostCard';
 import { useRouter } from 'next/navigation';
@@ -13,12 +13,20 @@ import { ProjectDetailResponseModel } from '@/hooks/posts/queries/usePostDetailQ
 
 export default function MyApplicationContent() {
   const [currentPage, setCurrentPage] = useState(0);
-  const { data: myApplicationsData, isLoading } = useMyApplicationsQuery({
+  const {
+    data: myApplicationsData,
+    isLoading,
+    refetch,
+  } = useMyApplicationsQuery({
     status: 'PAID',
     page: currentPage,
     size: 9,
   });
   const router = useRouter();
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   const applicationsNeedingPostData =
     myApplicationsData?.data?.content.filter(
