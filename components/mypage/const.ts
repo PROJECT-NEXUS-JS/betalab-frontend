@@ -56,17 +56,25 @@ export const getBreadcrumbItems = (activeTab: string) => {
   const baseItems = [{ label: '마이페이지', href: '/mypage' }];
 
   if (!activeTab) return baseItems;
+
   let sectionTitle = '';
+  let tabTitle = '';
+
   for (const [_, section] of Object.entries(MY_PAGE_MENUS)) {
     const foundItem = section.items.find(item => item.key === activeTab);
     if (foundItem) {
       sectionTitle = section.title;
+      tabTitle = foundItem.title;
       break;
     }
   }
 
-  if (sectionTitle) {
-    return [...baseItems, { label: sectionTitle, href: `/mypage?tab=${activeTab}` }];
+  if (sectionTitle && tabTitle) {
+    return [
+      ...baseItems,
+      { label: sectionTitle, href: `/mypage?tab=${activeTab}` },
+      { label: tabTitle, href: `/mypage?tab=${activeTab}` },
+    ];
   }
 
   return baseItems;
