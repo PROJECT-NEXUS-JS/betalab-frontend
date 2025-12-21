@@ -57,7 +57,7 @@ export const TOAST_MESSAGES: Record<string, ToastConfig> = {
   BAD_REQUEST: {
     type: 'error',
     iconName: 'red',
-    message: '로그인에 실패했어요\n다시 시도해 주세요',
+    message: '요청 처리에 실패했어요\n다시 시도해 주세요',
   },
   VALIDATION_FAILED: {
     type: 'error',
@@ -175,7 +175,7 @@ export const DEFAULT_TOAST_BY_STATUS: Record<number, ToastConfig> = {
   400: {
     type: 'error',
     iconName: 'red',
-    message: '로그인에 실패했어요\n다시 시도해 주세요',
+    message: '요청 처리에 실패했어요\n다시 시도해 주세요',
   },
   401: {
     type: 'alert',
