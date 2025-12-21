@@ -37,7 +37,7 @@ const postSummarySchema = z
     genreCategories: z.array(categorySchema),
     schedule: scheduleSchema.optional(),
     reward: rewardSchema.optional(),
-    hasReward: z.boolean(),
+    hasReward: z.boolean().optional(),
   })
   .strict();
 

@@ -1,22 +1,24 @@
 // 메인 카테고리
-export const MAIN_CATEGORIES = ['전체', '앱', '웹', '게임', '인기순위', '마감임박'] as const;
+export const MAIN_CATEGORIES = ['앱', '웹', '게임', '인기순위', '마감임박'] as const;
 
 export const MAIN_CATEGORY_API_MAP: Record<string, string> = {
   앱: 'APP',
   웹: 'WEB',
   게임: 'GAME',
-  인기순위: 'POPULAR',
-  마감임박: 'DEADLINE',
 };
 
 export const PLATFORM_CATEGORY_API_MAP: Record<string, string> = {
   Android: 'ANDROID',
   iOS: 'IOS',
-  모바일: 'MOBILE',
-  '웹 기반': 'WEB_ALL',
+  '모바일(Android)': 'ANDROID_GAME',
+  '모바일(iOS)': 'IOS_GAME',
   'PC 클라이언트': 'PC',
-  콘솔: 'CONSOLE',
-  VR: 'VR',
+  // 콘솔
+  'Play Station': 'PLAYSTATION',
+  Xbox: 'XBOX',
+  // VR
+  'Meta Quest': 'META_QUEST',
+  'Steam VR': 'STEAM_VR',
   무관: '',
 };
 
@@ -127,16 +129,24 @@ export const GENRE_CATEGORIES_MAP = new Map([
 export const PLATFORM_CATEGORIES_MAP = new Map([
   ['앱', ['Android', 'iOS', '무관']],
   ['웹', []],
-  ['게임', ['모바일', '웹 기반', 'PC 클라이언트', '콘솔', 'VR', '무관']],
+  [
+    '게임',
+    [
+      '모바일(Android)',
+      '모바일(iOS)',
+      'PC 클라이언트',
+      // 콘솔
+      'Play Station',
+      'Xbox',
+      // VR
+      'Meta Quest',
+      'Steam VR',
+      '무관',
+    ],
+  ],
   ['인기순위', []],
   ['마감임박', []],
 ] as const);
-
-// 콘솔 하위 카테고리
-export const CONSOLE_SUB_CATEGORIES = ['Play Station', 'Xbox', 'Nintendo Switch'] as const;
-
-// VR 하위 카테고리
-export const VR_SUB_CATEGORIES = ['Meta Quest', 'SteamVR', 'HTC Vive'] as const;
 
 // 탭 설정
 export const TAB_CONFIG = [
@@ -159,18 +169,18 @@ export const createApiParams = (
     sortBy: 'latest',
   };
 
-  if (mainCategory !== '마감임박') {
-    params.mainCategory = MAIN_CATEGORY_API_MAP[mainCategory] || 'APP';
+  if (mainCategory !== '인기순위' && mainCategory !== '마감임박') {
+    params.mainCategory = MAIN_CATEGORY_API_MAP[mainCategory];
 
     if (platformCategory !== '무관') {
-      params.platformCategory = PLATFORM_CATEGORY_API_MAP[platformCategory] || '';
+      params.platformCategory = PLATFORM_CATEGORY_API_MAP[platformCategory];
     }
   } else {
     params.sortBy = 'deadline';
   }
 
   if (genreCategory !== '전체') {
-    params.genreCategory = GENRE_CATEGORY_API_MAP[genreCategory] || '';
+    params.genreCategory = GENRE_CATEGORY_API_MAP[genreCategory];
   }
 
   return params;

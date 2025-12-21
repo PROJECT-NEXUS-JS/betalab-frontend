@@ -43,8 +43,12 @@ export default function ApplyCard({
   const endMonth = endDate.getMonth() + 1;
   const endDay = endDate.getDate();
 
-  const viewConditions = viewMore ? conditions : conditions.slice(0, 3);
+  const alreadyApplied =
+    participationStatus === ParticapationStatusEnum.enum.PENDING ||
+    participationStatus === ParticapationStatusEnum.enum.APPROVED ||
+    participationStatus === ParticapationStatusEnum.enum.COMPLETED;
 
+  const viewConditions = viewMore ? conditions : conditions.slice(0, 3);
   return (
     <div className="w-[258px] h-max p-3 flex flex-col flex-start gap-5 bg-White rounded-sm shadow-[0_0_10px_0_rgba(26,30,39,0.08)]">
       <div className="flex flex-col gap-4">
@@ -131,13 +135,15 @@ export default function ApplyCard({
               />
             </button>
             <Button
-              State="Primary"
+              State={alreadyApplied ? 'Disabled' : 'Primary'}
               Size="lg"
               // 테스트를 완료했으면 완료하기 버튼 띄움
               label={
                 participationStatus === ParticapationStatusEnum.enum.TEST_COMPLETED
                   ? '완료하기'
-                  : '신청하기'
+                  : alreadyApplied
+                    ? '신청 완료'
+                    : '신청하기'
               }
               onClick={registerClicked}
               className="w-full flex-1"
