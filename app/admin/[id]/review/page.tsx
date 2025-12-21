@@ -7,6 +7,7 @@ import { ReviewDataModel } from '@/hooks/review/dto';
 import ReviewCard from '@/components/common/molecules/ReviewCard';
 import ReviewCountCard from '@/components/admin/ReviewCountCard';
 import ReviewDetailSidebar from '@/components/admin/ReviewDetailSidebar';
+import { useCreateReviewReplyMutation } from '@/hooks/review/mutations/useCreateReviewReplyMutation';
 
 export default function AdminReviewPage() {
   const params = useParams();
@@ -18,6 +19,7 @@ export default function AdminReviewPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { data: reviewData, isLoading, isError } = usePostReviewQuery(postId);
+  const createReplyMutation = useCreateReviewReplyMutation(postId);
 
   if (isLoading) return <div>로딩 중...</div>;
   if (isError) return <div>에러 발생</div>;
@@ -29,19 +31,27 @@ export default function AdminReviewPage() {
     setSidebarOpen(true);
   };
 
-  const handleReplySubmit = (content: string) => {
+  const handleReplySubmit = async (content: string) => {
     if (!selectedReview) return;
-    const now = new Date();
-    const dateString = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-    setRepliedReviews(prev => ({
-      ...prev,
-      [selectedReview]: { content, date: dateString },
-    }));
+
+    try {
+      const response = await createReplyMutation.mutateAsync({
+        reviewId: selectedReview,
+        data: { content },
+      });
+      const now = new Date(response.data.createdAt);
+      const dateString = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+      setRepliedReviews(prev => ({
+        ...prev,
+        [selectedReview]: { content: response.data.content, date: dateString },
+      }));
+    } catch (error) {
+      console.error('답변 생성 실패:', error);
+    }
   };
 
-  const handleReplyEdit = () => {
-    // 수정 예정
-  };
+  const handleReplyEdit = () => {};
 
   const handleReplyDelete = () => {
     if (!selectedReview) return;
