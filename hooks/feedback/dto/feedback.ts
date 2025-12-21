@@ -49,6 +49,7 @@ export const FeedbackRequestBaseSchema = z.object({
   bugDescription: z.string().optional(), // TODO: 입력 부분 없음
   screenshotUrls: z.array(z.string()).optional(), // TODO: 입력 부분 없음
 
+<<<<<<< HEAD
   // 서술형 항목
   // goodPoints: z.string().optional(), // 좋았던 점
   // improvementSuggestions: z.string().optional(), // 개선 제안
@@ -73,6 +74,40 @@ export const FeedbackRequestSchema = FeedbackRequestBaseSchema.refine(
   },
   { message: '문제 발생 위치를 입력해주세요.', path: ['bugLocation'] },
 );
+=======
+    // 서술형 항목
+    // goodPoints: z.string().optional(), // 좋았던 점
+    // improvementSuggestions: z.string().optional(), // 개선 제안
+    // additionalComments: z.string().optional(), // 추가 의견
+    goodPoints: z.string().min(1), // 좋았던 점
+    improvementSuggestions: z.string().min(1), // 개선 제안
+    additionalComments: z.string().min(1), // 추가 의견
+  });
+
+type FeedbackBase = z.infer<typeof FeedbackRequestBaseSchema>;
+
+export const FeedbackRequestSchema = FeedbackRequestBaseSchema
+  .refine(
+    (data: FeedbackBase) => { 
+      if (!data.hasBug) return true;
+      return !!data.bugTypes && data.bugTypes.length > 0;
+    },
+    {
+      message: '버그 유형을 하나 이상 선택해주세요.',
+      path: ['bugTypes'],
+    },
+  )
+  .refine(
+    (data: FeedbackBase) => {
+      if (!data.hasBug) return true;
+      return !!data.bugLocation && data.bugLocation.trim().length > 0;
+    },
+    {
+      message: '문제 발생 위치를 입력해주세요.',
+      path: ['bugLocation'],
+    },
+  );
+>>>>>>> 3c5a9f2 (fix: 빌드 에러 수정)
 
 export type FeedbackRequestType = z.infer<typeof FeedbackRequestSchema>;
 
