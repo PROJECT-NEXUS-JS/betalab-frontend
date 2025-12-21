@@ -26,7 +26,7 @@ interface ReviewDetailSidebarProps {
   replyContent?: string | null;
   replyDate?: string | null;
   onReplySubmit: (content: string) => void;
-  onReplyEdit?: () => void;
+  onReplyEdit?: (content: string) => void;
   onReplyDelete?: () => void;
 }
 
@@ -157,7 +157,6 @@ export default function ReviewDetailSidebar({
                 onReplyEdit={() => {
                   setIsReplying(true);
                   setReplyText(replyContent || '');
-                  onReplyEdit?.();
                 }}
                 onReplyDelete={() => {
                   setIsReplying(false);
@@ -165,13 +164,24 @@ export default function ReviewDetailSidebar({
                   onReplyDelete?.();
                 }}
               />
-              {isReplying && !replyContent && (
+              {isReplying && (
                 <div className="w-[580px]">
                   <Button
                     State={replyText.trim() ? 'Primary' : 'Disabled'}
                     Size="xxl"
-                    onClick={replyText.trim() ? handleReplySubmit : undefined}
-                    label="답변 보내기"
+                    onClick={
+                      replyText.trim()
+                        ? replyContent
+                          ? async () => {
+                              await onReplyEdit?.(replyText.trim());
+                              setIsReplying(false);
+                            }
+                          : () => {
+                              handleReplySubmit();
+                            }
+                        : undefined
+                    }
+                    label={replyContent ? '답변 수정하기' : '답변 보내기'}
                     className="w-full h-12 px-7"
                   />
                 </div>

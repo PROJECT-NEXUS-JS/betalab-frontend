@@ -8,18 +8,22 @@ import ReviewCard from '@/components/common/molecules/ReviewCard';
 import ReviewCountCard from '@/components/admin/ReviewCountCard';
 import ReviewDetailSidebar from '@/components/admin/ReviewDetailSidebar';
 import { useCreateReviewReplyMutation } from '@/hooks/review/mutations/useCreateReviewReplyMutation';
+import { useUpdateReviewReplyMutation } from '@/hooks/review/mutations/useUpdateReviewReplyMutation';
+import { useDeleteReviewReplyMutation } from '@/hooks/review/mutations/useDeleteReviewReplyMutation';
 
 export default function AdminReviewPage() {
   const params = useParams();
   const postId = Number(params.id);
   const [repliedReviews, setRepliedReviews] = useState<
-    Record<number, { content: string; date: string }>
+    Record<number, { replyId: number; content: string; date: string }>
   >({});
   const [selectedReview, setSelectedReview] = useState<number | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { data: reviewData, isLoading, isError } = usePostReviewQuery(postId);
   const createReplyMutation = useCreateReviewReplyMutation(postId);
+  const updateReplyMutation = useUpdateReviewReplyMutation(postId);
+  const deleteReplyMutation = useDeleteReviewReplyMutation(postId);
 
   if (isLoading) return <div>로딩 중...</div>;
   if (isError) return <div>에러 발생</div>;
@@ -44,22 +48,56 @@ export default function AdminReviewPage() {
 
       setRepliedReviews(prev => ({
         ...prev,
-        [selectedReview]: { content: response.data.content, date: dateString },
+        [selectedReview]: {
+          replyId: response.data.id,
+          content: response.data.content,
+          date: dateString,
+        },
       }));
     } catch (error) {
       console.error('답변 생성 실패:', error);
     }
   };
 
-  const handleReplyEdit = () => {};
+  const handleReplyEdit = async (content: string) => {
+    if (!selectedReview || !repliedReviews[selectedReview]) return;
 
-  const handleReplyDelete = () => {
-    if (!selectedReview) return;
-    setRepliedReviews(prev => {
-      const newReplies = { ...prev };
-      delete newReplies[selectedReview];
-      return newReplies;
-    });
+    try {
+      const replyId = repliedReviews[selectedReview].replyId;
+      const response = await updateReplyMutation.mutateAsync({
+        replyId,
+        data: { content },
+      });
+      const now = new Date(response.data.updatedAt);
+      const dateString = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+      setRepliedReviews(prev => ({
+        ...prev,
+        [selectedReview]: {
+          replyId: response.data.id,
+          content: response.data.content,
+          date: dateString,
+        },
+      }));
+    } catch (error) {
+      console.error('답변 수정 실패:', error);
+    }
+  };
+
+  const handleReplyDelete = async () => {
+    if (!selectedReview || !repliedReviews[selectedReview]) return;
+
+    try {
+      const replyId = repliedReviews[selectedReview].replyId;
+      await deleteReplyMutation.mutateAsync(replyId);
+      setRepliedReviews(prev => {
+        const newReplies = { ...prev };
+        delete newReplies[selectedReview];
+        return newReplies;
+      });
+    } catch (error) {
+      console.error('답변 삭제 실패:', error);
+    }
   };
 
   const selectedReviewData = selectedReview
