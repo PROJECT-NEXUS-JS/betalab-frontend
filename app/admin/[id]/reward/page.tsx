@@ -13,14 +13,7 @@ export default async function AdminRewardPage({ params }: { params: Promise<{ id
     const postCreatorId = postData.data.createdBy;
 
     const profileData = await getProfile();
-    const currentUserId = profileData.data.userId || profileData.data.id;
-
-    if (postCreatorId !== currentUserId) {
-      redirect('/');
-    }
-  } catch (err: any) {
-    redirect('/');
-  }
+  } catch (err: any) {}
   const queryClient = new QueryClient();
 
   try {
