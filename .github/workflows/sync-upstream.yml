@@ -1,0 +1,31 @@
+name: Sync Upstream
+
+on:
+  schedule:
+    - cron: '0 * * * *' # 매시간 정각에 동기화 실행
+  workflow_dispatch:   # 버튼을 눌러 수동으로 즉시 실행 가능
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync check
+        uses: actions/checkout@v4
+        with:
+          ref: develop # 포크 레포의 대상 브랜치
+          fetch-depth: 0
+
+      - name: Update from Upstream
+        run: |
+          # 1. 원본 레포지토리 등록
+          git remote add upstream https://github.com/PROJECT-NEXUS-JS/betalab-frontend.git
+          
+          # 2. 원본 데이터 가져오기
+          git fetch upstream develop
+          
+          # 3. 로컬 develop 브랜치로 이동 및 원본과 병합
+          git checkout develop
+          git merge upstream/develop
+          
+          # 4. 포크 레포(origin)로 푸시
+          git push origin develop
