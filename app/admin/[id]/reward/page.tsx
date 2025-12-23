@@ -33,7 +33,7 @@ export default async function AdminRewardPage({ params }: { params: Promise<{ id
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <div>
-        <h1 className="text-subtitle-01 font-semibold text-Black mb-10">리워드 지급관리</h1>
+        <h1 className="text-subtitle-01 font-semibold text-Black mb-10">테스터 관리</h1>
         <RewardListClient postId={postId} />
         <div className="mt-10">
           <RewardStateListClient postId={postId} />
