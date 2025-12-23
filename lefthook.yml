@@ -1,0 +1,26 @@
+pre-push:
+  commands:
+    build:
+      run: |
+        echo "🚀 ========================================="
+        echo "🚀 Starting build for push verification..."
+        echo "🚀 ========================================="
+        echo "📊 Step 1/2: Running type check..."
+        if pnpm type-check; then
+          echo "✅ Type check passed successfully!"
+          echo "📊 Step 2/2: Building project..."
+          echo "🔨 ========================================="
+          echo "🏗️ Running production build..."
+          echo "🔨 ========================================="
+          pnpm build || exit 1
+          echo "🎉 ========================================="
+          echo "✅ Build completed successfully!"
+          echo "🚀 Ready to push!"
+          echo "🎉 ========================================="
+        else
+          echo "❌ ========================================="
+          echo "❌ Type check failed!"
+          echo "🚫 Build skipped - fix type errors first"
+          echo "❌ ========================================="
+          exit 1
+        fi
