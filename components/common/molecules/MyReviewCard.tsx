@@ -11,9 +11,12 @@ import { useUpdateReviewMutation } from '@/hooks/review/mutations/useUpdateRevie
 export interface MyReviewCardProps {
   review: WrittenReviewItemType;
   className?: string;
+  reply?: {
+    content: string;
+  } | null;
 }
 
-export default function MyReviewCard({ review, className }: MyReviewCardProps) {
+export default function MyReviewCard({ review, className, reply }: MyReviewCardProps) {
   const [showMoreButton, setShowMoreButton] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(review.content);
@@ -175,6 +178,30 @@ export default function MyReviewCard({ review, className }: MyReviewCardProps) {
           </button>
         </div>
       </section>
+      {reply && (
+        <div
+          className="self-stretch inline-flex justify-start items-start gap-2"
+          style={{ marginTop: '12px' }}
+        >
+          <div
+            data-size="lg"
+            data-style="corner down"
+            className="w-6 h-6 relative overflow-hidden flex items-center justify-center"
+          >
+            <Image
+              src="/icons/comment.svg"
+              alt="답변"
+              width={24}
+              height={24}
+              className="text-blue-600"
+            />
+          </div>
+          <div className="inline-flex flex-col justify-center items-start gap-1">
+            <div className="text-blue-600 text-sm font-medium leading-5">답변</div>
+            <div className="text-gray-600 text-sm font-medium leading-5">{reply.content}</div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
