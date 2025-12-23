@@ -16,7 +16,7 @@ interface CustomPieChartProps {
   rewardChart: ChartData;
 }
 
-const STATUS_COLORS: Record<string, string> = {
+export const STATUS_COLORS: Record<string, string> = {
   진행중: '#DAE7FF',
   대기: '#0E62FF',
   완료: '#9CA3AF',
@@ -26,7 +26,7 @@ const STATUS_COLORS: Record<string, string> = {
   COMPLETED: '#9CA3AF',
 };
 
-const REWARD_COLORS: Record<string, string> = {
+export const REWARD_COLORS: Record<string, string> = {
   미지급: '#DBEAFE', // bg-blue-100
   '지급 완료': '#2563EB', // bg-blue-600
   지급대기: '#DBEAFE', // bg-blue-100
@@ -80,7 +80,7 @@ const CustomLegend = ({ payload }: any) => {
   );
 };
 
-const StatusPieChart = ({
+export const StatusPieChart = ({
   data,
   colors,
   title,
@@ -150,7 +150,7 @@ const StatusPieChart = ({
   );
 };
 
-const RewardDonutChart = ({
+export const RewardDonutChart = ({
   data,
   colors,
   title,

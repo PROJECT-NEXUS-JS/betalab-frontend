@@ -1,8 +1,11 @@
 'use client';
 import { CustomLineChart } from '@/components/admin/CustomLineChart';
 import { useLineChartQuery } from '@/hooks/dashboard/quries/useLineChartQuery';
+import EmptyCard from '@/components/mypage/molecules/EmptyCard';
+import { useRouter } from 'next/navigation';
 
 export default function LineChartClientWrapper({ postId }: { postId: number }) {
+  const router = useRouter();
   const { data, isLoading, isError } = useLineChartQuery(postId);
 
   if (isLoading)
@@ -14,8 +17,21 @@ export default function LineChartClientWrapper({ postId }: { postId: number }) {
   if (isError) return <p className="text-center text-red-500">통계 정보를 불러오는 데 실패했습니다.</p>;
 
   const chartData = data?.data;
-  if (!chartData || !chartData.series || !chartData.labels || chartData.series.length === 0) {
-    return <p className="text-center text-Gray-300">표시할 데이터가 없습니다.</p>;
+  const hasSeriesData =
+    chartData?.series && chartData.series.length > 0
+      ? chartData.series.some(series => series.data && series.data.length > 0 && series.data.some(val => val > 0))
+      : false;
+  const hasLabels = chartData?.labels && chartData.labels.length > 0;
+
+  if (!chartData || !hasSeriesData || !hasLabels) {
+    return (
+      <EmptyCard
+        className="py-20"
+        title="아직 데이터가 없어요"
+        buttonLabel="내 테스트 보러가기"
+        onClick={() => router.push('/mypage')}
+      />
+    );
   }
 
   return (
