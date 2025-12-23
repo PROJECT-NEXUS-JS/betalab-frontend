@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import Tag from '@/components/common/atoms/Tag';
 import { Skeleton } from '@/components/ui/skeleton';
 import RankingArticle from '@/components/common/svg/RankingArticle';
-import { TestCardType } from '@/types/models/testCard';
+import { TestCardType, CategoryType } from '@/types/models/testCard';
 
 interface PostCardProps {
   className?: string;
@@ -13,8 +13,10 @@ interface PostCardProps {
 }
 
 export default function PostCard({ post, className, ranking }: PostCardProps) {
-  const mainCategoryNames = post.mainCategories.map(category => category.name);
-  const platformCategoryNames = post.platformCategories.map(category => category.name);
+  const mainCategoryNames = post.mainCategories.map((category: CategoryType) => category.name);
+  const platformCategoryNames = post.platformCategories.map(
+    (category: CategoryType) => category.name,
+  );
 
   const allCategoryNames = [...mainCategoryNames, ...platformCategoryNames];
   const categoryText = allCategoryNames.join('  ·  ');
