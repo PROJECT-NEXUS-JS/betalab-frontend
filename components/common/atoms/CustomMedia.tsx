@@ -55,17 +55,20 @@ export default function CustomMedia({
   }
 
   return (
-    <div className={cn('relative overflow-hidden rounded-lg', className)} style={{ width, height }}>
+    <div
+      className={cn('flex-shrink-0 relative overflow-hidden rounded-lg', className)}
+      style={{ width, height }}
+    >
       {/* CASE 1: 유튜브 */}
       {mediaType === 'youtube' && (
-        <iframe
-          src={`https://www.youtube.com/embed/${getYoutubeId(src)}`}
-          title={alt}
-          className="w-full h-full object-cover rounded-lg"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          style={{ border: 0 }}
-        />
+        <div className="aspect-video w-full">
+          <iframe
+            src={`https://www.youtube.com/embed/${getYoutubeId(src)}`}
+            title={alt}
+            className="w-full h-full"
+            allowFullScreen
+          />
+        </div>
       )}
 
       {/* CASE 2: 직접 비디오 파일 (.mp4 등) */}
@@ -74,7 +77,7 @@ export default function CustomMedia({
           src={src}
           controls
           playsInline
-          className="w-full h-full object-cover rounded-lg bg-black"
+          className="w-full h-full object-cover bg-black"
         >
           <track kind="captions" />
         </video>
@@ -89,7 +92,7 @@ export default function CustomMedia({
           height={height ?? 300}
           unoptimized // 외부 링크 허용을 위해 필수
           className={cn(
-            'rounded-lg object-cover transition-all duration-300',
+            'w-full h-auto transition-all duration-300',
             state === 'hover' && 'hover:scale-105',
           )}
         />
@@ -97,4 +100,3 @@ export default function CustomMedia({
     </div>
   );
 }
-

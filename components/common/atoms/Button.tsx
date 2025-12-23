@@ -47,6 +47,7 @@ export default function Button({
     <button
       onClick={onClick}
       className={cn(`${THEME_COLOR_CLASSNAME[State]} ${THEME_SIZE_CLASSNAME[Size]}`, className)}
+      disabled={State === 'Disabled'}
     >
       {label}
     </button>
@@ -58,7 +59,7 @@ const THEME_COLOR_CLASSNAME = {
   Primary: 'bg-Primary-500 text-White',
   Sub: 'bg-Primary-200 text-Primary-500',
   Solid: 'bg-White text-Dark-Gray border-[1px] border-Gray-100',
-  Disabled: 'bg-Gray-100 text-Light-Gray cursor-not-allowed',
+  Disabled: 'bg-Gray-100 text-Light-Gray',
   Secondary: 'bg-Black text-White',
   Focused: 'bg-Primary-100 text-Primary-500 border-[1px] border-Primary-500 ',
   'Text btn': 'px-1 flex items-center justify-center text-Dark-Gray underline',

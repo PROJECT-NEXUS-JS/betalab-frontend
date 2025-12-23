@@ -27,6 +27,7 @@ function buildQueryParams(params: GetUsersPostsListRequestType): string {
   (params.sort ?? []).forEach((s: string) => qp.append('sort', s));
 
   const qs = qp.toString();
+  console.log('qs', qs);
   return qs ? `${BASE_PATH}?${qs}` : BASE_PATH;
 }
 

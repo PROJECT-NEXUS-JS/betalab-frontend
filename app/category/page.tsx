@@ -29,7 +29,7 @@ function CategoryPageContent() {
 
   useEffect(() => {
     if (mainCategory === '인기순위') {
-      router.push('/category/popular?category=all', { scroll: false });
+      router.push('/category/popular', { scroll: false });
     }
   }, [mainCategory, router]);
 
@@ -59,32 +59,32 @@ function CategoryPageContent() {
     setCurrentPage(1);
   }, [mainCategory, genreCategory, platformCategory, keyword, setCurrentPage]);
 
-  useEffect(() => {
-    if (error) {
-      router.push('/');
-    }
-  }, [error, router]);
+  // useEffect(() => {
+  //   if (error) {
+  //     router.push('/');
+  //   }
+  // }, [error, router]);
 
   // 인기순위인 경우 PopularPage로 리다이렉트되므로 여기서는 렌더링하지 않음
   if (mainCategory === '인기순위') {
     return null;
   }
 
-  if (error) {
-    return (
-      <div className="flex flex-col">
-        <Tabbar className="px-16 py-5" />
-        <main className="flex pb-30 flex-row py-5 px-16 items-start justify-start gap-10">
-          <Sidebar />
-          <section className="flex flex-col items-center gap-10">
-            <div className="text-center text-red-500">
-              인증이 필요합니다. 홈페이지로 이동합니다.
-            </div>
-          </section>
-        </main>
-      </div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div className="flex flex-col">
+  //       <Tabbar className="px-16 py-5" />
+  //       <main className="flex pb-30 flex-row py-5 px-16 items-start justify-start gap-10">
+  //         <Sidebar />
+  //         <section className="flex flex-col items-center gap-10">
+  //           <div className="text-center text-red-500">
+  //             인증이 필요합니다. 홈페이지로 이동합니다.
+  //           </div>
+  //         </section>
+  //       </main>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="flex flex-col">
