@@ -22,6 +22,8 @@ export const useDeleteReviewReplyMutation = (postId: number) => {
     onSuccess: () => {
       // 리뷰 관련 쿼리 무효화
       queryClient.invalidateQueries({ queryKey: queryKeys.reviews.post(postId) });
+      // 모든 답변 조회 쿼리 무효화
+      queryClient.invalidateQueries({ queryKey: ['reviewReplies'] });
     },
     onError: (error: unknown) => {},
   });

@@ -38,11 +38,12 @@ export const useUpdateReviewReplyMutation = (postId: number) => {
   return useMutation({
     mutationFn: ({ replyId, data }: { replyId: number; data: UpdateReviewReplyRequest }) =>
       updateReviewReply(replyId, data),
-    onSuccess: () => {
+    onSuccess: (response: UpdateReviewReplyResponse) => {
       // 리뷰 관련 쿼리 무효화
       queryClient.invalidateQueries({ queryKey: queryKeys.reviews.post(postId) });
+      // 답변 조회 쿼리 무효화
+      queryClient.invalidateQueries({ queryKey: ['reviewReplies', response.data.reviewId] });
     },
     onError: (error: unknown) => {},
   });
 };
-

@@ -38,9 +38,11 @@ export const useCreateReviewReplyMutation = (postId: number) => {
   return useMutation({
     mutationFn: ({ reviewId, data }: { reviewId: number; data: CreateReviewReplyRequest }) =>
       createReviewReply(reviewId, data),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       // 리뷰 관련 쿼리 무효화
       queryClient.invalidateQueries({ queryKey: queryKeys.reviews.post(postId) });
+      // 답변 조회 쿼리 무효화
+      queryClient.invalidateQueries({ queryKey: ['reviewReplies', variables.reviewId] });
     },
     onError: (error: unknown) => {},
   });
