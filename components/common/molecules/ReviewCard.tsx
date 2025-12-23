@@ -22,6 +22,9 @@ export interface ReviewCardProps {
   onReplySubmit?: (content: string) => void;
   reviewId?: number;
   onClick?: () => void;
+  reply?: {
+    content: string;
+  } | null;
 }
 
 export default function ReviewCard({
@@ -37,6 +40,7 @@ export default function ReviewCard({
   onReplySubmit,
   reviewId,
   onClick,
+  reply,
 }: ReviewCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showMoreButton, setShowMoreButton] = useState(false);
@@ -168,6 +172,30 @@ export default function ReviewCard({
               label={isExpanded ? '접기' : '더보기'}
             />
           </section>
+        )}
+        {reply && (
+          <div
+            className="self-stretch inline-flex justify-start items-start gap-2"
+            style={{ marginTop: '12px' }}
+          >
+            <div
+              data-size="lg"
+              data-style="corner down"
+              className="w-6 h-6 relative overflow-hidden flex items-center justify-center"
+            >
+              <Image
+                src="/icons/comment.svg"
+                alt="답변"
+                width={24}
+                height={24}
+                className="text-blue-600"
+              />
+            </div>
+            <div className="inline-flex flex-col justify-center items-start gap-1">
+              <div className="text-blue-600 text-sm font-medium leading-5">답변</div>
+              <div className="text-gray-600 text-sm font-medium leading-5">{reply.content}</div>
+            </div>
+          </div>
         )}
       </div>
     </div>
