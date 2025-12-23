@@ -10,6 +10,24 @@ import { ToastHost } from '@/components/common/toast/ToastHost';
 export const metadata: Metadata = {
   title: 'Betalab',
   description: '세상을 먼저 경험할 기회',
+  openGraph: {
+    title: 'Betalab',
+    description: '세상을 먼저 경험할 기회',
+    images: [
+      {
+        url: '/thumbnail.png',
+        width: 1200,
+        height: 630,
+        alt: 'Betalab',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Betalab',
+    description: '세상을 먼저 경험할 기회',
+    images: ['/thumbnail.png'],
+  },
 };
 
 export default function RootLayout({
