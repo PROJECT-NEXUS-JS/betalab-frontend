@@ -7,6 +7,7 @@ on:
 
 jobs:
   sync:
+    if: github.repository == 'betalab-biz/betalab-frontend'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -25,7 +26,8 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
           # 4. 원본 레포지토리 등록 및 가져오기
-          git remote add upstream https://github.com/PROJECT-NEXUS-JS/betalab-frontend.git
+          # 원본 레포 등록 (이미 등록되어 있을 수 있으므로 에러 무시 처리)
+          git remote add upstream https://github.com/PROJECT-NEXUS-JS/betalab-frontend.git || git remote set-url upstream https://github.com/PROJECT-NEXUS-JS/betalab-frontend.git          git fetch upstream develop
           git fetch upstream develop
 
           # 3. 로컬 develop 브랜치로 이동 및 원본과 병합
