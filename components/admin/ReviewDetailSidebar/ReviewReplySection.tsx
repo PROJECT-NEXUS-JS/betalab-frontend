@@ -37,14 +37,12 @@ export default function ReviewReplySection({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   React.useEffect(() => {
-    if (isEditing) {
-      setIsReplying(true);
-    }
+    setIsReplying(isEditing);
   }, [isEditing]);
 
   return (
     <>
-      {isReplying && !replyContent ? (
+      {isReplying ? (
         <div className="w-full p-5 bg-gray-200 rounded outline-1 outline-offset-[-1px] outline-gray-200 flex flex-col gap-11">
           <div className="flex flex-col gap-5">
             <div className="text-base font-bold text-gray-900">답변</div>

@@ -13,6 +13,8 @@ import MyReviewCard from '@/components/common/molecules/MyReviewCard';
 import Button from '@/components/common/atoms/Button';
 import ReviewModal from './ReviewModal';
 import { useCreateReviewMutation } from '@/hooks/review/mutations/useCreateReviewMutation';
+import { useQueries } from '@tanstack/react-query';
+import { getReviewReplies } from '@/hooks/review/queries/useReviewRepliesQuery';
 
 export default function MyReviewContent() {
   const [selectedTab, setSelectedTab] = useState<'writable' | 'written'>('writable');
@@ -31,16 +33,20 @@ export default function MyReviewContent() {
 
   const createReviewMutation = useCreateReviewMutation();
 
+  const reviews = writtenReviewsData?.data?.content || [];
+  const replyQueries = useQueries({
+    queries: reviews.map((review: WrittenReviewItemType) => ({
+      queryKey: ['reviewReplies', review.reviewId],
+      queryFn: () => getReviewReplies(review.reviewId),
+      enabled: !!review.reviewId && reviews.length > 0,
+    })),
+  });
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  const handlePostClick = (postId: number) => {
-    router.push(`/project/${postId}`);
-  };
-
   const handleEditReview = (review: any) => {
-    // 리뷰가 이미 있는 경우 수정 모달 열기
     if (review) {
       setSelectedPost({
         id: review.postId,
@@ -54,17 +60,6 @@ export default function MyReviewContent() {
     }
   };
 
-  const handleCreateReview = (postData: any) => {
-    setSelectedPost({
-      id: postData.id,
-      title: postData.title,
-      thumbnailUrl: postData.thumbnailUrl,
-      startDate: postData.startDate,
-      endDate: postData.endDate,
-    });
-    setIsModalOpen(true);
-  };
-
   const handleSubmitReview = async (rating: number, content: string) => {
     if (!selectedPost) return;
 
@@ -76,9 +71,7 @@ export default function MyReviewContent() {
       });
       setIsModalOpen(false);
       setSelectedPost(null);
-    } catch (error) {
-      // 리뷰 작성 실패 무시
-    }
+    } catch (error) {}
   };
 
   const handleCloseModal = () => {
@@ -107,7 +100,6 @@ export default function MyReviewContent() {
         </Chip>
       </div>
 
-      {/* 작성 가능한 리뷰 탭일 때만 내용 표시 */}
       {selectedTab === 'writable' && (
         <div className="flex flex-col mt-10">
           <div className="flex flex-wrap gap-10">
@@ -198,11 +190,21 @@ export default function MyReviewContent() {
           ) : (
             <>
               <div className="flex flex-col gap-10">
-                {writtenReviewsData.data.content.map((review: WrittenReviewItemType) => (
-                  <div key={review.reviewId}>
-                    <MyReviewCard review={review} />
-                  </div>
-                ))}
+                {writtenReviewsData.data.content.map(
+                  (review: WrittenReviewItemType, index: number) => {
+                    const replyQuery = replyQueries[index];
+                    const replyContent = replyQuery?.data?.data?.[0]?.content;
+
+                    return (
+                      <div key={review.reviewId}>
+                        <MyReviewCard
+                          review={review}
+                          reply={replyContent ? { content: replyContent } : null}
+                        />
+                      </div>
+                    );
+                  },
+                )}
               </div>
 
               {writtenReviewsData.data.totalPages > 1 && (
@@ -216,8 +218,6 @@ export default function MyReviewContent() {
           )}
         </div>
       )}
-
-      {/* ReviewModal */}
       {isModalOpen && selectedPost && (
         <ReviewModal
           isOpen={isModalOpen}

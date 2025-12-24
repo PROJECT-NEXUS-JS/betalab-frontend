@@ -28,7 +28,7 @@ export default async function AdminLayout({
     { label: '데이터 센터', path: `/admin/${id}/data-center` },
     { label: '프로젝트 관리', path: `/admin/${id}/project-manage` },
     { label: '리뷰', path: `/admin/${id}/review` },
-    { label: '리워드 지급관리', path: `/admin/${id}/reward` },
+    { label: '테스터 관리', path: `/admin/${id}/reward` },
   ];
 
   await queryClient.prefetchQuery({

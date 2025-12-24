@@ -22,10 +22,6 @@ export default async function AdminDashboardPage({ params }: { params: Promise<{
     const accessToken = cookieStore.get('accessToken')?.value;
     const refreshToken = cookieStore.get('refreshToken')?.value;
 
-    if (!accessToken || !refreshToken) {
-      redirect('/');
-    }
-
     let postResponse;
     let postData;
     let postCreatorId;
@@ -49,12 +45,14 @@ export default async function AdminDashboardPage({ params }: { params: Promise<{
       throw err;
     }
 
+    // 임시로 접근 제어 비활성화
     // 작성자만 접근 가능하게
-    if (postCreatorId !== currentUserId) {
-      redirect('/');
-    }
+    // if (postCreatorId !== currentUserId) {
+    //   redirect('/');
+    // }
   } catch (err: any) {
-    redirect('/');
+    // 임시로 접근 제어 비활성화
+    // redirect('/');
   }
 
   const queryClient = new QueryClient();
