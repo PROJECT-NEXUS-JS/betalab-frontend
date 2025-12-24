@@ -16,7 +16,7 @@ jobs:
         with:
           ref: develop # 포크 레포의 대상 브랜치
           fetch-depth: 0
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ github.token }} 
 
       - name: Update from Upstream
         run: |
