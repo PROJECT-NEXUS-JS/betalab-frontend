@@ -8,24 +8,29 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Sync check
         uses: actions/checkout@v4
         with:
           ref: develop # 포크 레포의 대상 브랜치
           fetch-depth: 0
+          token: ${{ secrets.GH_TOKEN }}
 
       - name: Update from Upstream
         run: |
-          # 1. 원본 레포지토리 등록
+          # Git 사용자 설정 (merge 시 필요)
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          # 4. 원본 레포지토리 등록 및 가져오기
           git remote add upstream https://github.com/PROJECT-NEXUS-JS/betalab-frontend.git
-          
-          # 2. 원본 데이터 가져오기
           git fetch upstream develop
           
           # 3. 로컬 develop 브랜치로 이동 및 원본과 병합
           git checkout develop
           git merge upstream/develop
           
-          # 4. 포크 레포(origin)로 푸시
+          # 4. 포크 레포로 푸시
           git push origin develop
