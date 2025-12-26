@@ -11,8 +11,8 @@ type CategoryModel = z.infer<typeof CategorySchema>;
 const ScheduleSchema = z.object({
   startDate: z.string(),
   endDate: z.string(),
-  recruitmentDeadline: z.string(),
-  durationTime: z.string(),
+  recruitmentDeadline: z.string().nullable().optional(),
+  durationTime: z.string().nullable().optional(),
 });
 type ScheduleModel = z.infer<typeof ScheduleSchema>;
 
@@ -22,7 +22,8 @@ const RequirementSchema = z.object({
   genderRequirement: z.string().nullable(),
   ageMin: z.number().nullable(),
   ageMax: z.number().nullable(),
-  additionalRequirements: z.string().nullable(),
+  additionalRequirements: z.string().nullable().optional(),
+  screenerQuestions: z.array(z.string()).optional(),
 });
 type RequirementModel = z.infer<typeof RequirementSchema>;
 
@@ -36,8 +37,12 @@ type RewardModel = z.infer<typeof RewardSchema>;
 // Feedback
 const FeedbackSchema = z.object({
   feedbackMethod: z.string().nullable(),
-  feedbackItems: z.array(z.string()).nullable(),
-  privacyItems: z.array(z.enum(['NAME', 'EMAIL', 'CONTACT', 'OTHER'])),
+  feedbackItems: z.array(z.string()).nullable().optional(),
+  privacyItems: z
+    .array(z.enum(['NAME', 'EMAIL', 'CONTACT', 'OTHER']))
+    .nullable()
+    .optional(),
+  privacyPurpose: z.string().nullable().optional(),
 });
 type FeedbackModel = z.infer<typeof FeedbackSchema>;
 

@@ -124,7 +124,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
               {`홈 > ${projectData.mainCategories[0]?.name} > ${projectData.genreCategories.map((cat: { code: string; name: string }) => cat.name).join(', ')}`}{' '}
             </p>
             <CustomMedia
-              src={projectData.thumbnailUrl}
+              src={projectData.thumbnailUrl || '/empty.png'}
               alt={projectData.description || 'default description'}
               width={854}
               height={533}
@@ -157,14 +157,16 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
               }`}
             >
               {/* 미디어 리스트 */}
-              {projectData.content.mediaUrls?.map((media: string, index: number) => (
-                <CustomMedia
-                  key={`media-${index}`}
-                  src={media}
-                  alt={projectData.description || '상세 이미지'}
-                  state="default"
-                />
-              ))}
+              {projectData.content.mediaUrls &&
+                projectData.content.mediaUrls.length > 0 &&
+                projectData.content.mediaUrls.map((media: string, index: number) => (
+                  <CustomMedia
+                    key={`media-${index}`}
+                    src={media}
+                    alt={projectData.description || '상세 이미지'}
+                    state="default"
+                  />
+                ))}
               {/* 글이 있을 때만 텍스트 박스 렌더링 */}
               {projectData.content.storyGuide && (
                 <div className="p-4 rounded-xs border border-Gray-100">

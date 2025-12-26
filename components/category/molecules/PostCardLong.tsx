@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import Tag from '@/components/common/atoms/Tag';
 import { Skeleton } from '@/components/ui/skeleton';
+import { CategoryType } from '@/types/models/testCard';
 
 interface PostCardLongProps {
   className?: string;
@@ -10,8 +11,10 @@ interface PostCardLongProps {
 }
 
 export default function PostCardLong({ post, className }: PostCardLongProps) {
-  const mainCategoryNames = post.mainCategories.map(category => category.name);
-  const platformCategoryNames = post.platformCategories.map(category => category.name);
+  const mainCategoryNames = post.mainCategories.map((category: CategoryType) => category.name);
+  const platformCategoryNames = post.platformCategories.map(
+    (category: CategoryType) => category.name,
+  );
 
   const allCategoryNames = [...mainCategoryNames, ...platformCategoryNames];
   const categoryText = allCategoryNames.join('  ·  ');
@@ -47,20 +50,16 @@ export default function PostCardLong({ post, className }: PostCardLongProps) {
       )}
     >
       <div className="relative rounded-[2px] w-[158px] h-[110px] overflow-hidden flex-shrink-0">
-        {post.thumbnailUrl ? (
-          <div className="group">
-            <Image
-              src={post.thumbnailUrl}
-              alt={post.title}
-              width={158}
-              height={110}
-              priority
-              className="object-cover transition-transform duration-300 group-hover:scale-110"
-            />
-          </div>
-        ) : (
-          <div className="w-[158px] h-[110px] bg-Gray-100" />
-        )}
+        <div className="group">
+          <Image
+            src={post.thumbnailUrl || '/empty.png'}
+            alt={post.title}
+            width={158}
+            height={110}
+            priority
+            className="object-cover transition-transform duration-300 group-hover:scale-110"
+          />
+        </div>
         {/* <BookMark className="absolute bottom-2 right-2 size-5 fill-transparent text-transparent group-hover:fill-transparent group-hover:text-Gray-200 group-hover:stroke-Gray-200 group-hover:stroke-2" /> */}
       </div>
 

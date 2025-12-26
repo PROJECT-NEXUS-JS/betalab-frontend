@@ -8,6 +8,7 @@ import { useParticipantsQuery } from '@/hooks/reward/queries/useParticipantsQuer
 import { ParticipantItemType } from '@/hooks/reward/dto/participants';
 import { useApproveApplicationMutation } from '@/hooks/dashboard/mutations/useApplicationMutation';
 import { useCompleteApplicationMutation } from '@/hooks/dashboard/mutations/useApplicationMutation';
+import { usePayRewardMutation } from '@/hooks/reward/mutations/usePayRewardMutation';
 
 interface RewardStateListClientProps {
   postId: number;
@@ -104,6 +105,7 @@ export default function RewardStateListClient({ postId }: RewardStateListClientP
 
   const approveMutation = useApproveApplicationMutation(postId);
   const completeMutation = useCompleteApplicationMutation(postId);
+  const payRewardMutation = usePayRewardMutation(postId);
 
   if (error) {
     return <div>데이터를 불러오는 중 오류가 발생했습니다.</div>;
@@ -147,7 +149,16 @@ export default function RewardStateListClient({ postId }: RewardStateListClientP
                 }
               }
             : undefined,
-        onPay: rowType === '지급전' ? () => {} : undefined,
+        onPay:
+          rowType === '지급전'
+            ? async () => {
+                try {
+                  await payRewardMutation.mutateAsync(item.participationId);
+                } catch (error) {
+                  console.error('리워드 지급 실패:', error);
+                }
+              }
+            : undefined,
       };
     },
   );

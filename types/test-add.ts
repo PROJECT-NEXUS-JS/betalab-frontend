@@ -33,6 +33,7 @@ export const TestAddSchema = z
     ageMax: z.coerce.number().int().min(0).optional(),
     genderRequirement: z.string().optional(),
     additionalRequirements: z.string().optional(),
+    screenerQuestions: z.array(z.string()).optional(),
     rewardType: z.enum(['CASH', 'GIFT_CARD', 'PRODUCT', 'ETC']).optional(),
     rewardDescription: z.string().optional(),
     feedbackItems: z.array(z.string()).optional(),

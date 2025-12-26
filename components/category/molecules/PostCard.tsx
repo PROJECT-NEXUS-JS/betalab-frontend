@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import Tag from '@/components/common/atoms/Tag';
 import { Skeleton } from '@/components/ui/skeleton';
 import RankingArticle from '@/components/common/svg/RankingArticle';
-import { TestCardType } from '@/types/models/testCard';
+import { TestCardType, CategoryType } from '@/types/models/testCard';
 
 interface PostCardProps {
   className?: string;
@@ -13,8 +13,10 @@ interface PostCardProps {
 }
 
 export default function PostCard({ post, className, ranking }: PostCardProps) {
-  const mainCategoryNames = post.mainCategories.map(category => category.name);
-  const platformCategoryNames = post.platformCategories.map(category => category.name);
+  const mainCategoryNames = post.mainCategories.map((category: CategoryType) => category.name);
+  const platformCategoryNames = post.platformCategories.map(
+    (category: CategoryType) => category.name,
+  );
 
   const allCategoryNames = [...mainCategoryNames, ...platformCategoryNames];
   const categoryText = allCategoryNames.join('  ·  ');
@@ -49,20 +51,16 @@ export default function PostCard({ post, className, ranking }: PostCardProps) {
       )}
     >
       <div className="relative rounded-[2px] w-full h-[146px] overflow-hidden">
-        {post.thumbnailUrl ? (
-          <div className="group">
-            <Image
-              src={post.thumbnailUrl}
-              alt={post.title}
-              width={234}
-              height={146}
-              priority
-              className="object-cover transition-transform duration-300 group-hover:scale-110"
-            />
-          </div>
-        ) : (
-          <div className="w-[234px] h-[146px] bg-Gray-100" />
-        )}
+        <div className="group">
+          <Image
+            src={post.thumbnailUrl || '/empty.png'}
+            alt={post.title}
+            width={234}
+            height={146}
+            priority
+            className="object-cover transition-transform duration-300 group-hover:scale-110"
+          />
+        </div>
         {/* <BookMark className="absolute bottom-2 right-2 size-5 fill-transparent text-transparent group-hover:fill-transparent group-hover:text-Gray-200 group-hover:stroke-Gray-200 group-hover:stroke-2" /> */}
       </div>
       <div className="flex flex-col w-full max-w-[12.625rem] h-[91px]">
