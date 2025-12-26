@@ -22,6 +22,7 @@ const requirementSchema = z
     ageMin: z.number().nullable(),
     ageMax: z.number().nullable(),
     additionalRequirements: z.string().nullable(),
+    screenerQuestions: z.array(z.string()).optional(),
   })
   .strict();
 
@@ -31,6 +32,7 @@ const feedbackSchema = z
     feedbackMethod: z.string().nullable(),
     feedbackItems: z.array(z.string()).nullable(),
     privacyItems: z.array(z.enum(['NAME', 'EMAIL', 'CONTACT', 'OTHER'])),
+    privacyPurpose: z.string().nullable().optional(),
   })
   .strict();
 

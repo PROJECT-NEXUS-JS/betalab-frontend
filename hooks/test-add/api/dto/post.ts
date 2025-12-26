@@ -23,6 +23,7 @@ export const CreatePostPayloadSchema = z
     ageMax: z.number().int().min(0).optional(),
     genderRequirement: z.enum(['무관', '남성', '여성']).optional(),
     additionalRequirements: z.string().optional(),
+    screenerQuestions: z.array(z.string()).optional(),
 
     rewardType: z.enum(['CASH', 'GIFT_CARD', 'PRODUCT', 'ETC']).optional(),
     rewardDescription: z.string().optional(),

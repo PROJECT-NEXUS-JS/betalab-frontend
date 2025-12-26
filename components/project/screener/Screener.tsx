@@ -90,6 +90,7 @@ function createQuestions(postDetail: ProjectDataModel | undefined) {
 
   // 5. 개인정보 이용 동의
   if (
+    postDetail.feedback.privacyItems &&
     postDetail.feedback.privacyItems.length > 0 &&
     !postDetail.feedback.privacyItems.includes('OTHER')
   ) {

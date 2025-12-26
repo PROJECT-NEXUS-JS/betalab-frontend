@@ -34,6 +34,7 @@ export type CreatePostPayload = {
   ageMax?: number;
   genderRequirement?: string;
   additionalRequirements?: string;
+  screenerQuestions?: string[];
   rewardType?: 'CASH' | 'GIFT_CARD' | 'PRODUCT' | 'ETC';
   rewardDescription?: string;
   feedbackItems?: string[];
@@ -80,6 +81,7 @@ export function buildCreatePostPayload(form: TestAddState): CreatePostPayload {
     ageMax: form.ageMax,
     genderRequirement: form.genderRequirement ?? '무관',
     additionalRequirements: form.additionalRequirements,
+    screenerQuestions: form.screenerQuestions,
     rewardType: form.rewardType as CreatePostPayload['rewardType'],
     rewardDescription: form.rewardDescription,
     feedbackItems: form.feedbackItems ?? [],
