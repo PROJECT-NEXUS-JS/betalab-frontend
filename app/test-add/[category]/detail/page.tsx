@@ -14,6 +14,7 @@ import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
 import { useCreatePostMutation } from '@/hooks/test-add/mutations/useCreatePostMutation';
 import Chip from '@/components/common/atoms/Chip';
 import CheckTag from '@/components/common/atoms/CheckTag';
+import InfoModal from '@/components/common/molecules/InfoModal';
 
 const PI_OPTIONS = ['이름', '이메일', '연락처', '기타'] as const;
 type PI = (typeof PI_OPTIONS)[number];
@@ -50,6 +51,7 @@ export default function TestAddSettingPage() {
   const total = 10;
   const [thumbnailImages, setThumbnailImages] = useState<File[]>([]); // 썸네일
   const [galleryImages, setGalleryImages] = useState<File[]>([]);
+  const [infoModalOpen, setInfoModalOpen] = useState(false);
 
   useEffect(() => {
     const pis = Array.isArray(form.privacyItems) ? form.privacyItems : [];
@@ -81,14 +83,19 @@ export default function TestAddSettingPage() {
     title: title.trim() || undefined,
     serviceSummary: summary.trim() || undefined,
     privacyItems: piSelected.length ? piSelected.map(p => UI_TO_API[p]) : undefined,
+    privacyPurpose: piPurpose.trim() || undefined,
     mediaUrl: mediaTab === 'video' && videoUrl.trim() ? videoUrl.trim() : undefined,
     participationMethod: '온라인' as const,
     storyGuide: form.storyGuide || undefined,
   });
 
-  const onNext = async () => {
+  const handleNext = () => {
     if (!title.trim()) return alert('제목을 입력해주세요.');
     if (!summary.trim()) return alert('한 줄 소개를 입력해주세요.');
+    setInfoModalOpen(true);
+  };
+
+  const handleInfoModalConfirm = async () => {
     if (createPostMutation.isPending) return;
 
     const patch = buildPatch();
@@ -319,10 +326,16 @@ export default function TestAddSettingPage() {
             <CarouselBar activeIndex={stepIndex} total={totalSteps} />
           </div>
           <div className="flex-1 flex justify-end">
-            <StepNextButton onClick={onNext} />
+            <StepNextButton onClick={handleNext} />
           </div>
         </div>
       </div>
+      <InfoModal
+        type="recruiter"
+        isOpen={infoModalOpen}
+        onClose={() => setInfoModalOpen(false)}
+        onConfirm={handleInfoModalConfirm}
+      />
     </main>
   );
 }
