@@ -124,7 +124,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
               {`홈 > ${projectData.mainCategories[0]?.name} > ${projectData.genreCategories.map((cat: { code: string; name: string }) => cat.name).join(', ')}`}{' '}
             </p>
             <CustomMedia
-              src={projectData.thumbnailUrl}
+              src={projectData.thumbnailUrl || '/empty.png'}
               alt={projectData.description || 'default description'}
               width={854}
               height={533}

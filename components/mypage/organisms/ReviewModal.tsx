@@ -69,15 +69,11 @@ export default function ReviewModal({
 
         <div className="flex flex-row gap-5">
           <div className="w-[256px] h-[160px] flex-shrink-0 shadow-sm">
-            {postData.thumbnailUrl ? (
-              <img
-                src={postData.thumbnailUrl}
-                alt="썸네일"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full bg-gray-300"></div>
-            )}
+            <img
+              src={postData.thumbnailUrl || '/empty.png'}
+              alt="썸네일"
+              className="w-full h-full object-cover"
+            />
           </div>
           <div className="flex flex-col justify-end">
             <h3 className="text-subtitle-02 font-semibold text-Black line-clamp-2">
