@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import Tag from '@/components/common/atoms/Tag';
 import { Skeleton } from '@/components/ui/skeleton';
+import { CategoryType } from '@/types/models/testCard';
 
 interface PostCardLongProps {
   className?: string;
@@ -10,8 +11,10 @@ interface PostCardLongProps {
 }
 
 export default function PostCardLong({ post, className }: PostCardLongProps) {
-  const mainCategoryNames = post.mainCategories.map(category => category.name);
-  const platformCategoryNames = post.platformCategories.map(category => category.name);
+  const mainCategoryNames = post.mainCategories.map((category: CategoryType) => category.name);
+  const platformCategoryNames = post.platformCategories.map(
+    (category: CategoryType) => category.name,
+  );
 
   const allCategoryNames = [...mainCategoryNames, ...platformCategoryNames];
   const categoryText = allCategoryNames.join('  ·  ');
