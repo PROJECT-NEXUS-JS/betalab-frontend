@@ -4,11 +4,12 @@ import { cn } from '@/lib/utils';
 import Tag from '@/components/common/atoms/Tag';
 import { Skeleton } from '@/components/ui/skeleton';
 import RankingArticle from '@/components/common/svg/RankingArticle';
-import { TestCardType, CategoryType } from '@/types/models/testCard';
+import { PostSummaryType } from '@/hooks/posts/dto/postList';
+import { CategoryType } from '@/hooks/posts/dto/postDetail';
 
 interface PostCardProps {
   className?: string;
-  post: TestCardType;
+  post: PostSummaryType;
   ranking?: number;
 }
 

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { BaseModelSchema } from '@/types/models/base-model';
-import { categorySchema, scheduleSchema, rewardSchema } from '@/types/models/testCard';
+import { CategorySchema, ScheduleSchema, RewardSchema } from './postDetail';
 
 // 신청 상태 enum
 const applicationStatusSchema = z.enum(['PENDING', 'APPROVED', 'COMPLETED', 'REJECTED', 'PAID']);
@@ -55,17 +55,17 @@ const postSchema = z
     creatorProfileUrl: z.string().nullable(),
     description: z.string(),
     thumbnailUrl: z.string().nullable(),
-    mainCategories: z.array(categorySchema),
-    platformCategories: z.array(categorySchema),
-    genreCategories: z.array(categorySchema),
+    mainCategories: z.array(CategorySchema),
+    platformCategories: z.array(CategorySchema),
+    genreCategories: z.array(CategorySchema),
     status: z.enum(['DRAFT', 'ACTIVE', 'INACTIVE', 'COMPLETED', 'CANCELLED', 'EXPIRED']),
     qnaMethod: z.string(),
     likeCount: z.number(),
     viewCount: z.number(),
     currentParticipants: z.number(),
-    schedule: scheduleSchema,
+    schedule: ScheduleSchema,
     requirement: requirementSchema,
-    reward: rewardSchema.nullable(),
+    reward: RewardSchema.nullable(),
     feedback: feedbackSchema,
     content: contentSchema,
     createdAt: z.string(),

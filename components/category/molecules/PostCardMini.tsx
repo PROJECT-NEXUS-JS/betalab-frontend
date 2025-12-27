@@ -1,10 +1,11 @@
-import { TestCardType, CategoryType } from '@/types/models/testCard';
+import { CategoryType } from '@/hooks/posts/dto/postDetail';
+import { PostSummaryType } from '@/hooks/posts/dto/postList';
 import Tag from '@/components/common/atoms/Tag';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface PostCardMiniProps {
-  post: TestCardType;
+  post: PostSummaryType;
   className?: string;
 }
 

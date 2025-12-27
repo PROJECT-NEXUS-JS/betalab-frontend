@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { BaseModelSchema } from '@/types/models/base-model';
-import { categorySchema, scheduleSchema, rewardSchema } from '@/types/models/testCard';
+import { CategorySchema, RewardSchema, ScheduleSchema } from './postDetail';
 
 // 요구사항 스키마
 const requirementSchema = z
@@ -41,17 +41,17 @@ const bookmarkedPostSchema = z
     creatorProfileUrl: z.string(),
     description: z.string(),
     thumbnailUrl: z.string().nullable(),
-    mainCategories: z.array(categorySchema),
-    platformCategories: z.array(categorySchema),
-    genreCategories: z.array(categorySchema),
+    mainCategories: z.array(CategorySchema),
+    platformCategories: z.array(CategorySchema),
+    genreCategories: z.array(CategorySchema),
     status: z.enum(['DRAFT', 'PUBLISHED', 'CLOSED']),
     qnaMethod: z.string(),
     likeCount: z.number(),
     viewCount: z.number(),
     currentParticipants: z.number(),
-    schedule: scheduleSchema,
+    schedule: ScheduleSchema,
     requirement: requirementSchema,
-    reward: rewardSchema,
+    reward: RewardSchema,
     feedback: feedbackSchema,
     content: contentSchema,
     createdAt: z.string(),

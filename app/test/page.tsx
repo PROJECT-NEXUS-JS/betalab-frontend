@@ -2,7 +2,6 @@
 import { useMyPostsQuery } from '@/hooks/posts/queries/useMyPostsQuery';
 
 import PostCard, { PostCardSkeleton } from '@/components/category/molecules/PostCard';
-import { TestCardType } from '@/types/models/testCard';
 import { cn } from '@/lib/utils';
 import Button from '@/components/common/atoms/Button';
 import { useRouter } from 'next/navigation';

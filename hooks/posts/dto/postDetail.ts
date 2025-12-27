@@ -1,23 +1,25 @@
 import { z } from 'zod';
 
 // Category
-const CategorySchema = z.object({
+export const CategorySchema = z.object({
   code: z.string(),
   name: z.string(),
 });
-type CategoryModel = z.infer<typeof CategorySchema>;
+
+export type CategoryType = z.infer<typeof CategorySchema>;
 
 // Schedule
-const ScheduleSchema = z.object({
+export const ScheduleSchema = z.object({
   startDate: z.string(),
   endDate: z.string(),
-  recruitmentDeadline: z.string().nullable().optional(),
-  durationTime: z.string().nullable().optional(),
+  recruitmentDeadline: z.string(),
+  durationTime: z.string(),
 });
-type ScheduleModel = z.infer<typeof ScheduleSchema>;
+
+export type ScheduleType = z.infer<typeof ScheduleSchema>;
 
 // Requirement
-const RequirementSchema = z.object({
+export const RequirementSchema = z.object({
   maxParticipants: z.number(),
   genderRequirement: z.string().nullable(),
   ageMin: z.number().nullable(),
@@ -25,14 +27,16 @@ const RequirementSchema = z.object({
   additionalRequirements: z.string().nullable().optional(),
   screenerQuestions: z.array(z.string()).optional(),
 });
-type RequirementModel = z.infer<typeof RequirementSchema>;
+
+export type RequirementModel = z.infer<typeof RequirementSchema>;
 
 // Reward
-const RewardSchema = z.object({
-  rewardType: z.enum(['CASH', 'GIFT_CARD', 'PRODUCT', 'NONE']), // "CASH" 혹은 string
+export const RewardSchema = z.object({
+  rewardType: z.enum(['CASH', 'GIFT_CARD', 'PRODUCT', 'NONE']),
   rewardDescription: z.string().nullable(),
 });
-type RewardModel = z.infer<typeof RewardSchema>;
+
+export type RewardType = z.infer<typeof RewardSchema>;
 
 // Feedback
 const FeedbackSchema = z.object({
@@ -44,7 +48,7 @@ const FeedbackSchema = z.object({
     .optional(),
   privacyPurpose: z.string().nullable().optional(),
 });
-type FeedbackModel = z.infer<typeof FeedbackSchema>;
+type FeedbackType = z.infer<typeof FeedbackSchema>;
 
 // Content
 const ContentSchema = z.object({
@@ -52,7 +56,7 @@ const ContentSchema = z.object({
   storyGuide: z.string().nullable(),
   mediaUrls: z.array(z.string()).or(z.null()).optional(), // mediaUrlS는 선택적이며, null일 수 있음
 });
-type ContentModel = z.infer<typeof ContentSchema>;
+type ContentType = z.infer<typeof ContentSchema>;
 
 // particapationStatus
 export const ParticapationStatusEnum = z.enum([
