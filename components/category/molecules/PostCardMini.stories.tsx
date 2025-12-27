@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import PostCardMini from './PostCardMini';
-import { UsersPostsListItemType } from '@/hooks/posts/dto/postList';
+import { PostSummaryType } from '@/hooks/posts/dto/postList';
 
 const meta: Meta<typeof PostCardMini> = {
   title: 'Category/PostCardMini',
@@ -21,8 +21,8 @@ type Story = StoryObj<typeof meta>;
 
 // 기본 데이터 템플릿 (미래 날짜로 설정)
 const createPostData = (
-  overrides: Partial<UsersPostsListItemType> = {},
-): UsersPostsListItemType => ({
+  overrides: Partial<PostSummaryType> = {},
+): PostSummaryType => ({
   id: 1,
   title: '기본 제목',
   serviceSummary: '기본 서비스 요약입니다.',

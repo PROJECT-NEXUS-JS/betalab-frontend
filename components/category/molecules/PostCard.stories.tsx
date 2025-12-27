@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import PostCard from './PostCard';
-import { UsersPostsListItemType } from '@/hooks/posts/dto/postList';
+import { PostSummaryType } from '@/hooks/posts/dto/postList';
 
 const meta: Meta<typeof PostCard> = {
   title: 'Category/PostCard',
@@ -21,8 +21,8 @@ type Story = StoryObj<typeof meta>;
 
 // 기본 데이터 템플릿 (API 응답 타입에 맞춤)
 const createPostData = (
-  overrides: Partial<UsersPostsListItemType> = {},
-): UsersPostsListItemType => ({
+  overrides: Partial<PostSummaryType> = {},
+): PostSummaryType => ({
   id: 1,
   title: '기본 제목',
   serviceSummary: '기본 서비스 요약입니다.',

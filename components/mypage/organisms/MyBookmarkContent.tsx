@@ -4,7 +4,7 @@ import PostCard, { PostCardSkeleton } from '@/components/category/molecules/Post
 import { useRouter } from 'next/navigation';
 import Pagination from '@/components/category/molecules/Pagination';
 import EmptyCard from '../molecules/EmptyCard';
-import { TestCardType } from '@/types/models/testCard';
+import { PostSummaryType } from '@/hooks/posts/dto/postList';
 
 export default function MyBookmarkContent() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -44,7 +44,7 @@ export default function MyBookmarkContent() {
           />
         ) : (
           myBookmarksData.data.content.map(post => {
-            const postCardData: TestCardType = {
+            const postCardData: PostSummaryType = {
               id: post.id,
               title: post.title,
               serviceSummary: post.serviceSummary,

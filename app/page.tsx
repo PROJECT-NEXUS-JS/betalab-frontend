@@ -11,7 +11,7 @@ import PostCardMini from '@/components/category/molecules/PostCardMini';
 import { usePostsListHomeQuery } from '@/hooks/posts/queries/usePostsListHomeQuery';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { TestCardType } from '@/types/models/testCard';
+import { PostSummaryType } from '@/hooks/posts/dto/postList';
 
 const PAGE_CARD_SIZE = 4;
 
@@ -78,7 +78,7 @@ export default function HomePage() {
                 <p className="text-body-01 text-Gray-300">오늘의 추천 테스트가 없어요.</p>
               </div>
             ) : (
-              recommendPosts.content.map((post: TestCardType) => (
+              recommendPosts.content.map((post: PostSummaryType) => (
                 <PostCard key={post.id} post={post} />
               ))
             )}
@@ -101,7 +101,7 @@ export default function HomePage() {
                 <p className="text-body-01 text-Gray-300">곧 마감되는 테스트가 없어요.</p>
               </div>
             ) : (
-              deadlinePosts.content.map((post: TestCardType) => (
+              deadlinePosts.content.map((post: PostSummaryType) => (
                 <div
                   key={post.id}
                   className="cursor-pointer"
@@ -132,7 +132,7 @@ export default function HomePage() {
                 <p className="text-body-01 text-Gray-300">인기 테스트가 없어요.</p>
               </div>
             ) : (
-              popularPosts.content.map((post: TestCardType, index: number) => {
+              popularPosts.content.map((post: PostSummaryType, index: number) => {
                 const currentRanking = popularPage * PAGE_CARD_SIZE + index + 1;
                 return <PostCard key={post.id} post={post} ranking={currentRanking} />;
               })

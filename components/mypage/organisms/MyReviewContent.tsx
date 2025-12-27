@@ -7,7 +7,7 @@ import PostCard, { PostCardSkeleton } from '@/components/category/molecules/Post
 import { useRouter } from 'next/navigation';
 import Pagination from '@/components/category/molecules/Pagination';
 import EmptyCard from '../molecules/EmptyCard';
-import { TestCardType } from '@/types/models/testCard';
+import { PostSummaryType } from '@/hooks/posts/dto/postList';
 import { useWrittenReviewsQuery } from '@/hooks/review/queries/useWrittenReviewsQuery';
 import MyReviewCard from '@/components/common/molecules/MyReviewCard';
 import Button from '@/components/common/atoms/Button';
@@ -121,7 +121,7 @@ export default function MyReviewContent() {
               />
             ) : (
               writableReviewsData.data.content.map((review: WritableReviewItemType) => {
-                const postCardData: TestCardType = {
+                const postCardData: PostSummaryType = {
                   id: review.postId,
                   title: review.postTitle,
                   serviceSummary: `카테고리: ${review.category}`,

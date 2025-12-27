@@ -99,7 +99,6 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
   useLayoutEffect(() => {
     if (contentRef.current) {
       // 스크롤 높이(전체 높이)가 630px을 초과하는지 확인
-      console.log('contentRef.current.scrollHeight', contentRef.current.scrollHeight);
       const fullHeight = contentRef.current.scrollHeight;
       if (fullHeight > 630) {
         setShouldShowFoldButton(true);

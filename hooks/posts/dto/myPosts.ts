@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { BaseModelSchema } from '@/types/models/base-model';
-import { categorySchema } from '@/types/models/testCard';
+import { CategorySchema } from './postDetail';
 
 // 내 게시글 조회 요청 스키마
 export const getMyPostsRequestSchema = z
@@ -20,9 +20,9 @@ const myPostSchema = z
     title: z.string(),
     serviceSummary: z.string(),
     thumbnailUrl: z.string().nullable(),
-    mainCategories: z.array(categorySchema),
-    platformCategories: z.array(categorySchema),
-    genreCategories: z.array(categorySchema),
+    mainCategories: z.array(CategorySchema),
+    platformCategories: z.array(CategorySchema),
+    genreCategories: z.array(CategorySchema),
   })
   .strict();
 
