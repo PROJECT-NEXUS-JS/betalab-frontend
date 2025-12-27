@@ -8,7 +8,6 @@ import {
   type UserPostListModel,
 } from '@/hooks/test-add/api/dto/post';
 
-const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 type CreateFiles = { thumbnail?: File | null; images?: File[] | null };
 
 export async function createUserPostFromForm(
@@ -31,7 +30,6 @@ export async function createUserPost(
   }
 
   const path = '/v1/users/posts';
-  const url = `${BASE_URL}${path}`;
 
   const fd = new FormData();
   // 서버가 object를 기대하므로 Blob으로 전송 (project-manage와 동일한 방식)
