@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import ApplyCard, { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
 import { usePostLikeCountQuery, usePostLikeMutation, usePostLikeStatusQuery } from '@/hooks/like';
-import { ParticapationStatusEnum } from '@/hooks/posts/dto/postDetail';
+import { ParticipationStatusEnum } from '@/hooks/posts/dto/postDetail';
 import useScreenerStore from '@/stores/screenerStore';
 import InfoModal from '@/components/common/molecules/InfoModal';
 
@@ -39,7 +39,7 @@ export default function ProjectDetailCardClient({ projectId, ApplyCardProps }: P
   };
 
   const handleRegister = () => {
-    if (ApplyCardProps.participationStatus === ParticapationStatusEnum.enum.TEST_COMPLETED) {
+    if (ApplyCardProps.participationStatus === ParticipationStatusEnum.enum.TEST_COMPLETED) {
       router.push(`/project/${projectId}/feedback`);
     } else {
       setInfoModalOpen(true);

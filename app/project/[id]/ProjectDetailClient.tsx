@@ -45,7 +45,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
     }
   };
 
-  const { data: postDetailData, isLoading, isError, error } = useGetPostDetailQuery(Number(id));
+  const { data: postDetailData, isLoading, isError } = useGetPostDetailQuery(Number(id));
   const {
     data: rightSidebarData,
     isLoading: isRightSidebarLoading,
@@ -69,7 +69,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
         participationMethod: '',
         qnaMethod: '',
       },
-      postDetailData?.data.participationStatus ?? 'PENDING',
+      postDetailData?.data.participationStatus ?? null, // undefined일 경우 null로 치환
     );
 
   const {
