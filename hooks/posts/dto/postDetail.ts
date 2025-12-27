@@ -59,13 +59,17 @@ const ContentSchema = z.object({
 type ContentType = z.infer<typeof ContentSchema>;
 
 // particapationStatus
-export const ParticapationStatusEnum = z.enum([
+export const ParticipationStatusEnum = z.enum([
   'PENDING',
   'APPROVED',
   'TEST_COMPLETED',
   'COMPLETED',
   'REJECTED',
 ]);
+
+// null 허용한 particapationStatus 타입
+const ParticipationStatus = ParticipationStatusEnum.nullable();
+export type ParticipationStatusType = z.infer<typeof ParticipationStatus>;
 
 // Main ProjectDataSchema
 export const ProjectDataSchema = z.object({
@@ -93,7 +97,7 @@ export const ProjectDataSchema = z.object({
   createdBy: z.number(),
   isLiked: z.boolean(),
   isParticipated: z.boolean(),
-  participationStatus: ParticapationStatusEnum.nullable(),
+  participationStatus: ParticipationStatus,
 });
 
 export type ProjectDataModel = z.infer<typeof ProjectDataSchema>;

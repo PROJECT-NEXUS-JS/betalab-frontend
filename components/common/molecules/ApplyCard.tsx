@@ -5,7 +5,7 @@ import Condition, { ConditionProps } from '../atoms/Condition';
 import Button from '../atoms/Button';
 import UserProfile from '../svg/UserProfile';
 import BookMark from '../svg/BookMark';
-import { ParticapationStatusEnum } from '@/hooks/posts/dto/postDetail';
+import { ParticipationStatusEnum } from '@/hooks/posts/dto/postDetail';
 export interface ApplyCardProps {
   title: string;
   profile: {
@@ -22,7 +22,7 @@ export interface ApplyCardProps {
   scrapedAndRegisterShow?: boolean;
   scrapClicked?: () => void;
   registerClicked?: () => void;
-  participationStatus: string;
+  participationStatus: string | null;
 }
 
 export default function ApplyCard({
@@ -44,9 +44,9 @@ export default function ApplyCard({
   const endDay = endDate.getDate();
 
   const alreadyApplied =
-    participationStatus === ParticapationStatusEnum.enum.PENDING ||
-    participationStatus === ParticapationStatusEnum.enum.APPROVED ||
-    participationStatus === ParticapationStatusEnum.enum.COMPLETED;
+    participationStatus === ParticipationStatusEnum.enum.PENDING ||
+    participationStatus === ParticipationStatusEnum.enum.APPROVED ||
+    participationStatus === ParticipationStatusEnum.enum.COMPLETED;
 
   const viewConditions = viewMore ? conditions : conditions.slice(0, 3);
   return (
@@ -139,7 +139,7 @@ export default function ApplyCard({
               Size="lg"
               // 테스트를 완료했으면 완료하기 버튼 띄움
               label={
-                participationStatus === ParticapationStatusEnum.enum.TEST_COMPLETED
+                participationStatus === ParticipationStatusEnum.enum.TEST_COMPLETED
                   ? '완료하기'
                   : alreadyApplied
                     ? '신청 완료'

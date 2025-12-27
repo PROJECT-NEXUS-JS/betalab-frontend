@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ParticipationStatusEnum } from '@/hooks/posts/dto/postDetail';
 
 const PageableMetaSchema = z.object({
   paged: z.boolean(),
@@ -13,15 +14,12 @@ const PageableMetaSchema = z.object({
   unpaged: z.boolean(),
 });
 
-export const ParticipationStatusEnum = z.enum([
+export const RewardStatusEnum = z.enum([
   'PENDING',
-  'APPROVED',
-  'COMPLETED',
+  'PAYMENT_PENDING',
+  'PAYMENT_IN_PROGRESS',
   'PAID',
-  'REJECTED',
 ]);
-
-export const RewardStatusEnum = z.enum(['PENDING', 'PAYMENT_PENDING', 'PAYMENT_IN_PROGRESS', 'PAID']);
 
 const ParticipantItemSchema = z.object({
   participationId: z.number(),
@@ -63,4 +61,3 @@ export const ParticipantsResponseSchema = z.object({
 
 export type ParticipantsResponseType = z.infer<typeof ParticipantsResponseSchema>;
 export type ParticipantItemType = z.infer<typeof ParticipantItemSchema>;
-
