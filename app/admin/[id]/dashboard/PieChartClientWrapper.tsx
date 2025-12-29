@@ -8,6 +8,7 @@ import {
   STATUS_COLORS,
   REWARD_COLORS,
 } from '@/components/admin/CustomPieChart';
+import { PieChartModel } from '@/hooks/dashboard/dto/pieChart';
 
 export default function PieChartClientWrapper({ postId }: { postId: number }) {
   const router = useRouter();
@@ -24,7 +25,8 @@ export default function PieChartClientWrapper({ postId }: { postId: number }) {
         </div>
       </div>
     );
-  if (isError) return <p className="text-center text-red-500">통계 정보를 불러오는 데 실패했습니다.</p>;
+  if (isError)
+    return <p className="text-center text-red-500">통계 정보를 불러오는 데 실패했습니다.</p>;
 
   const chartData = data?.data;
   if (!chartData) {
@@ -40,11 +42,15 @@ export default function PieChartClientWrapper({ postId }: { postId: number }) {
 
   const hasStatusData =
     chartData.statusChart?.items && chartData.statusChart.items.length > 0
-      ? chartData.statusChart.items.some(item => item.value > 0)
+      ? chartData.statusChart.items.some(
+          (item: PieChartModel['statusChart']['items'][number]) => item.value > 0,
+        )
       : false;
   const hasRewardData =
     chartData.rewardChart?.items && chartData.rewardChart.items.length > 0
-      ? chartData.rewardChart.items.some(item => item.value > 0)
+      ? chartData.rewardChart.items.some(
+          (item: PieChartModel['rewardChart']['items'][number]) => item.value > 0,
+        )
       : false;
 
   return (
@@ -80,4 +86,3 @@ export default function PieChartClientWrapper({ postId }: { postId: number }) {
     </div>
   );
 }
-

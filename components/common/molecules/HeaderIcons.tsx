@@ -73,7 +73,6 @@ const HeaderIcons = ({ userData }: HeaderIconsProps) => {
   return (
     <>
       <div className="flex flex-row gap-5 items-center">
-        <Bell className="size-6 text-Gray-300" />
         <Link href="/mypage?tab=bookmarked-tests">
           <BookMark className="size-6 fill-transparent text-Gray-300 stroke-Gray-300 stroke-2 cursor-pointer" />
         </Link>

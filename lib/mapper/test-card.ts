@@ -30,13 +30,14 @@ export const mapRecentlyViewedTestToTestCard = (test: {
   category: string;
   title: string;
   oneLineIntro: string;
+  thumbnailUrl?: string | null;
   tags: string[];
   viewedAt: string;
 }): PostSummaryType => ({
   id: test.postId,
   title: test.title,
   serviceSummary: test.oneLineIntro,
-  thumbnailUrl: null,
+  thumbnailUrl: test.thumbnailUrl ?? null,
   mainCategories: [{ code: test.category, name: test.category }],
   platformCategories: [],
   genreCategories: [],
@@ -63,7 +64,7 @@ export const mapToTestCard = (test: any): PostSummaryType => {
     id: test.postId || test.id || 0,
     title: test.title || '',
     serviceSummary: test.serviceSummary || test.oneLineIntro || '',
-    thumbnailUrl: test.thumbnailUrl || null,
+    thumbnailUrl: test.thumbnailUrl ?? null,
     mainCategories: test.mainCategories || [
       { code: test.category || '', name: test.category || '' },
     ],

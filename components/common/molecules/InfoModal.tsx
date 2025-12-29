@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import Button from '@/components/common/atoms/Button';
 
 export type InfoModalType = 'participant' | 'recruiter';
@@ -17,9 +17,9 @@ const PARTICIPANT_CONTENT = {
   title: ['참여자이신가요?', '시작 전에 확인해 주세요'],
   subtitle: (
     <>
-      <span className="text-gray-600">베타랩은</span>
-      <span className="text-blue-600"> 테스트 참여 신청, 피드백 제출</span>
-      <span className="text-gray-600">을 돕는 플랫폼이에요</span>
+      <span className="text-gray-600 text-sm font-medium">베타랩은</span>
+      <span className="text-blue-600 text-sm font-medium"> 테스트 참여 신청, 피드백 제출</span>
+      <span className="text-gray-600 text-sm font-medium">을 돕는 플랫폼이에요</span>
     </>
   ),
   alertText: '아래 항목은 모집자가 직접 제공해드려요',
@@ -46,9 +46,9 @@ const RECRUITER_CONTENT = {
   title: ['모집자이신가요?', '시작 전에 확인해 주세요'],
   subtitle: (
     <>
-      <span className="text-gray-600">베타랩은</span>
-      <span className="text-blue-600"> 테스터 모집·신청·피드백·진행 관리</span>
-      <span className="text-gray-600">를 돕는 운영 플랫폼이에요</span>
+      <span className="text-gray-600 text-sm font-medium">베타랩은</span>
+      <span className="text-blue-600 text-sm font-medium"> 테스터 모집·신청·피드백·진행 관리</span>
+      <span className="text-gray-600 text-sm font-medium">를 돕는 운영 플랫폼이에요</span>
     </>
   ),
   alertText: (
@@ -93,21 +93,19 @@ export default function InfoModal({ type, isOpen, onClose, onConfirm }: InfoModa
       >
         <div className="flex flex-col justify-start items-center gap-7">
           {/* Title */}
-          <DialogTitle className="flex flex-col justify-start items-center">
+          <div className="flex flex-col justify-start items-center">
             {content.title.map((line, index) => (
-              <span
+              <div
                 key={index}
-                className="text-center justify-start text-Black text-subtitle-01 font-medium"
+                className="text-center justify-start text-gray-900 text-2xl font-medium leading-9"
               >
                 {line}
-              </span>
+              </div>
             ))}
-          </DialogTitle>
+          </div>
 
           {/* Subtitle */}
-          <DialogDescription className="justify-start text-center text-body-02 font-medium">
-            {content.subtitle}
-          </DialogDescription>
+          <div className="justify-start text-center">{content.subtitle}</div>
 
           {/* Alert Box */}
           <div className="self-stretch p-5 bg-sky-50 rounded-xl flex flex-col justify-start items-start gap-5">

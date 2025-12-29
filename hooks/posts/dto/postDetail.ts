@@ -12,8 +12,8 @@ export type CategoryType = z.infer<typeof CategorySchema>;
 export const ScheduleSchema = z.object({
   startDate: z.string(),
   endDate: z.string(),
-  recruitmentDeadline: z.string(),
-  durationTime: z.string(),
+  recruitmentDeadline: z.string().nullable().optional(),
+  durationTime: z.string().nullable().optional(),
 });
 
 export type ScheduleType = z.infer<typeof ScheduleSchema>;
