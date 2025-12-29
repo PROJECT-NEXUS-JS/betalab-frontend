@@ -11,7 +11,7 @@ import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
 export default function TestAddNamePage() {
   const { category } = useParams<{ category: string }>();
   const router = useRouter();
-  const { form, update, save } = useTestAddForm();
+  const { form, update, save, getForm } = useTestAddForm();
 
   const [title, setTitle] = useState('');
   const [isFocused, setIsFocused] = useState(false);
@@ -41,6 +41,9 @@ export default function TestAddNamePage() {
     update({ title });
     save();
   };
+
+  const currentForm = getForm();
+  console.log('currentForm', currentForm);
 
   return (
     <TestAddLayout

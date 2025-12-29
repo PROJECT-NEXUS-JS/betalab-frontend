@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import TestAddLayout from '@/components/test-add/layouts/TestAddLayout';
 import ConditionCard from '@/components/test-add/ConditionCard';
@@ -9,6 +9,9 @@ import Button from '@/components/common/atoms/Button';
 import Chip from '@/components/common/atoms/Chip';
 import TextCounter from '@/components/test-add/TextCounter';
 import { useTestAddForm } from '@/hooks/test-add/useTestAddForm';
+import { showToast } from '@/components/common/toast/ToastHost';
+import { LoaderCircle } from 'lucide-react';
+import { API_TO_UI_APP, API_TO_UI_GAME } from '@/constants/platformMapping';
 
 type ButtonState = 'Focused' | 'Solid';
 type RewardUI = 'cash' | 'gift' | 'product' | 'etc';
@@ -28,7 +31,7 @@ const API_TO_UI: Record<string, RewardUI> = {
 export default function TestAddConditionsPage() {
   const router = useRouter();
   const { category } = useParams<{ category?: string }>();
-  const { form, update, save } = useTestAddForm();
+  const { form, update, save, getForm } = useTestAddForm();
 
   const [openGender, setOpenGender] = useState(false);
   const [openAge, setOpenAge] = useState(false);
@@ -43,6 +46,8 @@ export default function TestAddConditionsPage() {
   const [rewardType, setRewardType] = useState<RewardUI | null>(null);
   const [rewardDesc, setRewardDesc] = useState('');
   const [rewardRule, setRewardRule] = useState('');
+
+  const [isQuestionsGenerating, setIsQuestionsGenerating] = useState(false);
 
   const MAX_REWARD_LENGTH = 30;
 
@@ -71,7 +76,7 @@ export default function TestAddConditionsPage() {
 
     if (typeof form.additionalRequirements === 'string') {
       setOpenOther(!!form.additionalRequirements);
-      setOtherConditions(form.additionalRequirements || '');
+      setOtherConditions(form.additionalRequirements ?? '');
     }
 
     if (form.rewardType) {
@@ -132,7 +137,7 @@ export default function TestAddConditionsPage() {
     alert('임시 저장되었습니다.');
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (openGender && !gender) {
       alert('성별을 선택해주세요.');
       return;
@@ -160,34 +165,88 @@ export default function TestAddConditionsPage() {
       return;
     }
 
-    const patch: any = {
-      genderRequirement: openGender ? (gender === 'male' ? '남성' : '여성') : '무관',
-      additionalRequirements: openOther ? otherConditions.trim() || undefined : undefined,
-      rewardType: openReward && rewardType ? UI_TO_API[rewardType] : undefined,
-      rewardDescription:
-        openReward && (rewardDesc || rewardRule)
-          ? [rewardDesc.trim(), rewardRule.trim() ? `지급 조건: ${rewardRule.trim()}` : '']
-              .filter(Boolean)
-              .join(' ')
-          : undefined,
-    };
+    // 질문 생성 시작
+    setIsQuestionsGenerating(true);
 
-    if (openAge) {
-      if (ageMode === 'adult') {
-        patch.ageMin = 19;
-        patch.ageMax = undefined;
-      } else {
-        patch.ageMin = Number(ageFrom);
-        patch.ageMax = Number(ageTo);
+    try {
+      // 모든 조건을 하나의 텍스트로 결합
+      const conditionsArray: string[] = [];
+
+      // 플랫폼
+      const currentPlatformCategories = getForm().platformCategory ?? [];
+      const hasAllOption = currentPlatformCategories.some(code =>
+        ['WEB_ALL', 'APP_ALL', 'GAME_ALL', 'ETC_ALL'].includes(code),
+      );
+
+      if (currentPlatformCategories.length > 0 && !hasAllOption) {
+        const platformNames = currentPlatformCategories.map(code => {
+          // APP, GAME 매핑 객체에서 한글 이름을 찾음
+          return API_TO_UI_APP[code] || API_TO_UI_GAME[code] || code;
+        });
+
+        // 중복 제거 후 추가
+        const uniquePlatformNames = Array.from(new Set(platformNames));
+        conditionsArray.push(`필수 사용 기기/플랫폼: ${uniquePlatformNames.join(', ')}`);
       }
-    } else {
-      patch.ageMin = undefined;
-      patch.ageMax = undefined;
-    }
+      if (openGender && gender) {
+        conditionsArray.push(`${gender === 'male' ? '성별: 남성' : '성별: 여성'}`);
+      }
 
-    update(patch);
-    save();
-    router.push(`/test-add/${category}/detail`);
+      if (openAge) {
+        if (ageMode === 'adult') conditionsArray.push('연령: 19세 이상 성인');
+        else if (ageFrom && ageTo) conditionsArray.push(`연령: ${ageFrom}세 ~ ${ageTo}세`);
+      }
+
+      if (openOther && otherConditions.trim()) {
+        conditionsArray.push(`${otherConditions.trim()}`);
+      }
+
+      const allConditionsText = conditionsArray.join(', ');
+
+      let finalQuestions: string[] = [];
+
+      // 조건이 하나라도 있으면 AI 호출
+      if (allConditionsText) {
+        const response = await fetch('/api/generate-questions', {
+          method: 'POST',
+          body: JSON.stringify({ conditions: allConditionsText }),
+        });
+
+        const data = await response.json();
+        finalQuestions = data.questions;
+      }
+
+      const patch: any = {
+        genderRequirement: openGender ? (gender === 'male' ? '남성' : '여성') : '무관',
+        additionalRequirements: openOther ? otherConditions.trim() : undefined,
+        screenerQuestions: finalQuestions,
+        rewardType: openReward && rewardType ? UI_TO_API[rewardType] : undefined,
+        rewardDescription:
+          openReward && (rewardDesc || rewardRule)
+            ? [rewardDesc.trim(), rewardRule.trim() ? `지급 조건: ${rewardRule.trim()}` : '']
+                .filter(Boolean)
+                .join(' ')
+            : undefined,
+      };
+
+      if (openAge) {
+        patch.ageMin = ageMode === 'adult' ? 19 : Number(ageFrom);
+        patch.ageMax = ageMode === 'adult' ? undefined : Number(ageTo);
+      }
+
+      update(patch);
+      save();
+      router.push(`/test-add/${category}/detail`);
+    } catch (error) {
+      console.error(error);
+      showToast({
+        type: 'error',
+        message: 'AI 질문 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+        iconName: 'siren',
+      });
+    } finally {
+      setIsQuestionsGenerating(false); // 로딩 종료
+    }
   };
 
   const getButtonState = (isActive: boolean): ButtonState => (isActive ? 'Focused' : 'Solid');
@@ -201,10 +260,22 @@ export default function TestAddConditionsPage() {
       totalSteps={10}
       onNext={handleNext}
       onSave={handleSave}
-      showSave
       saveLabel="임시 저장"
       category={category}
+      // 질문 생성 중일 땐 버튼 표시 x
+      showSave={!isQuestionsGenerating}
+      showNextButton={!isQuestionsGenerating}
     >
+      {isQuestionsGenerating && (
+        <>
+          <div className="fixed inset-0 gap-y-4 z-10 flex flex-col items-center justify-center bg-black/50">
+            <LoaderCircle className="animate-spin" />
+            <p className="text-white text-subtitle-01 font-semibold">
+              AI가 최적의 조건 질문을 생성하고 있어요...
+            </p>
+          </div>
+        </>
+      )}
       <div className="mx-auto w-full max-w-[1000px]">
         <h1 className="text-subtitle-01 font-bold mb-6">참여 조건 설정이 필요하신가요 ?</h1>
         <div className="grid grid-cols-12 gap-4 mb-6">
@@ -296,7 +367,7 @@ export default function TestAddConditionsPage() {
               onToggle={() => setOpenOther(v => !v)}
             >
               <div className="mb-2 text-caption-01 text-Gray-300">
-                최대 5개의 조건을 입력해주세요{' '}
+                최대 5개의 조건을 입력해주세요
               </div>
               <Input
                 type="text"

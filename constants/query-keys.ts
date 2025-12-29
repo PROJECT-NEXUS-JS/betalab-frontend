@@ -8,6 +8,8 @@ export const queryKeys = {
     detail: (postId: number) => [...queryKeys.posts.all, 'detail', postId] as const,
     rightSidebar: (postId: number) => [...queryKeys.posts.all, 'rightSidebar', postId] as const,
     similarPosts: (postId: number) => [...queryKeys.posts.all, 'similarPost', postId] as const,
+    screenerQuestions: (postId: number) =>
+      [...queryKeys.posts.all, 'screenerQuestions', postId] as const,
   },
   feedback: {
     all: ['feedback'] as const,

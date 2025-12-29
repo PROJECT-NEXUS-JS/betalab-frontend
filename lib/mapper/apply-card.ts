@@ -1,11 +1,12 @@
 import { RightSidebarModel } from '@/hooks/posts/dto/postRightSidebar';
 import { ConditionProps } from '@/components/common/atoms/Condition';
 import { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
+import { ParticipationStatusType } from '@/hooks/posts/dto/postDetail';
 
 // RightSidebarModel을 ApplyCardProps로 변환하는 함수
 export const transformToApplyCardProps = (
   data: RightSidebarModel,
-  participationStatus: string,
+  participationStatus: ParticipationStatusType,
 ): Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'> => {
   const conditions: ConditionProps[] = [
     {

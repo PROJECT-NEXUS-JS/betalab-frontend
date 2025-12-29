@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useQueries, UseQueryResult } from '@tanstack/react-query';
 import Pagination from '@/components/category/molecules/Pagination';
 import EmptyCard from '../molecules/EmptyCard';
-import { TestCardType } from '@/types/models/testCard';
+import { PostSummaryType } from '@/hooks/posts/dto/postList';
 import { getPostDetail } from '@/hooks/posts/queries/usePostDetailQuery';
 import { queryKeys } from '@/constants/query-keys';
 import Chip from '@/components/common/atoms/Chip';
@@ -142,7 +142,7 @@ export default function MyOngoingContent() {
 
                   if (!post) return null;
 
-                  const postCardData: TestCardType = {
+                  const postCardData: PostSummaryType = {
                     id: post.id,
                     title: post.title,
                     serviceSummary: post.serviceSummary,

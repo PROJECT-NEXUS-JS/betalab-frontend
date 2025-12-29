@@ -56,7 +56,7 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
         participationMethod: '',
         qnaMethod: '',
       },
-      postDetailData?.data?.status ?? 'PENDING', // 상태 추가
+      postDetailData?.data?.participationStatus ?? null, // undefinded -> null로 치환
     ),
     scrapedAndRegisterShow: false,
   };

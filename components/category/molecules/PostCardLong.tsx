@@ -1,13 +1,13 @@
-import { UsersPostsListItemType } from '@/hooks/posts/dto/postList';
+import { PostSummaryType } from '@/hooks/posts/dto/postList';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import Tag from '@/components/common/atoms/Tag';
 import { Skeleton } from '@/components/ui/skeleton';
-import { CategoryType } from '@/types/models/testCard';
+import { CategoryType } from '@/hooks/posts/dto/postDetail';
 
 interface PostCardLongProps {
   className?: string;
-  post: UsersPostsListItemType;
+  post: PostSummaryType;
 }
 
 export default function PostCardLong({ post, className }: PostCardLongProps) {

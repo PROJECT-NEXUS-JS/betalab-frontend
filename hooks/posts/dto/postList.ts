@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { BaseModelSchema } from '@/types/models/base-model';
-import { categorySchema, scheduleSchema, rewardSchema } from '@/types/models/testCard';
+import { CategorySchema, ScheduleSchema, RewardSchema } from './postDetail';
 
 export const getUsersPostsListRequestSchema = z
   .object({
@@ -32,16 +32,16 @@ const postSummarySchema = z
     title: z.string(),
     serviceSummary: z.string(),
     thumbnailUrl: z.string().nullable(),
-    mainCategories: z.array(categorySchema),
-    platformCategories: z.array(categorySchema),
-    genreCategories: z.array(categorySchema),
-    schedule: scheduleSchema.optional(),
-    reward: rewardSchema.optional(),
+    mainCategories: z.array(CategorySchema),
+    platformCategories: z.array(CategorySchema),
+    genreCategories: z.array(CategorySchema),
+    schedule: ScheduleSchema.optional(),
+    reward: RewardSchema.optional(),
     hasReward: z.boolean().optional(),
   })
   .strict();
 
-export type UsersPostsListItemType = z.infer<typeof postSummarySchema>;
+export type PostSummaryType = z.infer<typeof postSummarySchema>;
 
 const pageSchema = z
   .object({

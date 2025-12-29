@@ -1,4 +1,4 @@
-import { TestCardType } from '@/types/models/testCard';
+import { PostSummaryType } from '@/hooks/posts/dto/postList';
 
 // TestDeadlineType을 TestCardType으로 변환
 export const mapTestDeadlineToTestCard = (test: {
@@ -7,7 +7,7 @@ export const mapTestDeadlineToTestCard = (test: {
   title: string;
   tags: string[];
   deadline: string;
-}): TestCardType => ({
+}): PostSummaryType => ({
   id: test.postId,
   title: test.title,
   serviceSummary: `카테고리: ${test.category}`,
@@ -24,7 +24,7 @@ export const mapTestDeadlineToTestCard = (test: {
   reward: undefined,
 });
 
-// RecentlyViewedTestDto를 TestCardType으로 변환
+// RecentlyViewedTestDto를 PostSummaryType으로 변환
 export const mapRecentlyViewedTestToTestCard = (test: {
   postId: number;
   category: string;
@@ -33,7 +33,7 @@ export const mapRecentlyViewedTestToTestCard = (test: {
   thumbnailUrl?: string | null;
   tags: string[];
   viewedAt: string;
-}): TestCardType => ({
+}): PostSummaryType => ({
   id: test.postId,
   title: test.title,
   serviceSummary: test.oneLineIntro,
@@ -51,7 +51,7 @@ export const mapRecentlyViewedTestToTestCard = (test: {
 });
 
 // 범용 변환 함수 (API 응답 타입에 따라 자동 선택)
-export const mapToTestCard = (test: any): TestCardType => {
+export const mapToTestCard = (test: any): PostSummaryType => {
   if ('deadline' in test) {
     return mapTestDeadlineToTestCard(test);
   }

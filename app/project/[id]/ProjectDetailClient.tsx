@@ -42,7 +42,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
     }
   };
 
-  const { data: postDetailData, isLoading, isError, error } = useGetPostDetailQuery(Number(id));
+  const { data: postDetailData, isLoading, isError } = useGetPostDetailQuery(Number(id));
   const {
     data: rightSidebarData,
     isLoading: isRightSidebarLoading,
@@ -73,7 +73,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
         participationMethod: '',
         qnaMethod: '',
       },
-      postDetailData?.data.participationStatus ?? 'PENDING',
+      postDetailData?.data.participationStatus ?? null, // undefined일 경우 null로 치환
     );
 
   const {
@@ -103,7 +103,6 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
   useLayoutEffect(() => {
     if (contentRef.current) {
       // 스크롤 높이(전체 높이)가 630px을 초과하는지 확인
-      console.log('contentRef.current.scrollHeight', contentRef.current.scrollHeight);
       const fullHeight = contentRef.current.scrollHeight;
       if (fullHeight > 630) {
         setShouldShowFoldButton(true);

@@ -7,8 +7,8 @@ import Image from 'next/image';
 
 import { useGetPostDetailQuery } from '@/hooks/posts/queries/usePostDetailQuery';
 import useGetApplicationStatus from '@/hooks/application/queries/useGetApplicationStatus';
-import { ProjectDataModel } from '@/hooks/posts/dto/postDetail';
-import { CategoryType } from '@/types/models/testCard';
+import useGetScreenerQuestions from '@/hooks/posts/queries/useGetScreenerQuestions';
+import { ProjectDataModel, CategoryType } from '@/hooks/posts/dto/postDetail';
 
 import useScreenerStore from '@/stores/screenerStore';
 
@@ -26,11 +26,21 @@ interface Question {
 }
 
 /** 스크리너 질문 배열 생성 함수 */
-function createQuestions(postDetail: ProjectDataModel | undefined) {
+function createQuestions(
+  postDetail: ProjectDataModel | undefined,
+  screenerQuestions: string[] | undefined,
+) {
   const questions: Question[] = [];
 
-  // 정보 안들어오면 빈 배열 리턴
-  if (!postDetail) return questions;
+  // 1. AI가 생성한 질문들을 먼저 배열에 담기
+  if (screenerQuestions && screenerQuestions.length > 0) {
+    screenerQuestions.forEach((q, index) => {
+      questions.push({
+        id: `screener-${index}`,
+        question: q,
+      });
+    });
+  }
 
   // 1. 플랫폼 질문
   // 특정 플랫폼을 요구하면
@@ -89,12 +99,11 @@ function createQuestions(postDetail: ProjectDataModel | undefined) {
     postDetail.feedback.privacyItems.length > 0 &&
     !postDetail.feedback.privacyItems.includes('OTHER')
   ) {
-    // 한국어로 바꿈
     const koreanPrivacyItems = postDetail.feedback.privacyItems.map(
       (key: string) => PRIVACY_ITEM_LABELS[key],
     );
-    // 쉼표로 연결
     const privacyItemsString = koreanPrivacyItems.join(', ');
+
     questions.push({
       id: 'privacyAgree',
       question: `개인 정보 이용 (${privacyItemsString})에 동의하시나요?`,
@@ -114,39 +123,38 @@ const Screener = ({ id }: ScreenerProps) => {
   const { data: postDetail, isLoading: isPostDetailLoading } = useGetPostDetailQuery(id);
   const { data: applicationStatus, isLoading: isApplicationStatusLoading } =
     useGetApplicationStatus(id);
+  const { data: screenerQuestions, isLoading: isScreenerQuestionsLoading } =
+    useGetScreenerQuestions(id);
 
   const postDetailData = postDetail?.data;
   const applicationStatusData = applicationStatus?.data;
+  const screenerQuestionsData = screenerQuestions?.data.screenerQuestions;
 
   const [isOpenNotMatchModal, setIsOpenNotMatchModal] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   // postDetail이 로드되면 질문 배열을 생성
-  const questions = useMemo(() => createQuestions(postDetailData), [postDetail]);
+  const questions = useMemo(
+    () => createQuestions(postDetailData, screenerQuestionsData),
+    [postDetailData, screenerQuestionsData],
+  );
 
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
-  // isScreenerOpen 상태가 아니면 안 띄움
-  if (!isScreenerOpen) return null;
+  // isScreenerOpen 상태가 아니거나, 참가 신청이 돼있으면 안 띄움
+  if (!isScreenerOpen || (!isApplicationStatusLoading && applicationStatusData)) return null;
+  console.log({
+    isScreenerOpen: isScreenerOpen,
+    isApplicationStatusLoading: isApplicationStatusLoading,
+    applicationStatusData: applicationStatusData,
+    isPostDetailLoading: isPostDetailLoading,
+    isScreenerQuestionsLoading: isScreenerQuestionsLoading,
+  });
 
-  // 참가 신청 돼있으면 안 띄움
-  if (!isApplicationStatusLoading && applicationStatusData) {
-    return null;
-  }
-
-  // postDetail 로딩 중 또는 데이터가 없을 경우
-  if (!postDetail || isPostDetailLoading) {
-    return (
-      <div className="flex justify-center items-center">
-        <LoaderCircle className="animate-spin" />
-      </div>
-    );
-  }
-
-  // 질문이 없으면 안 띄움
+  // 질문이 없으면 안 띄우고 바로 신청 페이지로 이동
   if (questions.length === 0) {
-    return null;
+    router.push(`/project/${id}/application`);
   }
 
   // --- 사용자 액션 핸들러 ---
@@ -154,6 +162,7 @@ const Screener = ({ id }: ScreenerProps) => {
     // 마지막 질문인 경우
     if (isLastQuestion) {
       // 모두 동의시 신청 페이지로 이동
+      setIsScreenerOpen(false);
       router.push(`/project/${id}/application`);
     } else {
       // 다음 질문으로 이동
@@ -166,60 +175,73 @@ const Screener = ({ id }: ScreenerProps) => {
   };
 
   return (
-    <Dialog open={isScreenerOpen} onOpenChange={setIsScreenerOpen}>
-      {isOpenNotMatchModal ? (
-        <Modal
-          title="이번 테스트의 조건과는 맞지 않아요."
-          description={`아쉽지만 현재 테스트 참여 조건과 일치하지 않아 참여가 어려워요.
-  다음 테스트에서 함께할 수 있길 기대할게요 :)`}
-          isOpen={isOpenNotMatchModal}
-          onClose={() => {
-            setIsScreenerOpen(false);
-            setIsOpenNotMatchModal(false);
-          }}
-          btnLabel1="다른 테스트 둘러보기"
-          btnOnClick1={() => {
-            setIsScreenerOpen(false);
-            setIsOpenNotMatchModal(false);
-            router.push('/');
-          }}
-        />
+    <>
+      {isPostDetailLoading || isApplicationStatusLoading || isScreenerQuestionsLoading ? (
+        <div className="flex justify-center items-center min-h-[200px]">
+          <LoaderCircle className="animate-spin" />
+        </div>
       ) : (
-        <DialogContent
-          showCloseButton={false}
-          className="!rounded-none !fixed !top-auto !bottom-0 !left-0 !translate-x-0 !translate-y-0 bg-white !max-w-none py-10 flex flex-col items-center"
-        >
-          <div className="flex flex-col gap-y-10 items-center">
-            <div className="flex flex-col gap-y-1">
-              <DialogHeader className="flex !flex-row justify-between">
-                <DialogTitle className="text-Black text-subtitle-02 font-semibold">
-                  아래 질문에 답변해주세요
-                </DialogTitle>
-                <Image
-                  src="/icons/x.svg"
-                  alt="close icon"
-                  width={24}
-                  height={24}
-                  onClick={() => setIsScreenerOpen(false)}
-                  className="cursor-pointer"
-                />
-              </DialogHeader>
-              <p className="text-body-01  text-Dark-Gray font-medium">
-                조건을 만족하는 참여자를 모집하고 있습니다. 신뢰도 높은 테스트를 위해 함께해 주세요!
-              </p>
-            </div>
-            <div className="w-full flex p-3 flex-col gap-10 bg-Primary-100 rounded-xs">
-              <p className="text-body-01 text-Black font-semibold">{currentQuestion.question}</p>
-              <div className="flex gap-x-1 self-end">
-                <Button onClick={handleAffirmative} label="네" Size="lg" State="Primary" />
-                <Button label="아니요" Size="lg" onClick={handleNegative} State="Solid" />
-              </div>
-            </div>
-            <CarouselBar activeIndex={currentQuestionIndex} total={questions.length} />
-          </div>
-        </DialogContent>
+        isScreenerOpen && (
+          <Dialog open={isScreenerOpen} onOpenChange={setIsScreenerOpen}>
+            {isOpenNotMatchModal ? (
+              <Modal
+                title="이번 테스트의 조건과는 맞지 않아요."
+                description={`아쉽지만 현재 테스트 참여 조건과 일치하지 않아 참여가 어려워요.
+  다음 테스트에서 함께할 수 있길 기대할게요 :)`}
+                isOpen={isOpenNotMatchModal}
+                onClose={() => {
+                  setIsScreenerOpen(false);
+                  setIsOpenNotMatchModal(false);
+                }}
+                btnLabel1="다른 테스트 둘러보기"
+                btnOnClick1={() => {
+                  setIsScreenerOpen(false);
+                  setIsOpenNotMatchModal(false);
+                  router.push('/');
+                }}
+              />
+            ) : (
+              <DialogContent
+                showCloseButton={false}
+                className="!rounded-none !fixed !top-auto !bottom-0 !left-0 !translate-x-0 !translate-y-0 bg-white !max-w-none py-10 flex flex-col items-center"
+              >
+                <div className="flex flex-col gap-y-10 items-center">
+                  <div className="flex flex-col gap-y-1">
+                    <DialogHeader className="flex !flex-row justify-between">
+                      <DialogTitle className="text-Black text-subtitle-02 font-semibold">
+                        아래 질문에 답변해주세요
+                      </DialogTitle>
+                      <Image
+                        src="/icons/x.svg"
+                        alt="close icon"
+                        width={24}
+                        height={24}
+                        onClick={() => setIsScreenerOpen(false)}
+                        className="cursor-pointer"
+                      />
+                    </DialogHeader>
+                    <p className="text-body-01  text-Dark-Gray font-medium">
+                      조건을 만족하는 참여자를 모집하고 있습니다. 신뢰도 높은 테스트를 위해 함께해
+                      주세요!
+                    </p>
+                  </div>
+                  <div className="w-full flex p-3 flex-col gap-10 bg-Primary-100 rounded-xs">
+                    <p className="text-body-01 text-Black font-semibold">
+                      {currentQuestion.question}
+                    </p>
+                    <div className="flex gap-x-1 self-end">
+                      <Button onClick={handleAffirmative} label="네" Size="lg" State="Primary" />
+                      <Button label="아니요" Size="lg" onClick={handleNegative} State="Solid" />
+                    </div>
+                  </div>
+                  <CarouselBar activeIndex={currentQuestionIndex} total={questions.length} />
+                </div>
+              </DialogContent>
+            )}
+          </Dialog>
+        )
       )}
-    </Dialog>
+    </>
   );
 };
 
