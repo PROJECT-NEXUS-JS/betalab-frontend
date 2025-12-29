@@ -10,6 +10,7 @@ import Pagination from '@/components/category/molecules/Pagination';
 import EmptyCard from '../molecules/EmptyCard';
 import { PostSummaryType } from '@/hooks/posts/dto/postList';
 import { getPostDetail } from '@/hooks/posts/queries/usePostDetailQuery';
+import { ParticipationStatusEnum } from '@/hooks/posts/dto/postDetail';
 import { queryKeys } from '@/constants/query-keys';
 import Chip from '@/components/common/atoms/Chip';
 import Button from '@/components/common/atoms/Button';
@@ -34,7 +35,7 @@ export default function MyOngoingContent() {
     isLoading,
     refetch,
   } = useMyApplicationsQuery({
-    status: 'APPROVED',
+    status: ParticipationStatusEnum.enum.APPROVED,
     page: currentPage,
     size: 9,
     sort: [sortOption],

@@ -45,9 +45,9 @@ export default function ApplyCard({
 
   const alreadyApplied =
     participationStatus === ParticipationStatusEnum.enum.PENDING ||
-    participationStatus === ParticipationStatusEnum.enum.APPROVED ||
-    participationStatus === ParticipationStatusEnum.enum.COMPLETED;
-
+    participationStatus === ParticipationStatusEnum.enum.COMPLETED ||
+    participationStatus === ParticipationStatusEnum.enum.TEST_COMPLETED;
+    
   const viewConditions = viewMore ? conditions : conditions.slice(0, 3);
   return (
     <div className="w-[258px] h-max p-3 flex flex-col flex-start gap-5 bg-White rounded-sm shadow-[0_0_10px_0_rgba(26,30,39,0.08)]">
@@ -139,7 +139,7 @@ export default function ApplyCard({
               Size="lg"
               // 테스트를 완료했으면 완료하기 버튼 띄움
               label={
-                participationStatus === ParticipationStatusEnum.enum.TEST_COMPLETED
+                participationStatus === ParticipationStatusEnum.enum.APPROVED
                   ? '완료하기'
                   : alreadyApplied
                     ? '신청 완료'

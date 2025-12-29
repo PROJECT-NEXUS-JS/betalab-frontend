@@ -8,8 +8,7 @@ import { Modal } from '@/components/category/molecules/Modal';
 import Button from '@/components/common/atoms/Button';
 import StarRating from './StarRating';
 import Chip from '@/components/common/atoms/Chip';
-import ToastPortal from '@/components/common/molecules/ToastPortal';
-import type { ToastProps } from '@/components/common/atoms/Toast';
+import { showToast } from '@/components/common/toast/ToastHost';
 import TextAreaSection from './TextAreaSection';
 import { cn } from '@/lib/utils';
 import {
@@ -87,11 +86,18 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
 
   // 서버에서 데이터(draft)가 들어오면 폼에 채워넣기
   useEffect(() => {
+    // participationId가 들어오면 업데이트
+    if (feedbackDetail?.participationId) {
+      setFormData(prev => ({
+        ...prev,
+        participationId: feedbackDetail.participationId,
+      }));
+    }
+    // draft 데이터가 있으면 나머지 폼 채우기
     if (existingFeedbackDraft) {
       setFormData((prev: FeedbackRequestType) => ({
         ...prev,
         // 서버 데이터가 있으면 덮어쓰고, 없으면 기존 값 유지
-        participationId: feedbackDetail.participationId ?? prev.participationId,
         overallSatisfaction: existingFeedbackDraft.overallSatisfaction ?? prev.overallSatisfaction,
         recommendationIntent:
           existingFeedbackDraft.recommendationIntent ?? prev.recommendationIntent,
@@ -115,24 +121,13 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
         additionalComments: existingFeedbackDraft.additionalComments ?? prev.additionalComments,
       }));
     }
-  }, [existingFeedbackDraft]); // existingFeedbackDraft가 변경될 때(로딩 완료 시)
+  }, [feedbackDetail, existingFeedbackDraft]);
 
   // 유효성 검사 통과 여부
   const isValid = useMemo(() => {
     return FeedbackRequestSchema.safeParse(formData).success;
   }, [formData]);
 
-  // 토스트
-  type ToastStyle = ToastProps['style'];
-  const [toast, setToast] = useState<{
-    show: boolean;
-    message: string;
-    style: ToastStyle;
-  }>({
-    show: false,
-    message: '',
-    style: 'default',
-  });
   // 제출 성공 모달
   const [successModalOpen, setSuccessModalOpen] = useState(false);
   // 피드백 이미 제출 모달
@@ -150,41 +145,43 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
   // 임시 저장
   const handleSaveDraft = useCallback(() => {
     // 제출 전 participationId 검증
-    console.log('formData.participationId', formData.participationId);
     if (!formData.participationId || formData.participationId === 0) {
-      setToast({
-        show: true,
+      showToast({
+        type: 'error',
         message: '참여 정보가 확인되지 않아 제출할 수 없습니다.',
-        style: 'error',
+        iconName: 'red',
       });
+
       return;
     }
 
-    // 임시: 임시 저장도 유효성 확인
+    // 임시 저장도 유효성 확인
     const result = FeedbackRequestSchema.safeParse(formData);
     if (!isValid) {
-      console.log('isValid', isValid);
-      setToast({
-        show: true,
+      showToast({
+        type: 'error',
         message:
           result?.error?.issues[0].message ?? `앗! 빠진 항목이 있어요.\n내용을 확인해주세요.`,
-        style: 'error',
+        iconName: 'red',
       });
+
       return;
     }
-
-    console.log('FeedbackForm 렌더링됨. projectId:', projectId);
 
     saveDraft(formData, {
       onSuccess: () => {
-        setToast({ show: true, message: '임시 저장되었습니다.', style: 'default' });
+        showToast({
+          type: 'alert',
+          message: '임시 저장되었습니다.',
+          iconName: 'check',
+        });
       },
       onError: (error: Error) => {
         console.error('임시 저장 실패', error);
-        // setToast({
-        //   show: true,
+        // showToast({
+        //   type: 'error',
         //   message: `임시 저장에 실패했어요.\n(오류 코드: [${String(error)}])`,
-        //   style: 'error',
+        //   iconName: 'red',
         // });
       },
     });
@@ -205,10 +202,10 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
     };
 
     const handleOffline = () => {
-      setToast({
-        show: true,
-        message: `피드백 등록에 실패했어요.\n인터넷 연결을 확인해주세요.`,
-        style: 'error',
+      showToast({
+        type: 'error',
+        message: '피드백 등록에 실패했어요.\n인터넷 연결을 확인해주세요.',
+        iconName: 'red',
       });
     };
 
@@ -256,23 +253,25 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
   const handleSubmit = () => {
     // 제출 전 participationId 검증
     if (!formData.participationId || formData.participationId === 0) {
-      setToast({
-        show: true,
+      showToast({
+        type: 'error',
         message: '참여 정보가 확인되지 않아 제출할 수 없습니다.',
-        style: 'error',
+        iconName: 'red',
       });
+
       return;
     }
 
     // 버튼이 활성화되어 있어도 한 번 더 체크
     const result = FeedbackRequestSchema.safeParse(formData);
     if (!isValid) {
-      setToast({
-        show: true,
+      showToast({
+        type: 'error',
         message:
           result?.error?.issues[0].message ?? `앗! 빠진 항목이 있어요.\n내용을 확인해주세요.`,
-        style: 'error',
+        iconName: 'red',
       });
+
       return;
     }
 
@@ -283,10 +282,10 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
       },
       onError: (error: Error) => {
         console.error('피드백 등록 실패', error);
-        // setToast({
-        //   show: true,
+        // showToast({
+        //   type: 'error',
         //   message: `피드백 등록에 실패했어요.\n(오류 코드: [${String(error)}])`,
-        //   style: 'error',
+        //   iconName: 'red',
         // });
       },
     });
@@ -466,13 +465,6 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
           />
         </div>
       </section>
-      {/* 토스트 영역 */}
-      <ToastPortal
-        visible={toast.show}
-        onClose={() => setToast(prev => ({ ...prev, show: false }))}
-        style={toast.style}
-        message={toast.message}
-      />
       {/* 모달 영역 */}
       <Modal
         title="성공적으로 테스트를 완료했어요!"

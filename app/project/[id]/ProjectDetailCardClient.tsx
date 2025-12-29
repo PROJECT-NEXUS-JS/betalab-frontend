@@ -8,7 +8,6 @@ import { usePostLikeCountQuery, usePostLikeMutation, usePostLikeStatusQuery } fr
 import { ParticipationStatusEnum } from '@/hooks/posts/dto/postDetail';
 import useScreenerStore from '@/stores/screenerStore';
 import InfoModal from '@/components/common/molecules/InfoModal';
-
 interface Props {
   projectId: number;
   ApplyCardProps: Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'>;
@@ -39,7 +38,7 @@ export default function ProjectDetailCardClient({ projectId, ApplyCardProps }: P
   };
 
   const handleRegister = () => {
-    if (ApplyCardProps.participationStatus === ParticipationStatusEnum.enum.TEST_COMPLETED) {
+    if (ApplyCardProps.participationStatus === ParticipationStatusEnum.enum.APPROVED) {
       router.push(`/project/${projectId}/feedback`);
     } else {
       setInfoModalOpen(true);
