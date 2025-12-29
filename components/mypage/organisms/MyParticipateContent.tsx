@@ -10,6 +10,7 @@ import { getPostDetail } from '@/hooks/posts/queries/usePostDetailQuery';
 import { queryKeys } from '@/constants/query-keys';
 import { ApplicationItemType } from '@/hooks/posts/dto/myApplications';
 import { ProjectDetailResponseModel } from '@/hooks/posts/queries/usePostDetailQuery';
+import { ParticipationStatusEnum } from '@/hooks/posts/dto/postDetail';
 
 export default function MyApplicationContent() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -18,7 +19,7 @@ export default function MyApplicationContent() {
     isLoading,
     refetch,
   } = useMyApplicationsQuery({
-    status: 'PAID',
+    status: ParticipationStatusEnum.enum.COMPLETED,
     page: currentPage,
     size: 9,
   });

@@ -10,7 +10,7 @@ import SimilarPostCard from '@/components/project/SimilarPostCard';
 import CategoryBar from '@/components/common/atoms/CategoryBar';
 
 import ProjectDetailCardClient from './ProjectDetailCardClient';
-import { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
+import { ApplyCardDataProps } from '@/components/common/molecules/ApplyCard';
 
 import { useGetPostDetailQuery } from '@/hooks/posts/queries/usePostDetailQuery';
 import { useGetRightSidebar } from '@/hooks/posts/queries/usePostRightSidebar';
@@ -55,26 +55,25 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
       router.back();
     }
   }, [isError, router]);
-
-  const applyCardData: Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'> =
-    transformToApplyCardProps(
-      rightSidebarData?.data ?? {
-        testName: '',
-        recruiterName: '',
-        recruiterAffiliation: '',
-        profileUrl: '',
-        testSummary: '',
-        daysRemaining: 0,
-        scrapCount: 0,
-        currentParticipants: 0,
-        participationTarget: '',
-        requiredDuration: '',
-        rewardInfo: '',
-        participationMethod: '',
-        qnaMethod: '',
-      },
-      postDetailData?.data.participationStatus ?? null, // undefined일 경우 null로 치환
-    );
+    
+  const applyCardData: ApplyCardDataProps = transformToApplyCardProps(
+    rightSidebarData?.data ?? {
+      testName: '',
+      recruiterName: '',
+      recruiterAffiliation: '',
+      profileUrl: '',
+      testSummary: '',
+      daysRemaining: 0,
+      scrapCount: 0,
+      currentParticipants: 0,
+      participationTarget: '',
+      requiredDuration: '',
+      rewardInfo: '',
+      participationMethod: '',
+      qnaMethod: '',
+    },
+    postDetailData?.data.participationStatus ?? null, // undefined일 경우 null로 치환
+  );
 
   const {
     data: reviewCardData,
@@ -230,7 +229,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
             </div>
           </section>
         </div>
-        <ProjectDetailCardClient projectId={projectData.id} ApplyCardProps={applyCardData} />
+        <ProjectDetailCardClient projectId={projectData.id} applyCardData={applyCardData} />
       </div>
     </div>
   );

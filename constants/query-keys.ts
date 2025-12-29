@@ -1,4 +1,5 @@
 import { StatusEnum } from '@/hooks/dashboard/dto/application';
+import { GetMyApplicationsRequestType } from '@/hooks/posts/dto/myApplications';
 
 export const queryKeys = {
   // 프로젝트/포스트 관련 쿼리
@@ -49,5 +50,9 @@ export const queryKeys = {
   application: {
     all: ['application'] as const,
     status: (postId: number) => [...queryKeys.application.all, 'status', postId] as const,
+  },
+  myApplications: {
+    all: ['myApplications'] as const,
+    list: (params: GetMyApplicationsRequestType) => ['myApplications', params] as const,
   },
 };
