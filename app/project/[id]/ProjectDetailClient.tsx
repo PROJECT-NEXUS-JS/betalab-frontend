@@ -50,11 +50,11 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
   } = useGetRightSidebar(Number(id));
 
   useEffect(() => {
-    if (isError && error) {
+    if (isError) {
       alert('마감된 테스트에요!');
       router.back();
     }
-  }, [isError, error, router]);
+  }, [isError, router]);
 
   const applyCardData: Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'> =
     transformToApplyCardProps(
