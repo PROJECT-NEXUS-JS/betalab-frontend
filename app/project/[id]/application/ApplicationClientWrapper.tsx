@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { applicationSchema, ApplicationFormData } from '@/hooks/application/dto/apply';
 
 import Label from '@/components/common/molecules/Label';
-import ApplyCard, { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
+import ApplyCard, { ApplyCardDataProps } from '@/components/common/molecules/ApplyCard';
 import RemindCard from '@/components/common/atoms/RemindCard';
 import Button from '@/components/common/atoms/Button';
 
@@ -39,7 +39,7 @@ export default function ApplicationClientWrapper({ id }: { id: number }) {
   } = useGetRightSidebar(Number(id));
   const { data: postDetailData } = useGetPostDetailQuery(Number(id));
 
-  const applyCardData: Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'> = {
+  const applyCardData: ApplyCardDataProps = {
     ...transformToApplyCardProps(
       rightSidebarData?.data ?? {
         testName: '',

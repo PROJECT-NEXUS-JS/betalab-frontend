@@ -1,13 +1,13 @@
 import { RightSidebarModel } from '@/hooks/posts/dto/postRightSidebar';
 import { ConditionProps } from '@/components/common/atoms/Condition';
-import { ApplyCardProps } from '@/components/common/molecules/ApplyCard';
+import { ApplyCardDataProps } from '@/components/common/molecules/ApplyCard';
 import { ParticipationStatusType } from '@/hooks/posts/dto/postDetail';
 
 // RightSidebarModel을 ApplyCardProps로 변환하는 함수
 export const transformToApplyCardProps = (
   data: RightSidebarModel,
   participationStatus: ParticipationStatusType,
-): Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'> => {
+): ApplyCardDataProps => {
   const conditions: ConditionProps[] = [
     {
       style: 'reward',
@@ -31,7 +31,7 @@ export const transformToApplyCardProps = (
     },
   ];
 
-  const transformedData: Omit<ApplyCardProps, 'scrapClicked' | 'registerClicked'> = {
+  const transformedData: ApplyCardDataProps = {
     title: data.testName,
     profile: {
       name: data.recruiterName,
