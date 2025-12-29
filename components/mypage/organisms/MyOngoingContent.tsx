@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useMyApplicationsQuery } from '@/hooks/posts/queries/useMyApplicationsQuery';
 import PostCard, { PostCardSkeleton } from '@/components/category/molecules/PostCard';
 import { useRouter } from 'next/navigation';
@@ -10,6 +10,8 @@ import Pagination from '@/components/category/molecules/Pagination';
 import EmptyCard from '../molecules/EmptyCard';
 import { PostSummaryType } from '@/hooks/posts/dto/postList';
 import { getPostDetail } from '@/hooks/posts/queries/usePostDetailQuery';
+import { getMyFeedback } from '@/hooks/feedback/queries/useMyFeedbackQuery';
+import { ParticipationStatusEnum } from '@/hooks/posts/dto/postDetail';
 import { queryKeys } from '@/constants/query-keys';
 import Chip from '@/components/common/atoms/Chip';
 import Button from '@/components/common/atoms/Button';
@@ -31,10 +33,10 @@ export default function MyOngoingContent() {
 
   const {
     data: myApplicationsData,
-    isLoading,
+    isLoading: isMyApplicationLoading,
     refetch,
   } = useMyApplicationsQuery({
-    status: 'APPROVED',
+    status: ParticipationStatusEnum.enum.APPROVED,
     page: currentPage,
     size: 9,
     sort: [sortOption],
@@ -49,13 +51,44 @@ export default function MyOngoingContent() {
       (app: ApplicationItemType) => !app.post && app.postId,
     ) ?? [];
 
+  // 1. 포스트 상세 데이터 가져오기
   const postQueries = useQueries({
     queries: applicationsNeedingPostData.map((app: ApplicationItemType) => ({
       queryKey: queryKeys.posts.detail(app.postId!),
       queryFn: () => getPostDetail(app.postId!),
       enabled: !!app.postId,
+      staleTime: 1000 * 60 * 5,
     })),
   });
+
+  // 2. 피드백 제출 여부 가져오기
+  const feedbackQueries = useQueries({
+    queries: (myApplicationsData?.data?.content ?? []).map((app: ApplicationItemType) => ({
+      queryKey: queryKeys.feedback.my(app.postId!),
+      queryFn: () => getMyFeedback(app.postId!),
+      enabled: !!app.postId,
+      staleTime: 1000 * 60 * 5,
+    })),
+  });
+
+  // 로딩 상태 통합
+  const isAnyLoading =
+    isMyApplicationLoading ||
+    postQueries.some(q => q.isLoading) ||
+    feedbackQueries.some(q => q.isLoading);
+
+  // 피드백 데이터 매핑
+  const feedbackMap = useMemo(() => {
+    const map = new Map<number, boolean>();
+    feedbackQueries.forEach((query, index) => {
+      const postId = myApplicationsData?.data?.content[index]?.postId;
+      if (postId) {
+        // 피드백 데이터가 존재하면(submitted) true
+        map.set(postId, !!query.data?.data.feedback);
+      }
+    });
+    return map;
+  }, [feedbackQueries, myApplicationsData]);
 
   // post 데이터를 postId로 매핑
   const postDataMap = new Map<number, ProjectDetailResponseModel['data'] | undefined>(
@@ -63,9 +96,6 @@ export default function MyOngoingContent() {
       const data = query.data as ProjectDetailResponseModel | undefined;
       return [applicationsNeedingPostData[index].postId!, data?.data];
     }),
-  );
-  const isPostDataLoading = postQueries.some(
-    (query: UseQueryResult<ProjectDetailResponseModel, Error>) => query.isLoading,
   );
 
   const handlePageChange = (page: number) => {
@@ -117,7 +147,7 @@ export default function MyOngoingContent() {
       </div>
       <div className="flex flex-col mt-10">
         <div className="flex flex-wrap gap-10">
-          {isLoading || isPostDataLoading ? (
+          {isAnyLoading ? (
             <div className="flex flex-wrap gap-4">
               {Array.from({ length: 9 }).map((_, index) => (
                 <PostCardSkeleton key={index} />
@@ -141,6 +171,9 @@ export default function MyOngoingContent() {
                     (application.postId ? postDataMap.get(application.postId) : null);
 
                   if (!post) return null;
+
+                  // 해당 게시글에 피드백을 이미 제출했는지 확인
+                  const isFeedbackSubmitted = feedbackMap.get(post.id) ?? false;
 
                   const postCardData: PostSummaryType = {
                     id: post.id,
@@ -175,11 +208,12 @@ export default function MyOngoingContent() {
                         onClick={event => event.stopPropagation()}
                       >
                         <Button
-                          State="Primary"
+                          State={isFeedbackSubmitted ? 'Disabled' : 'Primary'}
                           Size="xxl"
-                          label="완료하기"
+                          label={isFeedbackSubmitted ? '참여 완료' : '완료하기'}
                           className="w-40"
                           onClick={() => {
+                            if (isFeedbackSubmitted) return; // 클릭 방지
                             router.push(`/project/${post.id}/feedback`);
                           }}
                         />
@@ -213,7 +247,7 @@ export default function MyOngoingContent() {
           )}
         </div>
 
-        {!isLoading &&
+        {!isAnyLoading &&
           myApplicationsData?.data?.content &&
           myApplicationsData.data.content.length > 0 && (
             <Pagination

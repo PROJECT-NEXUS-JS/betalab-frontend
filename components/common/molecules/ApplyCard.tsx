@@ -5,7 +5,7 @@ import Condition, { ConditionProps } from '../atoms/Condition';
 import Button from '../atoms/Button';
 import UserProfile from '../svg/UserProfile';
 import BookMark from '../svg/BookMark';
-import { ParticipationStatusEnum } from '@/hooks/posts/dto/postDetail';
+import { ParticipationStatusType } from '@/hooks/posts/dto/postDetail';
 export interface ApplyCardProps {
   title: string;
   profile: {
@@ -22,8 +22,17 @@ export interface ApplyCardProps {
   scrapedAndRegisterShow?: boolean;
   scrapClicked?: () => void;
   registerClicked?: () => void;
-  participationStatus: string | null;
+  participationStatus: ParticipationStatusType;
+  // UI 상태 관련 props (부모가 계산해서 넘겨줌)
+  buttonLabel?: string;
+  isButtonDisabled?: boolean;
 }
+
+// 부모 컴포넌트(ProjectDetailCardClient)에서 쓸 타입
+export type ApplyCardDataProps = Omit<
+  ApplyCardProps,
+  'scrapClicked' | 'registerClicked' | 'buttonLabel' | 'isButtonDisabled'
+>;
 
 export default function ApplyCard({
   title,
@@ -37,18 +46,15 @@ export default function ApplyCard({
   scraped,
   scrapClicked,
   registerClicked,
-  participationStatus,
+  buttonLabel,
+  isButtonDisabled,
 }: ApplyCardProps) {
   const [viewMore, setViewMore] = useState(false);
   const endMonth = endDate.getMonth() + 1;
   const endDay = endDate.getDate();
 
-  const alreadyApplied =
-    participationStatus === ParticipationStatusEnum.enum.PENDING ||
-    participationStatus === ParticipationStatusEnum.enum.APPROVED ||
-    participationStatus === ParticipationStatusEnum.enum.COMPLETED;
-
   const viewConditions = viewMore ? conditions : conditions.slice(0, 3);
+
   return (
     <div className="w-[258px] h-max p-3 flex flex-col flex-start gap-5 bg-White rounded-sm shadow-[0_0_10px_0_rgba(26,30,39,0.08)]">
       <div className="flex flex-col gap-4">
@@ -135,16 +141,10 @@ export default function ApplyCard({
               />
             </button>
             <Button
-              State={alreadyApplied ? 'Disabled' : 'Primary'}
+              State={isButtonDisabled ? 'Disabled' : 'Primary'}
               Size="lg"
               // 테스트를 완료했으면 완료하기 버튼 띄움
-              label={
-                participationStatus === ParticipationStatusEnum.enum.TEST_COMPLETED
-                  ? '완료하기'
-                  : alreadyApplied
-                    ? '신청 완료'
-                    : '신청하기'
-              }
+              label={buttonLabel ?? '신청하기'}
               onClick={registerClicked}
               className="w-full flex-1"
             />

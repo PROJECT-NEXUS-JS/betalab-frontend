@@ -1,9 +1,7 @@
 import { z } from 'zod';
 import { BaseModelSchema } from '@/types/models/base-model';
 import { CategorySchema, ScheduleSchema, RewardSchema } from './postDetail';
-
-// 신청 상태 enum
-const applicationStatusSchema = z.enum(['PENDING', 'APPROVED', 'COMPLETED', 'REJECTED', 'PAID']);
+import { ParticipationStatusEnum } from './postDetail';
 
 // 사용자 스키마
 const userSchema = z
@@ -83,7 +81,7 @@ const applicationItemSchema = z
     approvedAt: z.string().nullable(),
     completedAt: z.string().nullable(),
     paidAt: z.string().nullable(),
-    status: applicationStatusSchema,
+    status: ParticipationStatusEnum,
     isPaid: z.boolean(),
     applicantName: z.string(),
     contactNumber: z.string(),
@@ -140,9 +138,7 @@ export type PageType = z.infer<typeof pageSchema>;
 // 내 신청 내역 조회 요청 스키마
 export const getMyApplicationsRequestSchema = z
   .object({
-    status: z
-      .enum(['PENDING', 'APPROVED', 'COMPLETED', 'REJECTED', 'PAID', 'TEST_COMPLETED'])
-      .optional(),
+    status: ParticipationStatusEnum.optional(),
     page: z.number().int().nonnegative().optional(),
     size: z.number().int().positive().optional(),
     sort: z.array(z.string()).optional(),
