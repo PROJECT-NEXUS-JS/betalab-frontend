@@ -8,6 +8,7 @@ const recentlyViewedTestSchema = z
     category: z.string(),
     title: z.string(),
     oneLineIntro: z.string(),
+    thumbnailUrl: z.string().nullable(),
     tags: z.array(z.string()),
     viewedAt: z.string(),
   })

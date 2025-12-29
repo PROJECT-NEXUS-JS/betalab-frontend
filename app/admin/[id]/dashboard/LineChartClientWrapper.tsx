@@ -3,6 +3,7 @@ import { CustomLineChart } from '@/components/admin/CustomLineChart';
 import { useLineChartQuery } from '@/hooks/dashboard/quries/useLineChartQuery';
 import EmptyCard from '@/components/mypage/molecules/EmptyCard';
 import { useRouter } from 'next/navigation';
+import { LineChartModel } from '@/hooks/dashboard/dto/lineChart';
 
 export default function LineChartClientWrapper({ postId }: { postId: number }) {
   const router = useRouter();
@@ -14,12 +15,16 @@ export default function LineChartClientWrapper({ postId }: { postId: number }) {
         <div className="text-center text-Gray-300">로딩 중...</div>
       </div>
     );
-  if (isError) return <p className="text-center text-red-500">통계 정보를 불러오는 데 실패했습니다.</p>;
+  if (isError)
+    return <p className="text-center text-red-500">통계 정보를 불러오는 데 실패했습니다.</p>;
 
   const chartData = data?.data;
   const hasSeriesData =
     chartData?.series && chartData.series.length > 0
-      ? chartData.series.some(series => series.data && series.data.length > 0 && series.data.some(val => val > 0))
+      ? chartData.series.some(
+          (series: LineChartModel['series'][number]) =>
+            series.data && series.data.length > 0 && series.data.some((val: number) => val > 0),
+        )
       : false;
   const hasLabels = chartData?.labels && chartData.labels.length > 0;
 
@@ -40,4 +45,3 @@ export default function LineChartClientWrapper({ postId }: { postId: number }) {
     </div>
   );
 }
-

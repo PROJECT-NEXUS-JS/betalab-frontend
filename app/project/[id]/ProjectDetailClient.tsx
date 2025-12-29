@@ -1,9 +1,6 @@
 'use client';
-import { useState, useRef, useLayoutEffect } from 'react';
+import { useState, useRef, useLayoutEffect, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-
-import { cn } from '@/lib/utils';
-
 import CustomMedia from '@/components/common/atoms/CustomMedia';
 import RemindCard from '@/components/common/atoms/RemindCard';
 import Chip from '@/components/common/atoms/Chip';
@@ -52,6 +49,13 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
     isError: isRightSidebarError,
   } = useGetRightSidebar(Number(id));
 
+  useEffect(() => {
+    if (isError) {
+      alert('마감된 테스트에요!');
+      router.back();
+    }
+  }, [isError, router]);
+    
   const applyCardData: ApplyCardDataProps = transformToApplyCardProps(
     rightSidebarData?.data ?? {
       testName: '',

@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { useGetPostDetailQuery } from '@/hooks/posts/queries/usePostDetailQuery';
 import useGetApplicationStatus from '@/hooks/application/queries/useGetApplicationStatus';
 import useGetScreenerQuestions from '@/hooks/posts/queries/useGetScreenerQuestions';
-import { ProjectDataModel } from '@/hooks/posts/dto/postDetail';
+import { ProjectDataModel, CategoryType } from '@/hooks/posts/dto/postDetail';
 
 import useScreenerStore from '@/stores/screenerStore';
 
@@ -42,9 +42,59 @@ function createQuestions(
     });
   }
 
-  // 2. 개인정보 이용 동의는 AI 질문 뒤에 항상 추가 (안전장치)
+  // 1. 플랫폼 질문
+  // 특정 플랫폼을 요구하면
   if (
-    postDetail &&
+    postDetail.platformCategories.findIndex(
+      (category: CategoryType) =>
+        category.code === 'WEB_ALL' ||
+        category.code === 'APP_ALL' ||
+        category.code === 'GAME_ALL' ||
+        category.code === 'ETC_ALL',
+    ) !== -1
+  ) {
+    const platformNames = postDetail.platformCategories.map((p: CategoryType) => p.name);
+    const platformString = platformNames.join(' 또는 ');
+    questions.push({
+      id: 'platform',
+      question: `현재 ${platformString} 기기를 사용하고 계신가요?`,
+    });
+  }
+  // 2. 성별 질문
+  // 무관이 아닌 경우
+  if (postDetail.requirement.genderRequirement !== '무관') {
+    questions.push({
+      id: 'gender',
+      question: `${postDetail.requirement.genderRequirement}이신가요 ?`,
+    });
+  }
+  // 3. 나이 질문
+  if (postDetail.requirement.ageMin && postDetail.requirement.ageMax) {
+    questions.push({
+      id: 'age',
+      question: `나이가 ${postDetail.requirement.ageMin}세 이상 ${postDetail.requirement.ageMax}세 이하이신가요?`,
+    });
+  } else if (postDetail.requirement.ageMin) {
+    questions.push({
+      id: 'age',
+      question: `나이가 ${postDetail.requirement.ageMin}세 이상이신가요?`,
+    });
+  } else if (postDetail.requirement.ageMax) {
+    questions.push({
+      id: 'age',
+      question: `나이가 ${postDetail.requirement.ageMax}세 이하이신가요?`,
+    });
+  }
+  // // 4. 추가 조건
+  // if (postDetail.requirement.additionalRequirements) {
+  //   questions.push({
+  //     id: 'additionalRequirments',
+  //     question: `추가 조건 "${postDetail.requirement.additionalRequirements}"을 만족하시나요?`,
+  //   });
+  // }
+
+  // 5. 개인정보 이용 동의
+  if (
     postDetail.feedback.privacyItems &&
     postDetail.feedback.privacyItems.length > 0 &&
     !postDetail.feedback.privacyItems.includes('OTHER')

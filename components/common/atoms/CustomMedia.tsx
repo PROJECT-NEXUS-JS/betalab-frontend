@@ -73,12 +73,7 @@ export default function CustomMedia({
 
       {/* CASE 2: 직접 비디오 파일 (.mp4 등) */}
       {mediaType === 'video' && (
-        <video
-          src={src}
-          controls
-          playsInline
-          className="w-full h-full object-cover bg-black"
-        >
+        <video src={src} controls playsInline className="w-full h-full object-cover bg-black">
           <track kind="captions" />
         </video>
       )}

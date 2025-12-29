@@ -3,13 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { XIcon } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import Button from '@/components/common/atoms/Button';
 
 interface ReviewReplySectionProps {
