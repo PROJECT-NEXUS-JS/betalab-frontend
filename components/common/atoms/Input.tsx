@@ -109,16 +109,6 @@ export default function Input(props: InputProps) {
     }
   };
 
-  const handleClear = () => {
-    if (onChange && state !== 'disabled') {
-      const syntheticEvent = {
-        target: { value: '' },
-        currentTarget: { value: '' },
-      } as React.ChangeEvent<HTMLInputElement>;
-      onChange(syntheticEvent);
-    }
-  };
-
   return (
     <div className={`${baseClasses} flex justify-between items-center max-w-full`}>
       <input
