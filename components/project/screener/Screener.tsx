@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { useGetPostDetailQuery } from '@/hooks/posts/queries/usePostDetailQuery';
 import useGetApplicationStatus from '@/hooks/application/queries/useGetApplicationStatus';
 import { ProjectDataModel } from '@/hooks/posts/dto/postDetail';
+import { CategoryType } from '@/types/models/testCard';
 
 import useScreenerStore from '@/stores/screenerStore';
 
@@ -16,13 +17,7 @@ import { PRIVACY_ITEM_LABELS } from '@/constants/screener';
 import CarouselBar from '@/components/common/molecules/CarouselBar';
 import { Modal } from '@/components/category/molecules/Modal';
 import Button from '@/components/common/atoms/Button';
-import {
-  Dialog,
-  DialogOverlay,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 /** 질문 타입 */
 interface Question {
@@ -41,14 +36,14 @@ function createQuestions(postDetail: ProjectDataModel | undefined) {
   // 특정 플랫폼을 요구하면
   if (
     postDetail.platformCategories.findIndex(
-      category =>
+      (category: CategoryType) =>
         category.code === 'WEB_ALL' ||
         category.code === 'APP_ALL' ||
         category.code === 'GAME_ALL' ||
         category.code === 'ETC_ALL',
     ) !== -1
   ) {
-    const platformNames = postDetail.platformCategories.map(p => p.name);
+    const platformNames = postDetail.platformCategories.map((p: CategoryType) => p.name);
     const platformString = platformNames.join(' 또는 ');
     questions.push({
       id: 'platform',
@@ -96,7 +91,7 @@ function createQuestions(postDetail: ProjectDataModel | undefined) {
   ) {
     // 한국어로 바꿈
     const koreanPrivacyItems = postDetail.feedback.privacyItems.map(
-      (key: string) => PRIVACY_ITEM_LABELS[key]
+      (key: string) => PRIVACY_ITEM_LABELS[key],
     );
     // 쉼표로 연결
     const privacyItemsString = koreanPrivacyItems.join(', ');

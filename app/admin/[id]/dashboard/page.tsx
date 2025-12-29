@@ -1,6 +1,5 @@
 import { dehydrate, QueryClient, HydrationBoundary } from '@tanstack/react-query';
 import { queryKeys } from '@/constants/query-keys';
-import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { serverInstance } from '@/apis/server-instance';
 import { ProjectDetailResponseSchema } from '@/hooks/posts/queries/usePostDetailQuery';
@@ -11,7 +10,6 @@ import TestTitleClient from './TestTitleClient';
 import RecruitmentStatusToggle from './RecruitmentStatusToggle';
 import { getStats, getBarChart, getPieChart, getLineChart } from './dashboard-api';
 import QuickActionSheet from '@/components/admin/QuickActionSheet';
-import Logger from '@/lib/logger';
 
 export default async function AdminDashboardPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
