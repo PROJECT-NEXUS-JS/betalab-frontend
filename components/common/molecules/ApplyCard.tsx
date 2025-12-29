@@ -24,8 +24,8 @@ export interface ApplyCardProps {
   registerClicked?: () => void;
   participationStatus: ParticipationStatusType;
   // UI 상태 관련 props (부모가 계산해서 넘겨줌)
-  buttonLabel: string;
-  isButtonDisabled: boolean;
+  buttonLabel?: string;
+  isButtonDisabled?: boolean;
 }
 
 // 부모 컴포넌트(ProjectDetailCardClient)에서 쓸 타입
@@ -144,7 +144,7 @@ export default function ApplyCard({
               State={isButtonDisabled ? 'Disabled' : 'Primary'}
               Size="lg"
               // 테스트를 완료했으면 완료하기 버튼 띄움
-              label={buttonLabel}
+              label={buttonLabel ?? '신청하기'}
               onClick={registerClicked}
               className="w-full flex-1"
             />
