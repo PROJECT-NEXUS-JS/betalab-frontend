@@ -226,7 +226,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
             </div>
           </section>
         </div>
-        <ProjectDetailCardClient projectId={projectData.id} ApplyCardProps={applyCardData} />
+        <ProjectDetailCardClient projectId={projectData.id} applyCardData={applyCardData} />
       </div>
     </div>
   );
