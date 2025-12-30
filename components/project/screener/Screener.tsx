@@ -42,70 +42,16 @@ function createQuestions(
     });
   }
 
-  // 1. 플랫폼 질문
-  // 특정 플랫폼을 요구하면
-  if (
-    postDetail.platformCategories.findIndex(
-      (category: CategoryType) =>
-        category.code === 'WEB_ALL' ||
-        category.code === 'APP_ALL' ||
-        category.code === 'GAME_ALL' ||
-        category.code === 'ETC_ALL',
-    ) !== -1
-  ) {
-    const platformNames = postDetail.platformCategories.map((p: CategoryType) => p.name);
-    const platformString = platformNames.join(' 또는 ');
-    questions.push({
-      id: 'platform',
-      question: `현재 ${platformString} 기기를 사용하고 계신가요?`,
-    });
-  }
-  // 2. 성별 질문
-  // 무관이 아닌 경우
-  if (postDetail.requirement.genderRequirement !== '무관') {
-    questions.push({
-      id: 'gender',
-      question: `${postDetail.requirement.genderRequirement}이신가요 ?`,
-    });
-  }
-  // 3. 나이 질문
-  if (postDetail.requirement.ageMin && postDetail.requirement.ageMax) {
-    questions.push({
-      id: 'age',
-      question: `나이가 ${postDetail.requirement.ageMin}세 이상 ${postDetail.requirement.ageMax}세 이하이신가요?`,
-    });
-  } else if (postDetail.requirement.ageMin) {
-    questions.push({
-      id: 'age',
-      question: `나이가 ${postDetail.requirement.ageMin}세 이상이신가요?`,
-    });
-  } else if (postDetail.requirement.ageMax) {
-    questions.push({
-      id: 'age',
-      question: `나이가 ${postDetail.requirement.ageMax}세 이하이신가요?`,
-    });
-  }
-  // // 4. 추가 조건
-  // if (postDetail.requirement.additionalRequirements) {
-  //   questions.push({
-  //     id: 'additionalRequirments',
-  //     question: `추가 조건 "${postDetail.requirement.additionalRequirements}"을 만족하시나요?`,
-  //   });
-  // }
+  // 2. 개인정보 이용 동의
+  // 개인정보 로직은 postDetail이 있을 때만 수행하도록 분리
+  const privacyItems = postDetail?.feedback?.privacyItems;
 
-  // 5. 개인정보 이용 동의
-  if (
-    postDetail.feedback.privacyItems &&
-    postDetail.feedback.privacyItems.length > 0 &&
-    !postDetail.feedback.privacyItems.includes('OTHER')
-  ) {
-    const koreanPrivacyItems = postDetail.feedback.privacyItems.map(
-      (key: string) => PRIVACY_ITEM_LABELS[key],
-    );
+  if (privacyItems && privacyItems.length > 0 && !privacyItems.includes('OTHER')) {
+    const koreanPrivacyItems = privacyItems.map(key => PRIVACY_ITEM_LABELS[key]);
     const privacyItemsString = koreanPrivacyItems.join(', ');
 
     questions.push({
-      id: 'privacyAgree',
+      id: `privacyAgree-${questions.length}`,
       question: `개인 정보 이용 (${privacyItemsString})에 동의하시나요?`,
     });
   }

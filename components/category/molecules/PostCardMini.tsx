@@ -18,9 +18,12 @@ export default function PostCardMini({ post, className }: PostCardMiniProps) {
   const allCategoryNames = [...mainCategoryNames, ...platformCategoryNames];
   const categoryText = allCategoryNames.join('  ·  ');
 
-  const calculateDday = (deadline: string): number => {
+  const calculateDday = (deadline: string | null | undefined): number => {
+    if (!deadline) return 0; // 날짜 정보가 없으면 D-Day를 0으로 반환
+
     const today = new Date();
     const deadlineDate = new Date(deadline);
+    
     const diffTime = deadlineDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
