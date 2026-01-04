@@ -25,8 +25,6 @@ import useMyFeedbackQuery from '@/hooks/feedback/queries/useMyFeedbackQuery';
 import { INCONVENIENT_LABELS, BUG_TYPE_LABELS, HAS_BUGS_OPTIONS } from '@/constants/feedback';
 import { LoaderCircle } from 'lucide-react';
 
-
-
 const chunkArray = <T,>(arr: T[], size: number) => {
   const result: T[][] = [];
   for (let i = 0; i < arr.length; i += size) {
@@ -86,20 +84,35 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
     additionalComments: '',
   });
 
+  // 접근 권한 가드
+  useEffect(() => {
+    if (isLoading) return;
+
+    // 데이터는 로딩되었으나 참여 정보가 없는 경우
+    if (
+      !feedbackDetail ||
+      !feedbackDetail.participationId ||
+      feedbackDetail.participationId === 0
+    ) {
+      showToast({
+        type: 'error',
+        message: '참여 정보가 확인되지 않습니다.',
+        iconName: 'red',
+      });
+      router.replace('/');
+    }
+  }, [isLoading, feedbackDetail, router]);
+
   // 서버에서 데이터(draft)가 들어오면 폼에 채워넣기
   useEffect(() => {
-    // participationId가 들어오면 업데이트
-    if (feedbackDetail?.participationId) {
-      setFormData(prev => ({
-        ...prev,
-        participationId: feedbackDetail.participationId,
-      }));
-    }
-    // draft 데이터가 있으면 나머지 폼 채우기
+    if (!feedbackDetail || !existingFeedbackDraft) return;
+
+    // draft 데이터가 있으면 폼 채우기
     if (existingFeedbackDraft) {
       setFormData((prev: FeedbackRequestType) => ({
         ...prev,
         // 서버 데이터가 있으면 덮어쓰고, 없으면 기존 값 유지
+        participationId: feedbackDetail.participationId,
         overallSatisfaction: existingFeedbackDraft.overallSatisfaction ?? prev.overallSatisfaction,
         recommendationIntent:
           existingFeedbackDraft.recommendationIntent ?? prev.recommendationIntent,
@@ -123,7 +136,7 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
         additionalComments: existingFeedbackDraft.additionalComments ?? prev.additionalComments,
       }));
     }
-  }, [feedbackDetail, existingFeedbackDraft]);
+  }, [existingFeedbackDraft, feedbackDetail?.participationId]);
 
   // 유효성 검사 통과 여부
   const isValid = useMemo(() => {
@@ -146,17 +159,6 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
   // --- 기능 ---
   // 임시 저장
   const handleSaveDraft = useCallback(() => {
-    // 제출 전 participationId 검증
-    if (!formData.participationId || formData.participationId === 0) {
-      showToast({
-        type: 'error',
-        message: '참여 정보가 확인되지 않아 제출할 수 없습니다.',
-        iconName: 'red',
-      });
-
-      return;
-    }
-
     // 임시 저장도 유효성 확인
     const result = FeedbackRequestSchema.safeParse(formData);
     if (!isValid) {
@@ -253,17 +255,6 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
 
   // 제출
   const handleSubmit = () => {
-    // 제출 전 participationId 검증
-    if (!formData.participationId || formData.participationId === 0) {
-      showToast({
-        type: 'error',
-        message: '참여 정보가 확인되지 않아 제출할 수 없습니다.',
-        iconName: 'red',
-      });
-
-      return;
-    }
-
     // 버튼이 활성화되어 있어도 한 번 더 체크
     const result = FeedbackRequestSchema.safeParse(formData);
     if (!isValid) {
@@ -320,6 +311,11 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
         <LoaderCircle className="animate-spin" />
       </div>
     );
+  }
+
+  // 데이터는 불러왔으나 참여 ID가 없는 경우 아무것도 렌더링하지 않음
+  if (!feedbackDetail?.participationId || feedbackDetail.participationId === 0) {
+    return null;
   }
 
   return (
