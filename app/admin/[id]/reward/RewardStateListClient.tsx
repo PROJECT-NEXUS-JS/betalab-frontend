@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import RewardStateList, {
   ParticipantData,
   ParticipantRowType,
@@ -9,6 +10,7 @@ import { ParticipantItemType } from '@/hooks/reward/dto/participants';
 import { useApproveApplicationMutation } from '@/hooks/dashboard/mutations/useApplicationMutation';
 import { useCompleteApplicationMutation } from '@/hooks/dashboard/mutations/useApplicationMutation';
 import { usePayRewardMutation } from '@/hooks/reward/mutations/usePayRewardMutation';
+import ParticipantDetailModal from '@/components/admin/reward/ParticipantDetailModal';
 
 interface RewardStateListClientProps {
   postId: number;
@@ -33,7 +35,6 @@ function mapParticipationStatus(
     case 'APPROVED':
       return '진행 중';
     case 'COMPLETED':
-      // rewardStatus가 PENDING이거나 null이면 완료요청, 아니면 완료
       if (rewardStatus === 'PENDING' || rewardStatus === null) {
         return '완료요청';
       }
@@ -97,6 +98,11 @@ function determineRowType(
 }
 
 export default function RewardStateListClient({ postId }: RewardStateListClientProps) {
+  const [selectedParticipationId, setSelectedParticipationId] = useState<number | null>(null);
+  const [selectedParticipationStatus, setSelectedParticipationStatus] = useState<string>('');
+  const [selectedRewardStatus, setSelectedRewardStatus] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const { data, error } = useParticipantsQuery({
     postId,
     page: 0,
@@ -123,6 +129,7 @@ export default function RewardStateListClient({ postId }: RewardStateListClientP
         number: index + 1,
         name: item.nickname,
         email: item.applicantEmail,
+        participationId: item.participationId,
         participationStatus: mapParticipationStatus(item.participationStatus, item.rewardStatus),
         appliedDate: formatDate(item.appliedAt) || '2025.07.29',
         approvedDate: formatDate(item.approvedAt),
@@ -163,5 +170,42 @@ export default function RewardStateListClient({ postId }: RewardStateListClientP
     },
   );
 
-  return <RewardStateList data={transformedData} />;
+  const handleRowClick = (row: ParticipantData) => {
+    const originalItem = filteredContent.find(
+      (item: ParticipantItemType) => item.participationId === row.participationId,
+    );
+    if (originalItem) {
+      setSelectedParticipationId(row.participationId);
+      setSelectedParticipationStatus(originalItem.participationStatus);
+      setSelectedRewardStatus(originalItem.rewardStatus);
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleApproveFromModal = async () => {
+    if (selectedParticipationId) {
+      try {
+        await approveMutation.mutateAsync(selectedParticipationId);
+      } catch (error) {
+        console.error('승인 실패:', error);
+      }
+    }
+  };
+
+  return (
+    <>
+      <RewardStateList data={transformedData} onRowClick={handleRowClick} />
+      <ParticipantDetailModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedParticipationId(null);
+        }}
+        participationId={selectedParticipationId}
+        participationStatus={selectedParticipationStatus}
+        rewardStatus={selectedRewardStatus}
+        onApprove={selectedParticipationStatus === 'PENDING' ? handleApproveFromModal : undefined}
+      />
+    </>
+  );
 }
