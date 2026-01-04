@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import CircleX from '@/public/icons/input-icon/circle-x.svg';
+import { cn } from '@/lib/utils';
 
 type State =
   | 'no value'
@@ -54,12 +55,12 @@ export default function Input(props: InputProps) {
   } = props;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const baseClasses = [
+  const baseClasses = cn(
     'p-4 text-sm border rounded-[2px] focus:outline-none transition-colors',
     THEME_COLOR_CLASSNAME[state],
     THEME_SIZE_CLASSNAME[size],
-    className ?? '',
-  ].join(' ');
+    className,
+  );
 
   const autoResize = () => {
     if (type !== 'text area') return;
