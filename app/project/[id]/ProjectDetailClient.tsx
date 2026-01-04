@@ -42,7 +42,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
     }
   };
 
-  const { data: postDetailData, isLoading, isError } = useGetPostDetailQuery(Number(id));
+  const { data: postDetailData, isLoading, isError, error } = useGetPostDetailQuery(Number(id));
   const {
     data: rightSidebarData,
     isLoading: isRightSidebarLoading,
@@ -55,7 +55,7 @@ export default function ProjectDetailClient({ id }: ProjectDetailClientProps) {
       router.back();
     }
   }, [isError, router]);
-    
+
   const applyCardData: ApplyCardDataProps = transformToApplyCardProps(
     rightSidebarData?.data ?? {
       testName: '',
