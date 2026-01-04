@@ -22,6 +22,7 @@ export interface ParticipantData {
   number: number;
   name: string;
   email: string;
+  participationId: number;
   participationStatus: '승인대기' | '진행 중' | '완료요청' | '완료';
   appliedDate: string;
   approvedDate?: string;
@@ -352,9 +353,10 @@ const columns: ColumnDef<ParticipantData>[] = [
 
 interface RewardStateListProps {
   data: ParticipantData[];
+  onRowClick?: (row: ParticipantData) => void;
 }
 
-export default function RewardStateList({ data }: RewardStateListProps) {
+export default function RewardStateList({ data, onRowClick }: RewardStateListProps) {
   const table = useReactTable({
     data,
     columns,
@@ -393,8 +395,11 @@ export default function RewardStateList({ data }: RewardStateListProps) {
                 <div
                   key={row.id}
                   data-property-1={rowProperty}
-                  className={`group grid cursor-default items-center h-[68px] ${baseBg}`}
+                  className={`group grid items-center h-[68px] ${baseBg} ${
+                    onRowClick ? 'cursor-pointer hover:bg-gray-50' : 'cursor-default'
+                  }`}
                   style={{ gridTemplateColumns: gridTemplate }}
+                  onClick={() => onRowClick?.(row.original)}
                 >
                   {row.getVisibleCells().map(cell => (
                     <div key={cell.id} className="flex items-center">
