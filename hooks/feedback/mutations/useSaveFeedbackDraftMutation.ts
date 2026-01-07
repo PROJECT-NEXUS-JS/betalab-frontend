@@ -12,7 +12,6 @@ const postFeedback = (data: FeedbackRequestType) => {
 /** 피드백 임시저장 훅 */
 export default function useSaveFeedbackDraftMutation(feedbackId: number) {
   const queryClient = useQueryClient();
-  const myFeedbackQueryKey = queryKeys.feedback.my(feedbackId);
 
   return useMutation({
     mutationFn: (data: FeedbackRequestType) => postFeedback(data),
