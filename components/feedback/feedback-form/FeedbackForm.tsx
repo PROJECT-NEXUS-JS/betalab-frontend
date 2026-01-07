@@ -84,6 +84,15 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
     additionalComments: '',
   });
 
+  useEffect(() => {
+    if (!feedbackDetail?.participationId || feedbackDetail.participationId === 0) return;
+
+    setFormData((prev: FeedbackRequestType) => ({
+      ...prev,
+      participationId: feedbackDetail.participationId,
+    }));
+  }, [feedbackDetail?.participationId]);
+
   // 접근 권한 가드
   useEffect(() => {
     if (isLoading) return;
@@ -112,7 +121,6 @@ const FeedbackForm = ({ projectId }: { projectId: number }) => {
       setFormData((prev: FeedbackRequestType) => ({
         ...prev,
         // 서버 데이터가 있으면 덮어쓰고, 없으면 기존 값 유지
-        participationId: feedbackDetail.participationId,
         overallSatisfaction: existingFeedbackDraft.overallSatisfaction ?? prev.overallSatisfaction,
         recommendationIntent:
           existingFeedbackDraft.recommendationIntent ?? prev.recommendationIntent,

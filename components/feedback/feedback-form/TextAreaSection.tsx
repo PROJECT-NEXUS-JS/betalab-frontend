@@ -32,7 +32,9 @@ const TextAreaSection = ({
         onChange={handleChange}
         placeholder={placeholder}
         maxLength={maxLength}
+        state={value.trim() ? 'has value' : 'no value'}
         className="w-full text-Black"
+        style={value.trim() ? { fontWeight: 'bold' } : undefined}
       />
       <div className="p-1 self-end text-right font-bold text-[10px] text-Light-Gray bg-Gray-50">
         {value.length}/{maxLength}
