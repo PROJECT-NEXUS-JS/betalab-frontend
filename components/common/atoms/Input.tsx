@@ -3,7 +3,6 @@
 import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import CircleX from '@/public/icons/input-icon/circle-x.svg';
-import { cn } from '@/lib/utils';
 
 type State =
   | 'no value'
@@ -24,6 +23,7 @@ type CommonProps = {
   value?: string;
   maxLength?: number;
   className?: string;
+  style?: React.CSSProperties;
 };
 
 type InputKindProps = CommonProps & {
@@ -52,15 +52,16 @@ export default function Input(props: InputProps) {
     value = '',
     maxLength,
     className,
+    style,
   } = props;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const baseClasses = cn(
+  const baseClasses = [
     'p-4 text-sm border rounded-[2px] focus:outline-none transition-colors',
     THEME_COLOR_CLASSNAME[state],
     THEME_SIZE_CLASSNAME[size],
-    className,
-  );
+    className ?? '',
+  ].join(' ');
 
   const autoResize = () => {
     if (type !== 'text area') return;
@@ -82,6 +83,7 @@ export default function Input(props: InputProps) {
       <textarea
         ref={textareaRef}
         className={`${baseClasses} resize-none overflow-hidden`}
+        style={style}
         placeholder={placeholder}
         value={value}
         onChange={e => {
