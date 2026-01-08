@@ -7,7 +7,8 @@ export const StatisticsResponseSchema = z.object({
   data: z.object({
     pendingCount: z.number(),
     approvedCount: z.number(),
-    completedCount: z.number(),
+    feedbackCompletedCount: z.number(),
+    testCompletedCount: z.number(),
     paidCount: z.number(),
     rejectedCount: z.number(),
     totalCount: z.number(),

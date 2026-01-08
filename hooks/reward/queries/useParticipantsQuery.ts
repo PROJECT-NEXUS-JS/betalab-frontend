@@ -5,7 +5,7 @@ import { ParticipantsResponseSchema, ParticipantsResponseType } from '../dto/par
 const BASE_PATH = '/v1/users/participations/posts';
 
 interface SearchRequest {
-  status?: 'PENDING' | 'APPROVED' | 'COMPLETED' | 'PAID' | 'REJECTED' | null;
+  status?: 'PENDING' | 'APPROVED' | 'FEEDBACK_COMPLETED' | 'TEST_COMPLETED' | 'REJECTED' | null;
   searchKeyword?: string;
   sortDirection?: 'ASC' | 'DESC';
 }

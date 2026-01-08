@@ -26,14 +26,20 @@ function formatDate(dateString: string | null | undefined): string | undefined {
 }
 
 function mapParticipationStatus(
-  status: string,
+  status: string | null,
   rewardStatus: string | null,
 ): '승인대기' | '진행 중' | '완료요청' | '완료' {
+  if (!status) return '승인대기';
+
   switch (status) {
     case 'PENDING':
       return '승인대기';
     case 'APPROVED':
       return '진행 중';
+    case 'FEEDBACK_COMPLETED':
+      return '완료요청';
+    case 'TEST_COMPLETED':
+      return '완료';
     case 'COMPLETED':
       if (rewardStatus === 'PENDING' || rewardStatus === null) {
         return '완료요청';
@@ -63,9 +69,14 @@ function mapRewardStatus(status: string | null): '미지급' | '지급대기' | 
 }
 
 function determineRowType(
-  participationStatus: string,
+  participationStatus: string | null,
   rewardStatus: string | null,
+  isPaid: boolean,
 ): ParticipantRowType {
+  if (!participationStatus) {
+    return '승인전';
+  }
+
   // 승인대기
   if (participationStatus === 'PENDING') {
     return '승인전';
@@ -74,6 +85,24 @@ function determineRowType(
   // 진행 중
   if (participationStatus === 'APPROVED') {
     return '진행중';
+  }
+
+  // 피드백 완료
+  if (participationStatus === 'FEEDBACK_COMPLETED') {
+    return '완료요청';
+  }
+
+  // 테스트 완료
+  if (participationStatus === 'TEST_COMPLETED') {
+    if (isPaid) {
+      return '지급완료';
+    }
+    return '지급전';
+  }
+
+  // 거절됨
+  if (participationStatus === 'REJECTED') {
+    return '승인전';
   }
 
   // 완료 요청
@@ -99,7 +128,9 @@ function determineRowType(
 
 export default function RewardStateListClient({ postId }: RewardStateListClientProps) {
   const [selectedParticipationId, setSelectedParticipationId] = useState<number | null>(null);
-  const [selectedParticipationStatus, setSelectedParticipationStatus] = useState<string>('');
+  const [selectedParticipationStatus, setSelectedParticipationStatus] = useState<string | null>(
+    null,
+  );
   const [selectedRewardStatus, setSelectedRewardStatus] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -123,7 +154,7 @@ export default function RewardStateListClient({ postId }: RewardStateListClientP
 
   const transformedData: ParticipantData[] = filteredContent.map(
     (item: ParticipantItemType, index: number) => {
-      const rowType = determineRowType(item.participationStatus, item.rewardStatus);
+      const rowType = determineRowType(item.participationStatus, item.rewardStatus, item.isPaid);
 
       return {
         number: index + 1,
@@ -161,6 +192,7 @@ export default function RewardStateListClient({ postId }: RewardStateListClientP
             ? async () => {
                 try {
                   await payRewardMutation.mutateAsync(item.participationId);
+                  window.location.reload();
                 } catch (error) {
                   console.error('리워드 지급 실패:', error);
                 }

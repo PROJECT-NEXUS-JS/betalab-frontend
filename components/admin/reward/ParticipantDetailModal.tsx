@@ -6,21 +6,27 @@ import { useParticipationDetailQuery } from '@/hooks/reward/queries/useParticipa
 import Button from '@/components/common/atoms/Button';
 
 function mapParticipationStatus(
-  status: string,
+  status: string | null,
   rewardStatus: string | null,
-): '승인대기' | '진행 중' | '완료요청' | '완료' {
+): '승인대기' | '진행 중' | '피드백 완료' | '테스트 완료' | '완료요청' | '완료' | '거절됨' {
+  if (!status) return '승인대기';
+  
   switch (status) {
     case 'PENDING':
       return '승인대기';
     case 'APPROVED':
       return '진행 중';
+    case 'FEEDBACK_COMPLETED':
+      return '피드백 완료';
+    case 'TEST_COMPLETED':
+      return '테스트 완료';
     case 'COMPLETED':
       if (rewardStatus === 'PENDING' || rewardStatus === null) {
         return '완료요청';
       }
       return '완료';
     case 'REJECTED':
-      return '승인대기';
+      return '거절됨';
     default:
       return '승인대기';
   }
@@ -46,7 +52,7 @@ interface ParticipantDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   participationId: number | null;
-  participationStatus: string;
+  participationStatus: string | null;
   rewardStatus: string | null;
   onApprove?: () => void;
 }
@@ -98,10 +104,16 @@ export default function ParticipantDetailModal({
         return 'bg-blue-600 text-sky-50';
       case '진행 중':
         return 'bg-sky-50 text-gray-600';
+      case '피드백 완료':
+        return 'bg-sky-50 text-gray-600';
+      case '테스트 완료':
+        return 'bg-sky-50 text-gray-600';
       case '완료요청':
         return 'bg-green-100 text-lime-700';
       case '완료':
         return 'bg-sky-50 text-blue-600';
+      case '거절됨':
+        return 'bg-gray-200 text-slate-500';
       default:
         return 'bg-gray-200 text-slate-500';
     }
