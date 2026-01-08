@@ -19,7 +19,7 @@ export default function MyApplicationContent() {
     isLoading,
     refetch,
   } = useMyApplicationsQuery({
-    status: ParticipationStatusEnum.enum.COMPLETED,
+    status: ParticipationStatusEnum.enum.TEST_COMPLETED,
     page: currentPage,
     size: 9,
   });
