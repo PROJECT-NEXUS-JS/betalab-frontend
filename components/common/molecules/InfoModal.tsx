@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import Button from '@/components/common/atoms/Button';
 
 export type InfoModalType = 'participant' | 'recruiter';
@@ -91,6 +91,9 @@ export default function InfoModal({ type, isOpen, onClose, onConfirm }: InfoModa
         className="p-10 w-[480px] max-w-[calc(100%-2rem)] rounded-2xl shadow-[0px_0px_10px_0px_rgba(26,30,39,0.08)]"
         showCloseButton={false}
       >
+        <DialogTitle className="sr-only">
+          {content.title.join(' ')}
+        </DialogTitle>
         <div className="flex flex-col justify-start items-center gap-7">
           {/* Title */}
           <div className="flex flex-col justify-start items-center">
