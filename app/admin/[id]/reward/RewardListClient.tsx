@@ -19,7 +19,7 @@ export default function RewardListClient({ postId }: { postId: number }) {
   const rewardItems = [
     { label: '승인대기', count: statistics.pendingCount, color: 'blue' as const },
     { label: '진행중', count: statistics.approvedCount, color: 'blue' as const },
-    { label: '완료', count: statistics.completedCount, color: 'green' as const },
+    { label: '완료', count: statistics.feedbackCompletedCount + statistics.testCompletedCount, color: 'green' as const },
     { label: '리워드 지급 완료', count: statistics.paidCount, color: 'black' as const },
   ];
 
