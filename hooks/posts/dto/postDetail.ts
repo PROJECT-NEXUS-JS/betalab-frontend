@@ -62,6 +62,7 @@ type ContentType = z.infer<typeof ContentSchema>;
 export const ParticipationStatusEnum = z.enum([
   'PENDING',
   'APPROVED',
+  'FEEDBACK_COMPLETED',
   'TEST_COMPLETED',
   'COMPLETED',
   'REJECTED',

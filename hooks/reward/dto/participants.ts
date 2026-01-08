@@ -30,7 +30,7 @@ const ParticipantItemSchema = z.object({
   appliedAt: z.string(),
   approvedAt: z.string().nullable(),
   completedAt: z.string().nullable(),
-  participationStatus: ParticipationStatusEnum,
+  participationStatus: ParticipationStatusEnum.nullable(),
   rewardStatus: RewardStatusEnum.nullable(),
   paidAt: z.string().nullable(),
   isPaid: z.boolean(),
