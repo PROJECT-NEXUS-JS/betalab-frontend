@@ -36,7 +36,7 @@ const HeaderIcons = ({ userData }: HeaderIconsProps) => {
   };
 
   const handleHelpClick = () => {
-    window.open('https://forms.gle/FBRFunCT8Mkufrj76', '_blank');
+    window.open('https://tally.so/r/7RLkL0', '_blank', 'noopener,noreferrer');
   };
 
   const DROPDOWN_ELEMENTS: DropdownElementProps[] = [
@@ -59,9 +59,7 @@ const HeaderIcons = ({ userData }: HeaderIconsProps) => {
       children: <p className="text-caption-02 font-semibold">프로필 설정</p>,
     },
     {
-      onClick: () => {
-        handleHelpClick();
-      },
+      onClick: handleHelpClick,
       children: <p className="text-caption-02 font-semibold">도움말/문의</p>,
     },
     {
