@@ -13,12 +13,7 @@ export default function useDeletePostMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (postId: number) => {
-      if (!postId || isNaN(postId)) {
-        throw new Error('INVALID_ID');
-      }
-      return await deletePost(postId);
-    },
+    mutationFn: (postId: number) =>  deletePost(postId),
     onSuccess: async () => {
       // 홈. 마이페이지 게시물 목록 초기화
       await Promise.all([
@@ -36,17 +31,6 @@ export default function useDeletePostMutation() {
       router.replace('/');
     },
     onError: error => {
-      // ID가 유효하지 않았던 경우
-      if (error.message === 'INVALID_ID') {
-        showToast({
-          type: 'error',
-          message: '유효하지 않은 접근입니다.',
-          iconName: 'red',
-        });
-        return;
-      }
-
-      // 실제 서버 삭제 실패 경우
       console.error('프로젝트 삭제 에러:', error);
       showToast({
         type: 'error',

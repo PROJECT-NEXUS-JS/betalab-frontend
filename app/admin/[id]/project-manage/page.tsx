@@ -15,6 +15,7 @@ import DetailCheck, { DetailInitial } from '@/components/admin/project-manage/De
 import { instance } from '@/apis/instance';
 import useDeletePostMutation from '@/hooks/posts/mutations/useDeletePostMutation';
 import { updatePost } from './project-manage-api';
+import { showToast } from '@/components/common/toast/ToastHost';
 
 type TestType = 'game' | 'app' | 'web';
 
@@ -459,7 +460,15 @@ export default function Page() {
   };
 
   const handleDeleteConfirm = () => {
-    deletePost(postId); // 삭제 실행
+    if (postId && !isNaN(postId)) {
+      deletePost(postId);
+    } else {
+      showToast({
+        type: 'alert',
+        message: '유효하지 않은 게시물입니다.',
+        iconName: 'red',
+      });
+    }
   };
 
   const handleDelete = () => setIsDeleteModalOpen(true);
