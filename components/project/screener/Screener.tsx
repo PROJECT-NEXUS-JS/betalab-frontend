@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { LoaderCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { useGetPostDetailQuery } from '@/hooks/posts/queries/usePostDetailQuery';
 import useGetApplicationStatus from '@/hooks/application/queries/useGetApplicationStatus';
 import useGetScreenerQuestions from '@/hooks/posts/queries/useGetScreenerQuestions';
-import { ProjectDataModel, CategoryType } from '@/hooks/posts/dto/postDetail';
+import { ProjectDataModel } from '@/hooks/posts/dto/postDetail';
 
 import useScreenerStore from '@/stores/screenerStore';
 
@@ -55,7 +55,6 @@ function createQuestions(
       question: `개인 정보 이용 (${privacyItemsString})에 동의하시나요?`,
     });
   }
-
   return questions;
 }
 
@@ -88,20 +87,32 @@ const Screener = ({ id }: ScreenerProps) => {
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
-  // isScreenerOpen 상태가 아니거나, 참가 신청이 돼있으면 안 띄움
-  if (!isScreenerOpen || (!isApplicationStatusLoading && applicationStatusData)) return null;
-  console.log({
-    isScreenerOpen: isScreenerOpen,
-    isApplicationStatusLoading: isApplicationStatusLoading,
-    applicationStatusData: applicationStatusData,
-    isPostDetailLoading: isPostDetailLoading,
-    isScreenerQuestionsLoading: isScreenerQuestionsLoading,
-  });
+  // 페이지 이동 로직 - 질문없을때
+  useEffect(() => {
+    // 로딩이 완료되었을 때만 판단
+    const isDataLoaded =
+      !isPostDetailLoading && !isApplicationStatusLoading && !isScreenerQuestionsLoading;
 
-  // 질문이 없으면 안 띄우고 바로 신청 페이지로 이동
-  if (questions.length === 0) {
-    router.push(`/project/${id}/application`);
-  }
+    if (isScreenerOpen && isDataLoaded && questions.length === 0) {
+      router.push(`/project/${id}/application`);
+    }
+  }, [
+    isScreenerOpen,
+    isPostDetailLoading,
+    isApplicationStatusLoading,
+    isScreenerQuestionsLoading,
+    questions.length,
+    id,
+    router,
+  ]);
+
+  // isScreenerOpen 상태가 아니거나, 참가 신청이 돼있으면, 질문이 없으면 안 띄움
+  if (
+    !isScreenerOpen ||
+    (!isApplicationStatusLoading && applicationStatusData) ||
+    questions.length === 0
+  )
+    return null;
 
   // --- 사용자 액션 핸들러 ---
   const handleAffirmative = () => {
