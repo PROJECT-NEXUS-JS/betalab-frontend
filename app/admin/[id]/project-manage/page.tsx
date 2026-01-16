@@ -1,17 +1,19 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useSearchParams, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import type { DateRange } from 'react-day-picker';
 import { addDays } from 'date-fns';
 import Dropdown from '@/components/admin/project-manage/DropDown';
 import CheckDropDown, { CheckOption } from '@/components/admin/project-manage/CheckDropDown';
 import ParticipationCheck from '@/components/admin/project-manage/ParticipationCheck';
 import DateCheck from '@/components/admin/project-manage/DateCheck';
+import PostDeleteModal from '@/components/admin/project-manage/PostDeleteModal';
 import Button from '@/components/common/atoms/Button';
 import ConditionCheck from '@/components/admin/project-manage/ConditionCheck';
 import DetailCheck, { DetailInitial } from '@/components/admin/project-manage/DetailCheck';
 import { instance } from '@/apis/instance';
+import useDeletePostMutation from '@/hooks/posts/mutations/useDeletePostMutation';
 import { updatePost } from './project-manage-api';
 
 type TestType = 'game' | 'app' | 'web';
@@ -201,14 +203,9 @@ type ConditionInitial = {
 };
 
 export default function Page() {
-  const searchParams = useSearchParams();
-  const routeParams = useParams<{ id?: string }>();
-  const postId = useMemo(() => {
-    const q = searchParams?.get('id');
-    const p = routeParams?.id;
-    const num = Number(q ?? p);
-    return Number.isFinite(num) ? num : undefined;
-  }, [searchParams, routeParams]);
+  const params = useParams();
+  // URL 파라미터에서 ID 추출 (숫자가 아니면 undefined)
+  const postId = params?.id ? Number(params.id) : undefined;
 
   const [title, setTitle] = useState('제목을 적어주세요');
   const [editingTitle, setEditingTitle] = useState(false);
@@ -251,6 +248,9 @@ export default function Page() {
 
   const genreOptions = useMemo<CheckOption[]>(() => GENRES_BY_TYPE[testType], [testType]);
   const isWeb = testType === 'web';
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const { mutate: deletePost } = useDeletePostMutation();
 
   useEffect(() => {
     if (isWeb) {
@@ -458,151 +458,166 @@ export default function Page() {
     }
   };
 
+  const handleDeleteConfirm = () => {
+    deletePost(postId); // 삭제 실행
+  };
+
+  const handleDelete = () => setIsDeleteModalOpen(true);
+
   return (
-    <div className="mx-auto w-full max-w-[920px] px-6 py-8 overflow-x-hidden">
-      <div className="mb-8">
-        {!editingTitle ? (
-          <p
-            className="text-subtitle-01 font-semibold text-Black cursor-text"
-            onClick={() => setEditingTitle(true)}
-            title="클릭하여 제목 수정"
-          >
-            {title}
-          </p>
-        ) : (
-          <input
-            ref={inputRef}
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-            onBlur={() => setEditingTitle(false)}
-            onKeyDown={e => {
-              if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
-              if (e.key === 'Escape') setEditingTitle(false);
-            }}
-            className="w-full rounded-[1px] border border-Gray-100 bg-White px-4 py-3 text-subtitle-01 text-Black"
-          />
-        )}
-      </div>
-
-      <div className="space-y-5">
-        <Row label="테스트 종류">
-          <div className="w-[340px]">
-            <Dropdown
-              value={testType}
-              onChange={(v: unknown) => setTestType(v as TestType)}
-              options={TEST_TYPES}
-              placeholder="선택하세요"
+    <>
+      <div className="mx-auto w-full max-w-[920px] px-6 py-8 overflow-x-hidden">
+        <div className="mb-8 flex flex-row justify-between">
+          {!editingTitle ? (
+            <p
+              className="text-subtitle-01 font-semibold text-Black cursor-text"
+              onClick={() => setEditingTitle(true)}
+              title="클릭하여 제목 수정"
+            >
+              {title}
+            </p>
+          ) : (
+            <input
+              ref={inputRef}
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+              onBlur={() => setEditingTitle(false)}
+              onKeyDown={e => {
+                if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                if (e.key === 'Escape') setEditingTitle(false);
+              }}
+              className="w-full rounded-[1px] border border-Gray-100 bg-White px-4 py-3 text-subtitle-01 text-Black"
             />
-          </div>
-        </Row>
+          )}
+          <Button State="Default" Size="xl" onClick={handleDelete} label="삭제하기" />
+        </div>
 
-        <Row label="플랫폼 종류">
-          <div className="w-[340px]">
-            {testType === 'app' ? (
+        <div className="space-y-5">
+          <Row label="테스트 종류">
+            <div className="w-[340px]">
               <Dropdown
-                value={platforms[0]}
-                onChange={(v: unknown) => setPlatforms(v ? [String(v)] : [])}
-                options={APP_PLATFORM_OPTIONS}
+                value={testType}
+                onChange={(v: unknown) => setTestType(v as TestType)}
+                options={TEST_TYPES}
                 placeholder="선택하세요"
               />
-            ) : (
+            </div>
+          </Row>
+
+          <Row label="플랫폼 종류">
+            <div className="w-[340px]">
+              {testType === 'app' ? (
+                <Dropdown
+                  value={platforms[0]}
+                  onChange={(v: unknown) => setPlatforms(v ? [String(v)] : [])}
+                  options={APP_PLATFORM_OPTIONS}
+                  placeholder="선택하세요"
+                />
+              ) : (
+                <CheckDropDown
+                  widthClass="w-[340px]"
+                  key={`platforms-${platforms.join('|')}`}
+                  options={PLATFORMS}
+                  value={platforms}
+                  disabled={isWeb}
+                  onChange={
+                    isWeb
+                      ? undefined
+                      : (v: unknown) => setPlatforms(Array.isArray(v) ? (v as string[]) : [])
+                  }
+                />
+              )}
+            </div>
+          </Row>
+
+          <Row label="장르 종류">
+            <div className="w-[540px]">
               <CheckDropDown
-                widthClass="w-[340px]"
-                key={`platforms-${platforms.join('|')}`}
-                options={PLATFORMS}
-                value={platforms}
-                disabled={isWeb}
-                onChange={
-                  isWeb
-                    ? undefined
-                    : (v: unknown) => setPlatforms(Array.isArray(v) ? (v as string[]) : [])
-                }
+                key={`genres-${testType}`}
+                options={genreOptions}
+                value={genres}
+                onChange={(v: unknown) => setGenres(Array.isArray(v) ? (v as string[]) : [])}
               />
-            )}
-          </div>
-        </Row>
+            </div>
+          </Row>
 
-        <Row label="장르 종류">
-          <div className="w-[540px]">
-            <CheckDropDown
-              key={`genres-${testType}`}
-              options={genreOptions}
-              value={genres}
-              onChange={(v: unknown) => setGenres(Array.isArray(v) ? (v as string[]) : [])}
+          <Row label="피드백 방식">
+            <div className="w-[540px]">
+              <CheckDropDown
+                key={`feedbacks-${feedbacks.join('|')}`}
+                options={FEEDBACKS}
+                value={feedbacks}
+                onChange={(v: unknown) => setFeedbacks(Array.isArray(v) ? (v as string[]) : [])}
+              />
+            </div>
+          </Row>
+
+          <Row label="테스트 소요 시간">
+            <div className="w-[340px]">
+              <Dropdown
+                value={duration}
+                onChange={(v: unknown) => setDuration(String(v))}
+                options={DURATIONS}
+                placeholder="선택하세요"
+              />
+            </div>
+          </Row>
+
+          <Row label="모집 인원">
+            <div className="w-[340px]">
+              <ParticipationCheck
+                value={people}
+                onChange={(v: unknown) => setPeople(Number(v))}
+                step={10}
+                min={0}
+                suffix="명"
+              />
+            </div>
+          </Row>
+
+          <Row label="모집 마감일">
+            <div className="w-[420px]">
+              <DateCheck value={range} onChange={(v: DateRange | undefined) => setRange(v)} />
+            </div>
+          </Row>
+
+          <Row label="참여 조건">
+            <ConditionCheck className="!mx-0" initial={conditionInitial} />
+          </Row>
+        </div>
+
+        {showDetail && (
+          <div className="mt-10">
+            <DetailCheck
+              key={`${postId ?? 'new'}:${(detailInitial.privacyItems ?? []).join('|')}`}
+              initial={detailInitial}
             />
           </div>
-        </Row>
+        )}
 
-        <Row label="피드백 방식">
-          <div className="w-[540px]">
-            <CheckDropDown
-              key={`feedbacks-${feedbacks.join('|')}`}
-              options={FEEDBACKS}
-              value={feedbacks}
-              onChange={(v: unknown) => setFeedbacks(Array.isArray(v) ? (v as string[]) : [])}
-            />
-          </div>
-        </Row>
-
-        <Row label="테스트 소요 시간">
-          <div className="w-[340px]">
-            <Dropdown
-              value={duration}
-              onChange={(v: unknown) => setDuration(String(v))}
-              options={DURATIONS}
-              placeholder="선택하세요"
-            />
-          </div>
-        </Row>
-
-        <Row label="모집 인원">
-          <div className="w-[340px]">
-            <ParticipationCheck
-              value={people}
-              onChange={(v: unknown) => setPeople(Number(v))}
-              step={10}
-              min={0}
-              suffix="명"
-            />
-          </div>
-        </Row>
-
-        <Row label="모집 마감일">
-          <div className="w-[420px]">
-            <DateCheck value={range} onChange={(v: DateRange | undefined) => setRange(v)} />
-          </div>
-        </Row>
-
-        <Row label="참여 조건">
-          <ConditionCheck className="!mx-0" initial={conditionInitial} />
-        </Row>
-      </div>
-
-      {showDetail && (
-        <div className="mt-10">
-          <DetailCheck
-            key={`${postId ?? 'new'}:${(detailInitial.privacyItems ?? []).join('|')}`}
-            initial={detailInitial}
+        <div className="mt-10 space-y-3">
+          <Button
+            State="Default"
+            Size="xl"
+            label={showDetail ? '프로젝트 설명 닫기' : '프로젝트 설명 더보기'}
+            className="w-full rounded-[8px]"
+            onClick={() => setShowDetail(v => !v)}
+          />
+          <Button
+            State="Primary"
+            Size="xl"
+            label="변경사항 저장하기"
+            onClick={save}
+            className="w-full rounded-[8px]"
           />
         </div>
-      )}
-
-      <div className="mt-10 space-y-3">
-        <Button
-          State="Default"
-          Size="xl"
-          label={showDetail ? '프로젝트 설명 닫기' : '프로젝트 설명 더보기'}
-          className="w-full rounded-[8px]"
-          onClick={() => setShowDetail(v => !v)}
-        />
-        <Button
-          State="Primary"
-          Size="xl"
-          label="변경사항 저장하기"
-          onClick={save}
-          className="w-full rounded-[8px]"
-        />
       </div>
-    </div>
+
+      <PostDeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDeleteConfirm}
+      />
+    </>
   );
 }

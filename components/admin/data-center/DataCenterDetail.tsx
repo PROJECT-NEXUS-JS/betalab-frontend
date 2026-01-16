@@ -32,7 +32,7 @@ const DAY_OPTIONS = [
 const DataCenterDetail = ({ postId }: { postId: number }) => {
   const { data: postDetail } = useGetPostDetailQuery(postId);
   const postDetailData = postDetail?.data;
-
+  
   const [selectedDay, setSelectedDay] = useState(7);
   const [isDayDropdownOpen, setIsDayDropdownOpen] = useState(false);
   const { data: dataCenterDetail } = useGetDaterCenterDetailQuery(postId, selectedDay);
