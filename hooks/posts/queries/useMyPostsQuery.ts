@@ -1,7 +1,6 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { GetMyPostsRequestType, GetMyPostsResponseType } from '../dto/myPosts';
 import { instance } from '@/apis/instance';
-import { queryKeys } from '@/constants/query-keys';
 
 const BASE_PATH = '/v1/users/posts/my';
 
@@ -29,7 +28,6 @@ export const useMyPostsQuery = (
     queryKey: ['myPosts', params],
     queryFn: () => getMyPosts(params),
     staleTime: 1000 * 60 * 5, // 5분
-    refetchOnMount: false,
     refetchOnWindowFocus: false,
   });
 };

@@ -11,6 +11,8 @@ export default function MyPostContent() {
   const { data: myPostsData, isLoading } = useMyPostsQuery({ page: currentPage, size: 9 });
   const router = useRouter();
 
+  console.log("myPostsData", myPostsData)
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
