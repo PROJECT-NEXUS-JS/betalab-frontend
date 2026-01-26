@@ -161,7 +161,11 @@ export default function DetailCheck({ initial }: Props) {
           <ImageStrip
             files={thumbFiles}
             total={1}
-            onUpload={fl => setThumbFiles([...thumbFiles, ...Array.from(fl)].slice(0, 1))}
+            onUpload={fl => {
+              const newFiles = Array.from(fl);
+              const existingFiles = thumbFiles.filter(f => f instanceof File);
+              setThumbFiles([...existingFiles, ...newFiles].slice(0, 1));
+            }}
             onRemove={idx => setThumbFiles(thumbFiles.filter((_, i) => i !== idx))}
           />
         </div>
@@ -224,7 +228,10 @@ export default function DetailCheck({ initial }: Props) {
               <ImageStrip
                 files={galleryFiles}
                 total={10}
-                onUpload={fl => setGalleryFiles([...galleryFiles, ...Array.from(fl)].slice(0, 10))}
+                onUpload={fl => {
+                  const newFiles = Array.from(fl);
+                  setGalleryFiles([...galleryFiles, ...newFiles].slice(0, 10));
+                }}
                 onRemove={idx => setGalleryFiles(galleryFiles.filter((_, i) => i !== idx))}
               />
             </div>
